@@ -1,0 +1,29 @@
+<resources>
+    <string name="app_name">Aard 2</string>
+    <string name="icon_search">&#xf002;</string>
+    <string name="icon_star">&#xf005;</string>
+    <string name="icon_history">&#xf017;</string>
+    <string name="icon_dictionary">&#xf02d;</string>
+
+    <string name="subtitle_lookup">Lookup</string>
+    <string name="subtitle_bookmark">Bookmarks</string>
+    <string name="subtitle_history">History</string>
+    <string name="subtitle_dictionaries">Dictionaries</string>
+        
+    <string name="action_find_dictionaries">Rescan</string>
+    <string name="action_find_in_page">Find in page</string>
+    <string name="action_bookmark_article">Bookmark</string>
+    <string name="action_filter_bookmarks">Filter</string>
+    <string name="action_filter_history">Filter</string>
+    <string name="action_filter">Filter</string>
+    <string name="action_ascending">Ascending</string>
+    <string name="action_descending">Descending</string>
+    
+    <string name="action_sort_by_title">By Title</string>
+    <string name="action_sort_by_time">By Time</string>    
+    <string name="action_lookup">Lookup</string>
+    
+    <string name="dict_label"><![CDATA[<big><b>%1$s</b></big>]]></string>
+    <string name="dict_path"><![CDATA[<small>%1$s</small>]]></string>
+    <string name="dict_item_count"><![CDATA[%1$,d items]]></string>
+</resources>

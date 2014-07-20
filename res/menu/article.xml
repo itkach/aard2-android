@@ -1,0 +1,13 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+    <item android:id="@+id/action_find_in_page"
+          android:title="@string/action_find_in_page"
+          android:showAsAction="never" 
+          />
+    <item android:id="@+id/action_bookmark_article"
+          android:icon="@drawable/ic_action_not_important"
+          android:title="@string/action_bookmark_article"
+          android:checkable="true" 
+          android:checked="false"
+          android:showAsAction="always"
+          />
+</menu>

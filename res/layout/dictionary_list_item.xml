@@ -1,0 +1,54 @@
+<itkach.aard2.CheckableRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android" 
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingBottom="6dip"
+        android:paddingLeft="8dip"
+        android:paddingRight="8dip"
+        android:paddingTop="3dip"
+        android:background="@android:drawable/list_selector_background"
+    >
+
+   <CheckBox
+            android:id="@+id/dictionary_checkbox"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentLeft="true"
+            android:visibility="gone"
+            android:clickable="false"
+            android:focusable="false"
+            android:checked="false" />
+    
+    
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_toEndOf="@id/dictionary_checkbox" 
+        >
+
+        <TextView
+            android:id="@+id/dictionary_label"
+            style="@android:style/TextAppearance.Holo.SearchResult.Title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="22sp"/>
+
+        <TextView
+            android:id="@+id/dictionary_path"
+            style="@android:style/TextAppearance.Holo.SearchResult.Subtitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@id/dictionary_label"
+            android:textStyle="italic"
+            />
+
+        <TextView
+            android:id="@+id/dictionary_blob_count"
+            style="@android:style/TextAppearance.Holo.Small"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_below="@id/dictionary_path"/>
+    </RelativeLayout>
+
+</itkach.aard2.CheckableRelativeLayout>

@@ -1,0 +1,7 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+    <item android:id="@+id/action_find_dictionaries"
+          android:icon="@drawable/ic_action_refresh"
+          android:title="@string/action_find_dictionaries" 
+          android:showAsAction="always"
+          />
+</menu>

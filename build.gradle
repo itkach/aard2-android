@@ -1,0 +1,63 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:0.12.+'
+    }
+}
+
+apply plugin: 'com.android.application'
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+
+repositories {
+    mavenCentral()
+    flatDir {
+        dirs 'libs'
+    }
+}
+
+android {
+    compileSdkVersion 19
+    buildToolsVersion "19.1.0"
+
+    defaultConfig {
+        minSdkVersion 17
+        targetSdkVersion 19
+        versionCode 1
+        versionName "1.0"
+    }
+
+    packagingOptions {
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/NOTICE'
+    }
+
+
+    lintOptions {
+        abortOnError false
+    }
+
+    sourceSets {
+        main {
+            manifest.srcFile 'AndroidManifest.xml'
+            java.srcDirs = ['src']
+            res.srcDirs = ['res']
+            assets.srcDirs = ['assets']
+        }
+    }
+
+}
+
+dependencies {
+    compile 'com.fasterxml.jackson.core:jackson-databind:2.4+'
+    compile 'com.fasterxml.jackson.core:jackson-core:2.4+'
+    compile 'com.fasterxml.jackson.core:jackson-annotations:2.4+'
+    compile project(':slobj')
+    compile project(':slobber')
+    compile files('libs/android-support-v4.jar')
+    //workaround for poor support of .aar libraries -
+    //using directory as repository
+    compile(name:'iconicdroid', version:'0.4.0', ext:'aar')
+ }

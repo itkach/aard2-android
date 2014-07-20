@@ -1,0 +1,395 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="744.09448819"
+   height="1052.3622047"
+   id="svg3890"
+   version="1.1"
+   inkscape:version="0.48.3.1 r9886"
+   sodipodi:docname="aard2.svg"
+   inkscape:export-filename="/home/itkach/aarddict-logo/take4.png"
+   inkscape:export-xdpi="9.1400003"
+   inkscape:export-ydpi="9.1400003">
+  <defs
+     id="defs3892">
+    <linearGradient
+       id="linearGradient4636">
+      <stop
+         style="stop-color:#0c3762;stop-opacity:1;"
+         offset="0"
+         id="stop4638" />
+      <stop
+         style="stop-color:#ffffff;stop-opacity:0.39215687;"
+         offset="1"
+         id="stop4640" />
+    </linearGradient>
+    <radialGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient4636"
+       id="radialGradient4642"
+       cx="457.12268"
+       cy="474.74438"
+       fx="457.12268"
+       fy="474.74438"
+       r="350.28571"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(-0.01055869,1.8915975,-2.210132,-0.01233684,1662.6457,-163.61588)" />
+    <radialGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient4636-6"
+       id="radialGradient4642-0"
+       cx="317.30756"
+       cy="647.39795"
+       fx="317.30756"
+       fy="647.39795"
+       r="350.28571"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(1.1927494,1.5814536,-1.3647841,1.0293348,737.94701,-570.11999)" />
+    <linearGradient
+       id="linearGradient4636-6">
+      <stop
+         style="stop-color:#285d6f;stop-opacity:1;"
+         offset="0"
+         id="stop4638-5" />
+      <stop
+         style="stop-color:#285d6f;stop-opacity:0;"
+         offset="1"
+         id="stop4640-2" />
+    </linearGradient>
+    <radialGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient4636-5"
+       id="radialGradient4642-2"
+       cx="317.30756"
+       cy="647.39795"
+       fx="317.30756"
+       fy="647.39795"
+       r="350.28571"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(1.1927494,1.5814536,-1.3647841,1.0293348,737.94701,-570.11999)" />
+    <linearGradient
+       id="linearGradient4636-5">
+      <stop
+         style="stop-color:#285d6f;stop-opacity:1;"
+         offset="0"
+         id="stop4638-3" />
+      <stop
+         style="stop-color:#285d6f;stop-opacity:0;"
+         offset="1"
+         id="stop4640-5" />
+    </linearGradient>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath5035">
+      <path
+         sodipodi:type="arc"
+         style="fill:url(#radialGradient5039);fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:16.5201683;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+         id="path5037"
+         sodipodi:cx="387.14285"
+         sodipodi:cy="596.64789"
+         sodipodi:rx="344.28571"
+         sodipodi:ry="344.28571"
+         d="m 731.42856,596.64789 a 344.28571,344.28571 0 1 1 -688.571413,0 344.28571,344.28571 0 1 1 688.571413,0 z"
+         transform="matrix(-0.00668355,0.83045391,-0.63516647,-0.02370332,919.29031,334.67844)"
+         inkscape:export-xdpi="9.25"
+         inkscape:export-ydpi="9.25"
+         inkscape:export-filename="/home/itkach/aarddict-logo/take2.png" />
+    </clipPath>
+    <radialGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient4636-5"
+       id="radialGradient5039"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(1.8501699,-1.8973217,1.3004236,2.1350193,-1080.9849,299.12898)"
+       cx="317.30756"
+       cy="647.39795"
+       fx="317.30756"
+       fy="647.39795"
+       r="350.28571" />
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath5041">
+      <path
+         sodipodi:type="arc"
+         style="fill:url(#radialGradient5045);fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:16.42271614;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+         id="path5043"
+         sodipodi:cx="387.14285"
+         sodipodi:cy="596.64789"
+         sodipodi:rx="344.28571"
+         sodipodi:ry="344.28571"
+         d="m 731.42856,596.64789 a 344.28571,344.28571 0 1 1 -688.571413,0 344.28571,344.28571 0 1 1 688.571413,0 z"
+         transform="matrix(-0.00668355,0.83045391,-0.64272699,-0.02398546,642.69069,324.35621)"
+         inkscape:export-xdpi="9.25"
+         inkscape:export-ydpi="9.25"
+         inkscape:export-filename="/home/itkach/aarddict-logo/take2.png" />
+    </clipPath>
+    <radialGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient4636-5"
+       id="radialGradient5045"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(1.8501699,-1.8750031,1.3004236,2.1099046,-1080.9849,-134.74295)"
+       cx="317.30756"
+       cy="647.39795"
+       fx="317.30756"
+       fy="647.39795"
+       r="350.28571" />
+    <filter
+       inkscape:collect="always"
+       id="filter3862">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="10.750001"
+         id="feGaussianBlur3864" />
+    </filter>
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.7"
+     inkscape:cx="45.182707"
+     inkscape:cy="450.21867"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     inkscape:window-width="1545"
+     inkscape:window-height="1059"
+     inkscape:window-x="0"
+     inkscape:window-y="19"
+     inkscape:window-maximized="0"
+     showguides="true"
+     inkscape:guide-bbox="true">
+    <sodipodi:guide
+       orientation="1.4555986e-08,1"
+       position="18.571429,555.71429"
+       id="guide4455" />
+    <sodipodi:guide
+       orientation="0,1"
+       position="948.57143,357.14286"
+       id="guide4459" />
+  </sodipodi:namedview>
+  <metadata
+     id="metadata3895">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <path
+       sodipodi:type="arc"
+       style="fill:url(#radialGradient4642);fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:20;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       id="path3898"
+       sodipodi:cx="387.14285"
+       sodipodi:cy="596.64789"
+       sodipodi:rx="344.28571"
+       sodipodi:ry="344.28571"
+       d="m 731.42856,596.64789 a 344.28571,344.28571 0 1 1 -688.571413,0 344.28571,344.28571 0 1 1 688.571413,0 z"
+       transform="translate(-1.4285736,-5.9980469e-5)"
+       inkscape:export-xdpi="9.1452761"
+       inkscape:export-ydpi="9.1452761"
+       inkscape:export-filename="/home/itkach/aarddict-logo/take4.png" />
+    <path
+       sodipodi:type="arc"
+       style="fill:#285d6f;fill-opacity:0;fill-rule:nonzero;stroke:#000000;stroke-width:3.39605308000000017;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       id="path4408"
+       sodipodi:cx="397.14285"
+       sodipodi:cy="630.93359"
+       sodipodi:rx="77.14286"
+       sodipodi:ry="287.14285"
+       d="m 474.28571,630.93359 a 77.14286,287.14285 0 1 1 -154.28572,0 77.14286,287.14285 0 1 1 154.28572,0 z"
+       transform="matrix(2.5925925,0,0,1.20398,-642.48673,-162.9836)"
+       inkscape:export-filename="/home/itkach/aarddict-logo/take2.png"
+       inkscape:export-xdpi="9.25"
+       inkscape:export-ydpi="9.25" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:6;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 382.85714,250.9336 2.85715,688.5714"
+       id="path4451"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cc"
+       inkscape:export-filename="/home/itkach/aarddict-logo/take2.png"
+       inkscape:export-xdpi="9.25"
+       inkscape:export-ydpi="9.25" />
+    <rect
+       style="fill:#ffffff;fill-opacity:0.74509804000000002;fill-rule:nonzero;stroke:#000000;stroke-width:4;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       id="rect4556"
+       width="685.71429"
+       height="2.8571167"
+       x="42.857132"
+       y="595.2193"
+       inkscape:export-filename="/home/itkach/aarddict-logo/take2.png"
+       inkscape:export-xdpi="9.25"
+       inkscape:export-ydpi="9.25" />
+    <path
+       sodipodi:type="arc"
+       style="fill:#285d6f;fill-opacity:0;fill-rule:nonzero;stroke:#000000;stroke-width:4.38417101;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       id="path4408-9-8"
+       sodipodi:cx="397.14285"
+       sodipodi:cy="630.93359"
+       sodipodi:rx="77.14286"
+       sodipodi:ry="287.14285"
+       d="m 474.28571,630.93359 a 77.14286,287.14285 0 1 1 -154.28572,0 77.14286,287.14285 0 1 1 154.28572,0 z"
+       transform="matrix(-0.04492371,-1.5554034,1.2037992,-0.01251799,-361.5877,1002.275)"
+       inkscape:export-filename="/home/itkach/aarddict-logo/take2.png"
+       inkscape:export-xdpi="9.25"
+       inkscape:export-ydpi="9.25"
+       clip-path="url(#clipPath5041)" />
+    <path
+       sodipodi:type="arc"
+       style="fill:#285d6f;fill-opacity:0;fill-rule:nonzero;stroke:#000000;stroke-width:4.35830879;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       id="path4408-9-4"
+       sodipodi:cx="397.14285"
+       sodipodi:cy="630.93359"
+       sodipodi:rx="77.14286"
+       sodipodi:ry="287.14285"
+       d="m 474.28571,630.93359 a 77.14286,287.14285 0 1 1 -154.28572,0 77.14286,287.14285 0 1 1 154.28572,0 z"
+       transform="matrix(-0.04492371,-1.5739177,1.2037992,-0.012667,-361.5877,1449.6981)"
+       inkscape:export-filename="/home/itkach/aarddict-logo/take2.png"
+       inkscape:export-xdpi="9.25"
+       inkscape:export-ydpi="9.25"
+       clip-path="url(#clipPath5035)" />
+    <rect
+       style="fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:20.49872208;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;filter:url(#filter3862)"
+       id="rect4463-8"
+       width="488.57144"
+       height="371.42862"
+       x="144.85713"
+       y="414.64789"
+       inkscape:export-filename="/home/itkach/aarddict-logo/take3.png"
+       inkscape:export-xdpi="9.25"
+       inkscape:export-ydpi="9.25"
+       transform="matrix(0.97591872,0,0,0.97542265,12.153576,14.78671)" />
+    <rect
+       style="fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:12;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       id="rect4463"
+       width="488.57144"
+       height="371.42862"
+       x="142.85713"
+       y="410.93353"
+       inkscape:export-filename="/home/itkach/aarddict-logo/take2.png"
+       inkscape:export-xdpi="9.25"
+       inkscape:export-ydpi="9.25" />
+    <rect
+       style="fill:#ffffff;fill-opacity:0.74509804;fill-rule:nonzero;stroke:#000000;stroke-width:6;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       id="rect4465"
+       width="162.85715"
+       height="1.4285715"
+       x="182.85715"
+       y="496.64789"
+       inkscape:export-filename="/home/itkach/aarddict-logo/take2.png"
+       inkscape:export-xdpi="9.25"
+       inkscape:export-ydpi="9.25" />
+    <rect
+       style="fill:#ffffff;fill-opacity:0.74509804;fill-rule:nonzero;stroke:#000000;stroke-width:6;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       id="rect4465-36"
+       width="162.85715"
+       height="1.4285715"
+       x="182.85715"
+       y="595.57648"
+       inkscape:export-filename="/home/itkach/aarddict-logo/take2.png"
+       inkscape:export-xdpi="9.25"
+       inkscape:export-ydpi="9.25" />
+    <rect
+       style="fill:#ffffff;fill-opacity:0.74509804;fill-rule:nonzero;stroke:#000000;stroke-width:6;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       id="rect4465-5"
+       width="162.85715"
+       height="1.4285715"
+       x="182.85715"
+       y="645.04077"
+       inkscape:export-filename="/home/itkach/aarddict-logo/take2.png"
+       inkscape:export-xdpi="9.25"
+       inkscape:export-ydpi="9.25" />
+    <rect
+       style="fill:#ffffff;fill-opacity:0.74509804;fill-rule:nonzero;stroke:#000000;stroke-width:6;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       id="rect4465-50"
+       width="162.85715"
+       height="1.4285715"
+       x="182.85715"
+       y="694.50507"
+       inkscape:export-filename="/home/itkach/aarddict-logo/take2.png"
+       inkscape:export-xdpi="9.25"
+       inkscape:export-ydpi="9.25" />
+    <rect
+       style="fill:#ffffff;fill-opacity:0.74509804;fill-rule:nonzero;stroke:#000000;stroke-width:6;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       id="rect4465-36-6"
+       width="162.85715"
+       height="1.4285715"
+       x="182.85715"
+       y="546.11218"
+       inkscape:export-filename="/home/itkach/aarddict-logo/take2.png"
+       inkscape:export-xdpi="9.25"
+       inkscape:export-ydpi="9.25" />
+    <rect
+       style="fill:#ffffff;fill-opacity:0.74509804;fill-rule:nonzero;stroke:#000000;stroke-width:6;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       id="rect4465-6"
+       width="162.85715"
+       height="1.4285715"
+       x="417.14285"
+       y="496.64789"
+       inkscape:export-filename="/home/itkach/aarddict-logo/take2.png"
+       inkscape:export-xdpi="9.25"
+       inkscape:export-ydpi="9.25" />
+    <rect
+       style="fill:#ffffff;fill-opacity:0.74509804;fill-rule:nonzero;stroke:#000000;stroke-width:6;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       id="rect4465-36-3"
+       width="162.85715"
+       height="1.4285715"
+       x="417.14285"
+       y="595.57648"
+       inkscape:export-filename="/home/itkach/aarddict-logo/take2.png"
+       inkscape:export-xdpi="9.25"
+       inkscape:export-ydpi="9.25" />
+    <rect
+       style="fill:#ffffff;fill-opacity:0.74509804;fill-rule:nonzero;stroke:#000000;stroke-width:6;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       id="rect4465-5-1"
+       width="162.85715"
+       height="1.4285715"
+       x="417.14285"
+       y="645.04077"
+       inkscape:export-filename="/home/itkach/aarddict-logo/take2.png"
+       inkscape:export-xdpi="9.25"
+       inkscape:export-ydpi="9.25" />
+    <rect
+       style="fill:#ffffff;fill-opacity:0.74509804;fill-rule:nonzero;stroke:#000000;stroke-width:6;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       id="rect4465-50-0"
+       width="162.85715"
+       height="1.4285715"
+       x="417.14285"
+       y="694.50507"
+       inkscape:export-filename="/home/itkach/aarddict-logo/take2.png"
+       inkscape:export-xdpi="9.25"
+       inkscape:export-ydpi="9.25" />
+    <rect
+       style="fill:#ffffff;fill-opacity:0.74509804;fill-rule:nonzero;stroke:#000000;stroke-width:6;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       id="rect4465-36-6-4"
+       width="162.85715"
+       height="1.4285715"
+       x="417.14285"
+       y="546.11218"
+       inkscape:export-filename="/home/itkach/aarddict-logo/take2.png"
+       inkscape:export-xdpi="9.25"
+       inkscape:export-ydpi="9.25" />
+  </g>
+</svg>
