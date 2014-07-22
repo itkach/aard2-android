@@ -28,7 +28,7 @@
    include ':aard2-android'
    #+END_SRC
 
-   Open [[https://developer.android.com/sdk/installing/studio.html][Adnroid Studio]], go to /File/, /Import Project.../, select
+   Open [[https://developer.android.com/sdk/installing/studio.html][Android Studio]], go to /File/, /Import Project.../, select
    /aard2/ directory and then /Finish/. This should create the project
    ready for running and debugging on device or in emulator.
 
