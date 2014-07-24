@@ -8,7 +8,7 @@
   Aard2 is built with [[http://www.gradle.org][Gradle]], make sure to install it first (Gradle
   1.x, Android tools don't work with 2.x yet).
 
-  Aard2 depends on projects [[https://github/itkach/fdrawable][fdrawable]], [[https://github.com/itkach/slobj][slobj]] and [[https://github.com/itkach/slobber][slobber]].
+  Aard2 depends on projects [[https://github.com/itkach/fdrawable][fdrawable]], [[https://github.com/itkach/slobj][slobj]] and [[https://github.com/itkach/slobber][slobber]].
 
   Get the source code:
 
