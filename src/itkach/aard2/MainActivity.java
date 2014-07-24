@@ -15,9 +15,8 @@ import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
-import com.atermenji.android.iconicdroid.IconicFontDrawable;
-import com.atermenji.android.iconicdroid.icon.FontAwesomeIcon;
-import com.atermenji.android.iconicdroid.icon.Icon;
+import itkach.fdrawable.IconicFontDrawable;
+import itkach.fdrawable.Icon;
 
 public class MainActivity extends FragmentActivity implements
         ActionBar.TabListener {
@@ -60,10 +59,12 @@ public class MainActivity extends FragmentActivity implements
                 });
 
         IconicFontDrawable[] tabIcons = new IconicFontDrawable[4];
-        tabIcons[0] = mkTabIcon(FontAwesomeIcon.SEARCH);
-        tabIcons[1] = mkTabIcon(FontAwesomeIcon.STAR);
-        tabIcons[2] = mkTabIcon(FontAwesomeIcon.TIME);
-        tabIcons[3] = mkTabIcon(FontAwesomeIcon.BOOK);
+        Application app = (Application)getApplication();
+
+        tabIcons[0] = mkTabIcon(app.getIcon(0xf002));
+        tabIcons[1] = mkTabIcon(app.getIcon(0xf02e));
+        tabIcons[2] = mkTabIcon(app.getIcon(0xf1da));
+        tabIcons[3] = mkTabIcon(app.getIcon(0xf02d));
         // For each of the sections in the app, add a tab to the action bar.
         for (int i = 0; i < mAppSectionsPagerAdapter.getCount(); i++) {
             Tab tab = actionBar.newTab();
@@ -79,10 +80,8 @@ public class MainActivity extends FragmentActivity implements
         }
     }
 
-    private IconicFontDrawable mkTabIcon(Icon ic) {
+    private IconicFontDrawable mkTabIcon(IconicFontDrawable icon) {
         DisplayMetrics dm = getResources().getDisplayMetrics();
-        IconicFontDrawable icon = new IconicFontDrawable(this);
-        icon.setIcon(ic);
         icon.setIntrinsicHeight(Math.round(19*dm.density));
         icon.setIntrinsicWidth(Math.round(19*dm.density));
         icon.setIconColor(Color.DKGRAY);

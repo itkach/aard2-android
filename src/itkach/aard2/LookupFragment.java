@@ -25,8 +25,7 @@ import android.widget.ProgressBar;
 import android.widget.SearchView;
 import android.widget.TextView;
 
-import com.atermenji.android.iconicdroid.IconicFontDrawable;
-import com.atermenji.android.iconicdroid.icon.FontAwesomeIcon;
+import itkach.fdrawable.IconicFontDrawable;
 
 public class LookupFragment extends Fragment {
 
@@ -77,8 +76,7 @@ public class LookupFragment extends Fragment {
         progressSpinner = (ProgressBar) rootView
                 .findViewById(R.id.progressSpinner);
 
-        IconicFontDrawable iconSearch = new IconicFontDrawable(getActivity());
-        iconSearch.setIcon(FontAwesomeIcon.SEARCH);
+        IconicFontDrawable iconSearch = app.getIcon(0xf002);
         iconSearch.setIconColor(Color.LTGRAY);
 
         emptyView = (TextView)rootView.findViewById(R.id.emptyLookupView);

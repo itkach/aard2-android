@@ -8,13 +8,14 @@
   Aard2 is built with [[http://www.gradle.org][Gradle]], make sure to install it first (Gradle
   1.x, Android tools don't work with 2.x yet).
 
-  Aard2 depends on two other projects: [[https://github.com/itkach/slobj][slobj]] and [[https://github.com/itkach/slobber][slobber]].
+  Aard2 depends on projects [[https://github/itkach/fdrawable][fdrawable]], [[https://github.com/itkach/slobj][slobj]] and [[https://github.com/itkach/slobber][slobber]].
 
   Get the source code:
 
    #+BEGIN_SRC sh
    mkdir aard2
    cd aard2
+   git clone https://github.com/itkach/fdrawable.git
    git clone https://github.com/itkach/slobj.git
    git clone https://github.com/itkach/slobber.git
    git clone https://github.com/itkach/aard2-android.git
@@ -23,6 +24,7 @@
    Create /settings.gradle/ with the following content:
 
    #+BEGIN_SRC groovy
+   include ':fdrawable'
    include ':slobj'
    include ':slobber'
    include ':aard2-android'

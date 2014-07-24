@@ -15,9 +15,7 @@ import android.view.View;
 import android.widget.AbsListView.MultiChoiceModeListener;
 import android.widget.ListView;
 
-import com.atermenji.android.iconicdroid.IconicFontDrawable;
-import com.atermenji.android.iconicdroid.icon.FontAwesomeIcon;
-import com.atermenji.android.iconicdroid.icon.Icon;
+import itkach.fdrawable.IconicFontDrawable;
 
 public class DictionariesFragment extends ListFragment {
 
@@ -107,13 +105,12 @@ public class DictionariesFragment extends ListFragment {
     @Override
     public void onPrepareOptionsMenu(final Menu menu) {
         MenuItem miFindDictionaries = menu.findItem(R.id.action_find_dictionaries);
-        setIcon(miFindDictionaries, FontAwesomeIcon.REFRESH);
+        setIcon(miFindDictionaries, 0xf021);
     }
 
-    private void setIcon(MenuItem mi, Icon icon) {
-        IconicFontDrawable iconicFontDrawable = new IconicFontDrawable(
-                getActivity());
-        iconicFontDrawable.setIcon(icon);
+    private void setIcon(MenuItem mi, int codePoint) {
+        Application app = ((Application)getActivity().getApplication());
+        IconicFontDrawable iconicFontDrawable = app.getIcon(codePoint);
         iconicFontDrawable.setIconColor(getResources().getColor(
                 android.R.color.secondary_text_dark));
         DisplayMetrics dm = getResources().getDisplayMetrics();

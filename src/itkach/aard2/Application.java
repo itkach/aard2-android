@@ -1,8 +1,12 @@
 package itkach.aard2;
 
+import itkach.fdrawable.Icon;
+import itkach.fdrawable.IconicFontDrawable;
 import itkach.slob.Slob;
 import itkach.slob.Slob.Blob;
 import itkach.slobber.Slobber;
+
+import itkach.fdrawable.TypefaceManager;
 
 import java.io.File;
 import java.io.IOException;
@@ -11,6 +15,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
@@ -19,6 +25,8 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class Application extends android.app.Application {
+
+
 
     private Slobber                         slobber;
 
@@ -36,9 +44,15 @@ public class Application extends android.app.Application {
 
     private ObjectMapper                    mapper;
 
+    private TypefaceManager                 typefaceManager;
+
+
     @Override
     public void onCreate() {
         super.onCreate();
+
+        typefaceManager = new TypefaceManager(getAssets());
+
         try {
             mapper = new ObjectMapper();
             mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES,
@@ -209,4 +223,8 @@ public class Application extends android.app.Application {
         return result;
     }
 
+    IconicFontDrawable getIcon(int codePoint) {
+        Typeface font = typefaceManager.get("fontawesome-4.1.0.ttf");
+        return new IconicFontDrawable(new Icon(font, codePoint));
+    }
 }

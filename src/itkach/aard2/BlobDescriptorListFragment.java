@@ -18,9 +18,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.SearchView;
 
-import com.atermenji.android.iconicdroid.IconicFontDrawable;
-import com.atermenji.android.iconicdroid.icon.FontAwesomeIcon;
-import com.atermenji.android.iconicdroid.icon.Icon;
+import itkach.fdrawable.IconicFontDrawable;
 
 abstract class BlobDescriptorListFragment extends ListFragment {
 
@@ -130,10 +128,9 @@ abstract class BlobDescriptorListFragment extends ListFragment {
         inflater.inflate(R.menu.blob_descriptor_list, menu);
     }
 
-    private void setIcon(MenuItem mi, Icon icon) {
-        IconicFontDrawable iconicFontDrawable = new IconicFontDrawable(
-                getActivity());
-        iconicFontDrawable.setIcon(icon);
+    private void setIcon(MenuItem mi, int codePoint) {
+        Application app = (Application)getActivity().getApplication();
+        IconicFontDrawable iconicFontDrawable = app.getIcon(codePoint);
         iconicFontDrawable.setIconColor(getResources().getColor(
                 android.R.color.secondary_text_dark));
         DisplayMetrics dm = getResources().getDisplayMetrics();
@@ -148,7 +145,8 @@ abstract class BlobDescriptorListFragment extends ListFragment {
         BlobDescriptorList list = getDescriptorList();
 
         MenuItem miFilter = menu.findItem(R.id.action_filter);
-        setIcon(miFilter, FontAwesomeIcon.FILTER);
+        setIcon(miFilter, 0xf0b0);
+        //setIcon(miFilter, FontAwesomeIcon.FILTER);
         View filterActionView = miFilter.getActionView();
         SearchView searchView = (SearchView) filterActionView
                 .findViewById(R.id.fldFilter);
@@ -176,30 +174,30 @@ abstract class BlobDescriptorListFragment extends ListFragment {
     }
 
     private void setSortOrder(MenuItem mi, BlobDescriptorList.SortOrder order) {
-        Icon icon;
+        int iconCodePoint;
         int textRes;
         if (order == BlobDescriptorList.SortOrder.TIME) {
-            icon = FontAwesomeIcon.TIME;
+            iconCodePoint = 0xf017;
             textRes = R.string.action_sort_by_time;
         } else {
-            icon = FontAwesomeIcon.LIST;
+            iconCodePoint = 0xf03a;
             textRes = R.string.action_sort_by_title;
         }
-        setIcon(mi, icon);
+        setIcon(mi, iconCodePoint);
         mi.setTitle(textRes);
     }
 
     private void setAscending(MenuItem mi, boolean ascending) {
-        Icon icon;
+        int iconCodePoint;
         int textRes;
         if (ascending) {
-            icon = FontAwesomeIcon.ARROW_UP;
+            iconCodePoint = 0xf01b;
             textRes = R.string.action_ascending;
         } else {
-            icon = FontAwesomeIcon.ARROW_DOWN;
+            iconCodePoint = 0xf01a;
             textRes = R.string.action_descending;
         }
-        setIcon(mi, icon);
+        setIcon(mi, iconCodePoint);
         mi.setTitle(textRes);
     }
 

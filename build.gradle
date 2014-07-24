@@ -56,8 +56,6 @@ dependencies {
     compile 'com.fasterxml.jackson.core:jackson-annotations:2.4+'
     compile project(':slobj')
     compile project(':slobber')
+    compile project(':fdrawable')
     compile files('libs/android-support-v4.jar')
-    //workaround for poor support of .aar libraries -
-    //using directory as repository
-    compile(name:'iconicdroid', version:'0.4.0', ext:'aar')
  }
