@@ -25,42 +25,35 @@ import java.util.TimerTask;
 
 import itkach.slob.Slob;
 
-public class LookupFragment extends ListFragment {
+public class LookupFragment extends BaseListFragment {
 
     private Timer       timer;
     private SearchView  searchView;
     private String      initialQuery = "";
     private String      currentQuery = "";
-    private View        emptyView;
+
+    @Override
+    Icons getEmptyIcon() {
+        return Icons.SEARCH;
+    }
+
+    @Override
+    CharSequence getEmptyText() {
+        return "";
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setHasOptionsMenu(true);
-        setRetainInstance(true);
         if (savedInstanceState != null) {
             initialQuery = savedInstanceState.getString("lookupQuery", "");
         }
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        emptyView = inflater.inflate(R.layout.empty_view, container, false);
-        TextView emptyText = ((TextView)emptyView.findViewById(R.id.empty_text));
-        emptyText.setText("Nothing found");
-        ImageView emptyIcon = (ImageView)(emptyView.findViewById(R.id.empty_icon));
-        emptyIcon.setImageDrawable(Icons.SEARCH.create(42, Color.LTGRAY));
-        return super.onCreateView(inflater, container, savedInstanceState);
-    }
-
-    @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ListView listView = getListView();
-        listView.setEmptyView(emptyView);
-
-        ((ViewGroup) listView.getParent()).addView(emptyView, 0);
-
         listView.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view,

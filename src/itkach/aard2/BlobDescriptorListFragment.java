@@ -25,46 +25,25 @@ import android.widget.TextView;
 
 import itkach.fdrawable.IconicFontDrawable;
 
-abstract class BlobDescriptorListFragment extends ListFragment {
+abstract class BlobDescriptorListFragment extends BaseListFragment {
 
     private IconicFontDrawable icFilter;
     private IconicFontDrawable icClock;
     private IconicFontDrawable icList;
     private IconicFontDrawable icArrowUp;
     private IconicFontDrawable icArrowDown;
-    private View emptyView;
 
     abstract BlobDescriptorList getDescriptorList();
 
     abstract String getItemClickAction();
 
-    abstract Icons getEmptyIcon();
-
-    abstract String getEmptyText();
-
     private BlobDescriptorListAdapter listAdapter;
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setHasOptionsMenu(true);
-        setRetainInstance(true);
-        listAdapter = new BlobDescriptorListAdapter(getDescriptorList());
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        emptyView = inflater.inflate(R.layout.empty_view, container, false);
-        TextView emptyText = ((TextView)emptyView.findViewById(R.id.empty_text));
-        emptyText.setText(getEmptyText());
-        ImageView emptyIcon = (ImageView)(emptyView.findViewById(R.id.empty_icon));
-        emptyIcon.setImageDrawable(getEmptyIcon().create(42, Color.LTGRAY));
-        return super.onCreateView(inflater, container, savedInstanceState);
-    }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        listAdapter = new BlobDescriptorListAdapter(getDescriptorList());
 
         int iconColor = getResources().getColor(android.R.color.secondary_text_dark);
         icFilter = Icons.FILTER.create(21, iconColor);
@@ -74,10 +53,6 @@ abstract class BlobDescriptorListFragment extends ListFragment {
         icArrowDown = Icons.ARROW_DOWN.create(21, iconColor);
 
         final ListView listView = getListView();
-
-        listView.setEmptyView(emptyView);
-
-        ((ViewGroup) listView.getParent()).addView(emptyView, 0);
 
         listView.setItemsCanFocus(false);
         listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);

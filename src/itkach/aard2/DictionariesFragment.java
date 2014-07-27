@@ -24,33 +24,14 @@ import android.widget.TextView;
 
 import static android.text.method.MovementMethod.*;
 
-public class DictionariesFragment extends ListFragment {
+public class DictionariesFragment extends BaseListFragment {
 
-    private View emptyView;
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setHasOptionsMenu(true);
-        setRetainInstance(true);
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        emptyView = inflater.inflate(R.layout.empty_view, container, false);
-        TextView emptyText = ((TextView)emptyView.findViewById(R.id.empty_text));
-        emptyText.setMovementMethod(LinkMovementMethod.getInstance());
-        emptyText.setText(getEmptyText());
-        ImageView emptyIcon = (ImageView)(emptyView.findViewById(R.id.empty_icon));
-        emptyIcon.setImageDrawable(getEmptyIcon().create(42, Color.LTGRAY));
-        return super.onCreateView(inflater, container, savedInstanceState);
-    }
-
-    private Icons getEmptyIcon() {
+    protected Icons getEmptyIcon() {
         return Icons.DICTIONARY;
     }
 
-    private CharSequence getEmptyText() {
+    protected CharSequence getEmptyText() {
         return Html.fromHtml("Get dictionaries at <a href='http://aarddict.org'>http://aarddict.org</a>");
     }
 
@@ -60,10 +41,6 @@ public class DictionariesFragment extends ListFragment {
         final Application app = (Application)getActivity().getApplication();
         final DictionaryListAdapter listAdapter = app.dictionaryList;
         final ListView listView = getListView();
-
-        listView.setEmptyView(emptyView);
-
-        ((ViewGroup) listView.getParent()).addView(emptyView, 0);
 
         listView.setItemsCanFocus(false);
         listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
