@@ -1,16 +1,9 @@
 package itkach.aard2;
 
-import itkach.slob.Slob;
-
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Timer;
-import java.util.TimerTask;
-
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
+import android.support.v4.app.ListFragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -21,28 +14,24 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.ProgressBar;
 import android.widget.SearchView;
 import android.widget.TextView;
 
-import org.w3c.dom.Text;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Timer;
+import java.util.TimerTask;
 
-import itkach.fdrawable.IconicFontDrawable;
+import itkach.slob.Slob;
 
-public class LookupFragment extends Fragment {
-
-    // ListView lookupResultView;
+public class LookupFragment extends ListFragment {
 
     private Timer       timer;
-    private ProgressBar progressSpinner;
     private SearchView  searchView;
     private String      initialQuery = "";
     private String      currentQuery = "";
-    private ListView    lookupResultView;
     private View        emptyView;
-    private IconicFontDrawable iconSearch;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -55,19 +44,27 @@ public class LookupFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-            Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_lookup,
-                container, false);
-        Application app = (Application) getActivity().getApplication();
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        emptyView = inflater.inflate(R.layout.empty_view, container, false);
+        TextView emptyText = ((TextView)emptyView.findViewById(R.id.empty_text));
+        emptyText.setText("Nothing found");
+        ImageView emptyIcon = (ImageView)(emptyView.findViewById(R.id.empty_icon));
+        emptyIcon.setImageDrawable(Icons.SEARCH.create(42, Color.LTGRAY));
+        return super.onCreateView(inflater, container, savedInstanceState);
+    }
 
-        lookupResultView = (ListView) rootView
-                .findViewById(R.id.lookupResultView);
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        ListView listView = getListView();
+        listView.setEmptyView(emptyView);
 
-        lookupResultView.setOnItemClickListener(new OnItemClickListener() {
+        ((ViewGroup) listView.getParent()).addView(emptyView, 0);
+
+        listView.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view,
-                    int position, long id) {
+                                    int position, long id) {
                 Log.i("--", "Item clicked: " + position);
                 Intent intent = new Intent(getActivity(),
                         ArticleCollectionActivity.class);
@@ -75,31 +72,10 @@ public class LookupFragment extends Fragment {
                 startActivity(intent);
             }
         });
-
-        lookupResultView.setAdapter(app.lastResult);
-
-        progressSpinner = (ProgressBar) rootView
-                .findViewById(R.id.progressSpinner);
-
-        iconSearch = Icons.SEARCH.create(42, Color.LTGRAY);
-
-        emptyView = inflater.inflate(R.layout.empty_view, container, false);
-        ((LinearLayout)rootView).addView(emptyView,
-                new ViewGroup.LayoutParams(
-                        ViewGroup.LayoutParams.MATCH_PARENT,
-                        ViewGroup.LayoutParams.MATCH_PARENT));
-//        emptyView = (TextView)rootView.findViewById(R.id.emptyLookupView);
-//        emptyView.setBackground(iconSearch);
-//        final Typeface fontAwesome = Typeface.createFromAsset(getActivity().getAssets(), "fonts/fontawesome-webfont.ttf" );
-//        emptyView.setTypeface(fontAwesome);
-
-        return rootView;
+        Application app = (Application) getActivity().getApplication();
+        getListView().setAdapter(app.lastResult);
     }
 
-    ListView getListView() {
-        View rootView = getView();
-        return (ListView) rootView.findViewById(R.id.lookupResultView);
-    }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -197,23 +173,20 @@ public class LookupFragment extends Fragment {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putString("lookupQuery", searchView.getQuery().toString());
+        String query = searchView.getQuery().toString();
+        outState.putString("lookupQuery", query);
     }
 
     private void setBusy(boolean busy) {
-        boolean empty = lookupResultView.getCount() == 0;
-        lookupResultView.setVisibility(!busy && !empty ? View.VISIBLE : View.GONE);
-        emptyView.setVisibility(!busy && empty ? View.VISIBLE : View.GONE);
-        TextView emptyText = ((TextView)emptyView.findViewById(R.id.empty_text));
-        if (searchView.getQuery() != null && !searchView.getQuery().toString().equals("")) {
-            emptyText.setText("Nothing found");
+        setListShown(!busy);
+        if (!busy) {
+            TextView emptyText = ((TextView)emptyView.findViewById(R.id.empty_text));
+            String msg = "";
+            if (searchView.getQuery() != null && !searchView.getQuery().toString().equals("")) {
+                msg = "Nothing found";
+            }
+            emptyText.setText(msg);
         }
-        else {
-            emptyText.setText("");
-        }
-        ImageView emptyIcon = (ImageView)(emptyView.findViewById(R.id.empty_icon));
-        emptyIcon.setImageDrawable(iconSearch);
-        progressSpinner.setVisibility(busy ? View.VISIBLE : View.GONE);
     }
 
     @Override
