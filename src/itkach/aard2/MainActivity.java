@@ -128,6 +128,16 @@ public class MainActivity extends FragmentActivity implements
             Application app = (Application) getActivity().getApplication();
             return app.bookmarks;
         }
+
+        @Override
+        Icons getEmptyIcon() {
+            return Icons.BOOKMARK;
+        }
+
+        @Override
+        String getEmptyText() {
+            return "No bookmarks";
+        }
     }
 
     public static class HistoryFragment extends BlobDescriptorListFragment {
@@ -141,6 +151,16 @@ public class MainActivity extends FragmentActivity implements
             Application app = (Application) getActivity()
                     .getApplication();
             return app.history;
+        }
+
+        @Override
+        Icons getEmptyIcon() {
+            return Icons.HISTORY;
+        }
+
+        @Override
+        String getEmptyText() {
+            return "No history";
         }
     }
 
