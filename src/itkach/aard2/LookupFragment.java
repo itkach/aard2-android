@@ -20,10 +20,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.SearchView;
 import android.widget.TextView;
+
+import org.w3c.dom.Text;
 
 import itkach.fdrawable.IconicFontDrawable;
 
@@ -37,7 +41,8 @@ public class LookupFragment extends Fragment {
     private String      initialQuery = "";
     private String      currentQuery = "";
     private ListView    lookupResultView;
-    private TextView        emptyView;
+    private View        emptyView;
+    private IconicFontDrawable iconSearch;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -76,11 +81,15 @@ public class LookupFragment extends Fragment {
         progressSpinner = (ProgressBar) rootView
                 .findViewById(R.id.progressSpinner);
 
-        IconicFontDrawable iconSearch = app.getIcon(0xf002);
-        iconSearch.setIconColor(Color.LTGRAY);
+        iconSearch = Icons.SEARCH.create(42, Color.LTGRAY);
 
-        emptyView = (TextView)rootView.findViewById(R.id.emptyLookupView);
-        emptyView.setBackground(iconSearch);
+        emptyView = inflater.inflate(R.layout.empty_view, container, false);
+        ((LinearLayout)rootView).addView(emptyView,
+                new ViewGroup.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.MATCH_PARENT));
+//        emptyView = (TextView)rootView.findViewById(R.id.emptyLookupView);
+//        emptyView.setBackground(iconSearch);
 //        final Typeface fontAwesome = Typeface.createFromAsset(getActivity().getAssets(), "fonts/fontawesome-webfont.ttf" );
 //        emptyView.setTypeface(fontAwesome);
 
@@ -195,12 +204,15 @@ public class LookupFragment extends Fragment {
         boolean empty = lookupResultView.getCount() == 0;
         lookupResultView.setVisibility(!busy && !empty ? View.VISIBLE : View.GONE);
         emptyView.setVisibility(!busy && empty ? View.VISIBLE : View.GONE);
+        TextView emptyText = ((TextView)emptyView.findViewById(R.id.empty_text));
         if (searchView.getQuery() != null && !searchView.getQuery().toString().equals("")) {
-            emptyView.setText("Nothing found");
+            emptyText.setText("Nothing found");
         }
         else {
-            emptyView.setText("");
+            emptyText.setText("");
         }
+        ImageView emptyIcon = (ImageView)(emptyView.findViewById(R.id.empty_icon));
+        emptyIcon.setImageDrawable(iconSearch);
         progressSpinner.setVisibility(busy ? View.VISIBLE : View.GONE);
     }
 

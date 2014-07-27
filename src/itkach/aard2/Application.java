@@ -50,9 +50,7 @@ public class Application extends android.app.Application {
     @Override
     public void onCreate() {
         super.onCreate();
-
-        typefaceManager = new TypefaceManager(getAssets());
-
+        Icons.init(getAssets(), getResources().getDisplayMetrics());
         try {
             mapper = new ObjectMapper();
             mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES,
@@ -223,8 +221,4 @@ public class Application extends android.app.Application {
         return result;
     }
 
-    IconicFontDrawable getIcon(int codePoint) {
-        Typeface font = typefaceManager.get("fontawesome-4.1.0.ttf");
-        return new IconicFontDrawable(new Icon(font, codePoint));
-    }
 }

@@ -61,10 +61,10 @@ public class MainActivity extends FragmentActivity implements
         IconicFontDrawable[] tabIcons = new IconicFontDrawable[4];
         Application app = (Application)getApplication();
 
-        tabIcons[0] = mkTabIcon(app.getIcon(0xf002));
-        tabIcons[1] = mkTabIcon(app.getIcon(0xf02e));
-        tabIcons[2] = mkTabIcon(app.getIcon(0xf1da));
-        tabIcons[3] = mkTabIcon(app.getIcon(0xf02d));
+        tabIcons[0] = Icons.SEARCH.create(19, Color.DKGRAY);
+        tabIcons[1] = Icons.BOOKMARK.create(19, Color.DKGRAY);
+        tabIcons[2] = Icons.HISTORY.create(19, Color.DKGRAY);
+        tabIcons[3] = Icons.DICTIONARY.create(19, Color.DKGRAY);
         // For each of the sections in the app, add a tab to the action bar.
         for (int i = 0; i < mAppSectionsPagerAdapter.getCount(); i++) {
             Tab tab = actionBar.newTab();
@@ -78,14 +78,6 @@ public class MainActivity extends FragmentActivity implements
         } else {
             Log.d("onCreate", "saved sate is null!!!");
         }
-    }
-
-    private IconicFontDrawable mkTabIcon(IconicFontDrawable icon) {
-        DisplayMetrics dm = getResources().getDisplayMetrics();
-        icon.setIntrinsicHeight(Math.round(19*dm.density));
-        icon.setIntrinsicWidth(Math.round(19*dm.density));
-        icon.setIconColor(Color.DKGRAY);
-        return icon;
     }
 
     @Override

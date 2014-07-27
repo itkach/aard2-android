@@ -18,17 +18,5 @@
             android:layout_gravity="center"
             android:indeterminate="true"
             android:visibility="gone"/>
-    
-    <TextView
-        android:id="@+id/emptyLookupView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/icon_search"
-        android:textSize="28sp"
-        android:textColor="@android:color/darker_gray"
-        android:gravity="center"
-        android:visibility="gone" 
-        android:padding="10dp"
-        />
-    
+
 </LinearLayout>

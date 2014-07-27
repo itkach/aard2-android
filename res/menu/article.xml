@@ -4,7 +4,6 @@
           android:showAsAction="never" 
           />
     <item android:id="@+id/action_bookmark_article"
-          android:icon="@drawable/ic_action_not_important"
           android:title="@string/action_bookmark_article"
           android:checkable="true" 
           android:checked="false"

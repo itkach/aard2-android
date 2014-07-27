@@ -22,6 +22,12 @@ import itkach.fdrawable.IconicFontDrawable;
 
 abstract class BlobDescriptorListFragment extends ListFragment {
 
+    private IconicFontDrawable icFilter;
+    private IconicFontDrawable icClock;
+    private IconicFontDrawable icList;
+    private IconicFontDrawable icArrowUp;
+    private IconicFontDrawable icArrowDown;
+
     abstract BlobDescriptorList getDescriptorList();
 
     abstract String getItemClickAction();
@@ -39,6 +45,14 @@ abstract class BlobDescriptorListFragment extends ListFragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        int iconColor = getResources().getColor(android.R.color.secondary_text_dark);
+        icFilter = Icons.FILTER.create(21, iconColor);
+        icClock = Icons.CLOCK.create(21, iconColor);
+        icList = Icons.LIST.create(21, iconColor);
+        icArrowUp = Icons.ARROW_UP.create(21, iconColor);
+        icArrowDown = Icons.ARROW_DOWN.create(21, iconColor);
+
         getListView().setItemsCanFocus(false);
         getListView().setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
         getListView().setMultiChoiceModeListener(new MultiChoiceModeListener() {
@@ -128,25 +142,14 @@ abstract class BlobDescriptorListFragment extends ListFragment {
         inflater.inflate(R.menu.blob_descriptor_list, menu);
     }
 
-    private void setIcon(MenuItem mi, int codePoint) {
-        Application app = (Application)getActivity().getApplication();
-        IconicFontDrawable iconicFontDrawable = app.getIcon(codePoint);
-        iconicFontDrawable.setIconColor(getResources().getColor(
-                android.R.color.secondary_text_dark));
-        DisplayMetrics dm = getResources().getDisplayMetrics();
-        iconicFontDrawable.setIntrinsicHeight(Math.round(21*dm.density));
-        iconicFontDrawable.setIntrinsicWidth(Math.round(21*dm.density));
-        mi.setIcon(iconicFontDrawable);
-    }
-
     @Override
     public void onPrepareOptionsMenu(final Menu menu) {
 
         BlobDescriptorList list = getDescriptorList();
 
         MenuItem miFilter = menu.findItem(R.id.action_filter);
-        setIcon(miFilter, 0xf0b0);
-        //setIcon(miFilter, FontAwesomeIcon.FILTER);
+        miFilter.setIcon(icFilter);
+
         View filterActionView = miFilter.getActionView();
         SearchView searchView = (SearchView) filterActionView
                 .findViewById(R.id.fldFilter);
@@ -174,30 +177,30 @@ abstract class BlobDescriptorListFragment extends ListFragment {
     }
 
     private void setSortOrder(MenuItem mi, BlobDescriptorList.SortOrder order) {
-        int iconCodePoint;
+        IconicFontDrawable icon;
         int textRes;
         if (order == BlobDescriptorList.SortOrder.TIME) {
-            iconCodePoint = 0xf017;
+            icon = icClock;
             textRes = R.string.action_sort_by_time;
         } else {
-            iconCodePoint = 0xf03a;
+            icon = icList;
             textRes = R.string.action_sort_by_title;
         }
-        setIcon(mi, iconCodePoint);
+        mi.setIcon(icon);
         mi.setTitle(textRes);
     }
 
     private void setAscending(MenuItem mi, boolean ascending) {
-        int iconCodePoint;
+        IconicFontDrawable icon;
         int textRes;
         if (ascending) {
-            iconCodePoint = 0xf01b;
+            icon = icArrowUp;
             textRes = R.string.action_ascending;
         } else {
-            iconCodePoint = 0xf01a;
+            icon = icArrowDown;
             textRes = R.string.action_descending;
         }
-        setIcon(mi, iconCodePoint);
+        mi.setIcon(icon);
         mi.setTitle(textRes);
     }
 

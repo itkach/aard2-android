@@ -13,16 +13,22 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.widget.ProgressBar;
 
+import itkach.fdrawable.IconicFontDrawable;
+
 public class ArticleFragment extends Fragment {
 
     public static final String ARG_URL = "articleUrl";
 
     private ArticleWebView view;
     private MenuItem miBookmark;
+    private IconicFontDrawable icBookmark;
+    private IconicFontDrawable icBookmarkO;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        icBookmark = Icons.BOOKMARK.create();
+        icBookmarkO = Icons.BOOKMARK_O.create();
         setHasOptionsMenu(true);
     }
 
@@ -37,10 +43,10 @@ public class ArticleFragment extends Fragment {
     private void displayBookmarked(boolean value) {
         if (value) {
             miBookmark.setChecked(true);
-            miBookmark.setIcon(R.drawable.ic_action_important);
+            miBookmark.setIcon(icBookmark);
         } else {
             miBookmark.setChecked(false);
-            miBookmark.setIcon(R.drawable.ic_action_not_important);
+            miBookmark.setIcon(icBookmarkO);
         }
     }
 

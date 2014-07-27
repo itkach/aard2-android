@@ -105,18 +105,8 @@ public class DictionariesFragment extends ListFragment {
     @Override
     public void onPrepareOptionsMenu(final Menu menu) {
         MenuItem miFindDictionaries = menu.findItem(R.id.action_find_dictionaries);
-        setIcon(miFindDictionaries, 0xf021);
-    }
-
-    private void setIcon(MenuItem mi, int codePoint) {
-        Application app = ((Application)getActivity().getApplication());
-        IconicFontDrawable iconicFontDrawable = app.getIcon(codePoint);
-        iconicFontDrawable.setIconColor(getResources().getColor(
-                android.R.color.secondary_text_dark));
-        DisplayMetrics dm = getResources().getDisplayMetrics();
-        iconicFontDrawable.setIntrinsicHeight(Math.round(21*dm.density));
-        iconicFontDrawable.setIntrinsicWidth(Math.round(21*dm.density));
-        mi.setIcon(iconicFontDrawable);
+        miFindDictionaries.setIcon(Icons.REFRESH.create(21, getResources().getColor(
+                android.R.color.secondary_text_dark)));
     }
 
     @Override
