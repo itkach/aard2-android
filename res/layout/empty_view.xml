@@ -7,13 +7,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <LinearLayout
+        android:gravity="center"
+        android:layout_gravity="center"
         android:orientation="horizontal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
         <ImageView
             android:src="@drawable/aard2"
             android:id="@+id/empty_icon"
-            android:layout_gravity="center"
+            android:layout_gravity="end"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="6sp"
