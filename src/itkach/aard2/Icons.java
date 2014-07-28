@@ -17,8 +17,8 @@ public enum Icons {
     DICTIONARY(0xf02d),
     REFRESH(0xf021),
     FILTER(0xf0b0),
-    ARROW_DOWN(0xf01b),
-    ARROW_UP(0xf01a),
+    ARROW_DOWN(0xf01a),
+    ARROW_UP(0xf01b),
     CLOCK(0xf017),
     LIST(0xf03a)
     ;
