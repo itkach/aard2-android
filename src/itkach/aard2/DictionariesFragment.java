@@ -116,8 +116,7 @@ public class DictionariesFragment extends BaseListFragment {
     @Override
     public void onPrepareOptionsMenu(final Menu menu) {
         MenuItem miFindDictionaries = menu.findItem(R.id.action_find_dictionaries);
-        miFindDictionaries.setIcon(Icons.REFRESH.create(21, getResources().getColor(
-                android.R.color.secondary_text_dark)));
+        miFindDictionaries.setIcon(Icons.REFRESH.forActionBar());
     }
 
     @Override

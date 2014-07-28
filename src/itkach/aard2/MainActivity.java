@@ -4,6 +4,7 @@ import android.app.ActionBar;
 import android.app.ActionBar.Tab;
 import android.app.FragmentTransaction;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -58,13 +59,13 @@ public class MainActivity extends FragmentActivity implements
                     }
                 });
 
-        IconicFontDrawable[] tabIcons = new IconicFontDrawable[4];
+        Drawable[] tabIcons = new Drawable[4];
         Application app = (Application)getApplication();
 
-        tabIcons[0] = Icons.SEARCH.create(19, Color.DKGRAY);
-        tabIcons[1] = Icons.BOOKMARK.create(19, Color.DKGRAY);
-        tabIcons[2] = Icons.HISTORY.create(19, Color.DKGRAY);
-        tabIcons[3] = Icons.DICTIONARY.create(19, Color.DKGRAY);
+        tabIcons[0] = Icons.SEARCH.forTab();
+        tabIcons[1] = Icons.BOOKMARK.forTab();
+        tabIcons[2] = Icons.HISTORY.forTab();
+        tabIcons[3] = Icons.DICTIONARY.forTab();
         // For each of the sections in the app, add a tab to the action bar.
         for (int i = 0; i < mAppSectionsPagerAdapter.getCount(); i++) {
             Tab tab = actionBar.newTab();

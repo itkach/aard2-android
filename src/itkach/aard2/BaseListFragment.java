@@ -33,7 +33,7 @@ public abstract class BaseListFragment extends ListFragment {
         emptyText.setMovementMethod(LinkMovementMethod.getInstance());
         emptyText.setText(getEmptyText());
         ImageView emptyIcon = (ImageView)(emptyView.findViewById(R.id.empty_icon));
-        emptyIcon.setImageDrawable(getEmptyIcon().create(42, Color.LTGRAY));
+        emptyIcon.setImageDrawable(getEmptyIcon().forEmptyView());
         return super.onCreateView(inflater, container, savedInstanceState);
     }
 

@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.util.DisplayMetrics;
@@ -27,11 +28,11 @@ import itkach.fdrawable.IconicFontDrawable;
 
 abstract class BlobDescriptorListFragment extends BaseListFragment {
 
-    private IconicFontDrawable icFilter;
-    private IconicFontDrawable icClock;
-    private IconicFontDrawable icList;
-    private IconicFontDrawable icArrowUp;
-    private IconicFontDrawable icArrowDown;
+    private Drawable icFilter;
+    private Drawable icClock;
+    private Drawable icList;
+    private Drawable icArrowUp;
+    private Drawable icArrowDown;
 
     abstract BlobDescriptorList getDescriptorList();
 
@@ -46,11 +47,11 @@ abstract class BlobDescriptorListFragment extends BaseListFragment {
         listAdapter = new BlobDescriptorListAdapter(getDescriptorList());
 
         int iconColor = getResources().getColor(android.R.color.secondary_text_dark);
-        icFilter = Icons.FILTER.create(21, iconColor);
-        icClock = Icons.CLOCK.create(21, iconColor);
-        icList = Icons.LIST.create(21, iconColor);
-        icArrowUp = Icons.ARROW_UP.create(21, iconColor);
-        icArrowDown = Icons.ARROW_DOWN.create(21, iconColor);
+        icFilter = Icons.FILTER.forActionBar();
+        icClock = Icons.CLOCK.forActionBar();
+        icList = Icons.LIST.forActionBar();
+        icArrowUp = Icons.ARROW_UP.forActionBar();
+        icArrowDown = Icons.ARROW_DOWN.forActionBar();
 
         final ListView listView = getListView();
 
@@ -178,7 +179,7 @@ abstract class BlobDescriptorListFragment extends BaseListFragment {
     }
 
     private void setSortOrder(MenuItem mi, BlobDescriptorList.SortOrder order) {
-        IconicFontDrawable icon;
+        Drawable icon;
         int textRes;
         if (order == BlobDescriptorList.SortOrder.TIME) {
             icon = icClock;
@@ -192,7 +193,7 @@ abstract class BlobDescriptorListFragment extends BaseListFragment {
     }
 
     private void setAscending(MenuItem mi, boolean ascending) {
-        IconicFontDrawable icon;
+        Drawable icon;
         int textRes;
         if (ascending) {
             icon = icArrowUp;

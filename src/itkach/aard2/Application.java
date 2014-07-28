@@ -50,7 +50,7 @@ public class Application extends android.app.Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        Icons.init(getAssets(), getResources().getDisplayMetrics());
+        Icons.init(getAssets(), getResources());
         try {
             mapper = new ObjectMapper();
             mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES,

@@ -1,6 +1,7 @@
 package itkach.aard2;
 
 import android.app.Activity;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -21,14 +22,14 @@ public class ArticleFragment extends Fragment {
 
     private ArticleWebView view;
     private MenuItem miBookmark;
-    private IconicFontDrawable icBookmark;
-    private IconicFontDrawable icBookmarkO;
+    private Drawable icBookmark;
+    private Drawable icBookmarkO;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        icBookmark = Icons.BOOKMARK.create();
-        icBookmarkO = Icons.BOOKMARK_O.create();
+        icBookmark = Icons.BOOKMARK.forActionBar();
+        icBookmarkO = Icons.BOOKMARK_O.forActionBar();
         setHasOptionsMenu(true);
     }
 

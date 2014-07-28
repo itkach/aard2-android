@@ -1,8 +1,10 @@
 package itkach.aard2;
 
 import android.content.res.AssetManager;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 import android.util.DisplayMetrics;
 
 import itkach.fdrawable.Icon;
@@ -25,6 +27,7 @@ public enum Icons {
 
     private static TypefaceManager typefaceManager;
     private static DisplayMetrics displayMetrics;
+    private static int iconColor;
 
     private final int codePoint;
 
@@ -32,16 +35,25 @@ public enum Icons {
         this.codePoint = codePoint;
     }
 
-    static void init(AssetManager assetManager, DisplayMetrics dm) {
+    static void init(AssetManager assetManager, Resources r) {
         typefaceManager = new TypefaceManager(assetManager);
-        displayMetrics = dm;
+        displayMetrics = r.getDisplayMetrics();
+        iconColor = r.getColor(android.R.color.secondary_text_dark);
     }
 
-    public IconicFontDrawable create() {
-        return create(21, Color.WHITE);
+    public Drawable forActionBar() {
+        return create(21, iconColor);
     }
 
-    public IconicFontDrawable create(int intrinsicSize, int color) {
+    public Drawable forEmptyView() {
+        return create(42, Color.LTGRAY);
+    }
+
+    public Drawable forTab() {
+        return create(19, Color.DKGRAY);
+    }
+
+    private IconicFontDrawable create(int intrinsicSize, int color) {
         Typeface font = typefaceManager.get("fontawesome-4.1.0.ttf");
         IconicFontDrawable drawable = new IconicFontDrawable(new Icon(font, codePoint));
         drawable.setIntrinsicHeight(Math.round(intrinsicSize*displayMetrics.density));
