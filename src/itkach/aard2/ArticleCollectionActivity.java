@@ -163,13 +163,19 @@ public class ArticleCollectionActivity extends FragmentActivity {
     private void updateTitle(int position) {
         Log.d("updateTitle", ""+position + " count: " + articleCollectionPagerAdapter.getCount());
         Slob.Blob blob = articleCollectionPagerAdapter.get(position);
+        CharSequence pageTitle = articleCollectionPagerAdapter.getPageTitle(position);
         Log.d("updateTitle", ""+blob);
-        String dictLabel = (blob == null) ? "" : blob.owner.getTags().get("label");
-        getActionBar().setTitle(dictLabel);
-        getActionBar().setSubtitle(blob.key);
-
-        Application app = (Application)getApplication();
-        app.history.add(app.getUrl(blob));
+        ActionBar actionBar = getActionBar();
+        if (blob != null) {
+            String dictLabel = blob.owner.getTags().get("label");
+            actionBar.setTitle(dictLabel);
+            Application app = (Application)getApplication();
+            app.history.add(app.getUrl(blob));
+        }
+        else {
+            actionBar.setTitle("???");
+        }
+        actionBar.setSubtitle(pageTitle);
     }
 
     @Override
@@ -247,13 +253,15 @@ public class ArticleCollectionActivity extends FragmentActivity {
         public Fragment getItem(int i) {
             Fragment fragment = new ArticleFragment();
             Slob.Blob blob = get(i);
-            String articleUrl = app.getUrl(blob);
-            Bundle args = new Bundle();
-            Log.i("Setting article fragment url",
-                    String.format("%s (key %s slob %s)",
+            if (blob != null) {
+                String articleUrl = app.getUrl(blob);
+                Bundle args = new Bundle();
+                Log.i("Setting article fragment url",
+                        String.format("%s (key %s slob %s)",
                                 articleUrl, blob.key, blob.owner.getTags().get("label")));
-            args.putString(ArticleFragment.ARG_URL, articleUrl);
-            fragment.setArguments(args);
+                args.putString(ArticleFragment.ARG_URL, articleUrl);
+                fragment.setArguments(args);
+            }
             return fragment;
         }
 
@@ -263,13 +271,19 @@ public class ArticleCollectionActivity extends FragmentActivity {
         }
 
         Slob.Blob get(int position) {
-            return (Slob.Blob)toBlob.convert(data.getItem(position));
+            return toBlob.convert(data.getItem(position));
         }
 
         @Override
         public CharSequence getPageTitle(int position) {
-            Slob.Blob blob = get(position);
-            return blob.key;
+            Object item = data.getItem(position);
+            if (item instanceof BlobDescriptor) {
+                return ((BlobDescriptor) item).key;
+            }
+            if (item instanceof Slob.Blob) {
+                return ((Blob)item).key;
+            }
+            return "???";
         }
 
         //this is needed so that fragment is properly updated

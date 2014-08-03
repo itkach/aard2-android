@@ -25,6 +25,7 @@ import android.widget.SearchView;
 import android.widget.TextView;
 
 import itkach.fdrawable.IconicFontDrawable;
+import itkach.slob.Slob;
 
 abstract class BlobDescriptorListFragment extends BaseListFragment {
 
@@ -125,6 +126,12 @@ abstract class BlobDescriptorListFragment extends BaseListFragment {
                 intent.setAction(getItemClickAction());
                 intent.putExtra("position", position);
                 startActivity(intent);
+//                BlobDescriptor item = getDescriptorList().get(position);
+//                Slob.Blob blob = getDescriptorList().resolve(item);
+//                if (blob != null) {
+//                    intent.putExtra("position", position);
+//                    startActivity(intent);
+//                }
             }
         });
 

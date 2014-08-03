@@ -7,6 +7,7 @@ import java.util.Locale;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.database.DataSetObserver;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,17 +17,25 @@ import android.widget.TextView;
 
 public class DictionaryListAdapter extends BaseAdapter {
 
-    private List<SlobDescriptor> data;
+    private final SlobDescriptorList data;
+    private final DataSetObserver observer;
     private boolean              selectionMode;
-    private Application          app;
 
-    DictionaryListAdapter(Application app) {
-        this.app = app;
-    }
-
-    void setData(List<SlobDescriptor> data) {
+    DictionaryListAdapter(SlobDescriptorList data) {
         this.data = data;
-        notifyDataSetChanged();
+        this.observer = new DataSetObserver() {
+            @Override
+            public void onChanged() {
+                notifyDataSetChanged();
+            }
+
+            @Override
+            public void onInvalidated() {
+                notifyDataSetInvalidated();
+            }
+        };
+        this.data.registerDataSetObserver(observer);
+
     }
 
     @Override
@@ -35,7 +44,7 @@ public class DictionaryListAdapter extends BaseAdapter {
         String label = desc.tags.get("label");
         String path = desc.path;
         int blobCount = desc.blobCount;
-        boolean available = app.getSlob(desc.id) != null;
+        boolean available = this.data.resolve(desc) != null;
         View view;
         if (convertView != null) {
             view = convertView;

@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -37,8 +38,15 @@ public class ArticleFragment extends Fragment {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.article, menu);
         miBookmark = menu.findItem(R.id.action_bookmark_article);
+        String url = view.getUrl();
         Application app = (Application)getActivity().getApplication();
-        displayBookmarked(app.isBookmarked(view.getUrl()));
+        try {
+            displayBookmarked(app.isBookmarked(url));
+        }
+        catch (Exception ex) {
+            miBookmark.setVisible(false);
+           Log.d(getTag(), "Not bookmarable: " + url, ex);
+        }
     }
 
     private void displayBookmarked(boolean value) {
@@ -61,12 +69,15 @@ public class ArticleFragment extends Fragment {
         }
         if (itemId == R.id.action_bookmark_article) {
             Application app = (Application)getActivity().getApplication();
-            if (item.isChecked()) {
-                app.removeBookmark(view.getUrl());
-                displayBookmarked(false);
-            } else {
-                app.addBookmark(view.getUrl());
-                displayBookmarked(true);
+            String url = view.getUrl();
+            if (url != null) {
+                if (item.isChecked()) {
+                    app.removeBookmark(url);
+                    displayBookmarked(false);
+                } else {
+                    app.addBookmark(view.getUrl());
+                    displayBookmarked(true);
+                }
             }
             return true;
         }
@@ -79,10 +90,15 @@ public class ArticleFragment extends Fragment {
         View layout = inflater.inflate(R.layout.article_view, container, false);
         final ProgressBar progressBar = (ProgressBar)layout.findViewById(R.id.webViewPogress);
         view = (ArticleWebView)layout.findViewById(R.id.webView);
-        Bundle args = getArguments();
         view.restoreState(savedInstanceState);
-        String url = args.getString(ARG_URL);
-        view.loadUrl(url);
+        Bundle args = getArguments();
+        String url = args == null ? null : args.getString(ARG_URL);
+        if (url != null) {
+            view.loadUrl(url);
+        }
+        else {
+            view.loadData("Not found", "text/plain", "utf-8");
+        }
         view.setWebChromeClient(new WebChromeClient() {
             public void onProgressChanged(WebView view, final int newProgress) {
                 final Activity acitivity = getActivity();

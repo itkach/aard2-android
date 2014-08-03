@@ -1,5 +1,7 @@
 package itkach.aard2;
 
+import android.util.Log;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,6 +41,10 @@ class DescriptorStore<T extends BaseDescriptor> {
     }
 
     void save(T item) {
+        if (item.id == null) {
+            Log.d(getClass().getName(), "Can't save item without id");
+            return;
+        }
         try {
             mapper.writeValue(new File(dir, item.id), item);
         } catch (Exception e) {

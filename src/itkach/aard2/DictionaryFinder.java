@@ -100,43 +100,15 @@ public class DictionaryFinder {
         }
     }
 
-    synchronized List<Slob> open(List<File> files) {
-
-        Set<String> paths = new HashSet<String>();
-        for (File f : files) {
-            try {
-                paths.add(f.getCanonicalPath());
-            } catch (IOException e) {
-                Log.e(T, "Failed to get canonical path for " + f.getName(), e);
-            }
-        }
-
-        Set<Slob> slobs = new HashSet<Slob>();
-
-        for (String path : paths) {
-            File f = new File(path);
-            try {
-                Slob s = new Slob(f);
-                if (slobs.contains(s)) {
-                    s.close();
-                }
-                else {
-                    slobs.add(s);
-                }
-            }
-            catch (Exception e) {
-                Log.e(T, "Failed to open " + f.getName(), e);
-            }
-        }
-        return Collections.unmodifiableList(new ArrayList<Slob>(slobs));
-    }
-
-    synchronized List<Slob> findDictionaries() {
+    synchronized List<SlobDescriptor> findDictionaries() {
         Log.d(T, "starting dictionary discovery");
         long t0 = System.currentTimeMillis();
         List<File> candidates = discover();
-        List<Slob> slobs = open(candidates);
         Log.d(T, "dictionary discovery took " + (System.currentTimeMillis() - t0));
-        return slobs;
+        List<SlobDescriptor> descriptors = new ArrayList<SlobDescriptor>();
+        for (File f : candidates) {
+            descriptors.add(SlobDescriptor.fromFile(f));
+        }
+        return descriptors;
     }
 }

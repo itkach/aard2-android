@@ -39,7 +39,7 @@ public class DictionariesFragment extends BaseListFragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         final Application app = (Application)getActivity().getApplication();
-        final DictionaryListAdapter listAdapter = app.dictionaryList;
+        final DictionaryListAdapter listAdapter = new DictionaryListAdapter(app.dictionaries);
         final ListView listView = getListView();
 
         listView.setItemsCanFocus(false);
@@ -73,8 +73,7 @@ public class DictionariesFragment extends BaseListFragment {
                                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
-                                        //FIXME Implement
-                                        //forgetSelectedItems();
+                                        forgetSelectedItems();
                                         mode.finish();
                                     }
                                 })
@@ -107,6 +106,17 @@ public class DictionariesFragment extends BaseListFragment {
         setListAdapter(listAdapter);
     }
 
+
+    private void forgetSelectedItems() {
+        SparseBooleanArray checkedItems = getListView().getCheckedItemPositions();
+        final Application app = (Application)getActivity().getApplication();
+        app.dictionaries.beginUpdate();
+        for (int i = checkedItems.size() - 1; i > -1; --i) {
+            int position = checkedItems.keyAt(i);
+            app.dictionaries.remove(position);
+        }
+        app.dictionaries.endUpdate(checkedItems.size() > 0);
+    }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {

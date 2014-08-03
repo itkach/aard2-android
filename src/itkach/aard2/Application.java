@@ -1,7 +1,5 @@
 package itkach.aard2;
 
-import itkach.fdrawable.Icon;
-import itkach.fdrawable.IconicFontDrawable;
 import itkach.slob.Slob;
 import itkach.slob.Slob.Blob;
 import itkach.slobber.Slobber;
@@ -15,8 +13,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import android.graphics.Typeface;
-import android.graphics.drawable.Drawable;
+import android.database.DataSetObserver;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
@@ -32,11 +29,11 @@ public class Application extends android.app.Application {
 
     BlobDescriptorList                      bookmarks;
     BlobDescriptorList                      history;
+    SlobDescriptorList dictionaries;
 
     private int                             port = 8013;
 
     BlobListAdapter                         lastResult;
-    DictionaryListAdapter                   dictionaryList;
 
     private DescriptorStore<BlobDescriptor> bookmarkStore;
     private DescriptorStore<BlobDescriptor> historyStore;
@@ -45,6 +42,7 @@ public class Application extends android.app.Application {
     private ObjectMapper                    mapper;
 
     private TypefaceManager                 typefaceManager;
+    private String lookupQuery;
 
 
     @Override
@@ -66,22 +64,40 @@ public class Application extends android.app.Application {
             throw new RuntimeException(e);
         }
         lastResult = new BlobListAdapter(this);
-        dictionaryList = new DictionaryListAdapter(this);
-        // List<File> dictFiles = loadDictFileList();
-        List<SlobDescriptor> slobDescList = loadDictList();
-        DictionaryFinder finder = new DictionaryFinder();
-        List<File> dictFiles = new ArrayList<File>();
-        for (SlobDescriptor sd : slobDescList) {
-            dictFiles.add(new File(sd.path));
-        }
-        final List<Slob> result = finder.open(dictFiles);
-        slobber.setSlobs(result);
-        dictionaryList.setData(slobDescList);
 
-
+        dictionaries = new SlobDescriptorList(this, dictStore);
         bookmarks = new BlobDescriptorList(this, bookmarkStore);
-        bookmarks.load();
         history = new BlobDescriptorList(this, historyStore);
+
+        dictionaries.registerDataSetObserver(new DataSetObserver() {
+            @Override
+            synchronized public void onChanged() {
+                lastResult.setData(new ArrayList<Slob.Blob>().iterator());
+                slobber.setSlobs(null);
+                for (SlobDescriptor sd : dictionaries) {
+                    sd.close();
+                }
+                List<Slob> slobs = new ArrayList<Slob>();
+                for (SlobDescriptor sd : dictionaries) {
+                    Slob s = sd.open();
+                    if (s != null) {
+                        slobs.add(s);
+                    }
+                }
+                slobber.setSlobs(slobs);
+
+                //FIXME run in background, set LookupFragment's busy indicator
+                if (lookupQuery != null && !lookupQuery.equals("")) {
+                    Iterator<Slob.Blob> result = find(lookupQuery);
+                    lastResult.setData(result);
+                }
+                bookmarks.notifyDataSetChanged();
+                history.notifyDataSetChanged();
+            }
+        });
+
+        dictionaries.load();
+        bookmarks.load();
         history.load();
     }
 
@@ -127,18 +143,19 @@ public class Application extends android.app.Application {
             throw new RuntimeException(
                     "Dictionary discovery is already running");
         }
+        dictionaries.clear();
         discoveryThread = new Thread(new Runnable() {
             @Override
             public void run() {
                 DictionaryFinder finder = new DictionaryFinder();
-                final List<Slob> result = finder.findDictionaries();
+                final List<SlobDescriptor> result = finder.findDictionaries();
                 discoveryThread = null;
                 Handler h = new Handler(Looper.getMainLooper());
                 h.post(new Runnable() {
                     @Override
                     public void run() {
-                        saveDictList(result);
-                        slobber.setSlobs(result);
+                        dictionaries.addAll(result);
+                        //slobber.setSlobs(result);
                         callback.onDiscoveryFinished();
                     }
                 });
@@ -147,29 +164,6 @@ public class Application extends android.app.Application {
         discoveryThread.start();
     }
 
-    // private SharedPreferences prefs() {
-    // SharedPreferences prefs = getSharedPreferences("aard2", MODE_PRIVATE);
-    // return prefs;
-    // }
-
-    private void saveDictList(List<Slob> slobs) {
-        List<SlobDescriptor> descriptors = new ArrayList<SlobDescriptor>(
-                slobs.size());
-        for (Slob s : slobs) {
-            SlobDescriptor sd = new SlobDescriptor();
-            sd.id = s.getId().toString();
-            sd.path = s.file.getAbsolutePath();
-            sd.tags = s.getTags();
-            sd.blobCount = s.size();
-            descriptors.add(sd);
-        }
-        dictStore.save(descriptors);
-        dictionaryList.setData(descriptors);
-    }
-
-    private List<SlobDescriptor> loadDictList() {
-        return dictStore.load(SlobDescriptor.class);
-    }
 
     String getURI(Slob slob) {
         Map<String, String> tags = slob.getTags();
@@ -190,13 +184,6 @@ public class Application extends android.app.Application {
         return null;
     }
 
-    Slob slobFromArticleURL(String articleURL) {
-        Uri uri = Uri.parse(articleURL);
-        String slobId = uri.getQueryParameter("slob");
-        Slob slob = this.getSlob(slobId);
-        return slob;
-    }
-
     void addBookmark(String contentURL) {
         bookmarks.add(contentURL);
     }
@@ -211,14 +198,7 @@ public class Application extends android.app.Application {
 
     void setLookupResult(String query, Iterator<Slob.Blob> data) {
         this.lastResult.setData(data);
-    }
-
-    List<Slob.Blob> getBookmarkedBlobList() {
-        List<Slob.Blob> result = new ArrayList<Slob.Blob>();
-        for (BlobDescriptor bd : bookmarks) {
-            result.add(bookmarks.resolve(bd));
-        }
-        return result;
+        lookupQuery = query;
     }
 
 }

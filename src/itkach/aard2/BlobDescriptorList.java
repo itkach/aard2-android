@@ -149,7 +149,7 @@ final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
         if (slob == null) {
             return null;
         }
-        if (slob.getId().equals(bd.slobId)) {
+        if (slob.getId().toString().equals(bd.slobId)) {
             try {
                 blob = new Slob.Blob(slob, bd.blobId, bd.key, bd.fragment,
                         slob.get(bd.blobId));
