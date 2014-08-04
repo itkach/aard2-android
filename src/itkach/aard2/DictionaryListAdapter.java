@@ -64,11 +64,16 @@ public class DictionaryListAdapter extends BaseAdapter {
         TextView blobCountView = (TextView) view
                 .findViewById(R.id.dictionary_blob_count);
         blobCountView.setEnabled(available);
+        blobCountView.setVisibility(desc.error == null ? View.VISIBLE : View.GONE);
         Resources r = parent.getResources();
         blobCountView.setText(format(Locale.getDefault(),
                 r.getString(R.string.dict_item_count), blobCount));
         CheckBox cb = (CheckBox) view.findViewById(R.id.dictionary_checkbox);
         cb.setVisibility(isSelectionMode() ? View.VISIBLE : View.GONE);
+        TextView errorView = (TextView) view
+                .findViewById(R.id.dictionary_error);
+        errorView.setVisibility(desc.error == null ? View.GONE : View.VISIBLE);
+        errorView.setText(desc.error);
         return view;
     }
 

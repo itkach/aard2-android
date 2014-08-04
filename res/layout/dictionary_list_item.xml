@@ -28,6 +28,7 @@
         <TextView
             android:id="@+id/dictionary_label"
             style="@android:style/TextAppearance.Holo.SearchResult.Title"
+            android:text="WordNet"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="22sp"/>
@@ -35,6 +36,7 @@
         <TextView
             android:id="@+id/dictionary_path"
             style="@android:style/TextAppearance.Holo.SearchResult.Subtitle"
+            android:text="/mnt/sdcard/wordnet.slob"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
@@ -45,10 +47,23 @@
         <TextView
             android:id="@+id/dictionary_blob_count"
             style="@android:style/TextAppearance.Holo.Small"
+            android:text="100,000"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_below="@id/dictionary_path"/>
+
+        <TextView
+            android:id="@+id/dictionary_error"
+            style="@android:style/TextAppearance.Holo.Small"
+            android:text="File does not exist"
+            android:textColor="@android:color/holo_red_dark"
+            android:visibility="visible"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@id/dictionary_path"/>
+
     </RelativeLayout>
 
 </itkach.aard2.CheckableRelativeLayout>
