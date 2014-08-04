@@ -51,8 +51,8 @@ abstract class BlobDescriptorListFragment extends BaseListFragment {
         icFilter = Icons.FILTER.forActionBar();
         icClock = Icons.CLOCK.forActionBar();
         icList = Icons.LIST.forActionBar();
-        icArrowUp = Icons.ARROW_UP.forActionBar();
-        icArrowDown = Icons.ARROW_DOWN.forActionBar();
+        icArrowUp = Icons.SORT_ASC.forActionBar();
+        icArrowDown = Icons.SORT_DESC.forActionBar();
 
         final ListView listView = getListView();
 
