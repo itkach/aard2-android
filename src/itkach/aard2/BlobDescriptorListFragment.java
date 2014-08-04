@@ -83,7 +83,8 @@ abstract class BlobDescriptorListFragment extends BaseListFragment {
                         new AlertDialog.Builder(getActivity())
                                 .setIcon(android.R.drawable.ic_dialog_alert)
                                 .setTitle("")
-                                .setMessage(String.format("Are you sure you want to delete %d items?", checkedItems.size()))
+                                .setMessage(String.format("Are you sure you want to delete %d items?",
+                                            listView.getCheckedItemCount()))
                                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
@@ -126,12 +127,6 @@ abstract class BlobDescriptorListFragment extends BaseListFragment {
                 intent.setAction(getItemClickAction());
                 intent.putExtra("position", position);
                 startActivity(intent);
-//                BlobDescriptor item = getDescriptorList().get(position);
-//                Slob.Blob blob = getDescriptorList().resolve(item);
-//                if (blob != null) {
-//                    intent.putExtra("position", position);
-//                    startActivity(intent);
-//                }
             }
         });
 
@@ -142,7 +137,10 @@ abstract class BlobDescriptorListFragment extends BaseListFragment {
         SparseBooleanArray checkedItems = getListView().getCheckedItemPositions();
         for (int i = checkedItems.size() - 1; i > -1; --i) {
             int position = checkedItems.keyAt(i);
-            getDescriptorList().remove(position);
+            boolean checked = checkedItems.get(position);
+            if (checked) {
+                getDescriptorList().remove(position);
+            }
          }
     }
 

@@ -65,11 +65,11 @@ public class DictionariesFragment extends BaseListFragment {
                 ListView listView = getListView();
                 switch (item.getItemId()) {
                     case R.id.dictionary_forget:
-                        SparseBooleanArray checkedItems = listView.getCheckedItemPositions();
+                        int checkedCount = getListView().getCheckedItemCount();
                         new AlertDialog.Builder(getActivity())
                                 .setIcon(android.R.drawable.ic_dialog_alert)
                                 .setTitle("")
-                                .setMessage(String.format("Are you sure you want to forget %d dictionaries?", checkedItems.size()))
+                                .setMessage(String.format("Are you sure you want to forget %d dictionaries?", checkedCount))
                                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
@@ -109,13 +109,17 @@ public class DictionariesFragment extends BaseListFragment {
 
     private void forgetSelectedItems() {
         SparseBooleanArray checkedItems = getListView().getCheckedItemPositions();
-        final Application app = (Application)getActivity().getApplication();
+        int checkedCount = getListView().getCheckedItemCount();
+        Application app = (Application)getActivity().getApplication();
         app.dictionaries.beginUpdate();
         for (int i = checkedItems.size() - 1; i > -1; --i) {
             int position = checkedItems.keyAt(i);
-            app.dictionaries.remove(position);
+            boolean checked = checkedItems.get(position);
+            if (checked) {
+                app.dictionaries.remove(position);
+            }
         }
-        app.dictionaries.endUpdate(checkedItems.size() > 0);
+        app.dictionaries.endUpdate(checkedCount > 0);
     }
 
     @Override
