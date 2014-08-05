@@ -20,7 +20,6 @@ public class BlobDescriptorListAdapter extends BaseAdapter {
     DateFormat              dateFormat;
     private DataSetObserver observer;
     private boolean         selectionMode;
-//    private Set<Integer>    selectedPositions;
 
     public BlobDescriptorListAdapter(BlobDescriptorList list) {
         this.list = list;
@@ -37,7 +36,6 @@ public class BlobDescriptorListAdapter extends BaseAdapter {
             }
         };
         this.list.registerDataSetObserver(observer);
-//        this.selectedPositions = new HashSet<Integer>();
     }
 
     @Override
@@ -99,13 +97,5 @@ public class BlobDescriptorListAdapter extends BaseAdapter {
         cb.setVisibility(isSelectionMode() ? View.VISIBLE : View.GONE);
         return view;
     }
-
-//    public boolean isSelected(int position) {
-//        return selectedPositions.contains(position);
-//    }
-//
-//    public void toggleSelected(int position) {
-//        setSelected(position, !isSelected(position));
-//    }
 
 }
