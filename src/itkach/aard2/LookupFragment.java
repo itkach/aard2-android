@@ -46,6 +46,11 @@ public class LookupFragment extends BaseListFragment {
     }
 
     @Override
+    protected boolean supportsSelection() {
+        return false;
+    }
+
+    @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ListView listView = getListView();

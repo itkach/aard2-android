@@ -92,7 +92,7 @@ public class MainActivity extends FragmentActivity implements
     @Override
     public void onTabUnselected(ActionBar.Tab tab,
             FragmentTransaction fragmentTransaction) {
-
+        ((BaseListFragment)mAppSectionsPagerAdapter.getItem(tab.getPosition())).finishActionMode();
         if (tab.getPosition() == 0) {
             View v = this.getCurrentFocus();
             if (v != null){

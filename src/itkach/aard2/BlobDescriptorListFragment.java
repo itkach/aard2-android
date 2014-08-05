@@ -11,7 +11,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AbsListView.MultiChoiceModeListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
@@ -31,13 +30,50 @@ abstract class BlobDescriptorListFragment extends BaseListFragment {
 
     private BlobDescriptorListAdapter listAdapter;
 
+    protected void setSelectionMode(boolean selectionMode) {
+        listAdapter.setSelectionMode(selectionMode);
+    }
+
+    protected int getSelectionMenuId() {
+        return R.menu.blob_descriptor_selection;
+    }
+
+    protected boolean onSelectionActionItemClicked(final ActionMode mode, MenuItem item) {
+        ListView listView = getListView();
+        switch (item.getItemId()) {
+            case R.id.blob_descriptor_delete:
+                new AlertDialog.Builder(getActivity())
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .setTitle("")
+                        .setMessage(String.format("Are you sure you want to delete %d items?",
+                                listView.getCheckedItemCount()))
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                deleteSelectedItems();
+                                mode.finish();
+                            }
+                        })
+                        .setNegativeButton("No", null)
+                        .show();
+                return true;
+            case R.id.blob_descriptor_select_all:
+                int itemCount = listView.getCount();
+                for (int i = itemCount - 1; i > -1; --i) {
+                    listView.setItemChecked(i, true);
+                }
+                return true;
+            default:
+                return false;
+        }
+    }
+
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
         listAdapter = new BlobDescriptorListAdapter(getDescriptorList());
 
-        int iconColor = getResources().getColor(android.R.color.secondary_text_dark);
         icFilter = Icons.FILTER.forActionBar();
         icClock = Icons.CLOCK.forActionBar();
         icList = Icons.LIST.forActionBar();
@@ -45,69 +81,6 @@ abstract class BlobDescriptorListFragment extends BaseListFragment {
         icArrowDown = Icons.SORT_DESC.forActionBar();
 
         final ListView listView = getListView();
-
-        listView.setItemsCanFocus(false);
-        listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
-        listView.setMultiChoiceModeListener(new MultiChoiceModeListener() {
-
-            @Override
-            public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-                MenuInflater inflater = mode.getMenuInflater();
-                inflater.inflate(R.menu.blob_descriptor_selection, menu);
-                listAdapter.setSelectionMode(true);
-                return true;
-            }
-
-            @Override
-            public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-                // TODO Auto-generated method stub
-                return false;
-            }
-
-            @Override
-            public boolean onActionItemClicked(final ActionMode mode, MenuItem item) {
-                ListView listView = getListView();
-                switch (item.getItemId()) {
-                    case R.id.blob_descriptor_delete:
-                        SparseBooleanArray checkedItems = listView.getCheckedItemPositions();
-                        new AlertDialog.Builder(getActivity())
-                                .setIcon(android.R.drawable.ic_dialog_alert)
-                                .setTitle("")
-                                .setMessage(String.format("Are you sure you want to delete %d items?",
-                                            listView.getCheckedItemCount()))
-                                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        deleteSelectedItems();
-                                        mode.finish();
-                                    }
-                                })
-                                .setNegativeButton("No", null)
-                                .show();
-                        return true;
-                    case R.id.blob_descriptor_select_all:
-                        int itemCount = listView.getCount();
-                        for (int i = itemCount - 1; i > -1; --i) {
-                            listView.setItemChecked(i, true);
-                        }
-                        return true;
-                    default:
-                        return false;
-                }
-            }
-
-            @Override
-            public void onDestroyActionMode(ActionMode mode) {
-                listAdapter.setSelectionMode(false);
-            }
-
-            @Override
-            public void onItemCheckedStateChanged(ActionMode mode,
-                                                  int position, long id, boolean checked) {
-            }
-
-        });
-
         listView.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view,
