@@ -15,8 +15,6 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.widget.ProgressBar;
 
-import itkach.fdrawable.IconicFontDrawable;
-
 public class ArticleFragment extends Fragment {
 
     public static final String ARG_URL = "articleUrl";

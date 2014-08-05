@@ -1,6 +1,6 @@
 package itkach.aard2;
 
-import itkach.slob.Slob;
+import android.util.Log;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -10,8 +10,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import android.util.Log;
 
 public class DictionaryFinder {
 

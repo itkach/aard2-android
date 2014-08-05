@@ -1,9 +1,5 @@
 package itkach.aard2;
 
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
@@ -13,6 +9,10 @@ import android.util.Log;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 public class ArticleWebView extends WebView {
 

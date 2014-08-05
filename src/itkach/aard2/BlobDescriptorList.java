@@ -1,6 +1,11 @@
 package itkach.aard2;
 
-import itkach.slob.Slob;
+import android.database.DataSetObservable;
+import android.database.DataSetObserver;
+import android.net.Uri;
+import android.util.Log;
+
+import com.ibm.icu.text.CollationKey;
 
 import java.io.IOException;
 import java.util.AbstractList;
@@ -11,12 +16,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
-import android.database.DataSetObservable;
-import android.database.DataSetObserver;
-import android.net.Uri;
-import android.util.Log;
-
-import com.ibm.icu.text.CollationKey;
+import itkach.slob.Slob;
 
 final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
 

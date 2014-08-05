@@ -1,9 +1,5 @@
 package itkach.aard2;
 
-import itkach.slob.Slob;
-
-import java.text.DateFormat;
-
 import android.content.Context;
 import android.database.DataSetObserver;
 import android.text.format.DateUtils;
@@ -13,6 +9,10 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
 import android.widget.TextView;
+
+import java.text.DateFormat;
+
+import itkach.slob.Slob;
 
 public class BlobDescriptorListAdapter extends BaseAdapter {
 
@@ -61,21 +61,8 @@ public class BlobDescriptorListAdapter extends BaseAdapter {
 
     public void setSelectionMode(boolean selectionMode) {
         this.selectionMode = selectionMode;
-//        if (!this.selectionMode) {
-//            this.selectedPositions.clear();
-//        }
         notifyDataSetChanged();
     }
-
-//    public void setSelected(int position, boolean selected) {
-//        if (selected) {
-//            this.selectedPositions.add(position);
-//        }
-//        else {
-//            this.selectedPositions.remove(position);
-//        }
-//        notifyDataSetChanged();
-//    }
 
     public boolean isSelectionMode() {
         return selectionMode;

@@ -4,15 +4,15 @@ package itkach.aard2;
  * From http://www.marvinlabs.com/2010/10/29/custom-listview-ability-check-items/
  */
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Checkable;
 import android.widget.RelativeLayout;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class CheckableRelativeLayout extends RelativeLayout implements
         Checkable {

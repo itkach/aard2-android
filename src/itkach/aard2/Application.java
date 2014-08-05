@@ -1,18 +1,5 @@
 package itkach.aard2;
 
-import itkach.slob.Slob;
-import itkach.slob.Slob.Blob;
-import itkach.slobber.Slobber;
-
-import itkach.fdrawable.TypefaceManager;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
 import android.database.DataSetObserver;
 import android.net.Uri;
 import android.os.Handler;
@@ -20,6 +7,17 @@ import android.os.Looper;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import itkach.fdrawable.TypefaceManager;
+import itkach.slob.Slob;
+import itkach.slob.Slob.Blob;
+import itkach.slobber.Slobber;
 
 public class Application extends android.app.Application {
 

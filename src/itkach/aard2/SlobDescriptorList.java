@@ -1,7 +1,5 @@
 package itkach.aard2;
 
-import java.util.AbstractList;
-
 import itkach.slob.Slob;
 
 public class SlobDescriptorList extends BaseDescriptorList<SlobDescriptor> {

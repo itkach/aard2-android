@@ -3,7 +3,6 @@ package itkach.aard2;
 import android.app.ActionBar;
 import android.app.ActionBar.Tab;
 import android.app.FragmentTransaction;
-import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -11,13 +10,9 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-
-import itkach.fdrawable.IconicFontDrawable;
-import itkach.fdrawable.Icon;
 
 public class MainActivity extends FragmentActivity implements
         ActionBar.TabListener {
@@ -97,6 +92,7 @@ public class MainActivity extends FragmentActivity implements
     @Override
     public void onTabUnselected(ActionBar.Tab tab,
             FragmentTransaction fragmentTransaction) {
+
         if (tab.getPosition() == 0) {
             View v = this.getCurrentFocus();
             if (v != null){

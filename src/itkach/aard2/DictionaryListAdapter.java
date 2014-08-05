@@ -1,10 +1,5 @@
 package itkach.aard2;
 
-import static java.lang.String.format;
-
-import java.util.List;
-import java.util.Locale;
-
 import android.content.Context;
 import android.content.res.Resources;
 import android.database.DataSetObserver;
@@ -14,6 +9,10 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
 import android.widget.TextView;
+
+import java.util.Locale;
+
+import static java.lang.String.format;
 
 public class DictionaryListAdapter extends BaseAdapter {
 

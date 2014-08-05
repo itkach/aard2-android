@@ -16,12 +16,6 @@
 
 package itkach.aard2;
 
-import itkach.slob.Slob;
-import itkach.slob.Slob.Blob;
-
-import java.util.Iterator;
-import java.util.List;
-
 import android.app.ActionBar;
 import android.content.Intent;
 import android.database.DataSetObserver;
@@ -43,6 +37,12 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.BaseAdapter;
 import android.widget.Toast;
+
+import java.util.Iterator;
+import java.util.List;
+
+import itkach.slob.Slob;
+import itkach.slob.Slob.Blob;
 
 public class ArticleCollectionActivity extends FragmentActivity {
 

@@ -2,11 +2,11 @@ package itkach.aard2;
 
 import android.util.Log;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 class DescriptorStore<T extends BaseDescriptor> {
 
