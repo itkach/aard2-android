@@ -37,11 +37,18 @@ final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
     private Comparator<BlobDescriptor>      timeComparatorAsc;
     private Comparator<BlobDescriptor>      timeComparatorDesc;
     private Comparator<BlobDescriptor>      comparator;
+    private Comparator<BlobDescriptor>      lastAccessComparator;
     private Slob.KeyComparator              keyComparator;
+    private int                             maxSize;
 
     BlobDescriptorList(Application app, DescriptorStore<BlobDescriptor> store) {
+        this(app, store, 100);
+    }
+
+    BlobDescriptorList(Application app, DescriptorStore<BlobDescriptor> store, int maxSize) {
         this.app = app;
         this.store = store;
+        this.maxSize = maxSize;
         this.list = new ArrayList<BlobDescriptor>();
         this.filteredList = new ArrayList<BlobDescriptor>();
         this.dataSetObservable = new DataSetObservable();
@@ -73,6 +80,13 @@ final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
             @Override
             public int compare(BlobDescriptor b1, BlobDescriptor b2) {
                 return (int) (b2.createdAt - b1.createdAt);
+            }
+        };
+
+        lastAccessComparator = new Comparator<BlobDescriptor>() {
+            @Override
+            public int compare(BlobDescriptor b1, BlobDescriptor b2) {
+                return (int) (b2.lastAccess - b1.lastAccess);
             }
         };
 
@@ -144,6 +158,8 @@ final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
     }
 
     Slob.Blob resolve(BlobDescriptor bd) {
+        bd.lastAccess = System.currentTimeMillis();
+        store.save(bd);
         Slob slob = resolveOwner(bd);
         Slob.Blob blob = null;
         if (slob == null) {
@@ -170,6 +186,7 @@ final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
         BlobDescriptor bd = new BlobDescriptor();
         bd.id = UUID.randomUUID().toString();
         bd.createdAt = System.currentTimeMillis();
+        bd.lastAccess = bd.createdAt;
         Uri uri = Uri.parse(contentUrl);
         bd.key = uri.getLastPathSegment();
         bd.slobId = uri.getQueryParameter("slob");
@@ -189,6 +206,11 @@ final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
         }
         this.list.add(bd);
         store.save(bd);
+        if (this.list.size() > this.maxSize) {
+            Collections.sort(this.list, lastAccessComparator);
+            BlobDescriptor lru = this.list.remove(this.list.size() - 1);
+            store.delete(lru.id);
+        }
         notifyDataSetChanged();
         return bd;
     }
