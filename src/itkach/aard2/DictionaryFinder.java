@@ -104,8 +104,16 @@ public class DictionaryFinder {
         List<File> candidates = discover();
         Log.d(T, "dictionary discovery took " + (System.currentTimeMillis() - t0));
         List<SlobDescriptor> descriptors = new ArrayList<SlobDescriptor>();
+        Set<String> seen = new HashSet<String>();
         for (File f : candidates) {
-            descriptors.add(SlobDescriptor.fromFile(f));
+            SlobDescriptor sd = SlobDescriptor.fromFile(f);
+            if (sd.id != null && seen.contains(sd.id)) {
+                sd.close();
+            }
+            else {
+                seen.add(sd.id);
+                descriptors.add(sd);
+            }
         }
         return descriptors;
     }
