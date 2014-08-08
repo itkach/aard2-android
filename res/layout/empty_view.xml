@@ -18,8 +18,8 @@
             android:layout_gravity="center"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="6sp"
-            android:layout_marginStart="20sp"
+            android:layout_marginRight="6sp"
+            android:layout_marginLeft="20sp"
             />
         <TextView
             android:text="Nothing found"
@@ -30,7 +30,7 @@
             android:layout_height="wrap_content"
             android:textColor="@android:color/darker_gray"
             android:textSize="28sp"
-            android:layout_marginEnd="20sp"
+            android:layout_marginRight="20sp"
             />
         </LinearLayout>
 </LinearLayout>

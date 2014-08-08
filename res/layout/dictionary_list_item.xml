@@ -22,7 +22,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_toEndOf="@id/dictionary_checkbox" 
+        android:layout_toRightOf="@id/dictionary_checkbox"
         >
 
         <TextView
