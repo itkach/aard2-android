@@ -4,6 +4,7 @@ import android.database.DataSetObserver;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -104,8 +105,11 @@ public class Application extends android.app.Application {
     }
 
     Iterator<Blob> find(String key, String preferredSlobId) {
-        return Slob.find(key, 10, slobber.getSlob(preferredSlobId),
+        long t0 = System.currentTimeMillis();
+        Iterator<Blob> result = Slob.find(key, 10, slobber.getSlob(preferredSlobId),
                 slobber.getSlobs());
+        Log.d(getClass().getName(), String.format("find ran in %dms", System.currentTimeMillis() - t0));
+        return result;
     }
 
     Iterator<Blob> findExact(String key, String slobId) {
@@ -199,4 +203,7 @@ public class Application extends android.app.Application {
         lookupQuery = query;
     }
 
+    String getLookupQuery() {
+        return lookupQuery;
+    }
 }

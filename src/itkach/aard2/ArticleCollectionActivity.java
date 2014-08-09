@@ -17,6 +17,7 @@
 package itkach.aard2;
 
 import android.app.ActionBar;
+import android.app.SearchManager;
 import android.content.Intent;
 import android.database.DataSetObserver;
 import android.net.Uri;
@@ -66,6 +67,7 @@ public class ArticleCollectionActivity extends FragmentActivity {
         final ActionBar actionBar = getActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
         Intent intent = getIntent();
+
         Uri articleUrl = intent.getData();
         if (articleUrl != null) {
             List<String> pathSegments = articleUrl.getPathSegments();
@@ -115,7 +117,31 @@ public class ArticleCollectionActivity extends FragmentActivity {
                         }, getSupportFragmentManager());
 
             }
-
+            else if (action != null && (action.equals(Intent.ACTION_SEND) || action.equals(Intent.ACTION_SEARCH)) ) {
+                String lookupKey = "";
+                if (action.equals(Intent.ACTION_SEND)) {
+                    lookupKey = intent.getStringExtra(Intent.EXTRA_TEXT);
+                }
+                else {
+                    lookupKey = intent.getStringExtra(SearchManager.QUERY);
+                }
+                Iterator<Slob.Blob> result = null;
+                if (!lookupKey.equals("")) {
+                    result = app.find(lookupKey, null);
+                }
+                if (result == null || !result.hasNext()) {
+                    Toast.makeText(this, "Not found", Toast.LENGTH_SHORT).show();
+                    Intent lookupIntent = new Intent(this, MainActivity.class);
+                    lookupIntent.putExtra(SearchManager.QUERY, lookupKey);
+                    startActivity(lookupIntent);
+                    this.finish();
+                    return;
+                }
+                BlobListAdapter data = new BlobListAdapter(this);
+                data.setData(result);
+                articleCollectionPagerAdapter = new ArticleCollectionPagerAdapter(
+                        app, data, blobToBlob, getSupportFragmentManager());
+            }
             else {
                 articleCollectionPagerAdapter = new ArticleCollectionPagerAdapter(
                         app, app.lastResult, blobToBlob, getSupportFragmentManager());

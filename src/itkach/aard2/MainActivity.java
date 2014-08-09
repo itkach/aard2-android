@@ -3,6 +3,8 @@ package itkach.aard2;
 import android.app.ActionBar;
 import android.app.ActionBar.Tab;
 import android.app.FragmentTransaction;
+import android.app.SearchManager;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -69,6 +71,13 @@ public class MainActivity extends FragmentActivity implements
             actionBar.addTab(tab);
         }
 
+        Intent intent = getIntent();
+        String query = intent.getStringExtra(SearchManager.QUERY);
+        if (query != null && !query.equals("")) {
+            mViewPager.setCurrentItem(0);
+            LookupFragment lookupFragment = (LookupFragment)mAppSectionsPagerAdapter.getItem(0);
+            lookupFragment.setQuery(query);
+        }
         if (savedInstanceState != null) {
             onRestoreInstanceState(savedInstanceState);
         } else {

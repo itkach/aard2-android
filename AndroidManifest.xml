@@ -43,6 +43,23 @@
         </activity>
         
         <activity 
-            android:name="itkach.aard2.ArticleCollectionActivity"/>
+            android:name="itkach.aard2.ArticleCollectionActivity"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize|smallestScreenSize"
+            />
+
+        <activity android:name=".ArticleCollectionActivityExternal"
+                  android:configChanges="keyboard|keyboardHidden|orientation|screenSize|smallestScreenSize"
+                  android:excludeFromRecents="true"
+                  android:taskAffinity="itkach.aard2.external">
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/plain" />
+            </intent-filter>
+        </activity>
+
     </application>
 </manifest>

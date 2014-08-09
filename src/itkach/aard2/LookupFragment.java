@@ -40,9 +40,18 @@ public class LookupFragment extends BaseListFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        String query = null;
         if (savedInstanceState != null) {
-            initialQuery = savedInstanceState.getString("lookupQuery", "");
+            query = savedInstanceState.getString("lookupQuery", "");
         }
+        else {
+            Application app = (Application) getActivity().getApplication();
+            query = app.getLookupQuery();
+        }
+        if (query == null) {
+            query = "";
+        }
+        setQuery(query);
     }
 
     @Override
@@ -151,9 +160,6 @@ public class LookupFragment extends BaseListFragment {
 
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
-        MenuItem miFilter = menu.findItem(R.id.action_lookup);
-        View filterActionView = miFilter.getActionView();
-        searchView = (SearchView) filterActionView.findViewById(R.id.fldLookup);
         searchView.setQuery(currentQuery, false);
         final Application app = (Application) getActivity()
                 .getApplication();
@@ -188,4 +194,11 @@ public class LookupFragment extends BaseListFragment {
         super.onDestroy();
     }
 
+    public void setQuery(String query) {
+        initialQuery = query;
+        currentQuery = query;
+        if (searchView != null) {
+            searchView.setQuery(query, true);
+        }
+    }
 }

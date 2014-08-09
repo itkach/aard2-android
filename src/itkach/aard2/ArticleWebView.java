@@ -72,12 +72,6 @@ public class ArticleWebView extends WebView {
                       return true;
                 }
 
-//                if (!url.equals(initialUrl) && url.startsWith("http://localhost:8013")) {
-//                    Intent intent = new Intent(getContext(), StandaloneArticleActivity.class);
-//                    intent.setData(Uri.parse(url));
-//                    getContext().startActivity(intent);
-//                    return true;
-//                }
                 Log.d("NOT overriding loading of", url);
                 return false;
             };
