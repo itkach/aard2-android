@@ -64,6 +64,7 @@ public class ArticleCollectionActivity extends FragmentActivity {
         requestWindowFeature(Window.FEATURE_PROGRESS);
         setContentView(R.layout.activity_article_collection);
         final Application app = (Application)getApplication();
+        app.push(this);
         final ActionBar actionBar = getActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
         Intent intent = getIntent();
@@ -212,6 +213,8 @@ public class ArticleCollectionActivity extends FragmentActivity {
         if (articleCollectionPagerAdapter != null) {
             articleCollectionPagerAdapter.destroy();
         }
+        Application app = (Application)getApplication();
+        app.pop(this);
         super.onDestroy();
     }
 

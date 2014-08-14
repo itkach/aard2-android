@@ -118,7 +118,10 @@ public class ArticleFragment extends Fragment {
 
     @Override
     public void onDestroy() {
-        view = null;
+        if (view != null) {
+            view.loadUrl("about:blank");
+            view = null;
+        }
         super.onDestroy();
     }
 }

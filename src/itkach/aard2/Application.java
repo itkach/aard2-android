@@ -1,5 +1,6 @@
 package itkach.aard2;
 
+import android.app.Activity;
 import android.database.DataSetObserver;
 import android.net.Uri;
 import android.os.Handler;
@@ -11,6 +12,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -40,13 +42,14 @@ public class Application extends android.app.Application {
 
     private ObjectMapper                    mapper;
 
-    private TypefaceManager                 typefaceManager;
-    private String lookupQuery;
+    private String                          lookupQuery;
 
+    private List<Activity>                  articleActivities;
 
     @Override
     public void onCreate() {
         super.onCreate();
+        articleActivities = Collections.synchronizedList(new ArrayList<Activity>());
         Icons.init(getAssets(), getResources());
         try {
             mapper = new ObjectMapper();
@@ -99,6 +102,20 @@ public class Application extends android.app.Application {
         bookmarks.load();
         history.load();
     }
+
+    void push(Activity activity) {
+        this.articleActivities.add(activity);
+        Log.d(getClass().getName(), "Activity added, stack size " + this.articleActivities.size());
+        if (this.articleActivities.size() > 10) {
+            Log.d(getClass().getName(), "Max stack size exceeded, finishing oldest activity");
+            this.articleActivities.get(0).finish();
+        }
+    }
+
+    void pop(Activity activity) {
+        this.articleActivities.remove(activity);
+    }
+
 
     Iterator<Blob> find(String key) {
         return Slob.find(key, 1000, slobber.getSlobs());
