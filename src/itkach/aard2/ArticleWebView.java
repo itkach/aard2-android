@@ -39,6 +39,9 @@ public class ArticleWebView extends WebView {
         settings.setJavaScriptEnabled(true);
         settings.setBuiltInZoomControls(true);
         settings.setDisplayZoomControls(false);
+        //Hardware rendering is buggy
+        //https://code.google.com/p/android/issues/detail?id=63738
+        this.setLayerType(LAYER_TYPE_SOFTWARE, null);
         this.setWebViewClient(new WebViewClient() {
 
             @Override
