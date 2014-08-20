@@ -106,7 +106,7 @@ public class Application extends android.app.Application {
     void push(Activity activity) {
         this.articleActivities.add(activity);
         Log.d(getClass().getName(), "Activity added, stack size " + this.articleActivities.size());
-        if (this.articleActivities.size() > 10) {
+        if (this.articleActivities.size() > 3) {
             Log.d(getClass().getName(), "Max stack size exceeded, finishing oldest activity");
             this.articleActivities.get(0).finish();
         }
