@@ -50,10 +50,12 @@ android {
 
     signingConfigs {
         release {
-            storeFile file(System.getenv("KEYSTORE"))
-            storePassword new String(System.console().readPassword("\n\$ Keystore password: "))
-            keyAlias "aard2-android"
-            keyPassword new String(System.console().readPassword("\n\$ Key password: "))
+            if (System.getenv("KEYSTORE_FILE") != null) {
+                storeFile file(System.getenv("KEYSTORE"))
+                storePassword new String(System.console().readPassword("\n\$ Keystore password: "))
+                keyAlias "aard2-android"
+                keyPassword new String(System.console().readPassword("\n\$ Key password: "))
+            }
         }
     }
 
