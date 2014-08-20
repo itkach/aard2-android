@@ -32,6 +32,13 @@ android {
     packagingOptions {
         exclude 'META-INF/LICENSE'
         exclude 'META-INF/NOTICE'
+        project.file("exclude.txt").eachLine {
+            line ->
+                println line
+                if (!line.startsWith("#")) {
+                    exclude line.trim()
+                }
+        }
     }
 
 
