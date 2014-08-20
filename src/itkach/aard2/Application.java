@@ -3,14 +3,18 @@ package itkach.aard2;
 import android.app.Activity;
 import android.database.DataSetObserver;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
+import android.webkit.WebView;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -49,6 +53,20 @@ public class Application extends android.app.Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        if(Build.VERSION.SDK_INT >= 19) {
+            try {
+                Method setWebContentsDebuggingEnabledMethod = WebView.class.getMethod(
+                        "setWebContentsDebuggingEnabled", boolean.class);
+                setWebContentsDebuggingEnabledMethod.invoke(null, true);
+            } catch (NoSuchMethodException e1) {
+                Log.d(getClass().getName(),
+                        "setWebContentsDebuggingEnabledMethod method not found");
+            } catch (InvocationTargetException e) {
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        }
         articleActivities = Collections.synchronizedList(new ArrayList<Activity>());
         Icons.init(getAssets(), getResources());
         try {
