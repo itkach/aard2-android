@@ -48,9 +48,9 @@ android {
         }
     }
 
-    signingConfigs {
-        release {
-            if (System.getenv("KEYSTORE_FILE") != null) {
+    if (System.getenv("KEYSTORE") != null) {
+        signingConfigs {
+            release {
                 storeFile file(System.getenv("KEYSTORE"))
                 storePassword new String(System.console().readPassword("\n\$ Keystore password: "))
                 keyAlias "aard2-android"
@@ -60,8 +60,10 @@ android {
     }
 
     buildTypes {
-        release {
-            signingConfig signingConfigs.release
+        if (System.getenv("KEYSTORE") != null) {
+            release {
+                signingConfig signingConfigs.release
+            }
         }
     }
 }
