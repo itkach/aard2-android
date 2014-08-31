@@ -7,22 +7,11 @@
         android:paddingTop="3dip"
         android:background="@android:drawable/list_selector_background"
     >
-
-   <CheckBox
-            android:id="@+id/blob_descriptor_checkbox"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_alignParentLeft="true"
-            android:visibility="gone"
-            android:clickable="false"
-            android:focusable="false"
-            android:checked="false" />
-    
     
     <RelativeLayout
+        android:id="@+id/blob_descriptor_item"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_toRightOf="@id/blob_descriptor_checkbox"
+        android:layout_height="wrap_content"
         >
 
         <TextView
@@ -30,7 +19,8 @@
             style="@android:style/TextAppearance.Holo.SearchResult.Title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Earth"
+            android:layout_marginRight="22dip"
+            android:text="Босния и Герцеговина на зимних Олимпийских играх 1998"
             android:textSize="22sp" />
 
         <TextView
@@ -52,5 +42,18 @@
             android:text="1 day ago, 11:23"
             android:textStyle="italic" />
     </RelativeLayout>
+
+    <CheckBox
+        android:id="@+id/blob_descriptor_checkbox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="-5dp"
+        android:visibility="gone"
+        android:clickable="false"
+        android:focusable="false"
+        android:checked="false"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        />
 
 </itkach.aard2.CheckableRelativeLayout>
