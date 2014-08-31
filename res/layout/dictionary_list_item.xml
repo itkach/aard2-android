@@ -28,20 +28,10 @@
             android:text="/mnt/sdcard/wordnet.slob"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginRight="8dip"
             android:layout_alignParentLeft="true"
             android:layout_below="@id/dictionary_label"
             android:textStyle="italic"
             />
-
-        <TextView
-            android:id="@+id/dictionary_blob_count"
-            style="@android:style/TextAppearance.Holo.Small"
-            android:text="100,000"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_below="@id/dictionary_path"/>
 
         <TextView
             android:id="@+id/dictionary_error"
@@ -53,6 +43,38 @@
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_below="@id/dictionary_path"/>
+
+        <TextView
+            android:id="@+id/dictionary_copyright"
+            style="@android:style/TextAppearance.Holo.SearchResult.Subtitle"
+            android:text="\u00a9 2014 Wikipedia editors and contributors"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@id/dictionary_error"
+            />
+
+        <TextView
+            android:id="@+id/dictionary_license"
+            style="@android:style/TextAppearance.Holo.SearchResult.Subtitle"
+            android:text="License: Creative Commons with Attribution"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:clickable="true"
+            android:focusable="false"
+            android:layout_below="@id/dictionary_copyright"
+            />
+
+        <TextView
+            android:id="@+id/dictionary_blob_count"
+            style="@android:style/TextAppearance.Holo.Small"
+            android:text="100,000"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_below="@id/dictionary_license"/>
+
 
     </RelativeLayout>
 

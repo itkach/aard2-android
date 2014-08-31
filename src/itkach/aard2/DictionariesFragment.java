@@ -3,6 +3,8 @@ package itkach.aard2;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.Html;
 import android.util.SparseBooleanArray;
@@ -122,5 +124,14 @@ public class DictionariesFragment extends BaseListFragment {
         return super.onOptionsItemSelected(item);
     }
 
-
+    @Override
+    public void onListItemClick(ListView l, View v, int position, long id) {
+        SlobDescriptor desc = (SlobDescriptor)l.getAdapter().getItem(position);
+        String source = desc.tags.get("source");
+        if (source != null) {
+            Uri uri = Uri.parse(source);
+            Intent browserIntent = new Intent(Intent.ACTION_VIEW, uri);
+            startActivity(browserIntent);
+        }
+    }
 }

@@ -1,8 +1,11 @@
 package itkach.aard2;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.database.DataSetObserver;
+import android.net.Uri;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,6 +40,10 @@ public class DictionaryListAdapter extends BaseAdapter {
 
     }
 
+    private static boolean isBlank(String value) {
+        return value == null || value.trim().equals("");
+    }
+
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         SlobDescriptor desc = (SlobDescriptor) getItem(position);
@@ -52,6 +59,18 @@ public class DictionaryListAdapter extends BaseAdapter {
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             view = inflater.inflate(R.layout.dictionary_list_item, parent,
                     false);
+            TextView licenseView = (TextView) view.findViewById(R.id.dictionary_license);
+            licenseView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    String url = (String)v.getTag();
+                    if (!isBlank(url)) {
+                        Uri uri = Uri.parse(url);
+                        Intent browserIntent = new Intent(Intent.ACTION_VIEW, uri);
+                        v.getContext().startActivity(browserIntent);
+                    }
+                }
+            });
         }
         TextView titleView = (TextView) view
                 .findViewById(R.id.dictionary_label);
@@ -60,6 +79,31 @@ public class DictionaryListAdapter extends BaseAdapter {
         TextView pathView = (TextView) view.findViewById(R.id.dictionary_path);
         pathView.setText(path);
         pathView.setEnabled(available);
+
+        TextView licenseView = (TextView) view.findViewById(R.id.dictionary_license);
+        String licenseName = desc.tags.get("license.name");
+        String licenseUrl = desc.tags.get("license.url");
+        licenseView.setVisibility(isBlank(licenseName) && isBlank(licenseUrl) ? View.GONE : View.VISIBLE);
+        CharSequence license;
+        if (isBlank(licenseUrl)) {
+            license = licenseName;
+        }
+        else {
+            if (isBlank(licenseName)) {
+                licenseName = licenseUrl;
+            }
+            license = Html.fromHtml(String.format("License: <a href='%s'>%s</a>", licenseUrl, licenseName));
+        }
+        licenseView.setText(license);
+        licenseView.setEnabled(available);
+        licenseView.setTag(licenseUrl);
+
+        TextView copyrightView = (TextView) view.findViewById(R.id.dictionary_copyright);
+        String copyright = desc.tags.get("copyright");
+        copyrightView.setVisibility(isBlank(copyright) ? View.GONE : View.VISIBLE);
+        copyrightView.setText(String.format("\u00a9 %s", copyright));
+        copyrightView.setEnabled(available);
+
         TextView blobCountView = (TextView) view
                 .findViewById(R.id.dictionary_blob_count);
         blobCountView.setEnabled(available);
