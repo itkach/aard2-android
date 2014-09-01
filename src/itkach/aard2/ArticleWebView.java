@@ -1,8 +1,11 @@
 package itkach.aard2;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
+import android.os.Handler;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.webkit.WebSettings;
@@ -16,6 +19,8 @@ import java.util.Set;
 public class ArticleWebView extends WebView {
 
     String TAG = getClass().getName();
+
+    private static final String PREF_TEXT_ZOOM = "textZoom";
 
     String initialUrl;
     Set<String> externalSchemes = new HashSet<String>(){
@@ -35,6 +40,7 @@ public class ArticleWebView extends WebView {
 
     public ArticleWebView(Context context, AttributeSet attrs) {
         super(context, attrs);
+
         WebSettings settings = this.getSettings();
         settings.setJavaScriptEnabled(true);
         settings.setBuiltInZoomControls(true);
@@ -79,12 +85,67 @@ public class ArticleWebView extends WebView {
                 return false;
             };
         });
+
+        applyTextZoomPref();
+    }
+
+    private SharedPreferences prefs() {
+        return getContext().getSharedPreferences("articleView", Activity.MODE_PRIVATE);
     }
 
     @Override
     public void loadUrl(String url, Map<String, String> additionalHttpHeaders) {
         initialUrl = url;
         super.loadUrl(url, additionalHttpHeaders);
+    }
+
+    void applyTextZoomPref() {
+        SharedPreferences prefs = prefs();
+        int textZoom = prefs.getInt(PREF_TEXT_ZOOM, 100);
+        WebSettings settings = getSettings();
+        settings.setTextZoom(textZoom);
+    }
+
+    private void saveTextZoomPref() {
+        SharedPreferences prefs = prefs();
+        int textZoom = getSettings().getTextZoom();
+        SharedPreferences.Editor e = prefs.edit();
+        e.putInt(PREF_TEXT_ZOOM, textZoom);
+        boolean success = e.commit();
+        if (!success) {
+            Log.w(getClass().getName(), "Failed to save article view text zoom pref");
+        }
+    }
+
+    boolean textZoomIn() {
+        WebSettings settings = getSettings();
+        int newZoom = settings.getTextZoom() + 20;
+        if (newZoom <= 200) {
+            settings.setTextZoom(newZoom);
+            saveTextZoomPref();
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
+    boolean textZoomOut() {
+        WebSettings settings = getSettings();
+        int newZoom = settings.getTextZoom() - 20;
+        if (newZoom >= 40) {
+            settings.setTextZoom(newZoom);
+            saveTextZoomPref();
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
+    void resetTextZoom() {
+        getSettings().setTextZoom(100);
+        saveTextZoomPref();
     }
 
 }

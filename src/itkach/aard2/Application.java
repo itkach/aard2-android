@@ -142,7 +142,7 @@ public class Application extends android.app.Application {
     Iterator<Blob> find(String key, String preferredSlobId) {
         long t0 = System.currentTimeMillis();
         Iterator<Blob> result = Slob.find(key, 10, slobber.getSlob(preferredSlobId),
-                slobber.getSlobs());
+                slobber.getSlobs(), Slob.Strength.QUATERNARY.level);
         Log.d(getClass().getName(), String.format("find ran in %dms", System.currentTimeMillis() - t0));
         return result;
     }

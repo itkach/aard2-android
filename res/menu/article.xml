@@ -3,6 +3,20 @@
           android:title="@string/action_find_in_page"
           android:showAsAction="never" 
           />
+    <item android:id="@+id/action_zoom_in"
+          android:title="@string/action_zoom_in"
+          android:showAsAction="never"
+        />
+    <item android:id="@+id/action_zoom_out"
+          android:title="@string/action_zoom_out"
+          android:showAsAction="never"
+        />
+
+    <item android:id="@+id/action_zoom_reset"
+          android:title="@string/action_zoom_reset"
+          android:showAsAction="never"
+        />
+
     <item android:id="@+id/action_bookmark_article"
           android:title="@string/action_bookmark_article"
           android:checkable="true" 

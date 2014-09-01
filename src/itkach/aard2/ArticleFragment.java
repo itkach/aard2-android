@@ -1,6 +1,7 @@
 package itkach.aard2;
 
 import android.app.Activity;
+import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -12,6 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebChromeClient;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.ProgressBar;
 
@@ -79,6 +81,18 @@ public class ArticleFragment extends Fragment {
             }
             return true;
         }
+        if (itemId == R.id.action_zoom_in) {
+            view.textZoomIn();
+            return true;
+        }
+        if (itemId == R.id.action_zoom_out) {
+            view.textZoomOut();
+            return true;
+        }
+        if (itemId == R.id.action_zoom_reset) {
+            view.resetTextZoom();
+            return true;
+        }
         return super.onOptionsItemSelected(item);
     }
 
@@ -114,6 +128,25 @@ public class ArticleFragment extends Fragment {
             }
         });
         return layout;
+    }
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        applyTextZoomPref();
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+        applyTextZoomPref();
+    }
+
+    void applyTextZoomPref() {
+        if (view != null) {
+            view.applyTextZoomPref();
+        }
     }
 
     @Override

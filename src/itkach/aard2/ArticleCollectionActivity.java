@@ -169,8 +169,16 @@ public class ArticleCollectionActivity extends FragmentActivity {
             }
 
             @Override
-            public void onPageSelected(int position) {
+            public void onPageSelected(final int position) {
                 updateTitle(position);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        ArticleFragment fragment =(ArticleFragment) articleCollectionPagerAdapter.getItem(position);
+                        fragment.applyTextZoomPref();
+                    }
+                });
+
             }});
         viewPager.setCurrentItem(position);
 
