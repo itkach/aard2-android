@@ -49,7 +49,7 @@ public class DictionaryListAdapter extends BaseAdapter {
         SlobDescriptor desc = (SlobDescriptor) getItem(position);
         String label = desc.tags.get("label");
         String path = desc.path;
-        int blobCount = desc.blobCount;
+        long blobCount = desc.blobCount;
         boolean available = this.data.resolve(desc) != null;
         View view;
         if (convertView != null) {

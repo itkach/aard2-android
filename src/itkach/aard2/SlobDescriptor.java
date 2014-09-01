@@ -13,7 +13,7 @@ public class SlobDescriptor extends BaseDescriptor {
     public Map<String, String> tags;
     public boolean enabled;
     public int priority;
-    public int blobCount;
+    public long blobCount;
     public String error;
 
     private Slob slob;
@@ -22,7 +22,7 @@ public class SlobDescriptor extends BaseDescriptor {
         this.id = s.getId().toString();
         this.path = s.file.getAbsolutePath();
         this.tags = s.getTags();
-        this.blobCount = s.size();
+        this.blobCount = s.getBlobCount();
         this.error = null;
         this.slob = s;
     }
