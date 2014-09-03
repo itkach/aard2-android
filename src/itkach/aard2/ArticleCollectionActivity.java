@@ -72,19 +72,16 @@ public class ArticleCollectionActivity extends FragmentActivity {
         Uri articleUrl = intent.getData();
         if (articleUrl != null) {
             List<String> pathSegments = articleUrl.getPathSegments();
-            String lookupKey = pathSegments.get(1);
-            String refererSlobId = intent.getStringExtra("refererSlobId");
-            if (refererSlobId == null) {
-                String referer = intent.getStringExtra("referer");
-                Uri refererUrl = Uri.parse(referer);
-                refererSlobId = refererUrl.getQueryParameter("slob");
-            }
+            int segmentCount = pathSegments.size();
+            String lookupKey = pathSegments.get(segmentCount - 1);
+            String slobId = pathSegments.get(segmentCount - 2);
+
             Iterator<Slob.Blob> result;
             if (intent.getBooleanExtra("findExact", false)) {
-                result = app.findExact(lookupKey, refererSlobId);
+                result = app.findExact(lookupKey, slobId);
             }
             else {
-                result = app.find(lookupKey, refererSlobId);
+                result = app.find(lookupKey, slobId);
             }
             if (!result.hasNext()) {
                 Toast.makeText(this, "Not found", Toast.LENGTH_SHORT).show();

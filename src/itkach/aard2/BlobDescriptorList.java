@@ -188,12 +188,12 @@ final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
         bd.createdAt = System.currentTimeMillis();
         bd.lastAccess = bd.createdAt;
         Uri uri = Uri.parse(contentUrl);
-        bd.key = uri.getLastPathSegment();
-        bd.slobId = uri.getQueryParameter("slob");
+        List<String> pathSegments = uri.getPathSegments();
+        bd.key = pathSegments.get(pathSegments.size() - 1);
+        bd.slobId = pathSegments.get(pathSegments.size() - 2);
         bd.blobId = uri.getQueryParameter("blob");
         bd.fragment = uri.getFragment();
-        Slob slob = app.getSlob(bd.slobId);
-        String slobUri = app.getURI(slob);
+        String slobUri = app.getSlobURI(bd.slobId);
         bd.slobUri = slobUri;
         return bd;
     }

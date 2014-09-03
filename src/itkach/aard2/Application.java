@@ -153,23 +153,12 @@ public class Application extends android.app.Application {
     }
 
     String getUrl(Blob blob) {
-        return String.format(
-                "http://localhost:%s/content/%s?slob=%s&blob=%s#%s", port,
-                Uri.encode(blob.key), blob.owner.getId(), blob.id,
-                blob.fragment);
-    }
-
-    String getUrl(String key) {
-        return String.format("http://localhost:%s/content/%s", port,
-                Uri.encode(key));
+        return String.format("http://localhost:%s%s",
+                port, Slobber.mkContentURL(blob));
     }
 
     Slob getSlob(String slobId) {
         return slobber.getSlob(slobId);
-    }
-
-    List<Slob> getSlobs() {
-        return slobber.getSlobs();
     }
 
     private Thread discoveryThread;
@@ -201,25 +190,14 @@ public class Application extends android.app.Application {
         discoveryThread.start();
     }
 
-
-    String getURI(Slob slob) {
-        Map<String, String> tags = slob.getTags();
-        String uri = tags.get("uri");
-        if (uri == null) {
-            uri = "slob:" + slob.getId();
-        }
-        return uri;
+    Slob findSlob(String slobOrUri) {
+        return slobber.findSlob(slobOrUri);
     }
 
-    Slob findSlob(String slobURI) {
-        List<Slob> slobs = getSlobs();
-        for (Slob s : slobs) {
-            if (getURI(s).equals(slobURI)) {
-                return s;
-            }
-        }
-        return null;
+    String getSlobURI(String slobId) {
+        return  slobber.getSlobURI(slobId);
     }
+
 
     void addBookmark(String contentURL) {
         bookmarks.add(contentURL);
@@ -241,4 +219,5 @@ public class Application extends android.app.Application {
     String getLookupQuery() {
         return lookupQuery;
     }
+
 }
