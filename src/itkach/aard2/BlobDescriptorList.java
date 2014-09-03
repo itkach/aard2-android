@@ -8,6 +8,8 @@ import android.util.Log;
 import com.ibm.icu.text.CollationKey;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -189,8 +191,14 @@ final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
         bd.lastAccess = bd.createdAt;
         Uri uri = Uri.parse(contentUrl);
         List<String> pathSegments = uri.getPathSegments();
-        bd.key = pathSegments.get(pathSegments.size() - 1);
-        bd.slobId = pathSegments.get(pathSegments.size() - 2);
+        int segmentCount = pathSegments.size();
+        bd.key = pathSegments.get(segmentCount - 1);
+        try {
+            bd.key = URLDecoder.decode(bd.key, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        }
+        bd.slobId = pathSegments.get(segmentCount - 2);
         bd.blobId = uri.getQueryParameter("blob");
         bd.fragment = uri.getFragment();
         String slobUri = app.getSlobURI(bd.slobId);
