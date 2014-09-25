@@ -20,7 +20,7 @@ import java.util.TimerTask;
 
 import itkach.slob.Slob;
 
-public class LookupFragment extends BaseListFragment {
+public class LookupFragment extends BaseListFragment implements LookupListener {
 
     private Timer       timer;
     private SearchView  searchView;
@@ -40,12 +40,15 @@ public class LookupFragment extends BaseListFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Application app = (Application) getActivity().getApplication();
+        app.addLookupListener(this);
+
         String query = null;
         if (savedInstanceState != null) {
             query = savedInstanceState.getString("lookupQuery", "");
         }
         else {
-            Application app = (Application) getActivity().getApplication();
+
             query = app.getLookupQuery();
         }
         if (query == null) {
@@ -114,23 +117,10 @@ public class LookupFragment extends BaseListFragment {
                         getActivity().runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                setBusy(true);
-                            }
-                        });
-                        final Application app = (Application) getActivity()
-                                .getApplication();
-                        final Iterator<Slob.Blob> result;
-                        if (query == null || query.equals("")) {
-                            result = new ArrayList<Slob.Blob>().iterator();
-                        } else {
-                            result = app.find(query);
-                        }
-                        getActivity().runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                app.setLookupResult(query, result);
+                                Application app = (Application) getActivity()
+                                        .getApplication();
                                 currentQuery = query;
-                                setBusy(false);
+                                app.lookup(query);
                             }
                         });
                         scheduledLookup = null;
@@ -191,6 +181,8 @@ public class LookupFragment extends BaseListFragment {
     @Override
     public void onDestroy() {
         timer.cancel();
+        Application app = (Application) getActivity().getApplication();
+        app.removeLookupListener(this);
         super.onDestroy();
     }
 
@@ -200,5 +192,20 @@ public class LookupFragment extends BaseListFragment {
         if (searchView != null) {
             searchView.setQuery(query, true);
         }
+    }
+
+    @Override
+    public void onLookupStarted(String query) {
+        setBusy(true);
+    }
+
+    @Override
+    public void onLookupFinished(String query) {
+        setBusy(false);
+    }
+
+    @Override
+    public void onLookupCanceled(String query) {
+        setBusy(false);
     }
 }

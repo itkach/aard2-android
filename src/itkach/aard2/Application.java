@@ -3,6 +3,7 @@ package itkach.aard2;
 import android.app.Activity;
 import android.database.DataSetObserver;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
@@ -105,12 +106,7 @@ public class Application extends android.app.Application {
                     }
                 }
                 slobber.setSlobs(slobs);
-
-                //FIXME run in background, set LookupFragment's busy indicator
-                if (lookupQuery != null && !lookupQuery.equals("")) {
-                    Iterator<Slob.Blob> result = find(lookupQuery);
-                    lastResult.setData(result);
-                }
+                lookup(lookupQuery);
                 bookmarks.notifyDataSetChanged();
                 history.notifyDataSetChanged();
             }
@@ -211,13 +207,77 @@ public class Application extends android.app.Application {
         return bookmarks.contains(contentURL);
     }
 
-    void setLookupResult(String query, Iterator<Slob.Blob> data) {
+    private void setLookupResult(String query, Iterator<Slob.Blob> data) {
         this.lastResult.setData(data);
         lookupQuery = query;
     }
 
     String getLookupQuery() {
         return lookupQuery;
+    }
+
+    private AsyncTask<Void, Void, Iterator<Blob>> currentLookupTask;
+
+    public void lookup(final String query) {
+        if (currentLookupTask != null) {
+            currentLookupTask.cancel(false);
+            notifyLookupCanceled(query);
+            currentLookupTask = null;
+        }
+        notifyLookupStarted(query);
+        if (query == null || query.equals("")) {
+            setLookupResult("", new ArrayList<Slob.Blob>().iterator());
+            notifyLookupFinished(query);
+            return;
+        }
+
+        currentLookupTask = new AsyncTask<Void, Void, Iterator<Blob>>() {
+
+            @Override
+            protected Iterator<Blob> doInBackground(Void... params) {
+                return find(query);
+            }
+
+            @Override
+            protected void onPostExecute(Iterator<Blob> result) {
+                if (!isCancelled()) {
+                    setLookupResult(query, result);
+                    notifyLookupFinished(query);
+                    currentLookupTask = null;
+                }
+            }
+
+        };
+
+        currentLookupTask.execute();
+    }
+
+    private void notifyLookupStarted(String query) {
+        for (LookupListener l : lookupListeners) {
+            l.onLookupStarted(query);
+        }
+    }
+
+    private void notifyLookupFinished(String query) {
+        for (LookupListener l : lookupListeners) {
+            l.onLookupFinished(query);
+        }
+    }
+
+    private void notifyLookupCanceled (String query) {
+        for (LookupListener l : lookupListeners) {
+            l.onLookupCanceled(query);
+        }
+    }
+
+    private List<LookupListener> lookupListeners = new ArrayList<LookupListener>();
+
+    void addLookupListener(LookupListener listener){
+        lookupListeners.add(listener);
+    }
+
+    void removeLookupListener(LookupListener listener){
+        lookupListeners.remove(listener);
     }
 
 }
