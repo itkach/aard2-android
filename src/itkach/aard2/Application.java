@@ -1,6 +1,7 @@
 package itkach.aard2;
 
 import android.app.Activity;
+import android.content.SharedPreferences;
 import android.database.DataSetObserver;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -29,8 +30,6 @@ import itkach.slobber.Slobber;
 
 public class Application extends android.app.Application {
 
-
-
     private Slobber                         slobber;
 
     BlobDescriptorList                      bookmarks;
@@ -47,7 +46,7 @@ public class Application extends android.app.Application {
 
     private ObjectMapper                    mapper;
 
-    private String                          lookupQuery;
+    private String                          lookupQuery = "";
 
     private List<Activity>                  articleActivities;
 
@@ -84,6 +83,9 @@ public class Application extends android.app.Application {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+
+        String initialQuery = prefs().getString("query", "");
+
         lastResult = new BlobListAdapter(this);
 
         dictionaries = new SlobDescriptorList(this, dictStore);
@@ -113,8 +115,13 @@ public class Application extends android.app.Application {
         });
 
         dictionaries.load();
+        lookup(initialQuery, false);
         bookmarks.load();
         history.load();
+    }
+
+    private SharedPreferences prefs() {
+        return this.getSharedPreferences("app", Activity.MODE_PRIVATE);
     }
 
     void push(Activity activity) {
@@ -177,7 +184,6 @@ public class Application extends android.app.Application {
                     @Override
                     public void run() {
                         dictionaries.addAll(result);
-                        //slobber.setSlobs(result);
                         callback.onDiscoveryFinished();
                     }
                 });
@@ -210,6 +216,9 @@ public class Application extends android.app.Application {
     private void setLookupResult(String query, Iterator<Slob.Blob> data) {
         this.lastResult.setData(data);
         lookupQuery = query;
+        SharedPreferences.Editor edit = prefs().edit();
+        edit.putString("query", query);
+        edit.apply();
     }
 
     String getLookupQuery() {
@@ -218,7 +227,11 @@ public class Application extends android.app.Application {
 
     private AsyncTask<Void, Void, Iterator<Blob>> currentLookupTask;
 
-    public void lookup(final String query) {
+    public void lookup(String query) {
+        this.lookup(query, true);
+    }
+
+    private void lookup(final String query, boolean async) {
         if (currentLookupTask != null) {
             currentLookupTask.cancel(false);
             notifyLookupCanceled(query);
@@ -231,25 +244,30 @@ public class Application extends android.app.Application {
             return;
         }
 
-        currentLookupTask = new AsyncTask<Void, Void, Iterator<Blob>>() {
+        if (async) {
+            currentLookupTask = new AsyncTask<Void, Void, Iterator<Blob>>() {
 
-            @Override
-            protected Iterator<Blob> doInBackground(Void... params) {
-                return find(query);
-            }
-
-            @Override
-            protected void onPostExecute(Iterator<Blob> result) {
-                if (!isCancelled()) {
-                    setLookupResult(query, result);
-                    notifyLookupFinished(query);
-                    currentLookupTask = null;
+                @Override
+                protected Iterator<Blob> doInBackground(Void... params) {
+                    return find(query);
                 }
-            }
 
-        };
+                @Override
+                protected void onPostExecute(Iterator<Blob> result) {
+                    if (!isCancelled()) {
+                        setLookupResult(query, result);
+                        notifyLookupFinished(query);
+                        currentLookupTask = null;
+                    }
+                }
 
-        currentLookupTask.execute();
+            };
+            currentLookupTask.execute();
+        }
+        else {
+            setLookupResult(query, find(query));
+            notifyLookupFinished(query);
+        }
     }
 
     private void notifyLookupStarted(String query) {
