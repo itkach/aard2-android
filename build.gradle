@@ -81,6 +81,7 @@ dependencies {
     compile 'com.fasterxml.jackson.core:jackson-annotations:2.4+'
     compile project(':slobj')
     compile project(':slobber')
+    compile project(':slobber').files('libs/simple-5.1.7.1.itkach.jar')
     compile project(':fdrawable')
     compile files('libs/android-support-v13.jar')
  }
