@@ -149,6 +149,11 @@ public class ArticleCollectionActivity extends FragmentActivity {
                 articleCollectionPagerAdapter.getCount() == 1 ? ViewGroup.GONE : ViewGroup.VISIBLE);
 
         int position = intent.getIntExtra("position", 0);
+        if (position > articleCollectionPagerAdapter.getCount() - 1) {
+            Toast.makeText(this, "Selected article is not available", Toast.LENGTH_SHORT).show();
+            this.finish();
+            return;
+        }
         viewPager = (ViewPager) findViewById(R.id.pager);
         viewPager.setAdapter(articleCollectionPagerAdapter);
         viewPager.setOnPageChangeListener(new OnPageChangeListener(){
