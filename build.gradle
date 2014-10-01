@@ -82,5 +82,5 @@ dependencies {
     compile project(':slobj')
     compile project(':slobber')
     compile project(':fdrawable')
-    compile files('libs/android-support-v4.jar')
+    compile files('libs/android-support-v13.jar')
  }
