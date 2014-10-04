@@ -3,6 +3,10 @@
   comes with redesigned user interface, bookmarks, history and a
   better [[https://github.com/itkach/slob][dictionary storage format]].
 
+** Download
+   [[https://github.com/itkach/aard2-android/releases][Aard2 for Android]]
+   [[https://github.com/itkach/slob/wiki/Dictionaries][Dictionaries]]
+
 ** Developing
 
   Aard2 is built with [[http://www.gradle.org][Gradle]], make sure to install it first (Gradle
