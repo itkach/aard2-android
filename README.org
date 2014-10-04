@@ -4,8 +4,9 @@
   better [[https://github.com/itkach/slob][dictionary storage format]].
 
 ** Download
-   [[https://github.com/itkach/aard2-android/releases][Aard2 for Android]]
-   [[https://github.com/itkach/slob/wiki/Dictionaries][Dictionaries]]
+
+   - [[https://github.com/itkach/aard2-android/releases][Aard2 for Android]]
+   - [[https://github.com/itkach/slob/wiki/Dictionaries][Dictionaries]]
 
 ** Developing
 
