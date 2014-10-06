@@ -3,6 +3,10 @@
           android:title="@string/action_find_in_page"
           android:showAsAction="never" 
           />
+    <item android:id="@+id/action_select_style"
+          android:title="@string/action_select_style"
+          android:showAsAction="never"
+        />
     <item android:id="@+id/action_zoom_in"
           android:title="@string/action_zoom_in"
           android:showAsAction="never"

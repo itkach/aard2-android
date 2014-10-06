@@ -5,22 +5,30 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
-import android.os.Handler;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.StringWriter;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 public class ArticleWebView extends WebView {
 
+    private final StyleTitlesReceiver styleReceiver;
+
+    private final String styleSwitcherJs;
     String TAG = getClass().getName();
 
     private static final String PREF_TEXT_ZOOM = "textZoom";
+    private static final String PREF_STYLE = "style.";
 
     String initialUrl;
     Set<String> externalSchemes = new HashSet<String>(){
@@ -41,10 +49,18 @@ public class ArticleWebView extends WebView {
     public ArticleWebView(Context context, AttributeSet attrs) {
         super(context, attrs);
 
+        styleSwitcherJs = Application.styleSwitcherJs;
+
         WebSettings settings = this.getSettings();
         settings.setJavaScriptEnabled(true);
         settings.setBuiltInZoomControls(true);
         settings.setDisplayZoomControls(false);
+
+        styleReceiver = new StyleTitlesReceiver(
+                getResources().getString(R.string.default_style_title));
+
+        this.addJavascriptInterface(styleReceiver, "android");
+
         //Hardware rendering is buggy
         //https://code.google.com/p/android/issues/detail?id=63738
         this.setLayerType(LAYER_TYPE_SOFTWARE, null);
@@ -53,6 +69,9 @@ public class ArticleWebView extends WebView {
             @Override
             public void onPageFinished(WebView view, String url) {
                 Log.d(TAG, "Page finished: " + url);
+                view.loadUrl("javascript:"+styleSwitcherJs);
+                view.loadUrl("javascript:android.setTitles($styleSwitcher.getTitles())");
+                applyStylePref();
             }
 
             @Override
@@ -83,10 +102,21 @@ public class ArticleWebView extends WebView {
 
                 Log.d("NOT overriding loading of", url);
                 return false;
-            };
+            }
         });
 
         applyTextZoomPref();
+    }
+
+
+    String[] getAvailableStyles() {
+        return styleReceiver.titles;
+    }
+
+    void setStyle(String styleTitle) {
+        saveStylePref(styleTitle);
+        this.loadUrl(
+         String.format("javascript:$styleSwitcher.setStyle('%s')", styleTitle));
     }
 
     private SharedPreferences prefs() {
@@ -115,6 +145,48 @@ public class ArticleWebView extends WebView {
         if (!success) {
             Log.w(getClass().getName(), "Failed to save article view text zoom pref");
         }
+    }
+
+    private String getCurrentSlobId() {
+        String url = this.getUrl();
+        if (url == null) {
+            return null;
+        }
+        Uri uri = Uri.parse(url);
+        List<String> pathSegments = uri.getPathSegments();
+        if (pathSegments.size() < 2) {
+            return null;
+        }
+        return pathSegments.get(1);
+    }
+
+    void saveStylePref(String styleTitle) {
+        String slobId = getCurrentSlobId();
+        if (slobId == null) {
+            return;
+        }
+        SharedPreferences prefs = prefs();
+        String prefName = PREF_STYLE + slobId;
+        String currentPref = prefs.getString(prefName, "");
+        if (currentPref.equals(styleTitle)) {
+            return;
+        }
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(prefName, styleTitle);
+        boolean success = editor.commit();
+        if (!success) {
+            Log.w(getClass().getName(), "Failed to save article view style pref");
+        }
+    }
+
+    void applyStylePref() {
+        String slobId = getCurrentSlobId();
+        if (slobId == null) {
+            return;
+        }
+        SharedPreferences prefs = prefs();
+        String styleTitle = prefs.getString(PREF_STYLE + slobId, "");
+        this.setStyle(styleTitle);
     }
 
     boolean textZoomIn() {

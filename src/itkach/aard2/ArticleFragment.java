@@ -1,6 +1,8 @@
 package itkach.aard2;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -93,6 +95,20 @@ public class ArticleFragment extends Fragment {
             view.resetTextZoom();
             return true;
         }
+        if (itemId == R.id.action_select_style) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            final String[] styleTitles = view.getAvailableStyles();
+            builder.setTitle(R.string.select_style)
+                    .setItems(styleTitles, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            String title = styleTitles[which];
+                            view.setStyle(title);
+                        }
+                    });
+            AlertDialog dialog = builder.create();
+            dialog.show();
+            return true;
+        }
         return super.onOptionsItemSelected(item);
     }
 
@@ -135,17 +151,25 @@ public class ArticleFragment extends Fragment {
     public void onResume() {
         super.onResume();
         applyTextZoomPref();
+        applyStylePref();
     }
 
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
         applyTextZoomPref();
+        applyStylePref();
     }
 
     void applyTextZoomPref() {
         if (view != null) {
             view.applyTextZoomPref();
+        }
+    }
+
+    void applyStylePref() {
+        if (view != null) {
+            view.applyStylePref();
         }
     }
 

@@ -19,7 +19,7 @@ repositories {
 }
 
 android {
-    compileSdkVersion 15
+    compileSdkVersion 19
     buildToolsVersion "19.1.0"
 
     defaultConfig {
@@ -84,4 +84,4 @@ dependencies {
     compile project(':slobber').files('libs/simple-5.1.7.1.itkach.jar')
     compile project(':fdrawable')
     compile files('libs/android-support-v13.jar')
- }
+}

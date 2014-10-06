@@ -2,6 +2,7 @@ package itkach.aard2;
 
 import android.app.Activity;
 import android.content.SharedPreferences;
+import android.content.res.AssetFileDescriptor;
 import android.database.DataSetObserver;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -14,9 +15,17 @@ import android.webkit.WebView;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.StringReader;
+import java.io.StringWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -50,6 +59,8 @@ public class Application extends android.app.Application {
 
     private List<Activity>                  articleActivities;
 
+    static String styleSwitcherJs;
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -80,6 +91,21 @@ public class Application extends android.app.Application {
                     "history", MODE_PRIVATE));
             slobber = new Slobber();
             slobber.start("127.0.0.1", port);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        try {
+            InputStream is = getClass().getClassLoader().getResourceAsStream("styleswitcher.js");
+            InputStreamReader reader = new InputStreamReader(is, "UTF-8");
+            StringWriter sw = new StringWriter();
+            int c;
+            while ((c = reader.read()) != -1) {
+                sw.write(c);
+            }
+            reader.close();
+            styleSwitcherJs = sw.toString();
+
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
