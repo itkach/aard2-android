@@ -1,12 +1,14 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
+    <item android:id="@+id/action_bookmark_article"
+          android:title="@string/action_bookmark_article"
+          android:checkable="true"
+          android:checked="false"
+          android:showAsAction="always"
+        />
     <item android:id="@+id/action_find_in_page"
           android:title="@string/action_find_in_page"
           android:showAsAction="never" 
           />
-    <item android:id="@+id/action_select_style"
-          android:title="@string/action_select_style"
-          android:showAsAction="never"
-        />
     <item android:id="@+id/action_zoom_in"
           android:title="@string/action_zoom_in"
           android:showAsAction="never"
@@ -21,10 +23,9 @@
           android:showAsAction="never"
         />
 
-    <item android:id="@+id/action_bookmark_article"
-          android:title="@string/action_bookmark_article"
-          android:checkable="true" 
-          android:checked="false"
-          android:showAsAction="always"
-          />
+    <item android:id="@+id/action_select_style"
+          android:title="@string/action_select_style"
+          android:showAsAction="never"
+        />
+
 </menu>
