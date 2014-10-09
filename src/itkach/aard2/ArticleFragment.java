@@ -27,6 +27,7 @@ public class ArticleFragment extends Fragment {
     private MenuItem miBookmark;
     private Drawable icBookmark;
     private Drawable icBookmarkO;
+    private String url;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -40,15 +41,6 @@ public class ArticleFragment extends Fragment {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.article, menu);
         miBookmark = menu.findItem(R.id.action_bookmark_article);
-        String url = view.getUrl();
-        Application app = (Application)getActivity().getApplication();
-        try {
-            displayBookmarked(app.isBookmarked(url));
-        }
-        catch (Exception ex) {
-            miBookmark.setVisible(false);
-           Log.d(getTag(), "Not bookmarable: " + url, ex);
-        }
     }
 
     private void displayBookmarked(boolean value) {
@@ -71,13 +63,12 @@ public class ArticleFragment extends Fragment {
         }
         if (itemId == R.id.action_bookmark_article) {
             Application app = (Application)getActivity().getApplication();
-            String url = view.getUrl();
-            if (url != null) {
+            if (this.url != null) {
                 if (item.isChecked()) {
-                    app.removeBookmark(url);
+                    app.removeBookmark(this.url);
                     displayBookmarked(false);
                 } else {
-                    app.addBookmark(view.getUrl());
+                    app.addBookmark(this.url);
                     displayBookmarked(true);
                 }
             }
@@ -120,7 +111,7 @@ public class ArticleFragment extends Fragment {
         view = (ArticleWebView)layout.findViewById(R.id.webView);
         view.restoreState(savedInstanceState);
         Bundle args = getArguments();
-        String url = args == null ? null : args.getString(ARG_URL);
+        this.url = args == null ? null : args.getString(ARG_URL);
         if (url != null) {
             view.loadUrl(url);
         }
@@ -129,9 +120,9 @@ public class ArticleFragment extends Fragment {
         }
         view.setWebChromeClient(new WebChromeClient() {
             public void onProgressChanged(WebView view, final int newProgress) {
-                final Activity acitivity = getActivity();
-                if (acitivity != null) {
-                    acitivity.runOnUiThread(new Runnable() {
+                final Activity activity = getActivity();
+                if (activity != null) {
+                    activity.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             progressBar.setProgress(newProgress);
@@ -157,6 +148,15 @@ public class ArticleFragment extends Fragment {
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
+        Application app = (Application)getActivity().getApplication();
+        try {
+            Log.d(getTag(), String.format("Is %s bookmarked? %s", this.url, app.isBookmarked(this.url)));
+            displayBookmarked(app.isBookmarked(this.url));
+        }
+        catch (Exception ex) {
+            miBookmark.setVisible(false);
+            Log.d(getTag(), "Not bookmarkable: " + this.url, ex);
+        }
         applyTextZoomPref();
         applyStylePref();
     }
