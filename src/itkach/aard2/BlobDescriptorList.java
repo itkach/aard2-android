@@ -160,14 +160,13 @@ final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
     }
 
     Slob.Blob resolve(BlobDescriptor bd) {
-        bd.lastAccess = System.currentTimeMillis();
-        store.save(bd);
         Slob slob = resolveOwner(bd);
         Slob.Blob blob = null;
         if (slob == null) {
             return null;
         }
-        if (slob.getId().toString().equals(bd.slobId)) {
+        String slobId = slob.getId().toString();
+        if (slobId.equals(bd.slobId)) {
             try {
                 blob = new Slob.Blob(slob, bd.blobId, bd.key, bd.fragment,
                         slob.get(bd.blobId));
@@ -179,7 +178,13 @@ final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
                     Slob.Strength.QUATERNARY);
             if (result.hasNext()) {
                 blob = result.next();
+                bd.slobId = slobId;
+                bd.blobId = blob.id;
             }
+        }
+        if (blob != null) {
+            bd.lastAccess = System.currentTimeMillis();
+            store.save(bd);
         }
         return blob;
     }
