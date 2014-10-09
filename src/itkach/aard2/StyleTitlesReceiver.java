@@ -18,10 +18,6 @@ public class StyleTitlesReceiver {
 
     @JavascriptInterface
     public void setTitles(String[] titles) {
-        Log.i("T", "Got style titles: " + titles);
-        if (titles == null) {
-            titles = DEFAULT;
-        }
         Log.d(getClass().getName(),
                 String.format("Got %d style titles", titles.length));
         this.titles = concat(DEFAULT, titles);
