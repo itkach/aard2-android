@@ -13,6 +13,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
@@ -34,7 +35,7 @@ public class MainActivity extends FragmentActivity implements
                         getString(R.string.icon_dictionary), });
 
         final ActionBar actionBar = getActionBar();
-        actionBar.setHomeButtonEnabled(false);
+        actionBar.setHomeButtonEnabled(true);
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 
         mViewPager = (ViewPager) findViewById(R.id.pager);
@@ -120,6 +121,20 @@ public class MainActivity extends FragmentActivity implements
     @Override
     public void onTabReselected(ActionBar.Tab tab,
             FragmentTransaction fragmentTransaction) {
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                Intent intent = new Intent(this,
+                        ArticleCollectionActivity.class);
+                intent.setAction("random");
+                startActivity(intent);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     public static final class BookmarksFragment extends

@@ -31,6 +31,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import itkach.fdrawable.TypefaceManager;
 import itkach.slob.Slob;
@@ -60,6 +61,8 @@ public class Application extends android.app.Application {
     private List<Activity>                  articleActivities;
 
     static String styleSwitcherJs;
+
+    private Random random = new Random();
 
     @Override
     public void onCreate() {
@@ -179,6 +182,16 @@ public class Application extends android.app.Application {
     Iterator<Blob> findExact(String key, String slobId) {
         Slob slob = slobber.getSlob(slobId);
         return slob.find(key, Slob.Strength.IDENTICAL);
+    }
+
+    Blob random() {
+        Slob[] slobs = slobber.getSlobs();
+        if (slobs.length > 0) {
+            Slob slob = slobs[random.nextInt(slobs.length)];
+            int size = slob.size();
+            return slob.get(random.nextInt(size));
+        }
+        return null;
     }
 
     String getUrl(Blob blob) {

@@ -39,6 +39,7 @@ import android.view.Window;
 import android.widget.BaseAdapter;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -95,7 +96,21 @@ public class ArticleCollectionActivity extends FragmentActivity {
         }
         else {
             String action = intent.getAction();
-            if (action != null && action.equals("showBookmarks")) {
+            if (action != null && action.equals("random")) {
+                Blob blob = app.random();
+                if (blob == null) {
+                    Toast.makeText(this, "Nothing found", Toast.LENGTH_SHORT).show();
+                    this.finish();
+                    return;
+                }
+                BlobListAdapter data = new BlobListAdapter(this);
+                List<Blob> result = new ArrayList<Blob>();
+                result.add(blob);
+                data.setData(result);
+                articleCollectionPagerAdapter = new ArticleCollectionPagerAdapter(
+                        app, data, blobToBlob, getSupportFragmentManager());
+            }
+            else if (action != null && action.equals("showBookmarks")) {
                 articleCollectionPagerAdapter = new ArticleCollectionPagerAdapter(
                         app, new BlobDescriptorListAdapter(app.bookmarks), new ToBlob() {
                             @Override
