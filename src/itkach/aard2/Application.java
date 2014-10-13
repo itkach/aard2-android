@@ -185,13 +185,7 @@ public class Application extends android.app.Application {
     }
 
     Blob random() {
-        Slob[] slobs = slobber.getSlobs();
-        if (slobs.length > 0) {
-            Slob slob = slobs[random.nextInt(slobs.length)];
-            int size = slob.size();
-            return slob.get(random.nextInt(size));
-        }
-        return null;
+        return slobber.findRandom();
     }
 
     String getUrl(Blob blob) {
