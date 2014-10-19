@@ -1,10 +1,5 @@
 <resources>
     <string name="app_name">Aard 2</string>
-    <string name="icon_search">&#xf002;</string>
-    <string name="icon_star">&#xf005;</string>
-    <string name="icon_history">&#xf017;</string>
-    <string name="icon_dictionary">&#xf02d;</string>
-
     <string name="subtitle_lookup">Lookup</string>
     <string name="subtitle_bookmark">Bookmarks</string>
     <string name="subtitle_history">History</string>
@@ -32,4 +27,10 @@
     <string name="action_select_style">Style...</string>
     <string name="select_style">Select style</string>
     <string name="default_style_title">Default</string>
+    <string name="subtitle_settings">Settings</string>
+    <string name="select_remote_content_mode">Load Remote Content</string>
+    <string name="setting_remote_content_always">Always</string>
+    <string name="setting_remote_content_wifi">When on Wi-Fi</string>
+    <string name="setting_remote_content_never">Never</string>
+    <string name="setting_remote_content">Load Remote Content</string>
 </resources>

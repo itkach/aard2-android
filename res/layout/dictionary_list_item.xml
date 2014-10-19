@@ -1,4 +1,4 @@
-<itkach.aard2.CheckableRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android" 
+<itkach.aard2.CheckableRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:paddingBottom="6dip"

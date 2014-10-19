@@ -4,17 +4,19 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
-import java.io.IOException;
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -27,8 +29,13 @@ public class ArticleWebView extends WebView {
     private final String styleSwitcherJs;
     String TAG = getClass().getName();
 
+    static final String PREF = "articleView";
     private static final String PREF_TEXT_ZOOM = "textZoom";
     private static final String PREF_STYLE = "style.";
+    static final String PREF_REMOTE_CONTENT = "remoteContent";
+    static final String PREF_REMOTE_CONTENT_ALWAYS = "always";
+    static final String PREF_REMOTE_CONTENT_WIFI = "wifi";
+    static final String PREF_REMOTE_CONTENT_NEVER = "never";
 
     String initialUrl;
     Set<String> externalSchemes = new HashSet<String>(){
@@ -44,7 +51,6 @@ public class ArticleWebView extends WebView {
     public ArticleWebView(Context context) {
         this(context, null);
     }
-
 
     public ArticleWebView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -72,6 +78,42 @@ public class ArticleWebView extends WebView {
                 view.loadUrl("javascript:"+styleSwitcherJs);
                 view.loadUrl("javascript:android.setTitles($styleSwitcher.getTitles())");
                 applyStylePref();
+            }
+
+            @Override
+            public WebResourceResponse shouldInterceptRequest(WebView view, String url) {
+                Log.d(TAG, "Should intercept? " + url);
+                Uri parsed;
+                try {
+                    parsed = Uri.parse(url);
+                }
+                catch (Exception e) {
+                    Log.d(TAG, "Failed to parse url: " + url, e);
+                    return super.shouldInterceptRequest(view, url);
+                }
+                if (parsed.isRelative()) {
+                    Log.d(TAG, "Relative url, not intercepting: " + url);
+                    return null;
+                }
+                String host = parsed.getHost();
+                if (host == null || host.toLowerCase().equals("localhost")) {
+                    Log.d(TAG, "Local url, not intercepting: " + url);
+                    return null;
+                }
+                if (allowRemoteContent(getContext())) {
+                    Log.d(TAG, String.format("Remote content from %s is allowed", url));
+                    return null;
+                }
+                String msg = String.format("Remote content from %s is not allowed", url);
+                Log.d(TAG, msg);
+                byte[] msgBytes;
+                try {
+                    msgBytes = msg.getBytes("UTF-8");
+                } catch (UnsupportedEncodingException e) {
+                    throw new RuntimeException(e);
+                }
+                InputStream inputStream = new ByteArrayInputStream(msgBytes);
+                return new WebResourceResponse("text/plain", "UTF-8", inputStream);
             }
 
             @Override
@@ -108,6 +150,31 @@ public class ArticleWebView extends WebView {
         applyTextZoomPref();
     }
 
+    boolean allowRemoteContent(Context context) {
+        SharedPreferences prefs = this.prefs();
+        String prefValue = prefs.getString(PREF_REMOTE_CONTENT, PREF_REMOTE_CONTENT_WIFI);
+        Log.d(TAG, "Remote content preference: " + prefValue);
+        if (prefValue.equals(PREF_REMOTE_CONTENT_ALWAYS)) {
+            return true;
+        }
+        if (prefValue.equals(PREF_REMOTE_CONTENT_NEVER)) {
+            return false;
+        }
+        if (prefValue.equals(PREF_REMOTE_CONTENT_WIFI)) {
+            ConnectivityManager cm = (ConnectivityManager) context
+                    .getSystemService(Context.CONNECTIVITY_SERVICE);
+
+            NetworkInfo networkInfo = cm.getActiveNetworkInfo();
+            if (networkInfo != null) {
+                int networkType = networkInfo.getType();
+                if (networkType == ConnectivityManager.TYPE_WIFI ||
+                        networkType == ConnectivityManager.TYPE_ETHERNET) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 
     String[] getAvailableStyles() {
         return styleReceiver.titles;
@@ -120,7 +187,7 @@ public class ArticleWebView extends WebView {
     }
 
     private SharedPreferences prefs() {
-        return getContext().getSharedPreferences("articleView", Activity.MODE_PRIVATE);
+        return getContext().getSharedPreferences(PREF, Activity.MODE_PRIVATE);
     }
 
     @Override

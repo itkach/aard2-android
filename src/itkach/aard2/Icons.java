@@ -17,6 +17,7 @@ public enum Icons {
     BOOKMARK_O(0xf097),
     HISTORY(0xf1da),
     DICTIONARY(0xf02d),
+    SETTINGS(0xf013),
     REFRESH(0xf021),
     FILTER(0xf0b0),
     SORT_DESC(0xf161),

@@ -28,11 +28,7 @@ public class MainActivity extends FragmentActivity implements
         setContentView(R.layout.activity_main);
 
         mAppSectionsPagerAdapter = new AppSectionsPagerAdapter(
-                getSupportFragmentManager(), new String[] {
-                        getString(R.string.icon_search),
-                        getString(R.string.icon_star),
-                        getString(R.string.icon_history),
-                        getString(R.string.icon_dictionary), });
+                getSupportFragmentManager());
 
         final ActionBar actionBar = getActionBar();
         actionBar.setHomeButtonEnabled(true);
@@ -46,7 +42,9 @@ public class MainActivity extends FragmentActivity implements
                 getString(R.string.subtitle_lookup),
                 getString(R.string.subtitle_bookmark),
                 getString(R.string.subtitle_history),
-                getString(R.string.subtitle_dictionaries), };
+                getString(R.string.subtitle_dictionaries),
+                getString(R.string.subtitle_settings),
+        };
 
         mViewPager
                 .setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
@@ -57,13 +55,14 @@ public class MainActivity extends FragmentActivity implements
                     }
                 });
 
-        Drawable[] tabIcons = new Drawable[4];
+        Drawable[] tabIcons = new Drawable[5];
         Application app = (Application)getApplication();
 
         tabIcons[0] = Icons.SEARCH.forTab();
         tabIcons[1] = Icons.BOOKMARK.forTab();
         tabIcons[2] = Icons.HISTORY.forTab();
         tabIcons[3] = Icons.DICTIONARY.forTab();
+        tabIcons[4] = Icons.SETTINGS.forTab();
         // For each of the sections in the app, add a tab to the action bar.
         for (int i = 0; i < mAppSectionsPagerAdapter.getCount(); i++) {
             Tab tab = actionBar.newTab();
@@ -102,7 +101,10 @@ public class MainActivity extends FragmentActivity implements
     @Override
     public void onTabUnselected(ActionBar.Tab tab,
             FragmentTransaction fragmentTransaction) {
-        ((BaseListFragment)mAppSectionsPagerAdapter.getItem(tab.getPosition())).finishActionMode();
+        Fragment frag = mAppSectionsPagerAdapter.getItem(tab.getPosition());
+        if (frag instanceof BaseListFragment) {
+            ((BaseListFragment)frag).finishActionMode();
+        }
         if (tab.getPosition() == 0) {
             View v = this.getCurrentFocus();
             if (v != null){
@@ -186,25 +188,22 @@ public class MainActivity extends FragmentActivity implements
     }
 
     public static class AppSectionsPagerAdapter extends FragmentPagerAdapter {
-
-        private String[]                   titles;
         private Fragment[]                 fragments;
         private LookupFragment             tabLookup;
         private BlobDescriptorListFragment tabBookmarks;
         private BlobDescriptorListFragment tabHistory;
         private DictionariesFragment       tabDictionaries;
+        private SettingsFragment           tabSettings;
 
-        public AppSectionsPagerAdapter(FragmentManager fm, String[] titles) {
+        public AppSectionsPagerAdapter(FragmentManager fm) {
             super(fm);
-            this.titles = titles;
             tabLookup = new LookupFragment();
             tabBookmarks = new BookmarksFragment();
-
             tabHistory = new HistoryFragment();
-
             tabDictionaries = new DictionariesFragment();
+            tabSettings = new SettingsFragment();
             fragments = new Fragment[] { tabLookup, tabBookmarks, tabHistory,
-                    tabDictionaries };
+                    tabDictionaries, tabSettings };
         }
 
         @Override
@@ -214,12 +213,12 @@ public class MainActivity extends FragmentActivity implements
 
         @Override
         public int getCount() {
-            return titles.length;
+            return fragments.length;
         }
 
         @Override
         public CharSequence getPageTitle(int position) {
-            return titles[position];
+            return "";
         }
     }
 }
