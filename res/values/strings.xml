@@ -33,4 +33,11 @@
     <string name="setting_remote_content_wifi">When on Wi-Fi</string>
     <string name="setting_remote_content_never">Never</string>
     <string name="setting_remote_content">Load Remote Content</string>
+    <string name="setting_about">About %1$s</string>
+    <string name="application_home_url">http://aarddict.org</string>
+    <string name="application_copyright">\u00a9 2014 Igor Tkach</string>
+    <string name="application_license_name">GNU General Public License v3</string>
+    <string name="application_license_url">https://gnu.org/licenses/gpl.html</string>
+    <string name="application_license"><![CDATA[<strong>License:</strong> <a href="%1$s">%2$s</a>]]></string>
+    <string name="application_version"><![CDATA[<strong>Version:</strong> %1$s]]></string>
 </resources>
