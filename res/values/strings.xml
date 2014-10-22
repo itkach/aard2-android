@@ -40,4 +40,7 @@
     <string name="application_license_url">https://gnu.org/licenses/gpl.html</string>
     <string name="application_license"><![CDATA[<strong>License:</strong> <a href="%1$s">%2$s</a>]]></string>
     <string name="application_version"><![CDATA[<strong>Version:</strong> %1$s]]></string>
+    <string name="setting_clear_cache">Clear Cache</string>
+    <string name="setting_clear_cache_subtitle">Delete cached content including remote images</string>
+    <string name="confirm_clear_cached_content">Clear cached content?</string>
 </resources>

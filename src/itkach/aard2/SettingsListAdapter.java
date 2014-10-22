@@ -1,7 +1,9 @@
 package itkach.aard2;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
@@ -12,6 +14,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebView;
 import android.widget.BaseAdapter;
 import android.widget.RadioButton;
 import android.widget.TextView;
@@ -23,7 +26,7 @@ public class SettingsListAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return 2;
+        return 3;
     }
 
     @Override
@@ -50,7 +53,8 @@ public class SettingsListAdapter extends BaseAdapter {
     public View getView(int i, View convertView, ViewGroup parent) {
         switch (i) {
             case 0: return getRemoteContentSettingsView(convertView, parent);
-            case 1: return getAboutView(convertView, parent);
+            case 1: return getClearCacheView(convertView, parent);
+            case 2: return getAboutView(convertView, parent);
         }
         return null;
     }
@@ -109,6 +113,42 @@ public class SettingsListAdapter extends BaseAdapter {
             btnWiFi.setChecked(currentValue.equals(ArticleWebView.PREF_REMOTE_CONTENT_WIFI));
             btnNever.setChecked(currentValue.equals(ArticleWebView.PREF_REMOTE_CONTENT_NEVER));
         };
+        return view;
+    }
+
+    private View getClearCacheView(View convertView, ViewGroup parent) {
+        View view;
+        if (convertView != null) {
+            view = convertView;
+        }
+        else {
+            final Context context = parent.getContext();
+            LayoutInflater inflater = (LayoutInflater) context
+                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            view = inflater.inflate(R.layout.settings_clear_cache_item, parent,
+                    false);
+            view.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                    builder.setMessage(R.string.confirm_clear_cached_content)
+                            .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    WebView webView = new WebView(context);
+                                    webView.clearCache(true);
+                                }
+                            })
+                            .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    // User cancelled the dialog
+                                }
+                            });
+                    // Create the AlertDialog object and return it
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
+                }
+            });
+        }
         return view;
     }
 
