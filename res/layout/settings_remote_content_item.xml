@@ -3,10 +3,10 @@
         android:id="@+id/settings_item"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingBottom="6dip"
+        android:paddingBottom="8dip"
         android:paddingLeft="8dip"
         android:paddingRight="8dip"
-        android:paddingTop="3dip"
+        android:paddingTop="6dip"
         android:background="@android:drawable/list_selector_background"
         >
         <TextView
