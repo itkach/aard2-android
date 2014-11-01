@@ -6,27 +6,34 @@ import android.net.Uri;
 import android.util.Log;
 
 import com.ibm.icu.text.CollationKey;
+import com.ibm.icu.text.Collator;
+import com.ibm.icu.text.RuleBasedCollator;
+import com.ibm.icu.text.StringSearch;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.text.StringCharacterIterator;
 import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 
 import itkach.slob.Slob;
 
 final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
 
-    static enum SortOrder {
-        TIME, NAME
-    }
 
+
+    static enum SortOrder {
+        TIME, NAME;
+    }
     private Application                     app;
+
     private DescriptorStore<BlobDescriptor> store;
     private List<BlobDescriptor>            list;
     private List<BlobDescriptor>            filteredList;
@@ -42,6 +49,7 @@ final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
     private Comparator<BlobDescriptor>      lastAccessComparator;
     private Slob.KeyComparator              keyComparator;
     private int                             maxSize;
+    private RuleBasedCollator               filterCollator;
 
     BlobDescriptorList(Application app, DescriptorStore<BlobDescriptor> store) {
         this(app, store, 100);
@@ -95,6 +103,15 @@ final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
         order = SortOrder.TIME;
         ascending = false;
         setSort(order, ascending);
+
+        try {
+            filterCollator = (RuleBasedCollator) Collator.getInstance(Locale.ROOT).clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeException(e);
+        }
+        filterCollator.setStrength(Collator.PRIMARY);
+        filterCollator.setAlternateHandlingShifted(true);
+
     }
 
     public void registerDataSetObserver(DataSetObserver observer) {
@@ -111,20 +128,15 @@ final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
      */
     public void notifyDataSetChanged() {
         this.filteredList.clear();
-        Slob.KeyComparator weakComparator = Slob.COMPARATORS
-                .get(Slob.Strength.PRIMARY);
-        CollationKey filterKey = weakComparator.getCollationKey(filter);
-        byte[] nullTerminatedPattern = filterKey.toByteArray();
-        if (nullTerminatedPattern.length == 1) {
+        if (filter == null || filter.length() == 0) {
             this.filteredList.addAll(this.list);
         }
         else {
-            byte[] pattern = new byte[nullTerminatedPattern.length - 1];
-            System.arraycopy(nullTerminatedPattern, 0, pattern, 0, pattern.length);
             for (BlobDescriptor bd : this.list) {
-                byte[] data = weakComparator.getCollationKey(bd.key).toByteArray();
-                //data.length-1 to ignore last byte which is 0
-                if (KPM.indexOf(data, 0, data.length - 1, pattern) > -1) {
+                StringSearch stringSearch = new StringSearch(
+                        filter, new StringCharacterIterator(bd.key), filterCollator);
+                int matchPos = stringSearch.first();
+                if (matchPos != StringSearch.DONE) {
                     this.filteredList.add(bd);
                 }
             }

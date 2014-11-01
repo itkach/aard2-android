@@ -66,7 +66,7 @@ com/ibm/icu/impl/data/icudt53b/bo_CN.res
 com/ibm/icu/impl/data/icudt53b/bo_IN.res
 com/ibm/icu/impl/data/icudt53b/br.res
 com/ibm/icu/impl/data/icudt53b/br_FR.res
-com/ibm/icu/impl/data/icudt53b/brkitr/char.brk
+#com/ibm/icu/impl/data/icudt53b/brkitr/char.brk
 com/ibm/icu/impl/data/icudt53b/brkitr/cjdict.dict
 com/ibm/icu/impl/data/icudt53b/brkitr/de.res
 com/ibm/icu/impl/data/icudt53b/brkitr/el.res
@@ -85,8 +85,8 @@ com/ibm/icu/impl/data/icudt53b/brkitr/line.brk
 com/ibm/icu/impl/data/icudt53b/brkitr/line_fi.brk
 com/ibm/icu/impl/data/icudt53b/brkitr/line_ja.brk
 com/ibm/icu/impl/data/icudt53b/brkitr/pt.res
-com/ibm/icu/impl/data/icudt53b/brkitr/res_index.res
-com/ibm/icu/impl/data/icudt53b/brkitr/root.res
+#com/ibm/icu/impl/data/icudt53b/brkitr/res_index.res
+#com/ibm/icu/impl/data/icudt53b/brkitr/root.res
 com/ibm/icu/impl/data/icudt53b/brkitr/ru.res
 com/ibm/icu/impl/data/icudt53b/brkitr/sent.brk
 com/ibm/icu/impl/data/icudt53b/brkitr/sent_el.brk
@@ -94,6 +94,7 @@ com/ibm/icu/impl/data/icudt53b/brkitr/thaidict.dict
 com/ibm/icu/impl/data/icudt53b/brkitr/title.brk
 com/ibm/icu/impl/data/icudt53b/brkitr/word.brk
 com/ibm/icu/impl/data/icudt53b/brkitr/word_POSIX.brk
+
 com/ibm/icu/impl/data/icudt53b/brx.res
 com/ibm/icu/impl/data/icudt53b/brx_IN.res
 com/ibm/icu/impl/data/icudt53b/bs.res
