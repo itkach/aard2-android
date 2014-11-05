@@ -1,0 +1,46 @@
+<resources>
+    <string name="app_name" translatable="false">Aard 2</string>
+    <string name="subtitle_lookup">РџРѕРёСЃРє</string>
+    <string name="subtitle_bookmark">Р—Р°РєР»Р°РґРєРё</string>
+    <string name="subtitle_history">РСЃС‚РѕСЂРёСЏ</string>
+    <string name="subtitle_dictionaries">РЎР»РѕРІР°СЂРё</string>
+        
+    <string name="action_find_dictionaries">РџРµСЂРµСЃРєР°РЅРёСЂРѕРІР°С‚СЊ</string>
+    <string name="action_find_in_page">РќР°Р№С‚Рё РЅР° СЃС‚СЂР°РЅРёС†Рµ</string>
+    <string name="action_bookmark_article">Р—Р°РєР»Р°РґРєР°</string>
+    <string name="action_filter_bookmarks">Р¤РёР»СЊС‚СЂ</string>
+    <string name="action_filter_history">Р¤РёР»СЊС‚СЂ</string>
+    <string name="action_filter">Р¤РёР»СЊС‚СЂ</string>
+    <string name="action_ascending">РџРѕ РІРѕР·СЂР°СЃС‚Р°РЅРёСЋ</string>
+    <string name="action_descending">РџРѕ СѓР±С‹РІР°РЅРёСЋ</string>
+    
+    <string name="action_sort_by_title">РџРѕ РЅР°Р·РІР°РЅРёСЋ</string>
+    <string name="action_sort_by_time">РџРѕ РґР°С‚Рµ</string>
+    <string name="action_lookup">РџРѕРёСЃРє</string>
+    
+    <string name="dict_label"><![CDATA[<big><b>%1$s</b></big>]]></string>
+    <string name="dict_path"><![CDATA[<small>%1$s</small>]]></string>
+    <string name="dict_item_count"><![CDATA[%1$,d СЃС‚Р°С‚СЊРё(-РµР№)]]></string>
+    <string name="action_zoom_out">РЈРјРµРЅСЊС€РёС‚СЊZoom Out</string>
+    <string name="action_zoom_in">РЈРІРµР»РёС‡РёС‚СЊ</string>
+    <string name="action_zoom_reset">РЎР±СЂРѕСЃ РјР°СЃС€С‚Р°Р±Р°</string>
+    <string name="action_select_style">РЎС‚РёР»СЊ...</string>
+    <string name="select_style">Р’С‹Р±СЂР°С‚СЊ СЃС‚РёР»СЊ</string>
+    <string name="default_style_title">РџРѕ СѓРјРѕР»С‡Р°РЅРёСЋ</string>
+    <string name="subtitle_settings">РќР°СЃС‚СЂРѕР№РєРё</string>
+    <string name="select_remote_content_mode">Р—Р°РіСЂСѓР¶Р°С‚СЊ СѓРґР°Р»РµРЅРЅРѕРµ СЃРѕРґРµСЂР¶РёРјРѕРµ</string>
+    <string name="setting_remote_content_always">Р’СЃРµРіРґР°</string>
+    <string name="setting_remote_content_wifi">РўРѕР»СЊРєРѕ РїРѕ Wi-Fi</string>
+    <string name="setting_remote_content_never">РќРёРєРѕРіРґР°</string>
+    <string name="setting_remote_content">Р—Р°РіСЂСѓР·РєР° СЃРµС‚РµРІРѕРіРѕ СЃРѕРґРµСЂР¶РёРјРѕРіРѕ</string>
+    <string name="setting_about">Рћ %1$s</string>
+    <string name="application_home_url" translatable="false">http://aarddict.org</string>
+    <string name="application_copyright" translatable="false">\u00a9 2014 Igor Tkach</string>
+    <string name="application_license_name" translatable="false">GNU General Public License v3</string>
+    <string name="application_license_url" translatable="false">https://gnu.org/licenses/gpl.html</string>
+    <string name="application_license"><![CDATA[<strong>Р›РёС†РµРЅР·РёСЏ РїСЂРѕРіСЂР°РјРјС‹:</strong> <a href="%1$s">%2$s</a>]]></string>
+    <string name="application_version"><![CDATA[<strong>Р’РµСЂСЃРёСЏ РїСЂРѕРіСЂР°РјРјС‹:</strong> %1$s]]></string>
+    <string name="setting_clear_cache">РћС‡РёСЃС‚РєР° РєСЌС€Р°</string>
+    <string name="setting_clear_cache_subtitle">РЈРґР°Р»РµРЅРёРµ РєСЌС€РёСЂРѕРІР°РЅРЅРѕРіРѕ СЃРѕРґРµСЂР¶РёРјРѕРіРѕ (РІРєР»СЋС‡Р°СЏ СЃРµС‚РµРІС‹Рµ РёР·РѕР±СЂР°Р¶РµРЅРёСЏ)</string>
+    <string name="confirm_clear_cached_content">РћС‡РёСЃС‚РёС‚СЊ РєСЌС€РёСЂРѕРІР°РЅРЅРѕРµ СЃРѕРґРµСЂР¶РёРјРѕРµ?</string>
+</resources>
