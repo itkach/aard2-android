@@ -13,12 +13,10 @@
         android:name="itkach.aard2.Application"
         android:icon="@drawable/aard2"
         android:theme="@android:style/Theme.Holo.Light.DarkActionBar">
- 
-        <activity android:name="itkach.aard2.MainActivity" 
+
+        <activity android:name=".MainActivity"
                   android:label="@string/app_name"
-                  android:launchMode="singleTop"
-                  android:windowSoftInputMode="stateHidden"
-                  >
+                  android:windowSoftInputMode="stateHidden">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -26,20 +24,18 @@
         </activity>
         
         <activity 
-            android:name="itkach.aard2.ArticleCollectionActivity"
+            android:name=".ArticleCollectionActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize|smallestScreenSize"
-            />
-
-        <activity android:name=".ArticleCollectionActivityExternal"
-                  android:configChanges="keyboard|keyboardHidden|orientation|screenSize|smallestScreenSize"
-                  android:excludeFromRecents="true"
-                  android:taskAffinity="itkach.aard2.external">
+            android:excludeFromRecents="true">
             <intent-filter>
-                <action android:name="android.intent.action.SEARCH" />
+                <action android:name="aard2.lookup" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
                 <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
                 <data android:mimeType="text/plain" />
             </intent-filter>
         </activity>

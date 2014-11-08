@@ -121,7 +121,7 @@ public class ArticleWebView extends WebView {
                     final String url) {
                 Log.d(TAG, String.format("shouldOverrideUrlLoading: %s (current %s, initial %s)",
                         url, view.getUrl(), initialUrl));
-                String referer = view.getUrl();
+                //String referer = view.getUrl();
                 Uri uri = Uri.parse(url);
                 String scheme = uri.getScheme();
                 String host = uri.getHost();
@@ -136,7 +136,7 @@ public class ArticleWebView extends WebView {
                 if (scheme.equals("http") && host.equals("localhost") && uri.getQueryParameter("blob") == null) {
                       Intent intent = new Intent(getContext(), ArticleCollectionActivity.class);
                       intent.setData(uri);
-                      intent.putExtra("referer", referer);
+                      //intent.putExtra("referer", referer);
                       getContext().startActivity(intent);
                       Log.d("Overriding loading of", url);
                       return true;

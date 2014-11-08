@@ -42,7 +42,6 @@ public class LookupFragment extends BaseListFragment implements LookupListener {
         super.onCreate(savedInstanceState);
         app = (Application) getActivity().getApplication();
         app.addLookupListener(this);
-        setQuery(app.getLookupQuery());
     }
 
     @Override
@@ -153,7 +152,8 @@ public class LookupFragment extends BaseListFragment implements LookupListener {
         if (!busy) {
             TextView emptyText = ((TextView)emptyView.findViewById(R.id.empty_text));
             String msg = "";
-            if (searchView.getQuery() != null && !searchView.getQuery().toString().equals("")) {
+            String query = app.getLookupQuery();
+            if (query != null && !query.toString().equals("")) {
                 msg = "Nothing found";
             }
             emptyText.setText(msg);
@@ -168,20 +168,18 @@ public class LookupFragment extends BaseListFragment implements LookupListener {
         super.onDestroy();
     }
 
-    public void setQuery(String query) {
-        if (searchView != null) {
-            searchView.setQuery(query, true);
-        }
-    }
-
     @Override
     public void onLookupStarted(String query) {
         setBusy(true);
+
     }
 
     @Override
     public void onLookupFinished(String query) {
         setBusy(false);
+        if (searchView != null) {
+            searchView.setQuery(query, false);
+        }
     }
 
     @Override

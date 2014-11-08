@@ -2,9 +2,7 @@ package itkach.aard2;
 
 import android.app.Activity;
 import android.content.SharedPreferences;
-import android.content.res.AssetFileDescriptor;
 import android.database.DataSetObserver;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Handler;
@@ -15,25 +13,17 @@ import android.webkit.WebView;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.io.FileInputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.StringReader;
 import java.io.StringWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Random;
 
-import itkach.fdrawable.TypefaceManager;
 import itkach.slob.Slob;
 import itkach.slob.Slob.Blob;
 import itkach.slobber.Slobber;
@@ -61,8 +51,6 @@ public class Application extends android.app.Application {
     private List<Activity>                  articleActivities;
 
     static String styleSwitcherJs;
-
-    private Random random = new Random();
 
     @Override
     public void onCreate() {
@@ -177,11 +165,6 @@ public class Application extends android.app.Application {
                 slobber.getSlobs(), Slob.Strength.QUATERNARY.level);
         Log.d(getClass().getName(), String.format("find ran in %dms", System.currentTimeMillis() - t0));
         return result;
-    }
-
-    Iterator<Blob> findExact(String key, String slobId) {
-        Slob slob = slobber.getSlob(slobId);
-        return slob.find(key, Slob.Strength.IDENTICAL);
     }
 
     Blob random() {

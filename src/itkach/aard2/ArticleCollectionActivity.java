@@ -72,94 +72,33 @@ public class ArticleCollectionActivity extends FragmentActivity {
 
         Uri articleUrl = intent.getData();
         if (articleUrl != null) {
-            List<String> pathSegments = articleUrl.getPathSegments();
-            int segmentCount = pathSegments.size();
-            String lookupKey = pathSegments.get(segmentCount - 1);
-            String slobId = pathSegments.get(segmentCount - 2);
-
-            Iterator<Slob.Blob> result;
-            if (intent.getBooleanExtra("findExact", false)) {
-                result = app.findExact(lookupKey, slobId);
-            }
-            else {
-                result = app.find(lookupKey, slobId);
-            }
-            if (!result.hasNext()) {
-                Toast.makeText(this, "Not found", Toast.LENGTH_SHORT).show();
-                this.finish();
-                return;
-            }
-            BlobListAdapter data = new BlobListAdapter(this);
-            data.setData(result);
-            articleCollectionPagerAdapter = new ArticleCollectionPagerAdapter(
-                    app, data, blobToBlob, getSupportFragmentManager());
+            articleCollectionPagerAdapter = createFromUri(app, articleUrl);
         }
         else {
             String action = intent.getAction();
-            if (action != null && action.equals("random")) {
-                Blob blob = app.random();
-                if (blob == null) {
-                    Toast.makeText(this, "Nothing found", Toast.LENGTH_SHORT).show();
-                    this.finish();
-                    return;
-                }
-                BlobListAdapter data = new BlobListAdapter(this);
-                List<Blob> result = new ArrayList<Blob>();
-                result.add(blob);
-                data.setData(result);
-                articleCollectionPagerAdapter = new ArticleCollectionPagerAdapter(
-                        app, data, blobToBlob, getSupportFragmentManager());
+            if (action == null) {
+                articleCollectionPagerAdapter = createFromLastResult(app);
             }
-            else if (action != null && action.equals("showBookmarks")) {
-                articleCollectionPagerAdapter = new ArticleCollectionPagerAdapter(
-                        app, new BlobDescriptorListAdapter(app.bookmarks), new ToBlob() {
-                            @Override
-                            public Blob convert(Object item) {
-                                return app.bookmarks.resolve((BlobDescriptor)item);
-                            }
-                        }, getSupportFragmentManager());
-
+            else if (action.equals("showRandom")) {
+                articleCollectionPagerAdapter = createFromRandom(app);
             }
-            else if (action != null && action.equals("showHistory")) {
-                articleCollectionPagerAdapter = new ArticleCollectionPagerAdapter(
-                        app, new BlobDescriptorListAdapter(app.history), new ToBlob() {
-                            @Override
-                            public Blob convert(Object item) {
-                                return app.history.resolve((BlobDescriptor)item);
-                            }
-                        }, getSupportFragmentManager());
-
+            else if (action.equals("showBookmarks")) {
+                articleCollectionPagerAdapter = createFromBookmarks(app);
             }
-            else if (action != null && (action.equals(Intent.ACTION_SEND) || action.equals(Intent.ACTION_SEARCH)) ) {
-                String lookupKey = "";
-                if (action.equals(Intent.ACTION_SEND)) {
-                    lookupKey = intent.getStringExtra(Intent.EXTRA_TEXT);
-                }
-                else {
-                    lookupKey = intent.getStringExtra(SearchManager.QUERY);
-                }
-                Iterator<Slob.Blob> result = null;
-                if (!lookupKey.equals("")) {
-                    result = app.find(lookupKey, null);
-                }
-                if (result == null || !result.hasNext()) {
-                    Toast.makeText(this, "Not found", Toast.LENGTH_SHORT).show();
-                    Intent lookupIntent = new Intent(this, MainActivity.class);
-                    lookupIntent.putExtra(SearchManager.QUERY, lookupKey);
-                    startActivity(lookupIntent);
-                    this.finish();
-                    return;
-                }
-                BlobListAdapter data = new BlobListAdapter(this);
-                data.setData(result);
-                articleCollectionPagerAdapter = new ArticleCollectionPagerAdapter(
-                        app, data, blobToBlob, getSupportFragmentManager());
+            else if (action.equals("showHistory")) {
+                articleCollectionPagerAdapter = createFromHistory(app);
             }
             else {
-                articleCollectionPagerAdapter = new ArticleCollectionPagerAdapter(
-                        app, app.lastResult, blobToBlob, getSupportFragmentManager());
+                articleCollectionPagerAdapter = createFromIntent(app, intent);
             }
         }
+
+        if (articleCollectionPagerAdapter == null || articleCollectionPagerAdapter.getCount() == 0) {
+            Toast.makeText(this, "Nothing found", Toast.LENGTH_SHORT).show();
+            this.finish();
+            return;
+        }
+
         findViewById(R.id.pager_title_strip).setVisibility(
                 articleCollectionPagerAdapter.getCount() == 1 ? ViewGroup.GONE : ViewGroup.VISIBLE);
 
@@ -174,16 +113,10 @@ public class ArticleCollectionActivity extends FragmentActivity {
         viewPager.setOnPageChangeListener(new OnPageChangeListener(){
 
             @Override
-            public void onPageScrollStateChanged(int arg0) {
-                // TODO Auto-generated method stub
-
-            }
+            public void onPageScrollStateChanged(int arg0) {}
 
             @Override
-            public void onPageScrolled(int arg0, float arg1, int arg2) {
-                // TODO Auto-generated method stub
-
-            }
+            public void onPageScrolled(int arg0, float arg1, int arg2) {}
 
             @Override
             public void onPageSelected(final int position) {
@@ -210,6 +143,79 @@ public class ArticleCollectionActivity extends FragmentActivity {
                 }
             }
         });
+    }
+
+    private ArticleCollectionPagerAdapter createFromUri(Application app, Uri articleUrl) {
+        List<String> pathSegments = articleUrl.getPathSegments();
+        int segmentCount = pathSegments.size();
+        String lookupKey = pathSegments.get(segmentCount - 1);
+        String slobId = pathSegments.get(segmentCount - 2);
+        Iterator<Slob.Blob> result = app.find(lookupKey, slobId);
+        BlobListAdapter data = new BlobListAdapter(this);
+        data.setData(result);
+        return new ArticleCollectionPagerAdapter(
+                app, data, blobToBlob, getSupportFragmentManager());
+    };
+
+    private ArticleCollectionPagerAdapter createFromLastResult(Application app) {
+        return new ArticleCollectionPagerAdapter(
+                app, app.lastResult, blobToBlob, getSupportFragmentManager());
+    }
+
+    private ArticleCollectionPagerAdapter createFromBookmarks(final Application app) {
+        return new ArticleCollectionPagerAdapter(
+                app, new BlobDescriptorListAdapter(app.bookmarks), new ToBlob() {
+            @Override
+            public Blob convert(Object item) {
+                return app.bookmarks.resolve((BlobDescriptor)item);
+            }
+        }, getSupportFragmentManager());
+    }
+
+    private ArticleCollectionPagerAdapter createFromHistory(final Application app) {
+        return new ArticleCollectionPagerAdapter(
+                app, new BlobDescriptorListAdapter(app.history), new ToBlob() {
+            @Override
+            public Blob convert(Object item) {
+                return app.history.resolve((BlobDescriptor)item);
+            }
+        }, getSupportFragmentManager());
+    }
+
+    private ArticleCollectionPagerAdapter createFromRandom(Application app) {
+        BlobListAdapter data = new BlobListAdapter(this);
+        List<Blob> result = new ArrayList<Blob>();
+        Blob blob = app.random();
+        if (blob != null) {
+            result.add(blob);
+        }
+        data.setData(result);
+        return new ArticleCollectionPagerAdapter(
+                app, data, blobToBlob, getSupportFragmentManager());
+    }
+
+    private ArticleCollectionPagerAdapter createFromIntent(Application app, Intent intent) {
+        String lookupKey = intent.getStringExtra(Intent.EXTRA_TEXT);
+        if (lookupKey == null) {
+            lookupKey = intent.getStringExtra(SearchManager.QUERY);
+        }
+        BlobListAdapter data = new BlobListAdapter(this);
+        if (lookupKey == null || lookupKey.length() == 0) {
+            Toast.makeText(this, "Nothing to look up", Toast.LENGTH_SHORT).show();
+        }
+        else {
+            Iterator<Slob.Blob> result;
+            do {
+                result = app.find(lookupKey, null);
+                if (result.hasNext()) {
+                    break;
+                }
+                lookupKey = lookupKey.substring(0, lookupKey.length() - 1);
+            } while (lookupKey.length() > 0);
+            data.setData(result);
+        }
+        return new ArticleCollectionPagerAdapter(
+                app, data, blobToBlob, getSupportFragmentManager());
     }
 
     private void updateTitle(int position) {
@@ -247,19 +253,9 @@ public class ArticleCollectionActivity extends FragmentActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
         case android.R.id.home:
-            // This is called when the Home (Up) button is pressed in the action
-            // bar.
-            // Create a simple intent that starts the hierarchical parent
-            // activity and
-            // use NavUtils in the Support Package to ensure proper handling of
-            // Up.
             Intent upIntent = new Intent(this, MainActivity.class);
             if (NavUtils.shouldUpRecreateTask(this, upIntent)) {
-                // This activity is not part of the application's task, so
-                // create a new task
-                // with a synthesized back stack.
-                TaskStackBuilder.from(this)
-                // If there are ancestor activities, they should be added here.
+                TaskStackBuilder.create(this)
                         .addNextIntent(upIntent).startActivities();
                 finish();
             } else {

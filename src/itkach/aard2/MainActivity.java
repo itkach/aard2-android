@@ -16,6 +16,7 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Toast;
 
 public class MainActivity extends FragmentActivity implements
         ActionBar.TabListener {
@@ -56,7 +57,7 @@ public class MainActivity extends FragmentActivity implements
                 });
 
         Drawable[] tabIcons = new Drawable[5];
-        Application app = (Application)getApplication();
+        final Application app = (Application)getApplication();
 
         tabIcons[0] = Icons.SEARCH.forTab();
         tabIcons[1] = Icons.BOOKMARK.forTab();
@@ -71,13 +72,6 @@ public class MainActivity extends FragmentActivity implements
             actionBar.addTab(tab);
         }
 
-        Intent intent = getIntent();
-        String query = intent.getStringExtra(SearchManager.QUERY);
-        if (query != null && !query.equals("")) {
-            mViewPager.setCurrentItem(0);
-            LookupFragment lookupFragment = (LookupFragment)mAppSectionsPagerAdapter.getItem(0);
-            lookupFragment.setQuery(query);
-        }
         if (savedInstanceState != null) {
             onRestoreInstanceState(savedInstanceState);
         } else {
@@ -131,7 +125,7 @@ public class MainActivity extends FragmentActivity implements
             case android.R.id.home:
                 Intent intent = new Intent(this,
                         ArticleCollectionActivity.class);
-                intent.setAction("random");
+                intent.setAction("showRandom");
                 startActivity(intent);
                 return true;
             default:
