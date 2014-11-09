@@ -2,6 +2,7 @@ package itkach.aard2;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.app.SearchManager;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
@@ -19,6 +20,7 @@ public class DictionariesFragment extends BaseListFragment {
 
 
     private DictionaryListAdapter listAdapter;
+    private AlertDialog           deleteConfirmationDialog = null;
 
     protected Icons getEmptyIcon() {
         return Icons.DICTIONARY;
@@ -47,7 +49,7 @@ public class DictionariesFragment extends BaseListFragment {
                 String countStr = getResources().getQuantityString(R.plurals.selected_dict_count,
                         checkedCount, checkedCount);
                 String message = getString(R.string.dictionaries_confirm_forget, countStr);
-                new AlertDialog.Builder(getActivity())
+                deleteConfirmationDialog = new AlertDialog.Builder(getActivity())
                         .setIcon(android.R.drawable.ic_dialog_alert)
                         .setTitle("")
                         .setMessage(message)
@@ -59,7 +61,14 @@ public class DictionariesFragment extends BaseListFragment {
                             }
                         })
                         .setNegativeButton(android.R.string.no, null)
-                        .show();
+                        .create();
+                deleteConfirmationDialog.setOnDismissListener(new DialogInterface.OnDismissListener(){
+                    @Override
+                    public void onDismiss(DialogInterface dialogInterface) {
+                        deleteConfirmationDialog = null;
+                    }
+                });
+                deleteConfirmationDialog.show();
                 return true;
             case R.id.dictionary_select_all:
                 int itemCount = listView.getCount();
@@ -135,6 +144,14 @@ public class DictionariesFragment extends BaseListFragment {
             Uri uri = Uri.parse(source);
             Intent browserIntent = new Intent(Intent.ACTION_VIEW, uri);
             startActivity(browserIntent);
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (deleteConfirmationDialog != null) {
+            deleteConfirmationDialog.dismiss();
         }
     }
 }

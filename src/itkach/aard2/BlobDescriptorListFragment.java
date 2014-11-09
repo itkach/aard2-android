@@ -60,8 +60,14 @@ abstract class BlobDescriptorListFragment extends BaseListFragment {
                                 deleteConfirmationDialog = null;
                             }
                         })
-                        .setNegativeButton(android.R.string.no, null).show();
-
+                        .setNegativeButton(android.R.string.no, null).create();
+                deleteConfirmationDialog.setOnDismissListener(new DialogInterface.OnDismissListener(){
+                    @Override
+                    public void onDismiss(DialogInterface dialogInterface) {
+                        deleteConfirmationDialog = null;
+                    }
+                });
+                deleteConfirmationDialog.show();
                 return true;
             case R.id.blob_descriptor_select_all:
                 int itemCount = listView.getCount();
@@ -207,7 +213,6 @@ abstract class BlobDescriptorListFragment extends BaseListFragment {
         super.onPause();
         if (deleteConfirmationDialog != null) {
             deleteConfirmationDialog.dismiss();
-            deleteConfirmationDialog = null;
         }
     }
 }
