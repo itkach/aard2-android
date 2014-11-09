@@ -94,7 +94,8 @@ public class ArticleCollectionActivity extends FragmentActivity {
         }
 
         if (articleCollectionPagerAdapter == null || articleCollectionPagerAdapter.getCount() == 0) {
-            Toast.makeText(this, "Nothing found", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.article_collection_nothing_found,
+                    Toast.LENGTH_SHORT).show();
             this.finish();
             return;
         }
@@ -104,7 +105,8 @@ public class ArticleCollectionActivity extends FragmentActivity {
 
         int position = intent.getIntExtra("position", 0);
         if (position > articleCollectionPagerAdapter.getCount() - 1) {
-            Toast.makeText(this, "Selected article is not available", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.article_collection_selected_not_available,
+                    Toast.LENGTH_SHORT).show();
             this.finish();
             return;
         }
@@ -201,7 +203,7 @@ public class ArticleCollectionActivity extends FragmentActivity {
         }
         BlobListAdapter data = new BlobListAdapter(this);
         if (lookupKey == null || lookupKey.length() == 0) {
-            Toast.makeText(this, "Nothing to look up", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.article_collection_nothing_to_lookup, Toast.LENGTH_SHORT).show();
         }
         else {
             Iterator<Slob.Blob> result;

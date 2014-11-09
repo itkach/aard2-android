@@ -45,16 +45,15 @@ abstract class BlobDescriptorListFragment extends BaseListFragment {
                 new AlertDialog.Builder(getActivity())
                         .setIcon(android.R.drawable.ic_dialog_alert)
                         .setTitle("")
-                        .setMessage(String.format("Are you sure you want to delete %d items?",
-                                listView.getCheckedItemCount()))
-                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        .setMessage(getString(R.string.blob_desciptor_confirm_delete, listView.getCheckedItemCount()))
+                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 deleteSelectedItems();
                                 mode.finish();
                             }
                         })
-                        .setNegativeButton("No", null)
+                        .setNegativeButton(android.R.string.no, null)
                         .show();
                 return true;
             case R.id.blob_descriptor_select_all:

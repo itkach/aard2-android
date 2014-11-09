@@ -75,7 +75,7 @@ public class MainActivity extends FragmentActivity implements
         if (savedInstanceState != null) {
             onRestoreInstanceState(savedInstanceState);
         } else {
-            Log.d("onCreate", "saved sate is null!!!");
+            Log.d("onCreate", "saved state is null!!!");
         }
     }
 
@@ -153,7 +153,7 @@ public class MainActivity extends FragmentActivity implements
 
         @Override
         String getEmptyText() {
-            return "No bookmarks";
+            return getString(R.string.main_empty_bookmarks);
         }
     }
 
@@ -177,7 +177,7 @@ public class MainActivity extends FragmentActivity implements
 
         @Override
         String getEmptyText() {
-            return "No history";
+            return getString(R.string.main_empty_history);
         }
     }
 

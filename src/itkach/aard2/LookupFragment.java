@@ -154,7 +154,7 @@ public class LookupFragment extends BaseListFragment implements LookupListener {
             String msg = "";
             String query = app.getLookupQuery();
             if (query != null && !query.toString().equals("")) {
-                msg = "Nothing found";
+                msg = getString(R.string.lookup_nothing_found);
             }
             emptyText.setText(msg);
         }

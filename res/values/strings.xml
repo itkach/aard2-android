@@ -43,4 +43,19 @@
     <string name="setting_clear_cache">Clear Cache</string>
     <string name="setting_clear_cache_subtitle">Delete cached content including remote images</string>
     <string name="confirm_clear_cached_content">Clear cached content?</string>
+    <string name="article_collection_nothing_found">Nothing found</string>
+    <string name="article_collection_selected_not_available">Selected article is not available</string>
+    <string name="article_collection_nothing_to_lookup">Nothing to look up</string>
+    <string name="article_view_msg_not_found">Not found</string>
+    <string name="dictionaries_please_wait">Please wait</string>
+    <string name="dictionaries_scanning_device">Scanning device for dictionaries...</string>
+    <string name="dictionaries_confirm_forget">Are you sure you want to forget %1$d dictionaries?</string>
+    <string name="dict_license"><![CDATA[License: <a href=\'%1$s\'>%2$s</a>]]></string>
+    <string name="lookup_nothing_found">Nothing found</string>
+    <string name="main_empty_bookmarks">No bookmarks</string>
+    <string name="main_empty_history">No history</string>
+    <string name="main_empty_dictionaries"><![CDATA[Visit<br><a href=\'http://aarddict.org\'>http://aarddict.org</a>]]></string>
+    <string name="delete">Delete</string>
+    <string name="action_forget">Forget</string>
+    <string name="blob_desciptor_confirm_delete">Are you sure you want to delete %1$d items?</string>
 </resources>

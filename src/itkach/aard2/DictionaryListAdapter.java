@@ -72,6 +72,9 @@ public class DictionaryListAdapter extends BaseAdapter {
                 }
             });
         }
+
+        Resources r = parent.getResources();
+
         TextView titleView = (TextView) view
                 .findViewById(R.id.dictionary_label);
         titleView.setEnabled(available);
@@ -92,7 +95,7 @@ public class DictionaryListAdapter extends BaseAdapter {
             if (isBlank(licenseName)) {
                 licenseName = licenseUrl;
             }
-            license = Html.fromHtml(String.format("License: <a href='%s'>%s</a>", licenseUrl, licenseName));
+            license = Html.fromHtml(r.getString(R.string.dict_license, licenseUrl, licenseName));
         }
         licenseView.setText(license);
         licenseView.setEnabled(available);
@@ -108,7 +111,7 @@ public class DictionaryListAdapter extends BaseAdapter {
                 .findViewById(R.id.dictionary_blob_count);
         blobCountView.setEnabled(available);
         blobCountView.setVisibility(desc.error == null ? View.VISIBLE : View.GONE);
-        Resources r = parent.getResources();
+
         blobCountView.setText(format(Locale.getDefault(),
                 r.getString(R.string.dict_item_count), blobCount));
         CheckBox cb = (CheckBox) view.findViewById(R.id.dictionary_checkbox);

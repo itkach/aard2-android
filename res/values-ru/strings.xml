@@ -44,4 +44,19 @@
     <string name="setting_clear_cache">Очистка кэша</string>
     <string name="setting_clear_cache_subtitle">Удалить кэшированный контент, включая загруженные изображения</string>
     <string name="confirm_clear_cached_content">Очистить содержимое кэша?</string>
+    <string name="article_collection_nothing_found">Ничего не найдено</string>
+    <string name="article_collection_selected_not_available">Выбранная статья недоступна</string>
+    <string name="article_collection_nothing_to_lookup">Не указано что искать</string>
+    <string name="article_view_msg_not_found">Ресурс не найден</string>
+    <string name="dictionaries_please_wait">Подождите</string>
+    <string name="dictionaries_scanning_device">Идёт поиск словарей на устройстве...</string>
+    <string name="dictionaries_confirm_forget">Исключить %1$d словарей?</string>
+    <string name="dict_license"><![CDATA[Лицензия: <a href=\'%1$s\'>%2$s</a>]]></string>
+    <string name="lookup_nothing_found">Ничего не найдено</string>
+    <string name="main_empty_bookmarks">Нет закладок</string>
+    <string name="main_empty_history">Нет истории</string>
+    <string name="main_empty_dictionaries"><![CDATA[Посетите<br><a href=\'http://aarddict.org\'>http://aarddict.org</a>]]></string>
+    <string name="delete">Удалить</string>
+    <string name="action_forget">Исключить</string>
+    <string name="blob_desciptor_confirm_delete">Удалить %1$d запись?</string>
 </resources>

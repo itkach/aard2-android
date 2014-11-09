@@ -116,7 +116,7 @@ public class ArticleFragment extends Fragment {
             view.loadUrl(url);
         }
         else {
-            view.loadData("Not found", "text/plain", "utf-8");
+            view.loadData(getString(R.string.article_view_msg_not_found), "text/plain", "utf-8");
         }
         view.setWebChromeClient(new WebChromeClient() {
             public void onProgressChanged(WebView view, final int newProgress) {

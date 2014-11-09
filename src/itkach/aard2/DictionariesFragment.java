@@ -25,7 +25,7 @@ public class DictionariesFragment extends BaseListFragment {
     }
 
     protected CharSequence getEmptyText() {
-        return Html.fromHtml("Get dictionaries at <a href='http://aarddict.org'>http://aarddict.org</a>");
+        return Html.fromHtml(getString(R.string.main_empty_dictionaries));
     }
 
     @Override
@@ -47,15 +47,15 @@ public class DictionariesFragment extends BaseListFragment {
                 new AlertDialog.Builder(getActivity())
                         .setIcon(android.R.drawable.ic_dialog_alert)
                         .setTitle("")
-                        .setMessage(String.format("Are you sure you want to forget %d dictionaries?", checkedCount))
-                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        .setMessage(getString(R.string.dictionaries_confirm_forget, checkedCount))
+                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 forgetSelectedItems();
                                 mode.finish();
                             }
                         })
-                        .setNegativeButton("No", null)
+                        .setNegativeButton(android.R.string.no, null)
                         .show();
                 return true;
             case R.id.dictionary_select_all:
@@ -110,8 +110,8 @@ public class DictionariesFragment extends BaseListFragment {
         if (item.getItemId() == R.id.action_find_dictionaries) {
             final ProgressDialog p = new ProgressDialog(getActivity());
             p.setIndeterminate(true);
-            p.setTitle("Please wait");
-            p.setMessage("Scanning device for dictionaries...");
+            p.setTitle(getString(R.string.dictionaries_please_wait));
+            p.setMessage(getString(R.string.dictionaries_scanning_device));
             app.findDictionaries(new DictionaryDiscoveryCallback() {
                 @Override
                 public void onDiscoveryFinished() {

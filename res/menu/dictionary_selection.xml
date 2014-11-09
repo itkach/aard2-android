@@ -2,9 +2,9 @@
 
     <item
         android:id="@+id/dictionary_select_all"
-        android:title="Select All"/>
+        android:title="@android:string/selectAll"/>
     
     <item
         android:id="@+id/dictionary_forget"
-        android:title="Forget"/>
+        android:title="@string/action_forget"/>
 </menu>
