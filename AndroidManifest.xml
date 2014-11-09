@@ -8,14 +8,13 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <application android:label="@string/app_name"
-        android:configChanges="keyboard|keyboardHidden|orientation|screenSize|smallestScreenSize"
         android:allowBackup="true"
         android:name="itkach.aard2.Application"
         android:icon="@drawable/aard2"
         android:theme="@android:style/Theme.Holo.Light.DarkActionBar">
 
         <activity android:name=".MainActivity"
-                  android:label="@string/app_name"
+                  android:configChanges="keyboard|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
                   android:windowSoftInputMode="stateHidden">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -25,7 +24,7 @@
         
         <activity 
             android:name=".ArticleCollectionActivity"
-            android:configChanges="keyboard|keyboardHidden|orientation|screenSize|smallestScreenSize"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
             android:excludeFromRecents="true">
             <intent-filter>
                 <action android:name="aard2.lookup" />
