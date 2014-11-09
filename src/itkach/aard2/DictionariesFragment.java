@@ -44,10 +44,13 @@ public class DictionariesFragment extends BaseListFragment {
         switch (item.getItemId()) {
             case R.id.dictionary_forget:
                 int checkedCount = getListView().getCheckedItemCount();
+                String countStr = getResources().getQuantityString(R.plurals.selected_dict_count,
+                        checkedCount, checkedCount);
+                String message = getString(R.string.dictionaries_confirm_forget, countStr);
                 new AlertDialog.Builder(getActivity())
                         .setIcon(android.R.drawable.ic_dialog_alert)
                         .setTitle("")
-                        .setMessage(getString(R.string.dictionaries_confirm_forget, checkedCount))
+                        .setMessage(message)
                         .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {

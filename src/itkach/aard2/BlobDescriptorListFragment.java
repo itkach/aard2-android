@@ -38,14 +38,19 @@ abstract class BlobDescriptorListFragment extends BaseListFragment {
         return R.menu.blob_descriptor_selection;
     }
 
+    abstract int getDeleteConfirmationItemCountResId();
+
     protected boolean onSelectionActionItemClicked(final ActionMode mode, MenuItem item) {
         ListView listView = getListView();
         switch (item.getItemId()) {
             case R.id.blob_descriptor_delete:
+                int count = listView.getCheckedItemCount();
+                String countStr = getResources().getQuantityString(getDeleteConfirmationItemCountResId(), count, count);
+                String message = getString(R.string.blob_descriptor_confirm_delete, countStr);
                 new AlertDialog.Builder(getActivity())
                         .setIcon(android.R.drawable.ic_dialog_alert)
                         .setTitle("")
-                        .setMessage(getString(R.string.blob_descriptor_confirm_delete, listView.getCheckedItemCount()))
+                        .setMessage(message)
                         .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {

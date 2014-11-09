@@ -113,7 +113,8 @@ public class DictionaryListAdapter extends BaseAdapter {
         blobCountView.setVisibility(desc.error == null ? View.VISIBLE : View.GONE);
 
         blobCountView.setText(format(Locale.getDefault(),
-                r.getString(R.string.dict_item_count), blobCount));
+                r.getQuantityString(R.plurals.dict_item_count, (int)blobCount), blobCount));
+
         CheckBox cb = (CheckBox) view.findViewById(R.id.dictionary_checkbox);
         cb.setVisibility(isSelectionMode() ? View.VISIBLE : View.GONE);
         TextView errorView = (TextView) view

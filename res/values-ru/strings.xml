@@ -21,7 +21,14 @@
     
     <string name="dict_label"><![CDATA[<big><b>%1$s</b></big>]]></string>
     <string name="dict_path"><![CDATA[<small>%1$s</small>]]></string>
-    <string name="dict_item_count"><![CDATA[%1$,d статьи (-ей)]]></string>
+
+    <plurals name="dict_item_count">
+        <item quantity="zero">%,d статей</item>
+        <item quantity="one">%,d статья</item>
+        <item quantity="few">%,d статьи</item>
+        <item quantity="many">%,d статей</item>
+    </plurals>
+
     <string name="action_zoom_out">Уменьшить</string>
     <string name="action_zoom_in">Увеличить</string>
     <string name="action_zoom_reset">Сброс масштаба</string>
@@ -50,7 +57,13 @@
     <string name="article_view_msg_not_found">Ресурс не найден</string>
     <string name="dictionaries_please_wait">Подождите</string>
     <string name="dictionaries_scanning_device">Идёт поиск словарей на устройстве...</string>
-    <string name="dictionaries_confirm_forget">Исключить %1$d словарей?</string>
+    <plurals name="selected_dict_count">
+        <item quantity="zero">%,d словарей</item>
+        <item quantity="one">%,d словарь</item>
+        <item quantity="few">%,d словаря</item>
+        <item quantity="many">%,d словарей</item>
+    </plurals>
+    <string name="dictionaries_confirm_forget">Исключить %1$s?</string>
     <string name="dict_license"><![CDATA[Лицензия: <a href=\'%1$s\'>%2$s</a>]]></string>
     <string name="lookup_nothing_found">Ничего не найдено</string>
     <string name="main_empty_bookmarks">Нет закладок</string>
@@ -58,5 +71,17 @@
     <string name="main_empty_dictionaries"><![CDATA[Посетите<br><a href=\'http://aarddict.org\'>http://aarddict.org</a>]]></string>
     <string name="delete">Удалить</string>
     <string name="action_forget">Исключить</string>
-    <string name="blob_descriptor_confirm_delete">Удалить %1$d запись?</string>
+    <plurals name="confirm_delete_bookmark_count">
+        <item quantity="zero">%,d закладок</item>
+        <item quantity="one">%,d закладку</item>
+        <item quantity="few">%,d закладки</item>
+        <item quantity="many">%,d закладок</item>
+    </plurals>
+    <plurals name="confirm_delete_history_count">
+        <item quantity="zero">%,d записей</item>
+        <item quantity="one">%,d запись</item>
+        <item quantity="few">%,d записи</item>
+        <item quantity="many">%,d записей</item>
+    </plurals>
+    <string name="blob_descriptor_confirm_delete">Удалить %1$s?</string>
 </resources>

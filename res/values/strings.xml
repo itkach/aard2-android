@@ -20,7 +20,20 @@
     
     <string name="dict_label"><![CDATA[<big><b>%1$s</b></big>]]></string>
     <string name="dict_path"><![CDATA[<small>%1$s</small>]]></string>
-    <string name="dict_item_count"><![CDATA[%1$,d items]]></string>
+    <!--
+    English only uses "one" and "other" for plurals.
+    Other quantities are included as a fallback if some translation
+    is missing a quantity used in that language, otherwise the app will crash
+    -->
+    <plurals name="dict_item_count">
+        <item quantity="zero">%,d items</item>
+        <item quantity="one">%,d item</item>
+        <item quantity="two">%,d items</item>
+        <item quantity="few">%,d items</item>
+        <item quantity="many">%,d items</item>
+        <item quantity="other">%,d items</item>
+    </plurals>
+
     <string name="action_zoom_out">Zoom Out</string>
     <string name="action_zoom_in">Zoom In</string>
     <string name="action_zoom_reset">Zoom Reset</string>
@@ -49,7 +62,15 @@
     <string name="article_view_msg_not_found">Not found</string>
     <string name="dictionaries_please_wait">Please wait</string>
     <string name="dictionaries_scanning_device">Scanning device for dictionaries...</string>
-    <string name="dictionaries_confirm_forget">Are you sure you want to forget %1$d dictionaries?</string>
+    <plurals name="selected_dict_count">
+        <item quantity="zero">%,d dictionaries</item>
+        <item quantity="one">%,d dictionary</item>
+        <item quantity="two">%,d dictionaries</item>
+        <item quantity="few">%,d dictionaries</item>
+        <item quantity="many">%,d dictionaries</item>
+        <item quantity="other">%,d dictionaries</item>
+    </plurals>
+    <string name="dictionaries_confirm_forget">Are you sure you want to forget %1$s?</string>
     <string name="dict_license"><![CDATA[License: <a href=\'%1$s\'>%2$s</a>]]></string>
     <string name="lookup_nothing_found">Nothing found</string>
     <string name="main_empty_bookmarks">No bookmarks</string>
@@ -57,5 +78,21 @@
     <string name="main_empty_dictionaries"><![CDATA[Visit<br><a href=\'http://aarddict.org\'>http://aarddict.org</a>]]></string>
     <string name="delete">Delete</string>
     <string name="action_forget">Forget</string>
-    <string name="blob_descriptor_confirm_delete">Are you sure you want to delete %1$d items?</string>
+    <plurals name="confirm_delete_bookmark_count">
+        <item quantity="zero">%,d bookmarks</item>
+        <item quantity="one">%,d bookmark</item>
+        <item quantity="two">%,d bookmarks</item>
+        <item quantity="few">%,d bookmarks</item>
+        <item quantity="many">%,d bookmarks</item>
+        <item quantity="other">%,d bookmarks</item>
+    </plurals>
+    <plurals name="confirm_delete_history_count">
+        <item quantity="zero">%,d history records</item>
+        <item quantity="one">%,d history record</item>
+        <item quantity="two">%,d history records</item>
+        <item quantity="few">%,d history records</item>
+        <item quantity="many">%,d history records</item>
+        <item quantity="other">%,d history records</item>
+    </plurals>
+    <string name="blob_descriptor_confirm_delete">Are you sure you want to delete %1$s?</string>
 </resources>

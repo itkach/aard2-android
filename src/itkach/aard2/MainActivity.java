@@ -155,6 +155,11 @@ public class MainActivity extends FragmentActivity implements
         String getEmptyText() {
             return getString(R.string.main_empty_bookmarks);
         }
+
+        @Override
+        int getDeleteConfirmationItemCountResId() {
+            return R.plurals.confirm_delete_bookmark_count;
+        }
     }
 
     public static class HistoryFragment extends BlobDescriptorListFragment {
@@ -179,6 +184,12 @@ public class MainActivity extends FragmentActivity implements
         String getEmptyText() {
             return getString(R.string.main_empty_history);
         }
+
+        @Override
+        int getDeleteConfirmationItemCountResId() {
+            return R.plurals.confirm_delete_history_count;
+        }
+
     }
 
     public static class AppSectionsPagerAdapter extends FragmentPagerAdapter {
