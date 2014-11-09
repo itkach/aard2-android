@@ -24,11 +24,12 @@ abstract class BlobDescriptorListFragment extends BaseListFragment {
     private Drawable icArrowUp;
     private Drawable icArrowDown;
 
+    private BlobDescriptorListAdapter       listAdapter;
+    private AlertDialog                     deleteConfirmationDialog = null;
+
     abstract BlobDescriptorList getDescriptorList();
 
     abstract String getItemClickAction();
-
-    private BlobDescriptorListAdapter listAdapter;
 
     protected void setSelectionMode(boolean selectionMode) {
         listAdapter.setSelectionMode(selectionMode);
@@ -47,7 +48,7 @@ abstract class BlobDescriptorListFragment extends BaseListFragment {
                 int count = listView.getCheckedItemCount();
                 String countStr = getResources().getQuantityString(getDeleteConfirmationItemCountResId(), count, count);
                 String message = getString(R.string.blob_descriptor_confirm_delete, countStr);
-                new AlertDialog.Builder(getActivity())
+                deleteConfirmationDialog = new AlertDialog.Builder(getActivity())
                         .setIcon(android.R.drawable.ic_dialog_alert)
                         .setTitle("")
                         .setMessage(message)
@@ -56,10 +57,11 @@ abstract class BlobDescriptorListFragment extends BaseListFragment {
                             public void onClick(DialogInterface dialog, int which) {
                                 deleteSelectedItems();
                                 mode.finish();
+                                deleteConfirmationDialog = null;
                             }
                         })
-                        .setNegativeButton(android.R.string.no, null)
-                        .show();
+                        .setNegativeButton(android.R.string.no, null).show();
+
                 return true;
             case R.id.blob_descriptor_select_all:
                 int itemCount = listView.getCount();
@@ -199,4 +201,13 @@ abstract class BlobDescriptorListFragment extends BaseListFragment {
         return super.onOptionsItemSelected(mi);
     }
 
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (deleteConfirmationDialog != null) {
+            deleteConfirmationDialog.dismiss();
+            deleteConfirmationDialog = null;
+        }
+    }
 }
