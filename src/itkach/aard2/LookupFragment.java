@@ -173,9 +173,6 @@ public class LookupFragment extends BaseListFragment implements LookupListener {
     @Override
     public void onLookupFinished(String query) {
         setBusy(false);
-        if (searchView != null) {
-            searchView.setQuery(query, false);
-        }
     }
 
     @Override
