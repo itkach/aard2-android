@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Aard 2</string>
+    <string name="subtitle_lookup">Поиск</string>
+    <string name="subtitle_bookmark">Закладки</string>
+    <string name="subtitle_history">История</string>
+    <string name="subtitle_dictionaries">Словари</string>
+        
+    <string name="action_find_dictionaries">Обновить</string>
+    <string name="action_find_in_page">Поиск на странице</string>
+    <string name="action_bookmark_article">Закладка</string>
+    <string name="action_filter_bookmarks">Фильтр</string>
+    <string name="action_filter_history">Фильтр по истории</string>
+    <string name="action_filter">Фильтр</string>
+    <string name="action_ascending">По возрастанию</string>
+    <string name="action_descending">По убыванию</string>
+    
+    <string name="action_sort_by_title">По названию</string>
+    <string name="action_sort_by_time">По времени</string>    
+    <string name="action_lookup">Поиск</string>
+    
+    <string name="dict_label"><![CDATA[<big><b>%1$s</b></big>]]></string>
+    <string name="dict_path"><![CDATA[<small>%1$s</small>]]></string>
+    <string name="dict_item_count"><![CDATA[%1$,d статьи (-ей)]]></string>
+    <string name="action_zoom_out">Уменьшить</string>
+    <string name="action_zoom_in">Увеличить</string>
+    <string name="action_zoom_reset">Сброс масштаба</string>
+    <string name="action_select_style">Стиль...</string>
+    <string name="select_style">Выбрать стиль</string>
+    <string name="default_style_title">По умолчанию</string>
+    <string name="subtitle_settings">Настройки</string>
+    <string name="select_remote_content_mode">Загрузка удаленного содержимого</string>
+    <string name="setting_remote_content_always">Всегда</string>
+    <string name="setting_remote_content_wifi">Только по Wi-Fi</string>
+    <string name="setting_remote_content_never">Никогда</string>
+    <string name="setting_remote_content">Загрузка удаленного содержимого</string>
+    <string name="setting_about">О %1$s</string>
+    <string name="application_home_url">http://aarddict.org</string>
+    <string name="application_copyright">\u00a9 2014 Igor Tkach</string>
+    <string name="application_license_name">GNU General Public License v3</string>
+    <string name="application_license_url">https://gnu.org/licenses/gpl.html</string>
+    <string name="application_license"><![CDATA[<strong>Лицензия:</strong> <a href="%1$s">%2$s</a>]]></string>
+    <string name="application_version"><![CDATA[<strong>Версия программы:</strong> %1$s]]></string>
+    <string name="setting_clear_cache">Очистка кэша</string>
+    <string name="setting_clear_cache_subtitle">Удалить кэшированный контент, включая загруженные изображения</string>
+    <string name="confirm_clear_cached_content">Очистить содержимое кэша?</string>
+</resources>
