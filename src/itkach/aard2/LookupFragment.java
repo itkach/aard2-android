@@ -13,12 +13,8 @@ import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.TextView;
 
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.Timer;
 import java.util.TimerTask;
-
-import itkach.slob.Slob;
 
 public class LookupFragment extends BaseListFragment implements LookupListener {
 

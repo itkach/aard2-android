@@ -5,7 +5,6 @@ import android.database.DataSetObserver;
 import android.net.Uri;
 import android.util.Log;
 
-import com.ibm.icu.text.CollationKey;
 import com.ibm.icu.text.Collator;
 import com.ibm.icu.text.RuleBasedCollator;
 import com.ibm.icu.text.StringSearch;
