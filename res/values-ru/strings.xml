@@ -58,5 +58,5 @@
     <string name="main_empty_dictionaries"><![CDATA[Посетите<br><a href=\'http://aarddict.org\'>http://aarddict.org</a>]]></string>
     <string name="delete">Удалить</string>
     <string name="action_forget">Исключить</string>
-    <string name="blob_desciptor_confirm_delete">Удалить %1$d запись?</string>
+    <string name="blob_descriptor_confirm_delete">Удалить %1$d запись?</string>
 </resources>

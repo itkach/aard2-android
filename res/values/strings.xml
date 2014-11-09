@@ -57,5 +57,5 @@
     <string name="main_empty_dictionaries"><![CDATA[Visit<br><a href=\'http://aarddict.org\'>http://aarddict.org</a>]]></string>
     <string name="delete">Delete</string>
     <string name="action_forget">Forget</string>
-    <string name="blob_desciptor_confirm_delete">Are you sure you want to delete %1$d items?</string>
+    <string name="blob_descriptor_confirm_delete">Are you sure you want to delete %1$d items?</string>
 </resources>

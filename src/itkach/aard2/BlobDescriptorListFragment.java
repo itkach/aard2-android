@@ -45,7 +45,7 @@ abstract class BlobDescriptorListFragment extends BaseListFragment {
                 new AlertDialog.Builder(getActivity())
                         .setIcon(android.R.drawable.ic_dialog_alert)
                         .setTitle("")
-                        .setMessage(getString(R.string.blob_desciptor_confirm_delete, listView.getCheckedItemCount()))
+                        .setMessage(getString(R.string.blob_descriptor_confirm_delete, listView.getCheckedItemCount()))
                         .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
