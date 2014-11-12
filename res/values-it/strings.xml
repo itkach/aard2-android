@@ -1,0 +1,94 @@
+<resources>
+<string name="app_name">Aard 2</string>
+<string name="subtitle_lookup">Ricerca</string>
+<string name="subtitle_bookmark">Segnalibri</string>
+<string name="subtitle_history">Cronologia</string>
+<string name="subtitle_dictionaries">Dizionari</string>
+<string name="action_find_dictionaries">Nuova scansione</string>
+<string name="action_find_in_page">Trova nella pagina</string>
+<string name="action_bookmark_article">Segnalibro</string>
+<string name="action_filter_bookmarks">Filtro</string>
+<string name="action_filter_history">Filtro</string>
+<string name="action_filter">Filtro</string>
+<string name="action_ascending">Ascendente</string>
+<string name="action_descending">Discendente</string>
+<string name="action_sort_by_title">Per titolo</string>
+<string name="action_sort_by_time">Per data</string>
+<string name="action_lookup">Ricerca</string>
+<string name="dict_label"><![CDATA[<big><b>%1$s</b></big>]]></string>
+<string name="dict_path"><![CDATA[<small>%1$s</small>]]></string>
+<!--
+English only uses "one" and "other" for plurals.
+Other quantities are included as a fallback if some translation
+is missing a quantity used in that language, otherwise the app will crash
+-->
+<plurals name="dict_item_count">
+<item quantity="zero">%,d voci</item>
+<item quantity="one">%,d voce</item>
+<item quantity="two">%,d voci</item>
+<item quantity="few">%,d voci</item>
+<item quantity="many">%,d voci</item>
+<item quantity="other">%,d voci</item>
+</plurals>
+<string name="action_zoom_out">Ingrandisci</string>
+<string name="action_zoom_in">Riduci</string>
+<string name="action_zoom_reset">Reset zoom</string>
+<string name="action_select_style">Stile...</string>
+<string name="select_style">Seleziona stile</string>
+<string name="default_style_title">Default</string>
+<string name="subtitle_settings">Impostazioni</string>
+<string name="select_remote_content_mode">Carica contenuto remoto</string>
+<string name="setting_remote_content_always">Sempre</string>
+<string name="setting_remote_content_wifi">Solo in Wi-Fi</string>
+<string name="setting_remote_content_never">Mai</string>
+<string name="setting_remote_content">Carica contenuto remoto</string>
+<string name="setting_about">Informazioni su %1$s</string>
+<string name="application_home_url">http://aarddict.org</string>
+<string name="application_copyright">\u00a9 2014 Igor Tkach</string>
+<string name="application_license_name">GNU General Public License v3</string>
+<string name="application_license_url">https://gnu.org/licenses/gpl.html</string>
+<string name="application_license"><![CDATA[<strong>License:</strong> <a href="%1$s">%2$s</a>]]></string>
+<string name="application_version"><![CDATA[<strong>Version:</strong> %1$s]]></string>
+<string name="setting_clear_cache">Ripulisci la cache</string>
+<string name="setting_clear_cache_subtitle">Cancella il contenuto della cache (comprese le immagini remote)</string>
+<string name="confirm_clear_cached_content">Vuoi davvero ripulire la cache?</string>
+<string name="article_collection_nothing_found">Nessun risultato</string>
+<string name="article_collection_selected_not_available">La voce selezionata non è disponibile</string>
+<string name="article_collection_nothing_to_lookup">Nulla da cercare</string>
+<string name="article_view_msg_not_found">Non trovato</string>
+<string name="dictionaries_please_wait">Attendere prego...</string>
+<string name="dictionaries_scanning_device">Rilevamento di dizionari nel dispositivo in corso...</string>
+<plurals name="selected_dict_count">
+<item quantity="zero">%,d dizionari</item>
+<item quantity="one">%,d dizionario</item>
+<item quantity="two">%,d dizionari</item>
+<item quantity="few">%,d dizionari</item>
+<item quantity="many">%,d dizionari</item>
+<item quantity="other">%,d dizionari</item>
+</plurals>
+<string name="dictionaries_confirm_forget">Sei sicuro di voler dimenticare %1$s?</string>
+<string name="dict_license"><![CDATA[License: <a href=\'%1$s\'>%2$s</a>]]></string>
+<string name="lookup_nothing_found">Nessun risultato</string>
+<string name="main_empty_bookmarks">Niente egnalibri</string>
+<string name="main_empty_history">Niente cronologia</string>
+<string name="main_empty_dictionaries"><![CDATA[Visit<br><a href=\'http://aarddict.org\'>http://aarddict.org</a>]]></string>
+<string name="delete">Cancella</string>
+<string name="action_forget">Dimentica</string>
+<plurals name="confirm_delete_bookmark_count">
+<item quantity="zero">%,d segnalibri</item>
+<item quantity="one">%,d segnalibro</item>
+<item quantity="two">%,d segnalibri</item>
+<item quantity="few">%,d segnalibri</item>
+<item quantity="many">%,d segnalibri</item>
+<item quantity="other">%,d segnalibri</item>
+</plurals>
+<plurals name="confirm_delete_history_count">
+<item quantity="zero">%,d risultati</item>
+<item quantity="one">%,d risultato</item>
+<item quantity="two">%,d risultati</item>
+<item quantity="few">%,d risultati</item>
+<item quantity="many">%,d risultati</item>
+<item quantity="other">%,d risulati</item>
+</plurals>
+<string name="blob_descriptor_confirm_delete">Sei sicuro di voler cancellare %1$s?</string>
+</resources>
