@@ -69,7 +69,7 @@ is missing a quantity used in that language, otherwise the app will crash
 <string name="dictionaries_confirm_forget">Sei sicuro di voler dimenticare %1$s?</string>
 <string name="dict_license"><![CDATA[License: <a href=\'%1$s\'>%2$s</a>]]></string>
 <string name="lookup_nothing_found">Nessun risultato</string>
-<string name="main_empty_bookmarks">Niente egnalibri</string>
+<string name="main_empty_bookmarks">Niente segnalibri</string>
 <string name="main_empty_history">Niente cronologia</string>
 <string name="main_empty_dictionaries"><![CDATA[Visit<br><a href=\'http://aarddict.org\'>http://aarddict.org</a>]]></string>
 <string name="delete">Cancella</string>
