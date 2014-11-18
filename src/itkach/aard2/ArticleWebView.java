@@ -97,6 +97,11 @@ public class ArticleWebView extends WebView {
                 }
                 String host = parsed.getHost();
                 if (host == null || host.toLowerCase().equals("localhost")) {
+                    if (parsed.getPath().equals("/favicon.ico")) {
+                        Log.d(TAG, "KILL favicon!");
+                        return new WebResourceResponse("text/plain", "UTF-8",
+                                new ByteArrayInputStream(new byte[0]));
+                    }
                     Log.d(TAG, "Local url, not intercepting: " + url);
                     return null;
                 }
@@ -106,14 +111,8 @@ public class ArticleWebView extends WebView {
                 }
                 String msg = String.format("Remote content from %s is not allowed", url);
                 Log.d(TAG, msg);
-                byte[] msgBytes;
-                try {
-                    msgBytes = msg.getBytes("UTF-8");
-                } catch (UnsupportedEncodingException e) {
-                    throw new RuntimeException(e);
-                }
-                InputStream inputStream = new ByteArrayInputStream(msgBytes);
-                return new WebResourceResponse("text/plain", "UTF-8", inputStream);
+                return new WebResourceResponse("text/plain", "UTF-8",
+                        new ByteArrayInputStream(new byte[0]));
             }
 
             @Override
