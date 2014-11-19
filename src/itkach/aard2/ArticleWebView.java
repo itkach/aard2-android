@@ -72,6 +72,8 @@ public class ArticleWebView extends WebView {
         //this.setLayerType(LAYER_TYPE_SOFTWARE, null);
         this.setWebViewClient(new WebViewClient() {
 
+            byte[] noBytes = new byte[0];
+
             @Override
             public void onPageFinished(WebView view, String url) {
                 Log.d(TAG, "Page finished: " + url);
@@ -107,7 +109,7 @@ public class ArticleWebView extends WebView {
                 String msg = String.format("Remote content from %s is not allowed", url);
                 Log.d(TAG, msg);
                 return new WebResourceResponse("text/plain", "UTF-8",
-                        new ByteArrayInputStream(new byte[0]));
+                        new ByteArrayInputStream(noBytes));
             }
 
             @Override
