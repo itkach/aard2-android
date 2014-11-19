@@ -30,8 +30,8 @@ is missing a quantity used in that language, otherwise the app will crash
 <item quantity="many">%,d voci</item>
 <item quantity="other">%,d voci</item>
 </plurals>
-<string name="action_zoom_out">Ingrandisci</string>
-<string name="action_zoom_in">Riduci</string>
+<string name="action_zoom_out">Riduci</string>
+<string name="action_zoom_in">Ingrandisci</string>
 <string name="action_zoom_reset">Reset zoom</string>
 <string name="action_select_style">Stile...</string>
 <string name="select_style">Seleziona stile</string>
