@@ -97,11 +97,6 @@ public class ArticleWebView extends WebView {
                 }
                 String host = parsed.getHost();
                 if (host == null || host.toLowerCase().equals("localhost")) {
-                    if (parsed.getPath().equals("/favicon.ico")) {
-                        Log.d(TAG, "KILL favicon!");
-                        return new WebResourceResponse("text/plain", "UTF-8",
-                                new ByteArrayInputStream(new byte[0]));
-                    }
                     Log.d(TAG, "Local url, not intercepting: " + url);
                     return null;
                 }
