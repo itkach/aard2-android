@@ -36,57 +36,6 @@ public class DictionariesFragment extends BaseListFragment {
     }
 
     @Override
-    protected void setSelectionMode(boolean selectionMode) {
-        listAdapter.setSelectionMode(selectionMode);
-    }
-
-    @Override
-    protected int getSelectionMenuId() {
-        return R.menu.dictionary_selection;
-    }
-
-    @Override
-    protected boolean onSelectionActionItemClicked(final ActionMode mode, MenuItem item) {
-        ListView listView = getListView();
-        switch (item.getItemId()) {
-            case R.id.dictionary_forget:
-                int checkedCount = getListView().getCheckedItemCount();
-                String countStr = getResources().getQuantityString(R.plurals.selected_dict_count,
-                        checkedCount, checkedCount);
-                String message = getString(R.string.dictionaries_confirm_forget, countStr);
-                deleteConfirmationDialog = new AlertDialog.Builder(getActivity())
-                        .setIcon(android.R.drawable.ic_dialog_alert)
-                        .setTitle("")
-                        .setMessage(message)
-                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                forgetSelectedItems();
-                                mode.finish();
-                            }
-                        })
-                        .setNegativeButton(android.R.string.no, null)
-                        .create();
-                deleteConfirmationDialog.setOnDismissListener(new DialogInterface.OnDismissListener(){
-                    @Override
-                    public void onDismiss(DialogInterface dialogInterface) {
-                        deleteConfirmationDialog = null;
-                    }
-                });
-                deleteConfirmationDialog.show();
-                return true;
-            case R.id.dictionary_select_all:
-                int itemCount = listView.getCount();
-                for (int i = itemCount - 1; i > -1; --i) {
-                    listView.setItemChecked(i, true);
-                }
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         final Application app = (Application)getActivity().getApplication();
@@ -94,21 +43,6 @@ public class DictionariesFragment extends BaseListFragment {
         setListAdapter(listAdapter);
     }
 
-
-    private void forgetSelectedItems() {
-        SparseBooleanArray checkedItems = getListView().getCheckedItemPositions();
-        int checkedCount = getListView().getCheckedItemCount();
-        Application app = (Application)getActivity().getApplication();
-        app.dictionaries.beginUpdate();
-        for (int i = checkedItems.size() - 1; i > -1; --i) {
-            int position = checkedItems.keyAt(i);
-            boolean checked = checkedItems.get(position);
-            if (checked) {
-                app.dictionaries.remove(position);
-            }
-        }
-        app.dictionaries.endUpdate(checkedCount > 0);
-    }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -139,20 +73,6 @@ public class DictionariesFragment extends BaseListFragment {
             return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void onListItemClick(ListView l, View v, int position, long id) {
-        Log.d("onListItemClick", l.toString() +" " + v + " " + position + " " + id);
-        SlobDescriptor desc = (SlobDescriptor)l.getAdapter().getItem(position);
-        String source = desc.tags.get("source");
-        Log.d("onListItemClick", source);
-        l.setSelection(position);
-//        if (source != null) {
-//            Uri uri = Uri.parse(source);
-//            Intent browserIntent = new Intent(Intent.ACTION_VIEW, uri);
-//            startActivity(browserIntent);
-//        }
     }
 
     @Override
