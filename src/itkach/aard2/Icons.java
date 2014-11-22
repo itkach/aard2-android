@@ -23,12 +23,19 @@ public enum Icons {
     SORT_DESC(0xf161),
     SORT_ASC(0xf160),
     CLOCK(0xf017),
-    LIST(0xf03a)
+    LIST(0xf03a),
+    TRASH(0xf1f8),
+    LICENSE(0xf19c),
+    EXTERNAL_LINK(0xf08e),
+    FILE_ACHIVE(0xf1c6),
+    ERROR(0xf071),
+    COPYRIGHT(0xf1f9)
     ;
 
     private static TypefaceManager typefaceManager;
     private static DisplayMetrics displayMetrics;
     private static int iconColor;
+    private static int textColor;
 
     private final int codePoint;
 
@@ -40,26 +47,40 @@ public enum Icons {
         typefaceManager = new TypefaceManager(assetManager);
         displayMetrics = r.getDisplayMetrics();
         iconColor = r.getColor(android.R.color.secondary_text_dark);
+        textColor = r.getColor(android.R.color.primary_text_light);
     }
 
-    public Drawable forActionBar() {
+    Drawable forActionBar() {
         return create(21, iconColor);
     }
 
-    public Drawable forEmptyView() {
+    Drawable forEmptyView() {
         return create(42, Color.LTGRAY);
     }
 
-    public Drawable forTab() {
+    Drawable forTab() {
         return create(19, Color.DKGRAY);
     }
 
-    private IconicFontDrawable create(int intrinsicSize, int color) {
-        Typeface font = typefaceManager.get("fontawesome-4.1.0.ttf");
+    Drawable forList() {
+        return create(21, textColor);
+    }
+
+    Drawable forText() {
+        return forText(textColor);
+    }
+
+    Drawable forText(int color) {
+        return create(14, color);
+    }
+
+    private Drawable create(int intrinsicSize, int color) {
+        Typeface font = typefaceManager.get("fontawesome-4.2.0.ttf");
         IconicFontDrawable drawable = new IconicFontDrawable(new Icon(font, codePoint));
         drawable.setIntrinsicHeight(Math.round(intrinsicSize*displayMetrics.density));
         drawable.setIntrinsicWidth(Math.round(intrinsicSize*displayMetrics.density));
         drawable.setIconColor(color);
         return drawable;
     }
+
 }

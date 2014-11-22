@@ -1,16 +1,20 @@
 package itkach.aard2;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.database.DataSetObserver;
 import android.net.Uri;
 import android.text.Html;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.CheckBox;
+import android.widget.ImageView;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import java.util.Locale;
@@ -19,12 +23,20 @@ import static java.lang.String.format;
 
 public class DictionaryListAdapter extends BaseAdapter {
 
-    private final SlobDescriptorList data;
-    private final DataSetObserver observer;
-    private boolean              selectionMode;
+    private final static String TAG = DictionaryListAdapter.class.getName();
 
-    DictionaryListAdapter(SlobDescriptorList data) {
+    private final SlobDescriptorList    data;
+    private final DataSetObserver       observer;
+    private final Context               context;
+    private boolean                     selectionMode;
+    private View.OnClickListener        openUrlOnClick;
+    private AlertDialog                 deleteConfirmationDialog;
+
+    private final static String hrefTemplate = "<a href=\'%1$s\'>%2$s</a>";
+
+    DictionaryListAdapter(SlobDescriptorList data, Context context) {
         this.data = data;
+        this.context = context;
         this.observer = new DataSetObserver() {
             @Override
             public void onChanged() {
@@ -38,6 +50,22 @@ public class DictionaryListAdapter extends BaseAdapter {
         };
         this.data.registerDataSetObserver(observer);
 
+        openUrlOnClick = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String url = (String)v.getTag();
+                if (!isBlank(url)) {
+                    try {
+                        Uri uri = Uri.parse(url);
+                        Intent browserIntent = new Intent(Intent.ACTION_VIEW, uri);
+                        v.getContext().startActivity(browserIntent);
+                    }
+                    catch (Exception e) {
+                        Log.d(TAG, "Failed to launch browser with url " + url, e);
+                    }
+                }
+            }
+        };
     }
 
     private static boolean isBlank(String value) {
@@ -47,7 +75,7 @@ public class DictionaryListAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         SlobDescriptor desc = (SlobDescriptor) getItem(position);
-        String label = desc.tags.get("label");
+        final String label = desc.tags.get("label");
         String path = desc.path;
         long blobCount = desc.blobCount;
         boolean available = this.data.resolve(desc) != null;
@@ -59,34 +87,144 @@ public class DictionaryListAdapter extends BaseAdapter {
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             view = inflater.inflate(R.layout.dictionary_list_item, parent,
                     false);
-            TextView licenseView = (TextView) view.findViewById(R.id.dictionary_license);
-            licenseView.setOnClickListener(new View.OnClickListener() {
+
+            View licenseView= view.findViewById(R.id.dictionary_license);
+            licenseView.setOnClickListener(openUrlOnClick);
+
+            View sourceView= view.findViewById(R.id.dictionary_source);
+            sourceView.setOnClickListener(openUrlOnClick);
+
+            Switch activeSwitch = (Switch)view.findViewById(R.id.dictionary_active);
+            activeSwitch.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onClick(View v) {
-                    String url = (String)v.getTag();
-                    if (!isBlank(url)) {
-                        Uri uri = Uri.parse(url);
-                        Intent browserIntent = new Intent(Intent.ACTION_VIEW, uri);
-                        v.getContext().startActivity(browserIntent);
-                    }
+                public void onClick(View view) {
+                    Switch activeSwitch = (Switch)view;
+                    Integer position = (Integer)view.getTag();
+                    SlobDescriptor desc = data.get(position);
+                    desc.active = activeSwitch.isChecked();
+                    data.set(position, desc);
+                }
+            });
+
+            View btnForget = view
+                    .findViewById(R.id.dictionary_btn_forget);
+            btnForget.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Integer position = (Integer)view.getTag();
+                    forget(position);
                 }
             });
         }
 
         Resources r = parent.getResources();
 
+        Switch switchView = (Switch) view
+                .findViewById(R.id.dictionary_active);
+
+        switchView.setChecked(desc.active);
+        switchView.setTag(position);
+
         TextView titleView = (TextView) view
                 .findViewById(R.id.dictionary_label);
         titleView.setEnabled(available);
         titleView.setText(label);
+
+        setupBlobCountView(desc, blobCount, available, view, r);
+        setupCopyrightView(desc, available, view);
+        setupLicenseView(desc, available, view);
+        setupSourceView(desc, available, view);
+        setupPathView(path, available, view);
+        setupErrorView(desc, view);
+
+        ImageView btnForget = (ImageView) view
+                .findViewById(R.id.dictionary_btn_forget);
+        btnForget.setImageDrawable(Icons.TRASH.forList());
+        btnForget.setTag(position);
+
+        return view;
+    }
+
+    private void setupPathView(String path, boolean available, View view) {
+        View pathRow = view.findViewById(R.id.dictionary_path_row);
+
+        ImageView pathIcon = (ImageView) view.findViewById(R.id.dictionary_path_icon);
+        pathIcon.setImageDrawable(Icons.FILE_ACHIVE.forText());
+
         TextView pathView = (TextView) view.findViewById(R.id.dictionary_path);
         pathView.setText(path);
-        pathView.setEnabled(available);
+
+        pathRow.setEnabled(available);
+    }
+
+    private void setupErrorView(SlobDescriptor desc, View view) {
+        View errorRow= view.findViewById(R.id.dictionary_error_row);
+
+        ImageView errorIcon = (ImageView) view.findViewById(R.id.dictionary_error_icon);
+        errorIcon.setImageDrawable(Icons.ERROR.forText(
+                context.getResources().getColor(android.R.color.holo_red_dark)));
+
+        TextView errorView = (TextView) view
+                .findViewById(R.id.dictionary_error);
+        errorView.setText(desc.error);
+
+        errorRow.setVisibility(desc.error == null ? View.GONE : View.VISIBLE);
+    }
+
+    private void setupBlobCountView(SlobDescriptor desc, long blobCount, boolean available, View view, Resources r) {
+        TextView blobCountView = (TextView) view
+                .findViewById(R.id.dictionary_blob_count);
+        blobCountView.setEnabled(available);
+        blobCountView.setVisibility(desc.error == null ? View.VISIBLE : View.GONE);
+
+        blobCountView.setText(format(Locale.getDefault(),
+                r.getQuantityString(R.plurals.dict_item_count, (int)blobCount), blobCount));
+    }
+
+    private void setupCopyrightView(SlobDescriptor desc, boolean available, View view) {
+        View copyrightRow= view.findViewById(R.id.dictionary_copyright_row);
+
+        ImageView copyrightIcon = (ImageView) view.findViewById(R.id.dictionary_copyright_icon);
+        copyrightIcon.setImageDrawable(Icons.COPYRIGHT.forText());
+
+        TextView copyrightView = (TextView) view.findViewById(R.id.dictionary_copyright);
+        String copyright = desc.tags.get("copyright");
+        copyrightView.setText(copyright);
+
+        copyrightRow.setVisibility(isBlank(copyright) ? View.GONE : View.VISIBLE);
+        copyrightRow.setEnabled(available);
+    }
+
+    private void setupSourceView(SlobDescriptor desc, boolean available, View view) {
+        View sourceRow = view.findViewById(R.id.dictionary_license_row);
+
+        ImageView sourceIcon = (ImageView) view.findViewById(R.id.dictionary_source_icon);
+        sourceIcon.setImageDrawable(Icons.EXTERNAL_LINK.forText());
+
+        TextView sourceView = (TextView) view.findViewById(R.id.dictionary_source);
+        String source = desc.tags.get("source");
+        CharSequence sourceHtml = Html.fromHtml(String.format(hrefTemplate, source, source));
+        sourceView.setText(sourceHtml);
+        sourceView.setTag(source);
+
+        int visibility = isBlank(source) ? View.GONE : View.VISIBLE;
+        //Setting visibility on layout seems to have no effect
+        //if one of the children is a link
+        sourceIcon.setVisibility(visibility);
+        sourceView.setVisibility(visibility);
+        sourceRow.setVisibility(visibility);
+        sourceRow.setEnabled(available);
+    }
+
+    private void setupLicenseView(SlobDescriptor desc, boolean available, View view) {
+        View licenseRow= view.findViewById(R.id.dictionary_license_row);
+
+        ImageView licenseIcon = (ImageView) view.findViewById(R.id.dictionary_license_icon);
+        licenseIcon.setImageDrawable(Icons.LICENSE.forText());
 
         TextView licenseView = (TextView) view.findViewById(R.id.dictionary_license);
         String licenseName = desc.tags.get("license.name");
         String licenseUrl = desc.tags.get("license.url");
-        licenseView.setVisibility(isBlank(licenseName) && isBlank(licenseUrl) ? View.GONE : View.VISIBLE);
         CharSequence license;
         if (isBlank(licenseUrl)) {
             license = licenseName;
@@ -95,33 +233,42 @@ public class DictionaryListAdapter extends BaseAdapter {
             if (isBlank(licenseName)) {
                 licenseName = licenseUrl;
             }
-            license = Html.fromHtml(r.getString(R.string.dict_license, licenseUrl, licenseName));
+            license = Html.fromHtml(String.format(hrefTemplate, licenseUrl, licenseName));
         }
         licenseView.setText(license);
-        licenseView.setEnabled(available);
         licenseView.setTag(licenseUrl);
 
-        TextView copyrightView = (TextView) view.findViewById(R.id.dictionary_copyright);
-        String copyright = desc.tags.get("copyright");
-        copyrightView.setVisibility(isBlank(copyright) ? View.GONE : View.VISIBLE);
-        copyrightView.setText(String.format("\u00a9 %s", copyright));
-        copyrightView.setEnabled(available);
+        int visibility = (isBlank(licenseName) && isBlank(licenseUrl)) ? View.GONE : View.VISIBLE;
+        licenseIcon.setVisibility(visibility);
+        licenseView.setVisibility(visibility);
+        licenseRow.setVisibility(visibility);
+        licenseRow.setEnabled(available);
+    }
 
-        TextView blobCountView = (TextView) view
-                .findViewById(R.id.dictionary_blob_count);
-        blobCountView.setEnabled(available);
-        blobCountView.setVisibility(desc.error == null ? View.VISIBLE : View.GONE);
+    private void forget(final int position) {
+        SlobDescriptor desc = data.get(position);
+        final String label = desc.tags.get("label");
+        String message = context.getString(R.string.dictionaries_confirm_forget, label);
+        deleteConfirmationDialog = new AlertDialog.Builder(context)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setTitle("")
+                .setMessage(message)
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        data.remove(position);
+                    }
+                })
+                .setNegativeButton(android.R.string.no, null)
+                .create();
+        deleteConfirmationDialog.setOnDismissListener(new DialogInterface.OnDismissListener(){
+            @Override
+            public void onDismiss(DialogInterface dialogInterface) {
+                deleteConfirmationDialog = null;
+            }
+        });
+        deleteConfirmationDialog.show();
 
-        blobCountView.setText(format(Locale.getDefault(),
-                r.getQuantityString(R.plurals.dict_item_count, (int)blobCount), blobCount));
-
-        CheckBox cb = (CheckBox) view.findViewById(R.id.dictionary_checkbox);
-        cb.setVisibility(isSelectionMode() ? View.VISIBLE : View.GONE);
-        TextView errorView = (TextView) view
-                .findViewById(R.id.dictionary_error);
-        errorView.setVisibility(desc.error == null ? View.GONE : View.VISIBLE);
-        errorView.setText(desc.error);
-        return view;
     }
 
     @Override

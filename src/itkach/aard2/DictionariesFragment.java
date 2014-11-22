@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.Html;
+import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.ActionMode;
 import android.view.Menu;
@@ -27,6 +28,11 @@ public class DictionariesFragment extends BaseListFragment {
 
     protected CharSequence getEmptyText() {
         return Html.fromHtml(getString(R.string.main_empty_dictionaries));
+    }
+
+    @Override
+    protected boolean supportsSelection() {
+        return false;
     }
 
     @Override
@@ -84,7 +90,7 @@ public class DictionariesFragment extends BaseListFragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         final Application app = (Application)getActivity().getApplication();
-        listAdapter = new DictionaryListAdapter(app.dictionaries);
+        listAdapter = new DictionaryListAdapter(app.dictionaries, getActivity());
         setListAdapter(listAdapter);
     }
 
@@ -137,13 +143,16 @@ public class DictionariesFragment extends BaseListFragment {
 
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
+        Log.d("onListItemClick", l.toString() +" " + v + " " + position + " " + id);
         SlobDescriptor desc = (SlobDescriptor)l.getAdapter().getItem(position);
         String source = desc.tags.get("source");
-        if (source != null) {
-            Uri uri = Uri.parse(source);
-            Intent browserIntent = new Intent(Intent.ACTION_VIEW, uri);
-            startActivity(browserIntent);
-        }
+        Log.d("onListItemClick", source);
+        l.setSelection(position);
+//        if (source != null) {
+//            Uri uri = Uri.parse(source);
+//            Intent browserIntent = new Intent(Intent.ACTION_VIEW, uri);
+//            startActivity(browserIntent);
+//        }
     }
 
     @Override

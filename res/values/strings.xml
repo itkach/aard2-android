@@ -71,7 +71,6 @@
         <item quantity="other">%,d dictionaries</item>
     </plurals>
     <string name="dictionaries_confirm_forget">Are you sure you want to forget %1$s?</string>
-    <string name="dict_license"><![CDATA[License: <a href=\'%1$s\'>%2$s</a>]]></string>
     <string name="lookup_nothing_found">Nothing found</string>
     <string name="main_empty_bookmarks">No bookmarks</string>
     <string name="main_empty_history">No history</string>

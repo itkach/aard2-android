@@ -11,7 +11,7 @@ import itkach.slob.Slob;
 public class SlobDescriptor extends BaseDescriptor {
     public String path;
     public Map<String, String> tags;
-    public boolean enabled;
+    public boolean active = true;
     public int priority;
     public long blobCount;
     public String error;

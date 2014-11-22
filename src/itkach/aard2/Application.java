@@ -34,7 +34,7 @@ public class Application extends android.app.Application {
 
     BlobDescriptorList                      bookmarks;
     BlobDescriptorList                      history;
-    SlobDescriptorList dictionaries;
+    SlobDescriptorList                      dictionaries;
 
     private int                             port = 8013;
 
@@ -155,8 +155,28 @@ public class Application extends android.app.Application {
     }
 
 
+    boolean isActive(Slob slob) {
+        for (SlobDescriptor sd : dictionaries) {
+            if (slob.getId().toString().equals(sd.id)) {
+                return sd.active;
+            }
+        }
+        return false;
+    }
+
+    Slob[] getActiveSlobs() {
+        Slob[] all = slobber.getSlobs();
+        List<Slob> active = new ArrayList(all.length);
+        for (Slob slob : all) {
+            if (isActive(slob)) {
+                active.add(slob);
+            }
+        }
+        return active.toArray(new Slob[active.size()]);
+    };
+
     Iterator<Blob> find(String key) {
-        return Slob.find(key, 1000, slobber.getSlobs());
+        return Slob.find(key, 1000, getActiveSlobs());
     }
 
     Iterator<Blob> find(String key, String preferredSlobId) {

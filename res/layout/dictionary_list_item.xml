@@ -1,36 +1,174 @@
-<itkach.aard2.CheckableRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:paddingBottom="6dip"
-        android:paddingLeft="8dip"
-        android:paddingRight="8dip"
-        android:paddingTop="3dip"
-        android:background="@android:drawable/list_selector_background"
-    >
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/dictionary_item"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="8dip"
+    android:paddingLeft="8dip"
+    android:paddingRight="8dip"
+    android:paddingTop="6dip">
 
-    <RelativeLayout
-        android:id="@+id/dictionary_item"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="6dp"
+        >
         <TextView
             android:id="@+id/dictionary_label"
             style="@android:style/TextAppearance.Holo.SearchResult.Title"
             android:text="WordNet"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginRight="22dip"
-            android:textSize="22sp"/>
+            android:textSize="24sp"
+            android:layout_gravity="left"
+            android:layout_weight="1"/>
+        <Switch
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/dictionary_active"
+            android:checked="true"
+            android:enabled="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_gravity="bottom"
+            android:layout_weight="0"/>
+    </LinearLayout>
 
+    <TextView
+        android:id="@+id/dictionary_blob_count"
+        style="@android:style/TextAppearance.Holo.Small"
+        android:text="100,000 items"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_marginBottom="6dp"
+        />
+
+    <LinearLayout
+        android:id="@+id/dictionary_copyright_row"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="2dp"
+        >
+
+        <ImageView
+            android:id="@+id/dictionary_copyright_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:baselineAlignBottom="true"
+            android:layout_marginRight="4dp"
+            android:layout_marginEnd="4dp"
+            />
+
+        <TextView
+            android:id="@+id/dictionary_copyright"
+            style="@android:style/TextAppearance.Holo.SearchResult.Subtitle"
+            android:text="2014 Wikipedia editors and contributors"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            />
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/dictionary_license_row"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="2dp"
+        >
+        <ImageView
+            android:id="@+id/dictionary_license_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:baselineAlignBottom="true"
+            android:layout_marginRight="4dp"
+            android:layout_marginEnd="4dp"
+            />
+        <TextView
+            android:id="@+id/dictionary_license"
+            style="@android:style/TextAppearance.Holo.SearchResult.Subtitle"
+            android:text="Creative Commons with Attribution"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:focusable="false"
+            />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/dictionary_source_row"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="2dp"
+        >
+
+        <ImageView
+            android:id="@+id/dictionary_source_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:baselineAlignBottom="true"
+            android:layout_marginRight="4dp"
+            android:layout_marginEnd="4dp"
+            />
+
+        <TextView
+            android:id="@+id/dictionary_source"
+            style="@android:style/TextAppearance.Holo.SearchResult.Subtitle"
+            android:text="http://en.wikipedia.org"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/dictionary_path_row"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="2dp"
+        >
+        <ImageView
+            android:id="@+id/dictionary_path_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:baselineAlignBottom="true"
+            android:layout_marginRight="4dp"
+            android:layout_marginEnd="4dp"
+            />
         <TextView
             android:id="@+id/dictionary_path"
             style="@android:style/TextAppearance.Holo.SearchResult.Subtitle"
             android:text="/mnt/sdcard/wordnet.slob"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_below="@id/dictionary_label"
             android:textStyle="italic"
+            />
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/dictionary_error_row"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="4dp"
+        >
+
+        <ImageView
+            android:id="@+id/dictionary_error_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:baselineAlignBottom="true"
+            android:layout_marginRight="4dp"
+            android:layout_marginEnd="4dp"
             />
 
         <TextView
@@ -40,55 +178,17 @@
             android:textColor="@android:color/holo_red_dark"
             android:visibility="visible"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_below="@id/dictionary_path"/>
+            android:layout_height="wrap_content"/>
 
-        <TextView
-            android:id="@+id/dictionary_copyright"
-            style="@android:style/TextAppearance.Holo.SearchResult.Subtitle"
-            android:text="\u00a9 2014 Wikipedia editors and contributors"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_below="@id/dictionary_error"
-            />
+    </LinearLayout>
 
-        <TextView
-            android:id="@+id/dictionary_license"
-            style="@android:style/TextAppearance.Holo.SearchResult.Subtitle"
-            android:text="License: Creative Commons with Attribution"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:clickable="true"
-            android:focusable="false"
-            android:layout_below="@id/dictionary_copyright"
-            />
-
-        <TextView
-            android:id="@+id/dictionary_blob_count"
-            style="@android:style/TextAppearance.Holo.Small"
-            android:text="100,000"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_below="@id/dictionary_license"/>
-
-
-    </RelativeLayout>
-
-    <CheckBox
-        android:id="@+id/dictionary_checkbox"
+    <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginRight="-5dp"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
-        android:layout_toRightOf="@id/dictionary_label"
-        android:visibility="gone"
-        android:clickable="false"
-        android:focusable="false"
-        android:checked="false"/>
+        android:id="@+id/dictionary_btn_forget"
+        android:layout_gravity="right"
+        android:padding="10dp"
+        android:layout_alignParentRight="true"/>
 
-</itkach.aard2.CheckableRelativeLayout>
+
+</LinearLayout>
