@@ -58,14 +58,6 @@ is missing a quantity used in that language, otherwise the app will crash
 <string name="article_view_msg_not_found">Non trovato</string>
 <string name="dictionaries_please_wait">Attendere prego...</string>
 <string name="dictionaries_scanning_device">Rilevamento di dizionari nel dispositivo in corso...</string>
-<plurals name="selected_dict_count">
-<item quantity="zero">%,d dizionari</item>
-<item quantity="one">%,d dizionario</item>
-<item quantity="two">%,d dizionari</item>
-<item quantity="few">%,d dizionari</item>
-<item quantity="many">%,d dizionari</item>
-<item quantity="other">%,d dizionari</item>
-</plurals>
 <string name="dictionaries_confirm_forget">Sei sicuro di voler dimenticare %1$s?</string>
 <string name="dict_license"><![CDATA[License: <a href=\'%1$s\'>%2$s</a>]]></string>
 <string name="lookup_nothing_found">Nessun risultato</string>

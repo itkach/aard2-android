@@ -57,12 +57,6 @@
     <string name="article_view_msg_not_found">Ресурс не найден</string>
     <string name="dictionaries_please_wait">Подождите</string>
     <string name="dictionaries_scanning_device">Идёт поиск словарей на устройстве...</string>
-    <plurals name="selected_dict_count">
-        <item quantity="zero">%,d словарей</item>
-        <item quantity="one">%,d словарь</item>
-        <item quantity="few">%,d словаря</item>
-        <item quantity="many">%,d словарей</item>
-    </plurals>
     <string name="dictionaries_confirm_forget">Исключить %1$s?</string>
     <string name="dict_license"><![CDATA[Лицензия: <a href=\'%1$s\'>%2$s</a>]]></string>
     <string name="lookup_nothing_found">Ничего не найдено</string>
