@@ -27,9 +27,10 @@ public enum Icons {
     TRASH(0xf1f8),
     LICENSE(0xf19c),
     EXTERNAL_LINK(0xf08e),
-    FILE_ACHIVE(0xf1c6),
+    FILE_ARCHIVE(0xf1c6),
     ERROR(0xf071),
-    COPYRIGHT(0xf1f9)
+    COPYRIGHT(0xf1f9),
+    SELECT_ALL(0xf046)
     ;
 
     private static TypefaceManager typefaceManager;

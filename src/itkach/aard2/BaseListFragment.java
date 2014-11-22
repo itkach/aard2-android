@@ -77,6 +77,14 @@ public abstract class BaseListFragment extends ListFragment {
                     actionMode = mode;
                     MenuInflater inflater = mode.getMenuInflater();
                     inflater.inflate(getSelectionMenuId(), menu);
+                    MenuItem miDelete = menu.findItem(R.id.blob_descriptor_delete);
+                    if (miDelete != null) {
+                        miDelete.setIcon(Icons.TRASH.forActionBar());
+                    }
+                    MenuItem miSelectAll = menu.findItem(R.id.blob_descriptor_select_all);
+                    if (miSelectAll != null) {
+                        miSelectAll.setIcon(Icons.SELECT_ALL.forActionBar());
+                    }
                     setSelectionMode(true);
                     return true;
                 }

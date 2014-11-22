@@ -149,7 +149,7 @@ public class DictionaryListAdapter extends BaseAdapter {
         View pathRow = view.findViewById(R.id.dictionary_path_row);
 
         ImageView pathIcon = (ImageView) view.findViewById(R.id.dictionary_path_icon);
-        pathIcon.setImageDrawable(Icons.FILE_ACHIVE.forText());
+        pathIcon.setImageDrawable(Icons.FILE_ARCHIVE.forText());
 
         TextView pathView = (TextView) view.findViewById(R.id.dictionary_path);
         pathView.setText(path);

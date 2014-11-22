@@ -6,5 +6,6 @@
     
     <item
         android:id="@+id/blob_descriptor_delete"
-        android:title="@string/delete"/>
+        android:title="@string/delete"
+        />
 </menu>
