@@ -21,8 +21,11 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Random;
+import java.util.Set;
 
 import itkach.slob.Slob;
 import itkach.slob.Slob.Blob;
@@ -36,7 +39,8 @@ public class Application extends android.app.Application {
     BlobDescriptorList                      history;
     SlobDescriptorList                      dictionaries;
 
-    private int                             port = 8013;
+    private static int                      PREFERRED_PORT = 8013;
+    private int                             port = -1;
 
     BlobListAdapter                         lastResult;
 
@@ -71,21 +75,22 @@ public class Application extends android.app.Application {
         }
         articleActivities = Collections.synchronizedList(new ArrayList<Activity>());
         Icons.init(getAssets(), getResources());
-        try {
-            mapper = new ObjectMapper();
-            mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES,
-                    false);
-            dictStore = new DescriptorStore<SlobDescriptor>(mapper, getDir("dictionaries", MODE_PRIVATE));
-            bookmarkStore = new DescriptorStore<BlobDescriptor>(mapper, getDir(
-                    "bookmarks", MODE_PRIVATE));
-            historyStore = new DescriptorStore<BlobDescriptor>(mapper, getDir(
-                    "history", MODE_PRIVATE));
-            slobber = new Slobber();
-            slobber.start("127.0.0.1", port);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        mapper = new ObjectMapper();
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES,
+                false);
+        dictStore = new DescriptorStore<SlobDescriptor>(mapper, getDir("dictionaries", MODE_PRIVATE));
+        bookmarkStore = new DescriptorStore<BlobDescriptor>(mapper, getDir(
+                "bookmarks", MODE_PRIVATE));
+        historyStore = new DescriptorStore<BlobDescriptor>(mapper, getDir(
+                "history", MODE_PRIVATE));
+        slobber = new Slobber();
 
+        long t0 = System.currentTimeMillis();
+
+        startWebServer();
+
+        Log.d(getClass().getName(), String.format("Started web server on port %d in %d ms",
+                port, (System.currentTimeMillis() - t0)));
         try {
             InputStream is = getClass().getClassLoader().getResourceAsStream("styleswitcher.js");
             InputStreamReader reader = new InputStreamReader(is, "UTF-8");
@@ -135,6 +140,45 @@ public class Application extends android.app.Application {
         lookup(initialQuery, false);
         bookmarks.load();
         history.load();
+    }
+
+    private void startWebServer() {
+        int portCandidate = PREFERRED_PORT;
+        try {
+            slobber.start("127.0.0.1", portCandidate);
+            port = portCandidate;
+        } catch (IOException e) {
+            Log.w(getClass().getName(),
+                    String.format("Failed to start on preferred port %d",
+                            portCandidate), e);
+            Set<Integer> seen = new HashSet<Integer>();
+            seen.add(PREFERRED_PORT);
+            Random rand = new Random();
+            int attemptCount = 0;
+            while (true) {
+                int value = 1 + (int)Math.floor((65535-1025)*rand.nextDouble());
+                portCandidate = 1024 + value;
+                if (seen.contains(portCandidate)) {
+                    continue;
+                }
+                attemptCount += 1;
+                seen.add(portCandidate);
+                Exception lastError;
+                try {
+                    slobber.start("127.0.0.1", portCandidate);
+                    port = portCandidate;
+                    break;
+                } catch (IOException e1) {
+                    lastError = e1;
+                    Log.w(getClass().getName(),
+                            String.format("Failed to start on port %d",
+                                    portCandidate), e1);
+                }
+                if (attemptCount >= 20) {
+                    throw new RuntimeException("Failed to start web server", lastError);
+                }
+            }
+        }
     }
 
     private SharedPreferences prefs() {
