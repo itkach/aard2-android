@@ -224,9 +224,16 @@ public class Application extends android.app.Application {
     }
 
     Iterator<Blob> find(String key, String preferredSlobId) {
+        //When following links we want to consider all dictionaries
+        //including the ones user turned off
+        return find(key, preferredSlobId, false);
+    }
+
+    Iterator<Blob> find(String key, String preferredSlobId, boolean activeOnly) {
         long t0 = System.currentTimeMillis();
+        Slob[] slobs = activeOnly ? getActiveSlobs() : slobber.getSlobs();
         Iterator<Blob> result = Slob.find(key, 10, slobber.getSlob(preferredSlobId),
-                slobber.getSlobs(), Slob.Strength.QUATERNARY.level);
+                slobs, Slob.Strength.QUATERNARY.level);
         Log.d(getClass().getName(), String.format("find ran in %dms", System.currentTimeMillis() - t0));
         return result;
     }

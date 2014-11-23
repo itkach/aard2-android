@@ -208,7 +208,7 @@ public class ArticleCollectionActivity extends FragmentActivity {
         else {
             Iterator<Slob.Blob> result;
             do {
-                result = app.find(lookupKey, null);
+                result = app.find(lookupKey, null, true);
                 if (result.hasNext()) {
                     break;
                 }
