@@ -14,6 +14,7 @@
         android:theme="@android:style/Theme.Holo.Light.DarkActionBar">
 
         <activity android:name=".MainActivity"
+
                   android:configChanges="keyboard|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
                   android:windowSoftInputMode="stateHidden">
             <intent-filter>
@@ -21,11 +22,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        
-        <activity 
+
+        <activity
             android:name=".ArticleCollectionActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
-            android:excludeFromRecents="true">
+            android:excludeFromRecents="true"
+            android:taskAffinity=""
+            >
             <intent-filter>
                 <action android:name="aard2.lookup" />
                 <category android:name="android.intent.category.DEFAULT" />
