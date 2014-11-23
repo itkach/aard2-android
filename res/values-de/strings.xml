@@ -1,0 +1,89 @@
+<resources>
+    <string name="app_name">Aard 2</string>
+    <string name="subtitle_lookup">Finden</string>
+    <string name="subtitle_bookmark">Lesezeichen</string>
+    <string name="subtitle_history">Verlauf</string>
+    <string name="subtitle_dictionaries">Wörterbücher</string>
+        
+    <string name="action_find_dictionaries">Finde Wörterbücher</string>
+    <string name="action_find_in_page">Finde in Seite</string>
+    <string name="action_bookmark_article">Lesezeichen</string>
+    <string name="action_filter_bookmarks">Filter</string>
+    <string name="action_filter_history">Filter</string>
+    <string name="action_filter">Filter</string>
+    <string name="action_ascending">Aufsteigend</string>
+    <string name="action_descending">Absteigend</string>
+    
+    <string name="action_sort_by_title">Nach Titel</string>
+    <string name="action_sort_by_time">Nach Zeit</string>    
+    <string name="action_lookup">Finden</string>
+    
+    <string name="dict_label"><![CDATA[<big><b>%1$s</b></big>]]></string>
+    <string name="dict_path"><![CDATA[<small>%1$s</small>]]></string>
+    <!--
+    English only uses "one" and "other" for plurals.
+    Other quantities are included as a fallback if some translation
+    is missing a quantity used in that language, otherwise the app will crash
+    -->
+    <plurals name="dict_item_count">
+        <item quantity="zero">%,d Stichworte</item>
+        <item quantity="one">%,d Stichwort</item>
+        <item quantity="two">%,d Stichworte</item>
+        <item quantity="few">%,d Stichworte</item>
+        <item quantity="many">%,d Stichworte</item>
+        <item quantity="other">%,d Stichworte</item>
+    </plurals>
+
+    <string name="action_zoom_out">Verkleinern</string>
+    <string name="action_zoom_in">Vergrössern</string>
+    <string name="action_zoom_reset">Zoom Reset</string>
+    <string name="action_select_style">Stile...</string>
+    <string name="select_style">Wähle Stil</string>
+    <string name="default_style_title">Default</string>
+    <string name="subtitle_settings">Einstellung</string>
+    <string name="select_remote_content_mode">Lade externer Inhalt</string>
+    <string name="setting_remote_content_always">Immer</string>
+    <string name="setting_remote_content_wifi">Nur mit Wi-Fi</string>
+    <string name="setting_remote_content_never">Nie</string>
+    <string name="setting_remote_content">Lade externer Inhalt</string>
+    <string name="setting_about">Über %1$s</string>
+    <string name="application_home_url">http://aarddict.org</string>
+    <string name="application_copyright">\u00a9 2014 Igor Tkach</string>
+    <string name="application_license_name">GNU General Public License v3</string>
+    <string name="application_license_url">https://gnu.org/licenses/gpl.html</string>
+    <string name="application_license"><![CDATA[<strong>License:</strong> <a href="%1$s">%2$s</a>]]></string>
+    <string name="application_version"><![CDATA[<strong>Version:</strong> %1$s]]></string>
+    <string name="setting_clear_cache">Cache löschen</string>
+    <string name="setting_clear_cache_subtitle">Inhalt des Cache mit externen Bildern löschen</string>
+    <string name="confirm_clear_cached_content">Cache löschen?</string>
+    <string name="article_collection_nothing_found">Nichts gefunden</string>
+    <string name="article_collection_selected_not_available">Gewählter Artikel ist nicht verfügbar</string>
+    <string name="article_collection_nothing_to_lookup">Nichts zum nachschlagen</string>
+    <string name="article_view_msg_not_found">Nichts gefunden</string>
+    <string name="dictionaries_please_wait">Bitte warten</string>
+    <string name="dictionaries_scanning_device">Durchsuche Gerät nach Wörterbüchern...</string>
+    <string name="dictionaries_confirm_forget">Vergesse %1$s?</string>
+    <string name="lookup_nothing_found">Nichts gefunden</string>
+    <string name="main_empty_bookmarks">Keine Lesezeichen</string>
+    <string name="main_empty_history">Kein Verlauf</string>
+    <string name="main_empty_dictionaries"><![CDATA[Visit<br><a href=\'http://aarddict.org\'>http://aarddict.org</a>]]></string>
+    <string name="delete">Lösche</string>
+    <string name="action_forget">Vergesse</string>
+    <plurals name="confirm_delete_bookmark_count">
+        <item quantity="zero">%,d Lesezeichen</item>
+        <item quantity="one">%,d Lesezeichen</item>
+        <item quantity="two">%,d Lesezeichen</item>
+        <item quantity="few">%,d Lesezeichen</item>
+        <item quantity="many">%,d Lesezeichen</item>
+        <item quantity="other">%,d Lesezeichen</item>
+    </plurals>
+    <plurals name="confirm_delete_history_count">
+        <item quantity="zero">%,d alte Datensätze</item>
+        <item quantity="one">%,d alten Datensatz</item>
+        <item quantity="two">%,d alte Datensätze</item>
+        <item quantity="few">%,d alte Datensätze</item>
+        <item quantity="many">%,d alte Datensätze</item>
+        <item quantity="other">%,d alte Datensätze</item>
+    </plurals>
+    <string name="blob_descriptor_confirm_delete">Lösche %1$s?</string>
+</resources>
