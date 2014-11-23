@@ -201,6 +201,7 @@ final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
     }
 
     public BlobDescriptor createDescriptor(String contentUrl) {
+        Log.d("createDescriptor", "Content url: " + contentUrl);
         BlobDescriptor bd = new BlobDescriptor();
         bd.id = UUID.randomUUID().toString();
         bd.createdAt = System.currentTimeMillis();
@@ -209,11 +210,6 @@ final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
         List<String> pathSegments = uri.getPathSegments();
         int segmentCount = pathSegments.size();
         bd.key = pathSegments.get(segmentCount - 1);
-        try {
-            bd.key = URLDecoder.decode(bd.key, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException(e);
-        }
         bd.slobId = pathSegments.get(segmentCount - 2);
         bd.blobId = uri.getQueryParameter("blob");
         bd.fragment = uri.getFragment();
