@@ -26,7 +26,7 @@ import itkach.slob.Slob;
 
 final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
 
-
+    private final String TAG = getClass().getName();
 
     static enum SortOrder {
         TIME, NAME;
@@ -201,7 +201,7 @@ final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
     }
 
     public BlobDescriptor createDescriptor(String contentUrl) {
-        Log.d("createDescriptor", "Content url: " + contentUrl);
+        Log.d(TAG, "Create descriptor from content url: " + contentUrl);
         BlobDescriptor bd = new BlobDescriptor();
         bd.id = UUID.randomUUID().toString();
         bd.createdAt = System.currentTimeMillis();
@@ -209,8 +209,19 @@ final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
         Uri uri = Uri.parse(contentUrl);
         List<String> pathSegments = uri.getPathSegments();
         int segmentCount = pathSegments.size();
-        bd.key = pathSegments.get(segmentCount - 1);
-        bd.slobId = pathSegments.get(segmentCount - 2);
+        if (segmentCount < 3) {
+            Log.w(TAG, "Can't create descriptor from URL " + contentUrl);
+            return null;
+        }
+        bd.slobId = pathSegments.get(1);
+        StringBuilder key = new StringBuilder();
+        for (int i = 2; i < segmentCount; i++) {
+            if (key.length() > 0) {
+                key.append("/");
+            }
+            key.append(pathSegments.get(i));
+        }
+        bd.key = key.toString();
         bd.blobId = uri.getQueryParameter("blob");
         bd.fragment = uri.getFragment();
         String slobUri = app.getSlobURI(bd.slobId);
@@ -257,7 +268,7 @@ final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
         BlobDescriptor bd = this.list.remove(index);
         if (bd != null) {
             boolean removed = store.delete(bd.id);
-            Log.d("remove", String.format("Item (%s) %s removed? %s", bd.key, bd.id, removed));
+            Log.d(TAG, String.format("Item (%s) %s removed? %s", bd.key, bd.id, removed));
             if (removed) {
                 notifyDataSetChanged();
             }
@@ -269,7 +280,7 @@ final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
         BlobDescriptor bd = createDescriptor(contentUrl);
         int index = this.list.indexOf(bd);
         boolean result = index > -1;
-        Log.i("Is bookmarked?", "" + result);
+        Log.d(TAG, "Is bookmarked?" + result);
         return result;
     }
 
