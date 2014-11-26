@@ -1,5 +1,10 @@
 package itkach.aard2;
 
+import android.net.Uri;
+
+import java.util.List;
+import java.util.UUID;
+
 public class BlobDescriptor extends BaseDescriptor {
     @Override
     public int hashCode() {
@@ -42,4 +47,28 @@ public class BlobDescriptor extends BaseDescriptor {
     public String blobId;
     public String key;
     public String fragment;
+
+    static BlobDescriptor fromUri(Uri uri) {
+        BlobDescriptor bd = new BlobDescriptor();
+        bd.id = UUID.randomUUID().toString();
+        bd.createdAt = System.currentTimeMillis();
+        bd.lastAccess = bd.createdAt;
+        List<String> pathSegments = uri.getPathSegments();
+        int segmentCount = pathSegments.size();
+        if (segmentCount < 3) {
+            return null;
+        }
+        bd.slobId = pathSegments.get(1);
+        StringBuilder key = new StringBuilder();
+        for (int i = 2; i < segmentCount; i++) {
+            if (key.length() > 0) {
+                key.append("/");
+            }
+            key.append(pathSegments.get(i));
+        }
+        bd.key = key.toString();
+        bd.blobId = uri.getQueryParameter("blob");
+        bd.fragment = uri.getFragment();
+        return bd;
+    }
 }

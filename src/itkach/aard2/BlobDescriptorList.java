@@ -202,30 +202,12 @@ final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
 
     public BlobDescriptor createDescriptor(String contentUrl) {
         Log.d(TAG, "Create descriptor from content url: " + contentUrl);
-        BlobDescriptor bd = new BlobDescriptor();
-        bd.id = UUID.randomUUID().toString();
-        bd.createdAt = System.currentTimeMillis();
-        bd.lastAccess = bd.createdAt;
         Uri uri = Uri.parse(contentUrl);
-        List<String> pathSegments = uri.getPathSegments();
-        int segmentCount = pathSegments.size();
-        if (segmentCount < 3) {
-            Log.w(TAG, "Can't create descriptor from URL " + contentUrl);
-            return null;
+        BlobDescriptor bd = BlobDescriptor.fromUri(uri);
+        if (bd != null) {
+            String slobUri = app.getSlobURI(bd.slobId);
+            bd.slobUri = slobUri;
         }
-        bd.slobId = pathSegments.get(1);
-        StringBuilder key = new StringBuilder();
-        for (int i = 2; i < segmentCount; i++) {
-            if (key.length() > 0) {
-                key.append("/");
-            }
-            key.append(pathSegments.get(i));
-        }
-        bd.key = key.toString();
-        bd.blobId = uri.getQueryParameter("blob");
-        bd.fragment = uri.getFragment();
-        String slobUri = app.getSlobURI(bd.slobId);
-        bd.slobUri = slobUri;
         return bd;
     }
 

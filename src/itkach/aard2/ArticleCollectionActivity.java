@@ -148,11 +148,8 @@ public class ArticleCollectionActivity extends FragmentActivity {
     }
 
     private ArticleCollectionPagerAdapter createFromUri(Application app, Uri articleUrl) {
-        List<String> pathSegments = articleUrl.getPathSegments();
-        int segmentCount = pathSegments.size();
-        String lookupKey = pathSegments.get(segmentCount - 1);
-        String slobId = pathSegments.get(segmentCount - 2);
-        Iterator<Slob.Blob> result = app.find(lookupKey, slobId);
+        BlobDescriptor bd = BlobDescriptor.fromUri(articleUrl);
+        Iterator<Slob.Blob> result = app.find(bd.key, bd.slobId);
         BlobListAdapter data = new BlobListAdapter(this);
         data.setData(result);
         return new ArticleCollectionPagerAdapter(
