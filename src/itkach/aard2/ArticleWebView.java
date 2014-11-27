@@ -47,12 +47,6 @@ public class ArticleWebView extends WebView {
     private String[]        styleTitles;
     private final String[]  defaultStyles;
 
-    private Runnable applyStylePrefRunnable = new Runnable() {
-        @Override
-        public void run() {
-            applyStylePref();
-        }
-    };
 
     private String          currentSlobId;
 
@@ -63,8 +57,6 @@ public class ArticleWebView extends WebView {
         for (String title : titles) {
             Log.d(getClass().getName(), title);
         }
-        if (titles.length > 0) {
-            getHandler().post(applyStylePrefRunnable);
         }
     }
 
