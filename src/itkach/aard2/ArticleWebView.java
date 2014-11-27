@@ -24,7 +24,7 @@ public class ArticleWebView extends WebView {
 
     private final String styleSwitcherJs;
 
-    String TAG = getClass().getName();
+    String TAG = getClass().getSimpleName();
 
     static final String PREF = "articleView";
     private static final String PREF_TEXT_ZOOM = "textZoom";
