@@ -54,9 +54,10 @@ public class ArticleWebView extends WebView {
     public void setStyleTitles(String[] titles) {
         Log.d(TAG, String.format("Got %d style titles", titles.length));
         this.styleTitles = concat(defaultStyles, titles);
-        for (String title : titles) {
-            Log.d(getClass().getName(), title);
-        }
+        if (Log.isLoggable(TAG, Log.DEBUG)) {
+            for (String title : titles) {
+                Log.d(TAG, title);
+            }
         }
     }
 
@@ -165,7 +166,6 @@ public class ArticleWebView extends WebView {
                 if (scheme.equals("http") && host.equals("localhost") && uri.getQueryParameter("blob") == null) {
                       Intent intent = new Intent(getContext(), ArticleCollectionActivity.class);
                       intent.setData(uri);
-                      //intent.putExtra("referer", referer);
                       getContext().startActivity(intent);
                       Log.d("Overriding loading of", url);
                       return true;
@@ -267,7 +267,6 @@ public class ArticleWebView extends WebView {
         }
         SharedPreferences prefs = prefs();
         String styleTitle = prefs.getString(PREF_STYLE + slobId, "");
-        Log.d(TAG, "Set style pref for " + slobId + ": " + styleTitle);
         this.setStyle(styleTitle);
     }
 
