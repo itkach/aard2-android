@@ -54,6 +54,8 @@ public class ArticleWebView extends WebView {
         }
     };
 
+    private String          currentSlobId;
+
     @JavascriptInterface
     public void setStyleTitles(String[] titles) {
         Log.d(TAG, String.format("Got %d style titles", titles.length));
@@ -103,13 +105,14 @@ public class ArticleWebView extends WebView {
 
             @Override
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
+                BlobDescriptor bd = BlobDescriptor.fromUri(Uri.parse(url));
+                currentSlobId = bd == null ? null : bd.slobId;
                 Log.d(TAG, "onPageStarted: " + url);
                 view.loadUrl("javascript:" + styleSwitcherJs);
             }
 
             @Override
             public void onLoadResource(WebView view, String url) {
-                Log.d(TAG, "onLoadResource: " + url);
                 applyStylePref();
             }
 
@@ -243,16 +246,7 @@ public class ArticleWebView extends WebView {
     }
 
     private String getCurrentSlobId() {
-        String url = this.getUrl();
-        if (url == null) {
-            return null;
-        }
-        Uri uri = Uri.parse(url);
-        List<String> pathSegments = uri.getPathSegments();
-        if (pathSegments.size() < 2) {
-            return null;
-        }
-        return pathSegments.get(1);
+        return currentSlobId;
     }
 
     void saveStylePref(String styleTitle) {
