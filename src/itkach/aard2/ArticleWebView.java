@@ -18,7 +18,6 @@ import android.webkit.WebViewClient;
 
 import java.io.ByteArrayInputStream;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 public class ArticleWebView extends WebView {
