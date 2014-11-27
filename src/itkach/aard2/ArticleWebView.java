@@ -4,29 +4,27 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.webkit.JavascriptInterface;
 import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 public class ArticleWebView extends WebView {
 
-    private final StyleTitlesReceiver styleReceiver;
-
     private final String styleSwitcherJs;
+
     String TAG = getClass().getName();
 
     static final String PREF = "articleView";
@@ -37,7 +35,6 @@ public class ArticleWebView extends WebView {
     static final String PREF_REMOTE_CONTENT_WIFI = "wifi";
     static final String PREF_REMOTE_CONTENT_NEVER = "never";
 
-    String initialUrl;
     Set<String> externalSchemes = new HashSet<String>(){
         {
             add("https");
@@ -47,6 +44,37 @@ public class ArticleWebView extends WebView {
             add("geo");
         }
     };
+
+    private String[]        styleTitles;
+    private final String[]  defaultStyles;
+
+    private Runnable applyStylePrefRunnable = new Runnable() {
+        @Override
+        public void run() {
+            applyStylePref();
+        }
+    };
+
+    @JavascriptInterface
+    public void setStyleTitles(String[] titles) {
+        Log.d(TAG, String.format("Got %d style titles", titles.length));
+        this.styleTitles = concat(defaultStyles, titles);
+        for (String title : titles) {
+            Log.d(getClass().getName(), title);
+        }
+        if (titles.length > 0) {
+            getHandler().post(applyStylePrefRunnable);
+        }
+    }
+
+    static String[] concat(String[] A, String[] B) {
+        int aLen = A.length;
+        int bLen = B.length;
+        String[] C= new String[aLen+bLen];
+        System.arraycopy(A, 0, C, 0, aLen);
+        System.arraycopy(B, 0, C, aLen, bLen);
+        return C;
+    }
 
     public ArticleWebView(Context context) {
         this(context, null);
@@ -62,23 +90,34 @@ public class ArticleWebView extends WebView {
         settings.setBuiltInZoomControls(true);
         settings.setDisplayZoomControls(false);
 
-        styleReceiver = new StyleTitlesReceiver(
-                getResources().getString(R.string.default_style_title));
+        defaultStyles = new String[]{getResources().getString(R.string.default_style_title)};
 
-        this.addJavascriptInterface(styleReceiver, "android");
+        this.addJavascriptInterface(this, "android");
 
         //Hardware rendering is buggy
         //https://code.google.com/p/android/issues/detail?id=63738
         //this.setLayerType(LAYER_TYPE_SOFTWARE, null);
+
         this.setWebViewClient(new WebViewClient() {
 
             byte[] noBytes = new byte[0];
 
             @Override
+            public void onPageStarted(WebView view, String url, Bitmap favicon) {
+                Log.d(TAG, "onPageStarted: " + url);
+                view.loadUrl("javascript:" + styleSwitcherJs);
+            }
+
+            @Override
+            public void onLoadResource(WebView view, String url) {
+                Log.d(TAG, "onLoadResource: " + url);
+                applyStylePref();
+            }
+
+            @Override
             public void onPageFinished(WebView view, String url) {
-                Log.d(TAG, "Page finished: " + url);
-                view.loadUrl("javascript:"+styleSwitcherJs);
-                view.loadUrl("javascript:android.setTitles($styleSwitcher.getTitles())");
+                Log.d(TAG, "onPageFinished: " + url);
+                view.loadUrl("javascript:" + "android.setStyleTitles($styleSwitcher.getTitles())");
                 applyStylePref();
             }
 
@@ -115,9 +154,9 @@ public class ArticleWebView extends WebView {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view,
                     final String url) {
-                Log.d(TAG, String.format("shouldOverrideUrlLoading: %s (current %s, initial %s)",
-                        url, view.getUrl(), initialUrl));
-                //String referer = view.getUrl();
+                Log.d(TAG, String.format("shouldOverrideUrlLoading: %s (current %s)",
+                        url, view.getUrl()));
+
                 Uri uri = Uri.parse(url);
                 String scheme = uri.getScheme();
                 String host = uri.getHost();
@@ -173,23 +212,17 @@ public class ArticleWebView extends WebView {
     }
 
     String[] getAvailableStyles() {
-        return styleReceiver.titles;
+        return styleTitles;
     }
 
     void setStyle(String styleTitle) {
         saveStylePref(styleTitle);
         this.loadUrl(
-         String.format("javascript:$styleSwitcher.setStyle('%s')", styleTitle));
+         String.format("javascript:(window.$styleSwitcher && window.$styleSwitcher.setStyle('%s'))", styleTitle));
     }
 
     private SharedPreferences prefs() {
         return getContext().getSharedPreferences(PREF, Activity.MODE_PRIVATE);
-    }
-
-    @Override
-    public void loadUrl(String url, Map<String, String> additionalHttpHeaders) {
-        initialUrl = url;
-        super.loadUrl(url, additionalHttpHeaders);
     }
 
     void applyTextZoomPref() {
@@ -249,6 +282,7 @@ public class ArticleWebView extends WebView {
         }
         SharedPreferences prefs = prefs();
         String styleTitle = prefs.getString(PREF_STYLE + slobId, "");
+        Log.d(TAG, "Set style pref for " + slobId + ": " + styleTitle);
         this.setStyle(styleTitle);
     }
 
