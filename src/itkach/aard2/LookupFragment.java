@@ -48,6 +48,7 @@ public class LookupFragment extends BaseListFragment implements LookupListener {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        setBusy(false);
         ListView listView = getListView();
         listView.setOnItemClickListener(new OnItemClickListener() {
             @Override
@@ -124,7 +125,6 @@ public class LookupFragment extends BaseListFragment implements LookupListener {
         });
 
         searchView.setSubmitButtonEnabled(false);
-        setBusy(false);
     }
 
     @Override
@@ -167,7 +167,6 @@ public class LookupFragment extends BaseListFragment implements LookupListener {
     @Override
     public void onLookupStarted(String query) {
         setBusy(true);
-
     }
 
     @Override
