@@ -44,8 +44,8 @@ public class ArticleWebView extends WebView {
         }
     };
 
-    private String[]        styleTitles;
-    private final String[]  defaultStyles;
+    private String[]            styleTitles;
+    private final String[]      defaultStyles;
 
     private String              currentSlobId;
     private ConnectivityManager connectivityManager;
@@ -243,15 +243,12 @@ public class ArticleWebView extends WebView {
 
     void saveStylePref(String styleTitle) {
         String slobId = getCurrentSlobId();
-        if (slobId == null) {
+        String currentPref = getStylePref(slobId);
+        if (currentPref.equals(styleTitle)) {
             return;
         }
         SharedPreferences prefs = prefs();
         String prefName = PREF_STYLE + slobId;
-        String currentPref = prefs.getString(prefName, "");
-        if (currentPref.equals(styleTitle)) {
-            return;
-        }
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString(prefName, styleTitle);
         boolean success = editor.commit();
@@ -260,13 +257,16 @@ public class ArticleWebView extends WebView {
         }
     }
 
-    void applyStylePref() {
-        String slobId = getCurrentSlobId();
+    String getStylePref(String slobId) {
         if (slobId == null) {
-            return;
+            return "";
         }
         SharedPreferences prefs = prefs();
-        String styleTitle = prefs.getString(PREF_STYLE + slobId, "");
+        return prefs.getString(PREF_STYLE + slobId, "");
+    }
+
+    void applyStylePref() {
+        String styleTitle = getStylePref(getCurrentSlobId());
         this.setStyle(styleTitle);
     }
 
