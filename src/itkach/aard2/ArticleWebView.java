@@ -47,8 +47,8 @@ public class ArticleWebView extends WebView {
     private String[]        styleTitles;
     private final String[]  defaultStyles;
 
-
-    private String          currentSlobId;
+    private String              currentSlobId;
+    private ConnectivityManager connectivityManager;
 
     @JavascriptInterface
     public void setStyleTitles(String[] titles) {
@@ -76,6 +76,9 @@ public class ArticleWebView extends WebView {
 
     public ArticleWebView(Context context, AttributeSet attrs) {
         super(context, attrs);
+
+        connectivityManager = (ConnectivityManager) context
+                .getSystemService(Context.CONNECTIVITY_SERVICE);
 
         styleSwitcherJs = Application.styleSwitcherJs;
 
@@ -190,10 +193,7 @@ public class ArticleWebView extends WebView {
             return false;
         }
         if (prefValue.equals(PREF_REMOTE_CONTENT_WIFI)) {
-            ConnectivityManager cm = (ConnectivityManager) context
-                    .getSystemService(Context.CONNECTIVITY_SERVICE);
-
-            NetworkInfo networkInfo = cm.getActiveNetworkInfo();
+            NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
             if (networkInfo != null) {
                 int networkType = networkInfo.getType();
                 if (networkType == ConnectivityManager.TYPE_WIFI ||
