@@ -9,22 +9,31 @@
       existingElement = document.getElementById(styleElementId);
 
   if (existingElement && existingElement.title === title) {
-    console.log('Element with title ' + title +
-                ' and id ' + styleElementId +
-                'already exists');
+    console.debug(
+      'Element with title ' + title +
+      ' and id ' + styleElementId +
+      ' already exists');
     return;
   }
 
   if (existingElement) {
-    console.log('Style element exists, but with different title ' +
-                existingElement.title + ', removing');
+    console.debug(
+      'Style element ' + existingElement.id +
+      ' exists with title ' + existingElement.title +
+      ' but title ' + title + ' is requested, removing');
     existingElement.remove();
   }
 
-  var head = document.head,
+  if (window.$styleSwitcher) {
+    console.debug('Clearing canned styles');
+    window.$styleSwitcher.setStyle('');
+  }
+
+  var target = document.body,
       style = document.createElement('style');
   style.id = styleElementId;
+  style.title = title;
   style.appendChild(document.createTextNode(css));
-  head.appendChild(style);
+  target.appendChild(style);
 
 })();

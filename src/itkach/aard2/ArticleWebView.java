@@ -84,7 +84,7 @@ public class ArticleWebView extends WebView {
         connectivityManager = (ConnectivityManager) context
                 .getSystemService(Context.CONNECTIVITY_SERVICE);
 
-        styleSwitcherJs = Application.styleSwitcherJs;
+        styleSwitcherJs = Application.jsStyleSwitcher;
 
         WebSettings settings = this.getSettings();
         settings.setJavaScriptEnabled(true);
@@ -214,26 +214,23 @@ public class ArticleWebView extends WebView {
 
     void setStyle(String styleTitle) {
         saveStylePref(styleTitle);
+        String js;
         final SharedPreferences prefs = getContext().getSharedPreferences(
                 "userStyles", Activity.MODE_PRIVATE);
         if (prefs.contains(styleTitle)){
             String css = prefs.getString(styleTitle, "");
-            String js = Application.userStyleJs;
-            this.loadUrl("javascript:"+String.format(js, getCurrentSlobId(), styleTitle, css));
+            js = String.format(
+                    "javascript:" + Application.jsUserStyle, getCurrentSlobId(), styleTitle, css);
         }
         else {
-            String removeUserStyleJs = "var existingElement = document.getElementById('%s');\n" +
-                    "if (existingElement) {\n" +
-                    "console.log('Removing existing style element');"+
-                    "  existingElement.remove();\n" +
-                    "}\n";
-
-            this.loadUrl(
-                    String.format(
-                               "javascript:"+
-                                removeUserStyleJs +
-                                "(window.$styleSwitcher && window.$styleSwitcher.setStyle('%s'))", getCurrentSlobId(), styleTitle));
+            js = String.format(
+                    "javascript:" + Application.jsClearUserStyle + Application.jsSetCannedStyle,
+                    getCurrentSlobId(), styleTitle);
         }
+        if (Log.isLoggable(TAG, Log.DEBUG)) {
+            Log.d(TAG, js);
+        }
+        this.loadUrl(js);
     }
 
     private SharedPreferences prefs() {
