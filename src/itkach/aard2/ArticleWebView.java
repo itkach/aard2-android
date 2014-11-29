@@ -219,8 +219,9 @@ public class ArticleWebView extends WebView {
                 "userStyles", Activity.MODE_PRIVATE);
         if (prefs.contains(styleTitle)){
             String css = prefs.getString(styleTitle, "");
+            String elementId = getCurrentSlobId();
             js = String.format(
-                    "javascript:" + Application.jsUserStyle, getCurrentSlobId(), styleTitle, css);
+                    "javascript:" + Application.jsUserStyle, elementId, css);
         }
         else {
             js = String.format(
