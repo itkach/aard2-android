@@ -23,6 +23,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class ArticleWebView extends WebView {
 
@@ -53,6 +55,7 @@ public class ArticleWebView extends WebView {
 
     private String              currentSlobId;
     private ConnectivityManager connectivityManager;
+    private Timer timer;
 
     @JavascriptInterface
     public void setStyleTitles(String[] titles) {
@@ -99,9 +102,26 @@ public class ArticleWebView extends WebView {
         //https://code.google.com/p/android/issues/detail?id=63738
         //this.setLayerType(LAYER_TYPE_SOFTWARE, null);
 
+        timer = new Timer();
+
         this.setWebViewClient(new WebViewClient() {
 
             byte[] noBytes = new byte[0];
+
+            TimerTask applyStylePref = new TimerTask() {
+                @Override
+                public void run() {
+                    getHandler().post(applyStyleRunnable);
+                }
+            };
+
+            Runnable applyStyleRunnable = new Runnable() {
+                @Override
+                public void run() {
+                    applyStylePref();
+                }
+            };
+
 
             @Override
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
@@ -109,16 +129,13 @@ public class ArticleWebView extends WebView {
                 currentSlobId = bd == null ? null : bd.slobId;
                 Log.d(TAG, "onPageStarted: " + url);
                 view.loadUrl("javascript:" + styleSwitcherJs);
-            }
-
-            @Override
-            public void onLoadResource(WebView view, String url) {
-                applyStylePref();
+                timer.schedule(applyStylePref, 60, 250);
             }
 
             @Override
             public void onPageFinished(WebView view, String url) {
                 Log.d(TAG, "onPageFinished: " + url);
+                applyStylePref.cancel();
                 view.loadUrl("javascript:" + "android.setStyleTitles($styleSwitcher.getTitles())");
                 applyStylePref();
             }
@@ -320,4 +337,9 @@ public class ArticleWebView extends WebView {
         saveTextZoomPref();
     }
 
+    @Override
+    public void destroy() {
+        super.destroy();
+        timer.cancel();
+    }
 }
