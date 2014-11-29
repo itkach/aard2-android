@@ -16,6 +16,11 @@
     return;
   }
 
+  if (window.$styleSwitcher) {
+    console.debug('Clearing canned styles');
+    window.$styleSwitcher.setStyle('');
+  }
+
   if (existingElement) {
     console.debug(
       'Style element ' + existingElement.id +
@@ -24,12 +29,7 @@
     existingElement.remove();
   }
 
-  if (window.$styleSwitcher) {
-    console.debug('Clearing canned styles');
-    window.$styleSwitcher.setStyle('');
-  }
-
-  var target = document.body,
+  var target = document.head,
       style = document.createElement('style');
   style.id = styleElementId;
   style.title = title;
