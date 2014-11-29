@@ -31,7 +31,9 @@ public enum Icons {
     ERROR(0xf071),
     COPYRIGHT(0xf1f9),
     SELECT_ALL(0xf046),
-    ADD(0xf067)
+    ADD(0xf067),
+    CHEVRON_UP(0xf077),
+    CHEVRON_DOWN(0xf078)
     ;
 
     private static TypefaceManager typefaceManager;

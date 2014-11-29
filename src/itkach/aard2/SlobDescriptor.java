@@ -15,6 +15,7 @@ public class SlobDescriptor extends BaseDescriptor {
     public int priority;
     public long blobCount;
     public String error;
+    public boolean expandDetail = false;
 
     private Slob slob;
 

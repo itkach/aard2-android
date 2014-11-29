@@ -1,11 +1,13 @@
 package itkach.aard2;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.database.DataSetObserver;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.text.Html;
 import android.util.Log;
@@ -27,14 +29,13 @@ public class DictionaryListAdapter extends BaseAdapter {
 
     private final SlobDescriptorList    data;
     private final DataSetObserver       observer;
-    private final Context               context;
-    private boolean                     selectionMode;
+    private final Activity context;
     private View.OnClickListener        openUrlOnClick;
     private AlertDialog                 deleteConfirmationDialog;
 
     private final static String hrefTemplate = "<a href=\'%1$s\'>%2$s</a>";
 
-    DictionaryListAdapter(SlobDescriptorList data, Context context) {
+    DictionaryListAdapter(SlobDescriptorList data, Activity context) {
         this.data = data;
         this.context = context;
         this.observer = new DataSetObserver() {
@@ -73,7 +74,7 @@ public class DictionaryListAdapter extends BaseAdapter {
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(int position, final View convertView, ViewGroup parent) {
         SlobDescriptor desc = (SlobDescriptor) getItem(position);
         final String label = desc.tags.get("label");
         String path = desc.path;
@@ -115,6 +116,20 @@ public class DictionaryListAdapter extends BaseAdapter {
                     forget(position);
                 }
             });
+
+            View btnToggleDetail = view
+                    .findViewById(R.id.dictionary_btn_toggle_detail);
+
+            btnToggleDetail.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Integer position = (Integer)view.getTag();
+                    SlobDescriptor desc = data.get(position);
+                    desc.expandDetail = !desc.expandDetail;
+                    data.set(position, desc);
+                }
+            });
+
         }
 
         Resources r = parent.getResources();
@@ -130,12 +145,21 @@ public class DictionaryListAdapter extends BaseAdapter {
         titleView.setEnabled(available);
         titleView.setText(label);
 
+        View detailView = view.findViewById(R.id.dictionary_details);
+        detailView.setVisibility(desc.expandDetail ? View.VISIBLE : View.GONE);
+
         setupBlobCountView(desc, blobCount, available, view, r);
         setupCopyrightView(desc, available, view);
         setupLicenseView(desc, available, view);
         setupSourceView(desc, available, view);
         setupPathView(path, available, view);
         setupErrorView(desc, view);
+
+        ImageView btnToggleDetail = (ImageView) view
+                .findViewById(R.id.dictionary_btn_toggle_detail);
+        Icons toggleIcon = desc.expandDetail ? Icons.CHEVRON_UP: Icons.CHEVRON_DOWN;
+        btnToggleDetail.setImageDrawable(toggleIcon.forList());
+        btnToggleDetail.setTag(position);
 
         ImageView btnForget = (ImageView) view
                 .findViewById(R.id.dictionary_btn_forget);
@@ -286,11 +310,4 @@ public class DictionaryListAdapter extends BaseAdapter {
         return data.size();
     }
 
-    public boolean isSelectionMode() {
-        return selectionMode;
-    }
-
-    public void setSelectionMode(boolean selectionMode) {
-        this.selectionMode = selectionMode;
-    }
 }
