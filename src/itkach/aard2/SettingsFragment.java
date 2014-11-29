@@ -31,7 +31,7 @@ public class SettingsFragment extends ListFragment {
             startActivity(browserIntent);
             return;
         }
-        if (position == 1) {
+        if (position == 2) {
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
             builder.setMessage(R.string.confirm_clear_cached_content)
                     .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
@@ -53,6 +53,7 @@ public class SettingsFragment extends ListFragment {
                 }
             });
             clearCacheConfirmationDialog.show();
+            return;
         }
     }
 

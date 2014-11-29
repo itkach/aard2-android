@@ -2,9 +2,12 @@ package itkach.aard2;
 
 import android.app.ActionBar;
 import android.app.ActionBar.Tab;
+import android.app.Activity;
 import android.app.FragmentTransaction;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -15,10 +18,17 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Toast;
+
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.StringWriter;
+import java.util.List;
 
 public class MainActivity extends FragmentActivity implements
         ActionBar.TabListener {
 
+    private static final String TAG = MainActivity.class.getSimpleName();;
     private AppSectionsPagerAdapter mAppSectionsPagerAdapter;
     private ViewPager               mViewPager;
 
@@ -115,6 +125,42 @@ public class MainActivity extends FragmentActivity implements
     @Override
     public void onTabReselected(ActionBar.Tab tab,
             FragmentTransaction fragmentTransaction) {
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Uri dataUri = data == null ? null : data.getData();
+        Log.d(getClass().getSimpleName(), String.format("req code %s, result code: %s, data: %s", requestCode, resultCode, dataUri));
+        if (resultCode == RESULT_OK && dataUri != null) {
+            try {
+                InputStream is = getContentResolver().openInputStream(dataUri);
+                Application app = (Application)getApplication();
+                String userCss = app.readTextFile(is, 256 * 1024);
+                List<String> pathSegments = dataUri.getPathSegments();
+                String fileName = pathSegments.get(pathSegments.size() - 1);
+                Log.d(TAG, fileName);
+                Log.d(TAG, userCss);
+                final SharedPreferences prefs = getSharedPreferences(
+                        "userStyles", Activity.MODE_PRIVATE);
+                SharedPreferences.Editor editor = prefs.edit();
+                editor.putString(fileName, userCss);
+                boolean saved = editor.commit();
+                if (!saved) {
+                    Toast.makeText(this, R.string.msg_failed_to_store_user_style,
+                            Toast.LENGTH_LONG).show();
+                }
+            }
+            catch (Application.FileTooBigException e) {
+                Log.d(TAG, "File is too big: " + dataUri);
+                Toast.makeText(this, R.string.msg_file_too_big,
+                        Toast.LENGTH_LONG).show();
+            }
+            catch (Exception e) {
+                Log.d(TAG, "Failed to load: " + dataUri, e);
+                Toast.makeText(this, R.string.msg_failed_to_read_file,
+                        Toast.LENGTH_LONG).show();
+            }
+        }
     }
 
     @Override

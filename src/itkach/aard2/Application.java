@@ -55,6 +55,7 @@ public class Application extends android.app.Application {
     private List<Activity>                  articleActivities;
 
     static String styleSwitcherJs;
+    static String userStyleJs;
 
     @Override
     public void onCreate() {
@@ -93,15 +94,14 @@ public class Application extends android.app.Application {
                 port, (System.currentTimeMillis() - t0)));
         try {
             InputStream is = getClass().getClassLoader().getResourceAsStream("styleswitcher.js");
-            InputStreamReader reader = new InputStreamReader(is, "UTF-8");
-            StringWriter sw = new StringWriter();
-            int c;
-            while ((c = reader.read()) != -1) {
-                sw.write(c);
-            }
-            reader.close();
-            styleSwitcherJs = sw.toString();
+            styleSwitcherJs = readTextFile(is, 0);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
+        try {
+            InputStream is = getAssets().open("userstyle.js");
+            userStyleJs = readTextFile(is, 0);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -141,6 +141,26 @@ public class Application extends android.app.Application {
         bookmarks.load();
         history.load();
     }
+
+    static String readTextFile(InputStream is, int maxSize) throws IOException, FileTooBigException {
+        InputStreamReader reader = new InputStreamReader(is, "UTF-8");
+        StringWriter sw = new StringWriter();
+        char[] buf = new char[16384];
+        int count = 0;
+        while (true) {
+            int read = reader.read(buf);
+            if (read == -1) {
+                break;
+            }
+            count += read;
+            if (maxSize > 0 && count > maxSize) {
+                throw new FileTooBigException();
+            }
+            sw.write(buf, 0, read);
+        }
+        reader.close();
+        return sw.toString();
+    };
 
     private void startWebServer() {
         int portCandidate = PREFERRED_PORT;
@@ -385,4 +405,6 @@ public class Application extends android.app.Application {
         lookupListeners.remove(listener);
     }
 
+    static class FileTooBigException extends IOException {
+    }
 }

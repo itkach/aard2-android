@@ -13,8 +13,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.TextView;
+
+import java.util.Map;
 
 public class SettingsListAdapter extends BaseAdapter {
 
@@ -23,7 +28,7 @@ public class SettingsListAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return 3;
+        return 4;
     }
 
     @Override
@@ -50,10 +55,47 @@ public class SettingsListAdapter extends BaseAdapter {
     public View getView(int i, View convertView, ViewGroup parent) {
         switch (i) {
             case 0: return getRemoteContentSettingsView(convertView, parent);
-            case 1: return getClearCacheView(convertView, parent);
-            case 2: return getAboutView(convertView, parent);
+            case 1: return getUserStylesView(convertView, parent);
+            case 2: return getClearCacheView(convertView, parent);
+            case 3: return getAboutView(convertView, parent);
         }
         return null;
+    }
+
+    private View getUserStylesView(View convertView, final ViewGroup parent) {
+        View view;
+        if (convertView != null) {
+            view = convertView;
+        }
+        else {
+            LayoutInflater inflater = (LayoutInflater) parent.getContext()
+                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            view = inflater.inflate(R.layout.settings_user_styles_item, parent,
+                    false);
+
+            ListView userStyleList = (ListView)view.findViewById(R.id.setting_user_styles_list);
+            final SharedPreferences prefs = view.getContext().getSharedPreferences(
+                    "userStyles", Activity.MODE_PRIVATE);
+            userStyleList.setAdapter(new UserStyleListAdapter(prefs));
+
+            ImageView btnAdd = (ImageView)view.findViewById(R.id.setting_btn_add_user_style);
+            btnAdd.setImageDrawable(Icons.ADD.forList());
+            btnAdd.setOnClickListener(new View.OnClickListener(){
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent();
+                    intent.setAction(Intent.ACTION_GET_CONTENT);
+                    intent.setType("text/*");
+                    Intent chooser = Intent.createChooser(intent, "Select CSS file");
+                    ((Activity)parent.getContext()).startActivityForResult(chooser, 0);
+                    return;
+                }
+            });
+        };
+        ListView userStyleList = (ListView)view.findViewById(R.id.setting_user_styles_list);
+        View emptyView = view.findViewById(R.id.setting_user_styles_empty);
+        emptyView.setVisibility(userStyleList.getAdapter().getCount() == 0 ? View.VISIBLE : View.GONE);
+        return view;
     }
 
     private View getRemoteContentSettingsView(View convertView, ViewGroup parent) {

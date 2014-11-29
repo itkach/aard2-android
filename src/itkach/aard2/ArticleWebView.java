@@ -17,7 +17,11 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import java.io.ByteArrayInputStream;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public class ArticleWebView extends WebView {
@@ -121,7 +125,6 @@ public class ArticleWebView extends WebView {
 
             @Override
             public WebResourceResponse shouldInterceptRequest(WebView view, String url) {
-                Log.d(TAG, "Should intercept? " + url);
                 Uri parsed;
                 try {
                     parsed = Uri.parse(url);
@@ -131,20 +134,15 @@ public class ArticleWebView extends WebView {
                     return super.shouldInterceptRequest(view, url);
                 }
                 if (parsed.isRelative()) {
-                    Log.d(TAG, "Relative url, not intercepting: " + url);
                     return null;
                 }
                 String host = parsed.getHost();
                 if (host == null || host.toLowerCase().equals("localhost")) {
-                    Log.d(TAG, "Local url, not intercepting: " + url);
                     return null;
                 }
                 if (allowRemoteContent(getContext())) {
-                    Log.d(TAG, String.format("Remote content from %s is allowed", url));
                     return null;
                 }
-                String msg = String.format("Remote content from %s is not allowed", url);
-                Log.d(TAG, msg);
                 return new WebResourceResponse("text/plain", "UTF-8",
                         new ByteArrayInputStream(noBytes));
             }
@@ -206,13 +204,36 @@ public class ArticleWebView extends WebView {
     }
 
     String[] getAvailableStyles() {
-        return styleTitles;
+        final SharedPreferences prefs = getContext().getSharedPreferences(
+                "userStyles", Activity.MODE_PRIVATE);
+        Map<String, ?> data = prefs.getAll();
+        List<String> names = new ArrayList<String>(data.keySet());
+        Collections.sort(names);
+        return concat(styleTitles, names.toArray(new String[names.size()]));
     }
 
     void setStyle(String styleTitle) {
         saveStylePref(styleTitle);
-        this.loadUrl(
-         String.format("javascript:(window.$styleSwitcher && window.$styleSwitcher.setStyle('%s'))", styleTitle));
+        final SharedPreferences prefs = getContext().getSharedPreferences(
+                "userStyles", Activity.MODE_PRIVATE);
+        if (prefs.contains(styleTitle)){
+            String css = prefs.getString(styleTitle, "");
+            String js = Application.userStyleJs;
+            this.loadUrl("javascript:"+String.format(js, getCurrentSlobId(), styleTitle, css));
+        }
+        else {
+            String removeUserStyleJs = "var existingElement = document.getElementById('%s');\n" +
+                    "if (existingElement) {\n" +
+                    "console.log('Removing existing style element');"+
+                    "  existingElement.remove();\n" +
+                    "}\n";
+
+            this.loadUrl(
+                    String.format(
+                               "javascript:"+
+                                removeUserStyleJs +
+                                "(window.$styleSwitcher && window.$styleSwitcher.setStyle('%s'))", getCurrentSlobId(), styleTitle));
+        }
     }
 
     private SharedPreferences prefs() {

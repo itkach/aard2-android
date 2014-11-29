@@ -30,7 +30,8 @@ public enum Icons {
     FILE_ARCHIVE(0xf1c6),
     ERROR(0xf071),
     COPYRIGHT(0xf1f9),
-    SELECT_ALL(0xf046)
+    SELECT_ALL(0xf046),
+    ADD(0xf067)
     ;
 
     private static TypefaceManager typefaceManager;
@@ -65,6 +66,10 @@ public enum Icons {
 
     Drawable forList() {
         return create(21, textColor);
+    }
+
+    Drawable forListSmall() {
+        return create(18, textColor);
     }
 
     Drawable forText() {
