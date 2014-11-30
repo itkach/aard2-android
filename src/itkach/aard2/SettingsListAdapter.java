@@ -19,11 +19,29 @@ import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
-public class SettingsListAdapter extends BaseAdapter {
+public class SettingsListAdapter extends BaseAdapter implements SharedPreferences.OnSharedPreferenceChangeListener {
+
+    private final static String TAG = SettingsListAdapter.class.getSimpleName();
+
+    private List<String> userStyleNames;
+    private Map<String, ?> userStyleData;
+    private SharedPreferences userStylePrefs;
+    View.OnClickListener onDeleteUserStyle;
+
 
     SettingsListAdapter() {
+        onDeleteUserStyle = new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String name = (String)view.getTag();
+                deleteUserStyle(name);
+            }
+        };
     }
 
     @Override
@@ -64,19 +82,23 @@ public class SettingsListAdapter extends BaseAdapter {
 
     private View getUserStylesView(View convertView, final ViewGroup parent) {
         View view;
+        Log.d(TAG, "getUserStylesView: convert view " + convertView);
+        LayoutInflater inflater = (LayoutInflater) parent.getContext()
+                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         if (convertView != null) {
             view = convertView;
         }
         else {
-            LayoutInflater inflater = (LayoutInflater) parent.getContext()
-                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            userStylePrefs = parent.getContext().getSharedPreferences(
+                    "userStyles", Activity.MODE_PRIVATE);
+            userStylePrefs.registerOnSharedPreferenceChangeListener(this);
+
+            this.userStyleData = userStylePrefs.getAll();
+            this.userStyleNames = new ArrayList<String>(this.userStyleData.keySet());
+            Collections.sort(this.userStyleNames);
+
             view = inflater.inflate(R.layout.settings_user_styles_item, parent,
                     false);
-
-            ListView userStyleList = (ListView)view.findViewById(R.id.setting_user_styles_list);
-            final SharedPreferences prefs = view.getContext().getSharedPreferences(
-                    "userStyles", Activity.MODE_PRIVATE);
-            userStyleList.setAdapter(new UserStyleListAdapter(prefs));
 
             ImageView btnAdd = (ImageView)view.findViewById(R.id.setting_btn_add_user_style);
             btnAdd.setImageDrawable(Icons.ADD.forList());
@@ -92,11 +114,48 @@ public class SettingsListAdapter extends BaseAdapter {
                 }
             });
         };
-        ListView userStyleList = (ListView)view.findViewById(R.id.setting_user_styles_list);
+
         View emptyView = view.findViewById(R.id.setting_user_styles_empty);
-        emptyView.setVisibility(userStyleList.getAdapter().getCount() == 0 ? View.VISIBLE : View.GONE);
+        emptyView.setVisibility(userStyleNames.size() == 0 ? View.VISIBLE : View.GONE);
+
+        LinearLayout userStyleListLayout = (LinearLayout)view.findViewById(R.id.setting_user_styles_list);
+        userStyleListLayout.removeAllViews();
+        for (int i = 0; i < userStyleNames.size(); i++) {
+            View styleItemView = inflater.inflate(R.layout.user_styles_list_item, parent,
+                    false);
+            ImageView btnDelete = (ImageView)styleItemView.findViewById(R.id.user_styles_list_btn_delete);
+            btnDelete.setImageDrawable(Icons.TRASH.forListSmall());
+            btnDelete.setOnClickListener(onDeleteUserStyle);
+
+            String name = userStyleNames.get(i);
+
+            btnDelete.setTag(name);
+
+            TextView nameView = (TextView)styleItemView.findViewById(R.id.user_styles_list_name);
+            nameView.setText(name);
+
+            userStyleListLayout.addView(styleItemView);
+        }
+
         return view;
     }
+
+    private void deleteUserStyle(String name) {
+        Log.d(TAG, "Deleting user style " + name);
+        SharedPreferences.Editor edit = this.userStylePrefs.edit();
+        edit.remove(name);
+        boolean result = edit.commit();
+        Log.d(TAG, "Pref change committed? " + result);
+    }
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
+        this.userStyleData = sharedPreferences.getAll();
+        this.userStyleNames = new ArrayList<String>(this.userStyleData.keySet());
+        Collections.sort(userStyleNames);
+        notifyDataSetChanged();
+    }
+
 
     private View getRemoteContentSettingsView(View convertView, ViewGroup parent) {
         View view;
