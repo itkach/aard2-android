@@ -86,4 +86,5 @@
         <item quantity="other">%,d alte Datensätze</item>
     </plurals>
     <string name="blob_descriptor_confirm_delete">Lösche %1$s?</string>
+    <string name="setting_user_style_confirm_forget">Vergesse %1$s?</string>
 </resources>

@@ -1,7 +1,9 @@
 package itkach.aard2;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
@@ -15,7 +17,6 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
@@ -27,6 +28,7 @@ import java.util.Map;
 public class SettingsListAdapter extends BaseAdapter implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     private final static String TAG = SettingsListAdapter.class.getSimpleName();
+    private final Activity context;
 
     private List<String> userStyleNames;
     private Map<String, ?> userStyleData;
@@ -34,8 +36,15 @@ public class SettingsListAdapter extends BaseAdapter implements SharedPreference
     View.OnClickListener onDeleteUserStyle;
 
 
-    SettingsListAdapter() {
-        onDeleteUserStyle = new View.OnClickListener() {
+    SettingsListAdapter(Activity context) {
+
+        this.context = context;
+
+        this.userStylePrefs = context.getSharedPreferences(
+                "userStyles", Activity.MODE_PRIVATE);
+        this.userStylePrefs.registerOnSharedPreferenceChangeListener(this);
+
+        this.onDeleteUserStyle = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 String name = (String)view.getTag();
@@ -89,10 +98,6 @@ public class SettingsListAdapter extends BaseAdapter implements SharedPreference
             view = convertView;
         }
         else {
-            userStylePrefs = parent.getContext().getSharedPreferences(
-                    "userStyles", Activity.MODE_PRIVATE);
-            userStylePrefs.registerOnSharedPreferenceChangeListener(this);
-
             this.userStyleData = userStylePrefs.getAll();
             this.userStyleNames = new ArrayList<String>(this.userStyleData.keySet());
             Collections.sort(this.userStyleNames);
@@ -109,7 +114,7 @@ public class SettingsListAdapter extends BaseAdapter implements SharedPreference
                     intent.setAction(Intent.ACTION_GET_CONTENT);
                     intent.setType("text/*");
                     Intent chooser = Intent.createChooser(intent, "Select CSS file");
-                    ((Activity)parent.getContext()).startActivityForResult(chooser, 0);
+                    context.startActivityForResult(chooser, 0);
                     return;
                 }
             });
@@ -140,12 +145,23 @@ public class SettingsListAdapter extends BaseAdapter implements SharedPreference
         return view;
     }
 
-    private void deleteUserStyle(String name) {
-        Log.d(TAG, "Deleting user style " + name);
-        SharedPreferences.Editor edit = this.userStylePrefs.edit();
-        edit.remove(name);
-        boolean result = edit.commit();
-        Log.d(TAG, "Pref change committed? " + result);
+    private void deleteUserStyle(final String name) {
+        String message = context.getString(R.string.setting_user_style_confirm_forget, name);
+        new AlertDialog.Builder(context)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setTitle("")
+                .setMessage(message)
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Log.d(TAG, "Deleting user style " + name);
+                        SharedPreferences.Editor edit = userStylePrefs.edit();
+                        edit.remove(name);
+                        edit.commit();
+                    }
+                })
+                .setNegativeButton(android.R.string.no, null)
+                .show();
     }
 
     @Override
@@ -155,7 +171,6 @@ public class SettingsListAdapter extends BaseAdapter implements SharedPreference
         Collections.sort(userStyleNames);
         notifyDataSetChanged();
     }
-
 
     private View getRemoteContentSettingsView(View convertView, ViewGroup parent) {
         View view;

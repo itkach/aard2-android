@@ -77,5 +77,5 @@
         <item quantity="few">%,d записи</item>
         <item quantity="many">%,d записей</item>
     </plurals>
-    <string name="blob_descriptor_confirm_delete">Удалить %1$s?</string>
+    <string name="setting_user_style_confirm_forget">Исключить %1$s?</string>
 </resources>

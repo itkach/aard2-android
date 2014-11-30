@@ -83,4 +83,5 @@ is missing a quantity used in that language, otherwise the app will crash
 <item quantity="other">%,d risulati</item>
 </plurals>
 <string name="blob_descriptor_confirm_delete">Sei sicuro di voler cancellare %1$s?</string>
+<string name="setting_user_style_confirm_forget">Sei sicuro di voler dimenticare %1$s?</string>
 </resources>

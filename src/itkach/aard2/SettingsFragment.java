@@ -19,7 +19,7 @@ public class SettingsFragment extends ListFragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        listAdapter = new SettingsListAdapter();
+        listAdapter = new SettingsListAdapter(getActivity());
         setListAdapter(listAdapter);
     }
 
