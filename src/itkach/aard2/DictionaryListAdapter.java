@@ -292,7 +292,6 @@ public class DictionaryListAdapter extends BaseAdapter {
             }
         });
         deleteConfirmationDialog.show();
-
     }
 
     @Override

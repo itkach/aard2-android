@@ -20,7 +20,6 @@ public class DictionariesFragment extends BaseListFragment {
 
 
     private DictionaryListAdapter listAdapter;
-    private AlertDialog           deleteConfirmationDialog = null;
 
     protected Icons getEmptyIcon() {
         return Icons.DICTIONARY;
@@ -75,11 +74,4 @@ public class DictionariesFragment extends BaseListFragment {
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public void onPause() {
-        super.onPause();
-        if (deleteConfirmationDialog != null) {
-            deleteConfirmationDialog.dismiss();
-        }
-    }
 }
