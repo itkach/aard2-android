@@ -39,6 +39,7 @@ public enum Icons {
     private static TypefaceManager typefaceManager;
     private static DisplayMetrics displayMetrics;
     private static int iconColor;
+    private static int listIconColor;
     private static int textColor;
 
     private final int codePoint;
@@ -51,6 +52,7 @@ public enum Icons {
         typefaceManager = new TypefaceManager(assetManager);
         displayMetrics = r.getDisplayMetrics();
         iconColor = r.getColor(android.R.color.secondary_text_dark);
+        listIconColor = r.getColor(android.R.color.secondary_text_light);
         textColor = r.getColor(android.R.color.primary_text_light);
     }
 
@@ -67,11 +69,11 @@ public enum Icons {
     }
 
     Drawable forList() {
-        return create(21, textColor);
+        return create(21, listIconColor);
     }
 
     Drawable forListSmall() {
-        return create(18, textColor);
+        return create(18, listIconColor);
     }
 
     Drawable forText() {
