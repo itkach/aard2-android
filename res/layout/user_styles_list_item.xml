@@ -18,7 +18,7 @@
         >
         <TextView
             android:id="@+id/user_styles_list_name"
-            style="@android:style/TextAppearance.Holo.SearchResult.Title"
+            style="@android:style/TextAppearance.Holo.SearchResult.Subtitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginRight="22dip"
