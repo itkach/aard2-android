@@ -92,4 +92,5 @@
     <string name="setting_user_styles_empty">No styles</string>
     <string name="msg_failed_to_store_user_style">Failed to store user style</string>
     <string name="setting_user_style_confirm_forget">Forget %1$s?</string>
+    <string name="msg_file_not_css">Doesn\'t appear to be a CSS file</string>
 </resources>

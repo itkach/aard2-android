@@ -132,6 +132,13 @@ public class MainActivity extends FragmentActivity implements
         Uri dataUri = data == null ? null : data.getData();
         Log.d(getClass().getSimpleName(), String.format("req code %s, result code: %s, data: %s", requestCode, resultCode, dataUri));
         if (resultCode == RESULT_OK && dataUri != null) {
+            String path = dataUri.getPath().toLowerCase();
+            if (!(path.endsWith(".css") || path.endsWith(".txt"))) {
+                Log.d(TAG, "Doesn't appear to be a css: " + dataUri);
+                Toast.makeText(this, R.string.msg_file_not_css,
+                        Toast.LENGTH_LONG).show();
+                return;
+            }
             try {
                 InputStream is = getContentResolver().openInputStream(dataUri);
                 Application app = (Application)getApplication();
@@ -140,6 +147,13 @@ public class MainActivity extends FragmentActivity implements
                 String fileName = pathSegments.get(pathSegments.size() - 1);
                 Log.d(TAG, fileName);
                 Log.d(TAG, userCss);
+                int lastIndexOfDot = fileName.lastIndexOf(".");
+                if (lastIndexOfDot > -1) {
+                    fileName = fileName.substring(0, lastIndexOfDot);
+                }
+                if (fileName.length() == 0) {
+                    fileName = "???";
+                }
                 final SharedPreferences prefs = getSharedPreferences(
                         "userStyles", Activity.MODE_PRIVATE);
                 SharedPreferences.Editor editor = prefs.edit();
