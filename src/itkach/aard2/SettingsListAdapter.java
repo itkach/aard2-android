@@ -2,6 +2,7 @@ package itkach.aard2;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -19,6 +20,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -114,8 +116,14 @@ public class SettingsListAdapter extends BaseAdapter implements SharedPreference
                     intent.setAction(Intent.ACTION_GET_CONTENT);
                     intent.setType("text/*");
                     Intent chooser = Intent.createChooser(intent, "Select CSS file");
-                    context.startActivityForResult(chooser, 0);
-                    return;
+                    try {
+                        context.startActivityForResult(chooser, 0);
+                    }
+                    catch (ActivityNotFoundException e){
+                        Log.d(TAG, "Not activity to get content", e);
+                        Toast.makeText(context, R.string.msg_no_activity_to_get_content,
+                                Toast.LENGTH_LONG).show();
+                    }
                 }
             });
         };
