@@ -53,6 +53,9 @@ class DescriptorStore<T extends BaseDescriptor> {
     }
 
     boolean delete(String itemId) {
+        if (itemId == null) {
+            return false;
+        }
         return new File(dir, itemId).delete();
     }
 
