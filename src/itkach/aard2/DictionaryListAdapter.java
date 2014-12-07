@@ -76,7 +76,10 @@ public class DictionaryListAdapter extends BaseAdapter {
     @Override
     public View getView(int position, final View convertView, ViewGroup parent) {
         SlobDescriptor desc = (SlobDescriptor) getItem(position);
-        final String label = desc.tags.get("label");
+        String label = desc.tags.get("label");
+        if (isBlank(label)) {
+            label = "???";
+        }
         String path = desc.path;
         long blobCount = desc.blobCount;
         boolean available = this.data.resolve(desc) != null;

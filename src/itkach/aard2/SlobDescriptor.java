@@ -4,13 +4,18 @@ import android.util.Log;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 
 import itkach.slob.Slob;
 
+
 public class SlobDescriptor extends BaseDescriptor {
+
+    private final static transient String TAG = SlobDescriptor.class.getSimpleName();
+
     public String path;
-    public Map<String, String> tags;
+    public Map<String, String> tags = new HashMap<String, String>();
     public boolean active = true;
     public int priority;
     public long blobCount;
@@ -37,6 +42,9 @@ public class SlobDescriptor extends BaseDescriptor {
             }
             catch (Exception e) {
                 error = e.getMessage();
+                if (Log.isLoggable(TAG, Log.DEBUG)) {
+                    Log.d(TAG, "Error while opening " + this.path, e);
+                }
             }
         }
         return slob;
@@ -47,7 +55,7 @@ public class SlobDescriptor extends BaseDescriptor {
             try {
                 slob.close();
             } catch (IOException e) {
-                Log.d(getClass().getName(), "Error while closing " + this.path, e);
+                Log.d(TAG, "Error while closing " + this.path, e);
             }
         }
     }
@@ -56,6 +64,10 @@ public class SlobDescriptor extends BaseDescriptor {
         SlobDescriptor s = new SlobDescriptor();
         s.path = file.getAbsolutePath();
         s.open();
+        if (s.error != null) {
+            s.expandDetail = true;
+            s.active = false;
+        }
         return s;
     }
 
