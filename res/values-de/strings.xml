@@ -1,4 +1,4 @@
-<resources>
+﻿<resources>
     <string name="app_name">Aard 2</string>
     <string name="subtitle_lookup">Finden</string>
     <string name="subtitle_bookmark">Lesezeichen</string>
@@ -16,7 +16,7 @@
     
     <string name="action_sort_by_title">Nach Titel</string>
     <string name="action_sort_by_time">Nach Zeit</string>    
-    <string name="action_lookup">Finden</string>
+    <string name="action_lookup">Lookup</string>
     
     <string name="dict_label"><![CDATA[<big><b>%1$s</b></big>]]></string>
     <string name="dict_path"><![CDATA[<small>%1$s</small>]]></string>
@@ -37,15 +37,15 @@
     <string name="action_zoom_out">Verkleinern</string>
     <string name="action_zoom_in">Vergrössern</string>
     <string name="action_zoom_reset">Zoom Reset</string>
-    <string name="action_select_style">Stile...</string>
+    <string name="action_select_style">Stile....</string>
     <string name="select_style">Wähle Stil</string>
     <string name="default_style_title">Default</string>
     <string name="subtitle_settings">Einstellung</string>
-    <string name="select_remote_content_mode">Lade externer Inhalt</string>
+    <string name="select_remote_content_mode">Lade externen Inhalt</string>
     <string name="setting_remote_content_always">Immer</string>
     <string name="setting_remote_content_wifi">Nur mit Wi-Fi</string>
     <string name="setting_remote_content_never">Nie</string>
-    <string name="setting_remote_content">Lade externer Inhalt</string>
+    <string name="setting_remote_content">Lade externen Inhalt</string>
     <string name="setting_about">Über %1$s</string>
     <string name="application_home_url">http://aarddict.org</string>
     <string name="application_copyright">\u00a9 2014 Igor Tkach</string>
@@ -64,7 +64,7 @@
     <string name="dictionaries_scanning_device">Durchsuche Gerät nach Wörterbüchern...</string>
     <string name="dictionaries_confirm_forget">Vergesse %1$s?</string>
     <string name="lookup_nothing_found">Nichts gefunden</string>
-    <string name="main_empty_bookmarks">Keine Lesezeichen</string>
+    <string name="main_empty_bookmarks">Kein Lesezeichen</string>
     <string name="main_empty_history">Kein Verlauf</string>
     <string name="main_empty_dictionaries"><![CDATA[Visit<br><a href=\'http://aarddict.org\'>http://aarddict.org</a>]]></string>
     <string name="delete">Lösche</string>
@@ -79,12 +79,20 @@
     </plurals>
     <plurals name="confirm_delete_history_count">
         <item quantity="zero">%,d alte Datensätze</item>
-        <item quantity="one">%,d alten Datensatz</item>
+        <item quantity="one">%,d alter Datensatz/item>
         <item quantity="two">%,d alte Datensätze</item>
         <item quantity="few">%,d alte Datensätze</item>
         <item quantity="many">%,d alte Datensätze</item>
         <item quantity="other">%,d alte Datensätze</item>
     </plurals>
     <string name="blob_descriptor_confirm_delete">Lösche %1$s?</string>
+    <string name="msg_failed_to_read_file">Datei nicht gelesen</string>
+    <string name="msg_file_too_big">Datei zu gross</string>
+    <string name="setting_user_styles">Anwender Stile</string>
+    <string name="setting_user_styles_empty">Keine Stile</string>
+    <string name="msg_failed_to_store_user_style">Kann Stil nicht speichern</string>
     <string name="setting_user_style_confirm_forget">Vergesse %1$s?</string>
+    <string name="msg_file_not_css">Scheint kein CSS file zu sein</string>
+    <string name="msg_no_activity_to_get_content">Kann Datei nicht öffnen</string>
 </resources>
+
