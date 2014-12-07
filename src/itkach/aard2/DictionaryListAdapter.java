@@ -76,10 +76,7 @@ public class DictionaryListAdapter extends BaseAdapter {
     @Override
     public View getView(int position, final View convertView, ViewGroup parent) {
         SlobDescriptor desc = (SlobDescriptor) getItem(position);
-        String label = desc.tags.get("label");
-        if (isBlank(label)) {
-            label = "???";
-        }
+        String label = desc.getLabel();
         String path = desc.path;
         long blobCount = desc.blobCount;
         boolean available = this.data.resolve(desc) != null;
@@ -274,7 +271,7 @@ public class DictionaryListAdapter extends BaseAdapter {
 
     private void forget(final int position) {
         SlobDescriptor desc = data.get(position);
-        final String label = desc.tags.get("label");
+        final String label = desc.getLabel();
         String message = context.getString(R.string.dictionaries_confirm_forget, label);
         deleteConfirmationDialog = new AlertDialog.Builder(context)
                 .setIcon(android.R.drawable.ic_dialog_alert)

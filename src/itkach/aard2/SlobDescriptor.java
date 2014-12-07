@@ -50,6 +50,14 @@ public class SlobDescriptor extends BaseDescriptor {
         return slob;
     }
 
+    String getLabel() {
+        String label = tags.get("label");
+        if (label == null || label.trim().length() == 0) {
+            label = "???";
+        }
+        return label;
+    }
+
     void close() {
         if (slob != null && !slob.isClosed()) {
             try {
