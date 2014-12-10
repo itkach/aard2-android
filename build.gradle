@@ -3,11 +3,11 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:0.12.+'
+        classpath 'com.android.tools.build:gradle:1.0+'
     }
 }
 
-apply plugin: 'com.android.application'
+apply plugin: 'android'
 apply plugin: 'eclipse'
 apply plugin: 'idea'
 
