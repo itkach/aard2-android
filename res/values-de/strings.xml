@@ -4,7 +4,7 @@
     <string name="subtitle_bookmark">Lesezeichen</string>
     <string name="subtitle_history">Verlauf</string>
     <string name="subtitle_dictionaries">Wörterbücher</string>
-        
+
     <string name="action_find_dictionaries">Finde Wörterbücher</string>
     <string name="action_find_in_page">Finde in Seite</string>
     <string name="action_bookmark_article">Lesezeichen</string>
@@ -13,11 +13,11 @@
     <string name="action_filter">Filter</string>
     <string name="action_ascending">Aufsteigend</string>
     <string name="action_descending">Absteigend</string>
-    
+
     <string name="action_sort_by_title">Nach Titel</string>
-    <string name="action_sort_by_time">Nach Zeit</string>    
+    <string name="action_sort_by_time">Nach Zeit</string>
     <string name="action_lookup">Lookup</string>
-    
+
     <string name="dict_label"><![CDATA[<big><b>%1$s</b></big>]]></string>
     <string name="dict_path"><![CDATA[<small>%1$s</small>]]></string>
     <!--
@@ -79,7 +79,7 @@
     </plurals>
     <plurals name="confirm_delete_history_count">
         <item quantity="zero">%,d alte Datensätze</item>
-        <item quantity="one">%,d alter Datensatz/item>
+        <item quantity="one">%,d alter Datensatz</item>
         <item quantity="two">%,d alte Datensätze</item>
         <item quantity="few">%,d alte Datensätze</item>
         <item quantity="many">%,d alte Datensätze</item>
@@ -95,4 +95,3 @@
     <string name="msg_file_not_css">Scheint kein CSS file zu sein</string>
     <string name="msg_no_activity_to_get_content">Kann Datei nicht öffnen</string>
 </resources>
-
