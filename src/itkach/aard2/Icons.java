@@ -33,7 +33,9 @@ public enum Icons {
     SELECT_ALL(0xf046),
     ADD(0xf067),
     CHEVRON_UP(0xf077),
-    CHEVRON_DOWN(0xf078)
+    CHEVRON_DOWN(0xf078),
+    STAR(0xf005),
+    STAR_O(0xf006)
     ;
 
     private static TypefaceManager typefaceManager;

@@ -17,7 +17,7 @@ public class SlobDescriptor extends BaseDescriptor {
     public String path;
     public Map<String, String> tags = new HashMap<String, String>();
     public boolean active = true;
-    public int priority;
+    public long priority;
     public long blobCount;
     public String error;
     public boolean expandDetail = false;

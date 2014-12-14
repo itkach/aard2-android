@@ -19,6 +19,7 @@ import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import java.util.Comparator;
 import java.util.Locale;
 
 import static java.lang.String.format;
@@ -28,8 +29,7 @@ public class DictionaryListAdapter extends BaseAdapter {
     private final static String TAG = DictionaryListAdapter.class.getName();
 
     private final SlobDescriptorList    data;
-    private final DataSetObserver       observer;
-    private final Activity context;
+    private final Activity              context;
     private View.OnClickListener        openUrlOnClick;
     private AlertDialog                 deleteConfirmationDialog;
 
@@ -38,7 +38,7 @@ public class DictionaryListAdapter extends BaseAdapter {
     DictionaryListAdapter(SlobDescriptorList data, Activity context) {
         this.data = data;
         this.context = context;
-        this.observer = new DataSetObserver() {
+        DataSetObserver observer = new DataSetObserver() {
             @Override
             public void onChanged() {
                 notifyDataSetChanged();
@@ -130,6 +130,29 @@ public class DictionaryListAdapter extends BaseAdapter {
                 }
             });
 
+
+            View btnToggleFav = view
+                    .findViewById(R.id.dictionary_btn_toggle_fav);
+            btnToggleFav.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Integer position = (Integer)view.getTag();
+                    SlobDescriptor desc = data.get(position);
+                    long currentTime = System.currentTimeMillis();
+                    if (desc.priority == 0) {
+                        desc.priority = currentTime;
+                    }
+                    else {
+                        desc.priority = 0;
+                    }
+                    desc.lastAccess = currentTime;
+                    data.beginUpdate();
+                    data.set(position, desc);
+                    data.sort();
+                    data.endUpdate(true);
+                }
+            });
+
         }
 
         Resources r = parent.getResources();
@@ -166,6 +189,11 @@ public class DictionaryListAdapter extends BaseAdapter {
         btnForget.setImageDrawable(Icons.TRASH.forList());
         btnForget.setTag(position);
 
+        ImageView btnToggleFav = (ImageView) view
+                .findViewById(R.id.dictionary_btn_toggle_fav);
+        Icons favIcon = desc.priority > 0 ? Icons.STAR: Icons.STAR_O;
+        btnToggleFav.setImageDrawable(favIcon.forList());
+        btnToggleFav.setTag(position);
         return view;
     }
 

@@ -112,6 +112,9 @@ public class DictionaryFinder {
             }
             else {
                 seen.add(sd.id);
+                long currentTime = System.currentTimeMillis();
+                sd.createdAt = currentTime;
+                sd.lastAccess = currentTime;
                 descriptors.add(sd);
             }
         }
