@@ -48,8 +48,9 @@ public class SlobDescriptorList extends BaseDescriptorList<SlobDescriptor> {
 
     @Override
     void load() {
-        //FIXME change notification fired twice, once for load, once for sort
+        beginUpdate();
         super.load();
         sort();
+        endUpdate(true);
     }
 }

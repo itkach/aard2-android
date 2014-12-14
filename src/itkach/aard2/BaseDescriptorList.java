@@ -16,14 +16,14 @@ abstract class BaseDescriptorList<T extends BaseDescriptor> extends AbstractList
     private final List<T> list;
     private final Class<T> typeParameterClass;
 
-    private boolean updating;
+    private int updating;
 
     BaseDescriptorList(Class<T> typeParameterClass, DescriptorStore<T> store) {
         this.typeParameterClass = typeParameterClass;
         this.store = store;
         this.dataSetObservable = new DataSetObservable();
         this.list = new ArrayList<T>();
-        this.updating = false;
+        this.updating = 0;
     }
 
     void registerDataSetObserver(DataSetObserver observer) {
@@ -36,19 +36,19 @@ abstract class BaseDescriptorList<T extends BaseDescriptor> extends AbstractList
 
     void beginUpdate() {
         Log.d(getClass().getName(), "beginUpdate");
-        this.updating = true;
+        this.updating++;
     }
 
     void endUpdate(boolean changed) {
         Log.d(getClass().getName(), "endUpdate, changed? " + changed);
-        this.updating = false;
+        this.updating--;
         if (changed) {
             notifyChanged();
         }
     }
 
     protected void notifyChanged() {
-        if (!this.updating) {
+        if (this.updating == 0) {
             this.dataSetObservable.notifyChanged();
         }
     }
