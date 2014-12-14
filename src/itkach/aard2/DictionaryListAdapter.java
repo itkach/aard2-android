@@ -131,18 +131,15 @@ public class DictionaryListAdapter extends BaseAdapter {
             });
 
 
-            View btnToggleFav = view
-                    .findViewById(R.id.dictionary_btn_toggle_fav);
-            btnToggleFav.setOnClickListener(new View.OnClickListener() {
+            View.OnClickListener toggleFavListener = new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Integer position = (Integer)view.getTag();
+                    Integer position = (Integer) view.getTag();
                     SlobDescriptor desc = data.get(position);
                     long currentTime = System.currentTimeMillis();
                     if (desc.priority == 0) {
                         desc.priority = currentTime;
-                    }
-                    else {
+                    } else {
                         desc.priority = 0;
                     }
                     desc.lastAccess = currentTime;
@@ -151,8 +148,13 @@ public class DictionaryListAdapter extends BaseAdapter {
                     data.sort();
                     data.endUpdate(true);
                 }
-            });
-
+            };
+            View btnToggleFav = view
+                    .findViewById(R.id.dictionary_btn_toggle_fav);
+            btnToggleFav.setOnClickListener(toggleFavListener);
+            View dictLabel = view
+                    .findViewById(R.id.dictionary_label);
+            dictLabel.setOnClickListener(toggleFavListener);
         }
 
         Resources r = parent.getResources();
@@ -167,6 +169,7 @@ public class DictionaryListAdapter extends BaseAdapter {
                 .findViewById(R.id.dictionary_label);
         titleView.setEnabled(available);
         titleView.setText(label);
+        titleView.setTag(position);
 
         View detailView = view.findViewById(R.id.dictionary_details);
         detailView.setVisibility(desc.expandDetail ? View.VISIBLE : View.GONE);
