@@ -70,10 +70,7 @@ public class BlobDescriptorListAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         BlobDescriptor item = list.get(position);
         Slob slob = list.resolveOwner(item);
-        CharSequence timestamp = DateUtils.getRelativeDateTimeString(
-                parent.getContext(), item.createdAt,
-                DateUtils.MINUTE_IN_MILLIS, DateUtils.WEEK_IN_MILLIS,
-                DateUtils.FORMAT_ABBREV_ALL);
+        CharSequence timestamp = DateUtils.getRelativeTimeSpanString(item.createdAt);
         View view;
         if (convertView != null) {
             view = convertView;
