@@ -19,7 +19,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/dictionary_btn_toggle_fav"
             android:layout_gravity="center_vertical"
-            android:paddingRight="4dp"
+            android:paddingRight="6dp"
             android:layout_alignParentLeft="true"/>
         <TextView
             android:id="@+id/dictionary_label"
@@ -211,7 +211,10 @@
             android:layout_height="wrap_content"
             android:id="@+id/dictionary_btn_toggle_detail"
             android:layout_gravity="left"
-            android:padding="10dp"
+            android:paddingRight="16dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="4dp"
+            android:paddingLeft="16dp"
             android:layout_alignParentLeft="true"/>
 
         <Space
@@ -225,7 +228,10 @@
             android:layout_height="wrap_content"
             android:id="@+id/dictionary_btn_forget"
             android:layout_gravity="right"
-            android:padding="10dp"
+            android:paddingRight="16dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="4dp"
+            android:paddingLeft="16dp"
             android:layout_alignParentRight="true"/>
 
     </LinearLayout>

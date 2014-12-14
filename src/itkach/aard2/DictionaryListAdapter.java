@@ -183,7 +183,7 @@ public class DictionaryListAdapter extends BaseAdapter {
 
         ImageView btnToggleDetail = (ImageView) view
                 .findViewById(R.id.dictionary_btn_toggle_detail);
-        Icons toggleIcon = desc.expandDetail ? Icons.CHEVRON_UP: Icons.CHEVRON_DOWN;
+        Icons toggleIcon = desc.expandDetail ? Icons.ANGLE_UP: Icons.ANGLE_DOWN;
         btnToggleDetail.setImageDrawable(toggleIcon.forList());
         btnToggleDetail.setTag(position);
 

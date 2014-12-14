@@ -32,8 +32,8 @@ public enum Icons {
     COPYRIGHT(0xf1f9),
     SELECT_ALL(0xf046),
     ADD(0xf067),
-    CHEVRON_UP(0xf077),
-    CHEVRON_DOWN(0xf078),
+    ANGLE_UP(0xf106),
+    ANGLE_DOWN(0xf107),
     STAR(0xf005),
     STAR_O(0xf006)
     ;
