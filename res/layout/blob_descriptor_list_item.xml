@@ -8,10 +8,11 @@
         android:background="@android:drawable/list_selector_background"
     >
     
-    <RelativeLayout
+    <LinearLayout
         android:id="@+id/blob_descriptor_item"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:orientation="vertical"
         >
 
         <TextView
@@ -23,25 +24,32 @@
             android:text="Босния и Герцеговина на зимних Олимпийских играх 1998"
             android:textSize="22sp" />
 
-        <TextView
-            android:id="@+id/blob_descriptor_source"
-            style="@android:style/TextAppearance.Holo.SearchResult.Subtitle"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_below="@id/blob_descriptor_key"
-            android:text="WordNet" />
+            android:orientation="horizontal"
+        >
 
         <TextView
-            android:id="@+id/blob_descriptor_timestamp"
-            style="@android:style/TextAppearance.Holo.Small"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_below="@id/blob_descriptor_key"
-            android:text="1 day ago, 11:23"
-            android:textStyle="italic" />
-    </RelativeLayout>
+                android:id="@+id/blob_descriptor_source"
+                style="@android:style/TextAppearance.Holo.SearchResult.Subtitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_weight="1"
+                android:text="WordNet" />
+
+            <TextView
+                android:id="@+id/blob_descriptor_timestamp"
+                style="@android:style/TextAppearance.Holo.Small"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:paddingLeft="6dp"
+                android:text="1 day ago"
+                android:textStyle="italic" />
+            </LinearLayout>
+    </LinearLayout>
 
     <CheckBox
         android:id="@+id/blob_descriptor_checkbox"
