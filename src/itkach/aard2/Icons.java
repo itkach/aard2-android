@@ -35,7 +35,9 @@ public enum Icons {
     ANGLE_UP(0xf106),
     ANGLE_DOWN(0xf107),
     STAR(0xf005),
-    STAR_O(0xf006)
+    STAR_O(0xf006),
+    FOLDER(0xf07b),
+    LEVEL_UP(0xf148)
     ;
 
     private static TypefaceManager typefaceManager;

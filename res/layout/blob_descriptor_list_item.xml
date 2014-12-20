@@ -48,7 +48,7 @@
                 android:paddingLeft="6dp"
                 android:text="1 day ago"
                 android:textStyle="italic" />
-            </LinearLayout>
+        </LinearLayout>
     </LinearLayout>
 
     <CheckBox

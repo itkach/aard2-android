@@ -13,6 +13,7 @@ import android.webkit.WebView;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -299,6 +300,19 @@ public class Application extends android.app.Application {
             }
         });
         discoveryThread.start();
+    }
+
+    synchronized boolean addDictionary(File file) {
+        SlobDescriptor newDesc = SlobDescriptor.fromFile(file);
+        if (newDesc.id != null) {
+            for (SlobDescriptor d: dictionaries) {
+                if (d.id != null && d.id.equals(newDesc.id)) {
+                    return true;
+                }
+            }
+        }
+        dictionaries.add(newDesc);
+        return false;
     }
 
     Slob findSlob(String slobOrUri) {

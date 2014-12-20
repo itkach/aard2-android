@@ -1,4 +1,8 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
+    <item android:id="@+id/action_add_dictionaries"
+        android:title="@string/action_add_dictionaries"
+        android:showAsAction="always"
+        />
     <item android:id="@+id/action_find_dictionaries"
           android:title="@string/action_find_dictionaries"
           android:showAsAction="always"

@@ -128,56 +128,6 @@ public class MainActivity extends FragmentActivity implements
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Uri dataUri = data == null ? null : data.getData();
-        Log.d(getClass().getSimpleName(), String.format("req code %s, result code: %s, data: %s", requestCode, resultCode, dataUri));
-        if (resultCode == RESULT_OK && dataUri != null) {
-            String path = dataUri.getPath().toLowerCase();
-            if (!(path.endsWith(".css") || path.endsWith(".txt"))) {
-                Log.d(TAG, "Doesn't appear to be a css: " + dataUri);
-                Toast.makeText(this, R.string.msg_file_not_css,
-                        Toast.LENGTH_LONG).show();
-                return;
-            }
-            try {
-                InputStream is = getContentResolver().openInputStream(dataUri);
-                Application app = (Application)getApplication();
-                String userCss = app.readTextFile(is, 256 * 1024);
-                List<String> pathSegments = dataUri.getPathSegments();
-                String fileName = pathSegments.get(pathSegments.size() - 1);
-                Log.d(TAG, fileName);
-                Log.d(TAG, userCss);
-                int lastIndexOfDot = fileName.lastIndexOf(".");
-                if (lastIndexOfDot > -1) {
-                    fileName = fileName.substring(0, lastIndexOfDot);
-                }
-                if (fileName.length() == 0) {
-                    fileName = "???";
-                }
-                final SharedPreferences prefs = getSharedPreferences(
-                        "userStyles", Activity.MODE_PRIVATE);
-                SharedPreferences.Editor editor = prefs.edit();
-                editor.putString(fileName, userCss);
-                boolean saved = editor.commit();
-                if (!saved) {
-                    Toast.makeText(this, R.string.msg_failed_to_store_user_style,
-                            Toast.LENGTH_LONG).show();
-                }
-            }
-            catch (Application.FileTooBigException e) {
-                Log.d(TAG, "File is too big: " + dataUri);
-                Toast.makeText(this, R.string.msg_file_too_big,
-                        Toast.LENGTH_LONG).show();
-            }
-            catch (Exception e) {
-                Log.d(TAG, "Failed to load: " + dataUri, e);
-                Toast.makeText(this, R.string.msg_failed_to_read_file,
-                        Toast.LENGTH_LONG).show();
-            }
-        }
-    }
-
-    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:

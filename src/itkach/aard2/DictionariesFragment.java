@@ -1,23 +1,24 @@
 package itkach.aard2;
 
-import android.app.AlertDialog;
+import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.text.Html;
 import android.util.Log;
-import android.util.SparseBooleanArray;
-import android.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ListView;
+import android.widget.Toast;
+
+import java.io.File;
 
 public class DictionariesFragment extends BaseListFragment {
 
+    private final static String TAG = DictionariesFragment.class.getSimpleName();
+
+    final static int FILE_SELECT_REQUEST = 17;
 
     private DictionaryListAdapter listAdapter;
 
@@ -52,6 +53,8 @@ public class DictionariesFragment extends BaseListFragment {
     public void onPrepareOptionsMenu(final Menu menu) {
         MenuItem miFindDictionaries = menu.findItem(R.id.action_find_dictionaries);
         miFindDictionaries.setIcon(Icons.REFRESH.forActionBar());
+        MenuItem miAddDictionaries = menu.findItem(R.id.action_add_dictionaries);
+        miAddDictionaries.setIcon(Icons.ADD.forActionBar());
     }
 
     @Override
@@ -71,7 +74,35 @@ public class DictionariesFragment extends BaseListFragment {
             p.show();
             return true;
         }
+        if (item.getItemId() == R.id.action_add_dictionaries) {
+            Intent intent = new Intent(getActivity(), FileSelectActivity.class);
+            startActivityForResult(intent, FILE_SELECT_REQUEST);
+            return true;
+        }
         return super.onOptionsItemSelected(item);
     }
 
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode != FILE_SELECT_REQUEST) {
+            Log.d(TAG, "Unknown request code: " + requestCode);
+            return;
+        }
+        String selectedPath = data == null ? null : data.getStringExtra(FileSelectActivity.KEY_SELECTED_FILE_PATH);
+        Log.d(TAG, String.format("req code %s, result code: %s, selected: %s", requestCode, resultCode, selectedPath));
+        if (resultCode == Activity.RESULT_OK && selectedPath != null && selectedPath.length() > 0) {
+            final Application app = ((Application)getActivity().getApplication());
+            boolean alreadyExists = app.addDictionary(new File(selectedPath));
+            String toastMessage;
+            if (alreadyExists) {
+                toastMessage = getString(R.string.msg_dictionary_already_open);
+            }
+            else {
+                toastMessage = getString(R.string.msg_dictionary_added, selectedPath);
+            }
+
+            Toast.makeText(getActivity(), toastMessage, Toast.LENGTH_LONG).show();
+        }
+    }
 }

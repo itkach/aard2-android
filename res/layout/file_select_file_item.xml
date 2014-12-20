@@ -1,0 +1,50 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/file_select_directory_item"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingBottom="8dip"
+    android:paddingLeft="8dip"
+    android:paddingRight="8dip"
+    android:paddingTop="6dip"
+    android:background="@android:drawable/list_selector_background"
+    android:orientation="vertical"
+    >
+
+    <TextView
+        android:id="@+id/file_select_file_name"
+        style="@android:style/TextAppearance.Holo.Medium"
+        android:text="enwiki-20141212.ext_img.lzma2.slob"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="22dip"
+        android:layout_weight="1"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        >
+
+        <TextView
+            android:id="@+id/file_select_file_size"
+            style="@android:style/TextAppearance.Holo.Small"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_weight="1"
+            android:text="3.25 Gb" />
+
+        <TextView
+            android:id="@+id/file_select_file_timestamp"
+            style="@android:style/TextAppearance.Holo.Small"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:paddingLeft="6dp"
+            android:text="1 day ago"
+            android:textStyle="italic" />
+    </LinearLayout>
+
+
+</LinearLayout>

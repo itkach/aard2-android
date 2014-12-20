@@ -2,6 +2,7 @@ package itkach.aard2;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.support.v4.app.Fragment;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -29,18 +30,21 @@ import java.util.Map;
 
 public class SettingsListAdapter extends BaseAdapter implements SharedPreferences.OnSharedPreferenceChangeListener {
 
+    final static int CSS_SELECT_REQUEST = 13;
+
     private final static String TAG = SettingsListAdapter.class.getSimpleName();
-    private final Activity context;
+    private final Activity      context;
 
-    private List<String> userStyleNames;
-    private Map<String, ?> userStyleData;
-    private SharedPreferences userStylePrefs;
-    View.OnClickListener onDeleteUserStyle;
+    private List<String>            userStyleNames;
+    private Map<String, ?>          userStyleData;
+    private SharedPreferences       userStylePrefs;
+    private View.OnClickListener    onDeleteUserStyle;
+    private Fragment                fragment;
 
 
-    SettingsListAdapter(Activity context) {
-
-        this.context = context;
+    SettingsListAdapter(Fragment fragment) {
+        this.fragment = fragment;
+        this.context = fragment.getActivity();
 
         this.userStylePrefs = context.getSharedPreferences(
                 "userStyles", Activity.MODE_PRIVATE);
@@ -93,7 +97,6 @@ public class SettingsListAdapter extends BaseAdapter implements SharedPreference
 
     private View getUserStylesView(View convertView, final ViewGroup parent) {
         View view;
-        Log.d(TAG, "getUserStylesView: convert view " + convertView);
         LayoutInflater inflater = (LayoutInflater) parent.getContext()
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         if (convertView != null) {
@@ -117,7 +120,7 @@ public class SettingsListAdapter extends BaseAdapter implements SharedPreference
                     intent.setType("text/*");
                     Intent chooser = Intent.createChooser(intent, "Select CSS file");
                     try {
-                        context.startActivityForResult(chooser, 0);
+                        fragment.startActivityForResult(chooser, CSS_SELECT_REQUEST);
                     }
                     catch (ActivityNotFoundException e){
                         Log.d(TAG, "Not activity to get content", e);
