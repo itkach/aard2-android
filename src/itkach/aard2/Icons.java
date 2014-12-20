@@ -54,7 +54,7 @@ public enum Icons {
         typefaceManager = new TypefaceManager(assetManager);
         displayMetrics = r.getDisplayMetrics();
         iconColor = r.getColor(android.R.color.secondary_text_dark);
-        listIconColor = r.getColor(android.R.color.secondary_text_light);
+        listIconColor = r.getColor(android.R.color.holo_blue_dark);
         textColor = r.getColor(android.R.color.primary_text_light);
     }
 
