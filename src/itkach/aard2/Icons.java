@@ -69,7 +69,7 @@ public enum Icons {
     }
 
     Drawable forTab() {
-        return create(19, Color.DKGRAY);
+        return create(19, 0xff888888);
     }
 
     Drawable forList() {
