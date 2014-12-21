@@ -18,17 +18,18 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/dictionary_btn_toggle_fav"
-            android:layout_gravity="center_vertical"
+            android:layout_gravity="top"
+            android:baselineAlignBottom="true"
             android:paddingRight="6dp"
             android:layout_alignParentLeft="true"/>
         <TextView
             android:id="@+id/dictionary_label"
             style="@android:style/TextAppearance.Holo.SearchResult.Title"
-            android:textSize="22sp"
+            android:textSize="20sp"
             android:text="WordNet"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="left"
+            android:layout_gravity="left|top"
             android:layout_weight="1"/>
         <Switch
             android:layout_width="wrap_content"
@@ -38,7 +39,7 @@
             android:enabled="true"
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
-            android:layout_gravity="bottom"
+            android:layout_gravity="top"
             android:layout_weight="0"/>
     </LinearLayout>
 
