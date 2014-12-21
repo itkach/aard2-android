@@ -1,7 +1,9 @@
 package itkach.aard2;
 
+import android.app.Activity;
 import android.app.ListActivity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.DataSetObserver;
 import android.os.Bundle;
 import android.os.Environment;
@@ -16,6 +18,7 @@ import java.io.File;
 public class FileSelectActivity extends ListActivity {
 
     final static String KEY_SELECTED_FILE_PATH = "selectedFilePath";
+    static final String PREF = "fileSelect";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,13 +35,64 @@ public class FileSelectActivity extends ListActivity {
                     path = "";
                 }
                 getActionBar().setSubtitle(path);
+                savePath(path);
             }
         });
-        File f = Environment.getExternalStorageDirectory();
-        adapter.setRoot(f);
         setListAdapter(adapter);
+        setPath(savedInstanceState);
     }
 
+    private SharedPreferences prefs() {
+        return getSharedPreferences(PREF, Activity.MODE_PRIVATE);
+    }
+
+    private void savePath(String path) {
+        SharedPreferences p = prefs();
+        SharedPreferences.Editor edit = p.edit();
+        edit.putString(KEY_SELECTED_FILE_PATH, path);
+        edit.commit();
+    }
+
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        FileSelectListAdapter adapter = (FileSelectListAdapter)getListAdapter();
+        if (adapter != null) {
+            File root = adapter.getRoot();
+            if (root != null) {
+                outState.putString(KEY_SELECTED_FILE_PATH, root.getAbsolutePath());
+            }
+        }
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle state) {
+        super.onRestoreInstanceState(state);
+        setPath(state);
+    }
+
+    private void setPath(Bundle state) {
+        FileSelectListAdapter adapter = (FileSelectListAdapter)getListAdapter();
+        if (adapter != null) {
+            String path = state == null ? null : state.getString(KEY_SELECTED_FILE_PATH);
+            File root = null;
+            if (path != null && path.length() > 0) {
+                root = new File(path);
+            }
+            else {
+                SharedPreferences p = prefs();
+                path = p.getString(KEY_SELECTED_FILE_PATH, null);
+                if (path != null) {
+                    root = new File(path);
+                }
+            }
+            if (root == null || !root.exists()) {
+                root = Environment.getExternalStorageDirectory();
+            }
+            adapter.setRoot(root);
+        }
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
