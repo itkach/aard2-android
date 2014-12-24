@@ -129,7 +129,11 @@ public class ArticleWebView extends WebView {
                 currentSlobId = bd == null ? null : bd.slobId;
                 Log.d(TAG, "onPageStarted: " + url);
                 view.loadUrl("javascript:" + styleSwitcherJs);
-                timer.schedule(applyStylePref, 60, 250);
+                try {
+                    timer.schedule(applyStylePref, 60, 250);
+                } catch (IllegalStateException ex) {
+                    Log.w(TAG, "Failed to schedule applyStylePref", ex);
+                }
             }
 
             @Override
