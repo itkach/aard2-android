@@ -6,13 +6,19 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.Html;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import java.io.File;
+
+import static android.view.View.OnClickListener;
 
 public class DictionariesFragment extends BaseListFragment {
 
@@ -21,6 +27,7 @@ public class DictionariesFragment extends BaseListFragment {
     final static int FILE_SELECT_REQUEST = 17;
 
     private DictionaryListAdapter listAdapter;
+    private boolean findDictionariesOnAttach = false;
 
     protected Icons getEmptyIcon() {
         return Icons.DICTIONARY;
@@ -43,6 +50,26 @@ public class DictionariesFragment extends BaseListFragment {
         setListAdapter(listAdapter);
     }
 
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View result = super.onCreateView(inflater, container, savedInstanceState);
+        View extraEmptyView = inflater.inflate(R.layout.dictionaries_empty_view_extra, container, false);
+        Button btn = (Button)extraEmptyView.findViewById(R.id.dictionaries_empty_btn_scan);
+        btn.setCompoundDrawablesWithIntrinsicBounds(Icons.REFRESH.forList(), null, null, null);
+        btn.setOnClickListener(new OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                findDictionaries();
+            }
+        });
+        LinearLayout emptyViewLayout = (LinearLayout)emptyView;
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+        );
+        emptyViewLayout.addView(extraEmptyView, layoutParams);
+        return result;
+    }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -59,19 +86,8 @@ public class DictionariesFragment extends BaseListFragment {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        final Application app = ((Application)getActivity().getApplication());
         if (item.getItemId() == R.id.action_find_dictionaries) {
-            final ProgressDialog p = new ProgressDialog(getActivity());
-            p.setIndeterminate(true);
-            p.setTitle(getString(R.string.dictionaries_please_wait));
-            p.setMessage(getString(R.string.dictionaries_scanning_device));
-            app.findDictionaries(new DictionaryDiscoveryCallback() {
-                @Override
-                public void onDiscoveryFinished() {
-                    p.dismiss();
-                }
-            });
-            p.show();
+            findDictionaries();
             return true;
         }
         if (item.getItemId() == R.id.action_add_dictionaries) {
@@ -82,6 +98,34 @@ public class DictionariesFragment extends BaseListFragment {
         return super.onOptionsItemSelected(item);
     }
 
+    public void findDictionaries() {
+        Activity activity = getActivity();
+        if (activity == null) {
+            this.findDictionariesOnAttach = true;
+            return;
+        }
+        this.findDictionariesOnAttach = false;
+        final Application app = ((Application)activity.getApplication());
+        final ProgressDialog p = new ProgressDialog(getActivity());
+        p.setIndeterminate(true);
+        p.setTitle(getString(R.string.dictionaries_please_wait));
+        p.setMessage(getString(R.string.dictionaries_scanning_device));
+        app.findDictionaries(new DictionaryDiscoveryCallback() {
+            @Override
+            public void onDiscoveryFinished() {
+                p.dismiss();
+            }
+        });
+        p.show();
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        if (findDictionariesOnAttach) {
+            findDictionaries();
+        }
+    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {

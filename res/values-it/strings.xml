@@ -63,7 +63,7 @@ is missing a quantity used in that language, otherwise the app will crash
 <string name="lookup_nothing_found">Nessun risultato</string>
 <string name="main_empty_bookmarks">Niente segnalibri</string>
 <string name="main_empty_history">Niente cronologia</string>
-<string name="main_empty_dictionaries"><![CDATA[Visit<br><a href=\'http://aarddict.org\'>http://aarddict.org</a>]]></string>
+<string name="main_empty_dictionaries">Nessun dizionario</string>
 <string name="delete">Cancella</string>
 <string name="action_forget">Dimentica</string>
 <plurals name="confirm_delete_bookmark_count">

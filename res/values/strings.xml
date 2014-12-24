@@ -6,7 +6,7 @@
     <string name="subtitle_bookmark">Bookmarks</string>
     <string name="subtitle_history">History</string>
     <string name="subtitle_dictionaries">Dictionaries</string>
-    <string name="action_find_dictionaries">Rescan</string>
+    <string name="action_find_dictionaries">Scan Device</string>
     <string name="action_find_in_page">Find in page</string>
     <string name="action_bookmark_article">Bookmark</string>
     <string name="action_filter_bookmarks">Filter</string>
@@ -65,7 +65,7 @@
     <string name="lookup_nothing_found">Nothing found</string>
     <string name="main_empty_bookmarks">No bookmarks</string>
     <string name="main_empty_history">No history</string>
-    <string name="main_empty_dictionaries"><![CDATA[Visit<br><a href=\'http://aarddict.org\'>http://aarddict.org</a>]]></string>
+    <string name="main_empty_dictionaries">No dictionaries</string>
     <string name="delete">Delete</string>
     <string name="action_forget">Forget</string>
 

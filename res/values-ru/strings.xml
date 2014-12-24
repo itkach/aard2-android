@@ -62,7 +62,7 @@
     <string name="lookup_nothing_found">Ничего не найдено</string>
     <string name="main_empty_bookmarks">Нет закладок</string>
     <string name="main_empty_history">Нет истории</string>
-    <string name="main_empty_dictionaries"><![CDATA[Посетите<br><a href=\'http://aarddict.org\'>http://aarddict.org</a>]]></string>
+    <string name="main_empty_dictionaries">Нет словарей</string>
     <string name="delete">Удалить</string>
     <string name="action_forget">Исключить</string>
     <plurals name="confirm_delete_bookmark_count">
