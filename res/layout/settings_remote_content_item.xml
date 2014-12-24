@@ -15,7 +15,7 @@
             android:text="@string/setting_remote_content"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginRight="22dip"
+            android:layout_marginRight="14dip"
             android:textSize="20sp"/>
 
         <RadioGroup
@@ -23,7 +23,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/setting_name"
             android:layout_marginTop="10dip"
-            android:layout_marginLeft="10dip"
+            android:layout_marginLeft="2dip"
             android:layout_marginRight="10dip"
             >
             <RadioButton
