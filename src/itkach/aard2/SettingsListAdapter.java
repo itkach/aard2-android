@@ -109,7 +109,6 @@ public class SettingsListAdapter extends BaseAdapter implements SharedPreference
 
             view = inflater.inflate(R.layout.settings_user_styles_item, parent,
                     false);
-
             ImageView btnAdd = (ImageView)view.findViewById(R.id.setting_btn_add_user_style);
             btnAdd.setImageDrawable(Icons.ADD.forList());
             btnAdd.setOnClickListener(new View.OnClickListener(){

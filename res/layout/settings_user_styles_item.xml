@@ -7,10 +7,7 @@
         android:paddingLeft="8dip"
         android:paddingRight="8dip"
         android:paddingTop="6dip"
-        android:background="@android:drawable/list_selector_background"
         android:orientation="vertical"
-        android:clickable="false"
-        android:focusable="false"
         >
 
         <LinearLayout
@@ -25,15 +22,20 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="22dip"
+                android:layout_gravity="left|top"
                 android:layout_weight="1"
                 android:textSize="20sp"/>
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/setting_btn_add_user_style"
-                android:layout_gravity="right"
-                android:padding="10dp"
-                android:layout_alignParentRight="true"/>
+                android:layout_gravity="right|center_vertical"
+                android:paddingTop="6dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:paddingBottom="10dp"
+                android:layout_alignParentRight="true"
+                />
         </LinearLayout>
 
         <TextView
