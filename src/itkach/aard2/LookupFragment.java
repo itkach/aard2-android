@@ -139,8 +139,10 @@ public class LookupFragment extends BaseListFragment implements LookupListener {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        String query = searchView.getQuery().toString();
-        outState.putString("lookupQuery", query);
+        if (searchView != null) {
+            String query = searchView.getQuery().toString();
+            outState.putString("lookupQuery", query);
+        }
     }
 
     private void setBusy(boolean busy) {
