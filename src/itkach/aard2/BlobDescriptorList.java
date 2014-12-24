@@ -10,8 +10,6 @@ import com.ibm.icu.text.RuleBasedCollator;
 import com.ibm.icu.text.StringSearch;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 import java.text.StringCharacterIterator;
 import java.util.AbstractList;
 import java.util.ArrayList;
@@ -20,7 +18,6 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
-import java.util.UUID;
 
 import itkach.slob.Slob;
 
