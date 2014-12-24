@@ -28,7 +28,7 @@ android {
         project.file("exclude.txt").eachLine {
             line ->
                 println line
-                if (!line.startsWith("#")) {
+                if (line && line.trim() && !line.startsWith("#")) {
                     exclude line.trim()
                 }
         }
