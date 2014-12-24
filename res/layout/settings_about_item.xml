@@ -1,22 +1,52 @@
-    <RelativeLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/settings_item"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="8dip"
+    android:paddingLeft="8dip"
+    android:paddingRight="8dip"
+    android:paddingTop="6dip"
+    android:clickable="false"
+    >
+
+    <TextView
+        android:id="@+id/setting_about"
+        style="@android:style/TextAppearance.Holo.SearchResult.Title"
+        android:text="@string/setting_about"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingBottom="8dip"
-        android:paddingLeft="8dip"
-        android:paddingRight="8dip"
-        android:paddingTop="6dip"
-        android:background="@android:drawable/list_selector_background"
+        android:layout_marginRight="22dip"
+        android:textSize="20sp"/>
+
+    <TextView
+        android:id="@+id/application_version"
+        style="@android:style/TextAppearance.Holo.SearchResult.Subtitle"
+        android:text="@string/application_version"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_marginBottom="6dp"
+        android:layout_marginRight="22dip"
+        android:layout_marginLeft="22dip"
+        />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="2dp"
+        android:layout_marginRight="22dip"
+        android:layout_marginLeft="22dip"
         >
-        <TextView
-            android:id="@+id/setting_about"
-            style="@android:style/TextAppearance.Holo.SearchResult.Title"
-            android:text="@string/setting_about"
-            android:layout_width="match_parent"
+
+        <ImageView
+            android:id="@+id/setting_about_copyright_icon"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginRight="22dip"
-            android:textSize="22sp"/>
+            android:baselineAlignBottom="true"
+            android:layout_marginRight="4dp"
+            android:layout_marginEnd="4dp"
+            />
 
         <TextView
             android:id="@+id/application_copyright"
@@ -25,32 +55,67 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
-            android:layout_below="@id/setting_about"
             />
 
-        <TextView
-            android:id="@+id/application_version"
-            style="@android:style/TextAppearance.Holo.SearchResult.Subtitle"
-            android:text="@string/application_version"
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="2dp"
+        android:layout_marginRight="22dip"
+        android:layout_marginLeft="22dip"
+        >
+        <ImageView
+            android:id="@+id/setting_about_license_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:clickable="true"
-            android:focusable="false"
-            android:layout_below="@id/application_copyright"
+            android:baselineAlignBottom="true"
+            android:layout_marginRight="4dp"
+            android:layout_marginEnd="4dp"
             />
-
         <TextView
             android:id="@+id/application_license"
             style="@android:style/TextAppearance.Holo.SearchResult.Subtitle"
-            android:text="@string/application_license"
+            android:text="@string/application_license_name"
+            android:autoLink="web"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:focusable="false"
+            />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="2dp"
+        android:layout_marginRight="22dip"
+        android:layout_marginLeft="22dip"
+        >
+
+        <ImageView
+            android:id="@+id/setting_about_source_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:baselineAlignBottom="true"
+            android:layout_marginRight="4dp"
+            android:layout_marginEnd="4dp"
+            />
+
+        <TextView
+            style="@android:style/TextAppearance.Holo.SearchResult.Subtitle"
+            android:text="@string/application_home_url"
+            android:autoLink="web"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
-            android:clickable="true"
-            android:focusable="false"
-            android:layout_below="@id/application_version"
             />
 
+    </LinearLayout>
 
-    </RelativeLayout>
+
+</LinearLayout>

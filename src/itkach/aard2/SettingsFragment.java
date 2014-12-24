@@ -34,12 +34,6 @@ public class SettingsFragment extends ListFragment {
 
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
-        if (position == listAdapter.getCount() - 1) {
-            Uri uri = Uri.parse(getString(R.string.application_home_url));
-            Intent browserIntent = new Intent(Intent.ACTION_VIEW, uri);
-            startActivity(browserIntent);
-            return;
-        }
         if (position == 2) {
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
             builder.setMessage(R.string.confirm_clear_cached_content)

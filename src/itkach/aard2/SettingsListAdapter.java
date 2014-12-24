@@ -267,6 +267,15 @@ public class SettingsListAdapter extends BaseAdapter implements SharedPreference
             view = inflater.inflate(R.layout.settings_about_item, parent,
                     false);
 
+            ImageView copyrightIcon = (ImageView) view.findViewById(R.id.setting_about_copyright_icon);
+            copyrightIcon.setImageDrawable(Icons.COPYRIGHT.forText());
+
+            ImageView licenseIcon = (ImageView) view.findViewById(R.id.setting_about_license_icon);
+            licenseIcon.setImageDrawable(Icons.LICENSE.forText());
+
+            ImageView sourceIcon = (ImageView) view.findViewById(R.id.setting_about_source_icon);
+            sourceIcon.setImageDrawable(Icons.EXTERNAL_LINK.forText());
+
             String appName = context.getString(R.string.app_name);
 
             String title = context.getString(R.string.setting_about, appName);
@@ -286,15 +295,15 @@ public class SettingsListAdapter extends BaseAdapter implements SharedPreference
                     context.startActivity(browserIntent);
                 }
             });
-            licenseView.setText(Html.fromHtml(license));
+            licenseView.setText(Html.fromHtml(license.trim()));
 
             PackageManager manager = context.getPackageManager();
-            String versionName = "";
+            String versionName;
             try {
                 PackageInfo info = manager.getPackageInfo(context.getPackageName(), 0);
                 versionName = info.versionName;
             } catch (PackageManager.NameNotFoundException e) {
-               throw new RuntimeException(e);
+                versionName = "?";
             }
 
             String version = context.getString(R.string.application_version, versionName);

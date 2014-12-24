@@ -47,12 +47,6 @@
     <string name="setting_remote_content_never">Nie</string>
     <string name="setting_remote_content">Lade externen Inhalt</string>
     <string name="setting_about">Über %1$s</string>
-    <string name="application_home_url">http://aarddict.org</string>
-    <string name="application_copyright">\u00a9 2014 Igor Tkach</string>
-    <string name="application_license_name">GNU General Public License v3</string>
-    <string name="application_license_url">https://gnu.org/licenses/gpl.html</string>
-    <string name="application_license"><![CDATA[<strong>License:</strong> <a href="%1$s">%2$s</a>]]></string>
-    <string name="application_version"><![CDATA[<strong>Version:</strong> %1$s]]></string>
     <string name="setting_clear_cache">Cache löschen</string>
     <string name="setting_clear_cache_subtitle">Inhalt des Cache mit externen Bildern löschen</string>
     <string name="confirm_clear_cached_content">Cache löschen?</string>

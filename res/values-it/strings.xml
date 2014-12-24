@@ -43,12 +43,6 @@ is missing a quantity used in that language, otherwise the app will crash
 <string name="setting_remote_content_never">Mai</string>
 <string name="setting_remote_content">Carica contenuto remoto</string>
 <string name="setting_about">Informazioni su %1$s</string>
-<string name="application_home_url">http://aarddict.org</string>
-<string name="application_copyright">\u00a9 2014 Igor Tkach</string>
-<string name="application_license_name">GNU General Public License v3</string>
-<string name="application_license_url">https://gnu.org/licenses/gpl.html</string>
-<string name="application_license"><![CDATA[<strong>License:</strong> <a href="%1$s">%2$s</a>]]></string>
-<string name="application_version"><![CDATA[<strong>Version:</strong> %1$s]]></string>
 <string name="setting_clear_cache">Ripulisci la cache</string>
 <string name="setting_clear_cache_subtitle">Cancella il contenuto della cache (comprese le immagini remote)</string>
 <string name="confirm_clear_cached_content">Vuoi davvero ripulire la cache?</string>

@@ -1,30 +1,32 @@
-    <RelativeLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/settings_item"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/settings_item"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingBottom="8dip"
+    android:paddingLeft="8dip"
+    android:paddingRight="8dip"
+    android:paddingTop="6dip"
+    android:background="@android:drawable/list_selector_background"
+    >
+    <TextView
+        android:id="@+id/setting_clear_cache"
+        style="@android:style/TextAppearance.Holo.SearchResult.Title"
+        android:text="@string/setting_clear_cache"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingBottom="8dip"
-        android:paddingLeft="8dip"
-        android:paddingRight="8dip"
-        android:paddingTop="6dip"
-        android:background="@android:drawable/list_selector_background"
-        >
-        <TextView
-            android:id="@+id/setting_clear_cache"
-            style="@android:style/TextAppearance.Holo.SearchResult.Title"
-            android:text="@string/setting_clear_cache"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="22dip"
-            android:textSize="22sp"/>
+        android:layout_marginRight="22dip"
+        android:textSize="20sp"/>
 
-        <TextView
-            android:id="@+id/setting_clear_cache_subtitle"
-            style="@android:style/TextAppearance.Holo.SearchResult.Subtitle"
-            android:text="@string/setting_clear_cache_subtitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_below="@id/setting_clear_cache"
-            />
-    </RelativeLayout>
+    <TextView
+        android:id="@+id/setting_clear_cache_subtitle"
+        style="@android:style/TextAppearance.Holo.SearchResult.Subtitle"
+        android:text="@string/setting_clear_cache_subtitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@id/setting_clear_cache"
+        android:layout_marginRight="22dip"
+        android:layout_marginLeft="22dip"
+        />
+</RelativeLayout>

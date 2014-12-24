@@ -42,12 +42,7 @@
     <string name="setting_remote_content_never">Никогда</string>
     <string name="setting_remote_content">Загрузка удаленного содержимого</string>
     <string name="setting_about">О %1$s</string>
-    <string name="application_home_url">http://aarddict.org</string>
-    <string name="application_copyright">\u00a9 2014 Igor Tkach</string>
-    <string name="application_license_name">GNU General Public License v3</string>
-    <string name="application_license_url">https://gnu.org/licenses/gpl.html</string>
-    <string name="application_license"><![CDATA[<strong>Лицензия:</strong> <a href="%1$s">%2$s</a>]]></string>
-    <string name="application_version"><![CDATA[<strong>Версия программы:</strong> %1$s]]></string>
+    <string name="application_version">Версия %1$s</string>
     <string name="setting_clear_cache">Очистка кэша</string>
     <string name="setting_clear_cache_subtitle">Удалить кэшированный контент, включая загруженные изображения</string>
     <string name="confirm_clear_cached_content">Очистить содержимое кэша?</string>
