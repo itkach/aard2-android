@@ -28,7 +28,7 @@ import java.util.List;
 public class MainActivity extends FragmentActivity implements
         ActionBar.TabListener {
 
-    private static final String TAG = MainActivity.class.getSimpleName();;
+    private static final String TAG = MainActivity.class.getSimpleName();
     private AppSectionsPagerAdapter mAppSectionsPagerAdapter;
     private ViewPager               mViewPager;
 
@@ -65,8 +65,6 @@ public class MainActivity extends FragmentActivity implements
                 });
 
         Drawable[] tabIcons = new Drawable[5];
-        final Application app = (Application)getApplication();
-
         tabIcons[0] = Icons.SEARCH.forTab();
         tabIcons[1] = Icons.BOOKMARK.forTab();
         tabIcons[2] = Icons.HISTORY.forTab();
@@ -83,7 +81,12 @@ public class MainActivity extends FragmentActivity implements
         if (savedInstanceState != null) {
             onRestoreInstanceState(savedInstanceState);
         } else {
-            Log.d("onCreate", "saved state is null!!!");
+            final Application app = (Application)getApplication();
+            if (app.dictionaries.size() == 0) {
+                mViewPager.setCurrentItem(3);
+                DictionariesFragment df = (DictionariesFragment)mAppSectionsPagerAdapter.getItem(3);
+                df.findDictionaries();
+            }
         }
     }
 
