@@ -1,5 +1,6 @@
 package itkach.aard2;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.ListActivity;
 import android.content.Intent;
@@ -7,6 +8,8 @@ import android.content.SharedPreferences;
 import android.database.DataSetObserver;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.v4.app.NavUtils;
+import android.support.v4.app.TaskStackBuilder;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -23,6 +26,9 @@ public class FileSelectActivity extends ListActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        final ActionBar actionBar = getActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
+
         final FileSelectListAdapter adapter = new FileSelectListAdapter();
         adapter.registerDataSetObserver(new DataSetObserver() {
             @Override
@@ -34,7 +40,7 @@ public class FileSelectActivity extends ListActivity {
                 } else {
                     path = "";
                 }
-                getActionBar().setSubtitle(path);
+                actionBar.setSubtitle(path);
                 savePath(path);
             }
         });
@@ -129,7 +135,12 @@ public class FileSelectActivity extends ListActivity {
             adapter.reload();
             return true;
         }
+        if (id == android.R.id.home) {
+            finish();
+            return true;
+        }
         return super.onOptionsItemSelected(item);
+
     }
 
     @Override
