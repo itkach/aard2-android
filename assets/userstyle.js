@@ -8,7 +8,6 @@
       existingElement = document.getElementById(styleElementId);
 
   if (window.$styleSwitcher) {
-    console.debug('Clearing canned styles');
     window.$styleSwitcher.setStyle('');
   }
 
