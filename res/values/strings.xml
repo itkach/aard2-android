@@ -17,8 +17,6 @@
     <string name="action_sort_by_title">By Title</string>
     <string name="action_sort_by_time">By Time</string>
     <string name="action_lookup">Lookup</string>
-    <string name="dict_label"><![CDATA[<big><b>%1$s</b></big>]]></string>
-    <string name="dict_path"><![CDATA[<small>%1$s</small>]]></string>
     <!--
     English only uses "one" and "other" for plurals.
     Other quantities are included as a fallback if some translation
