@@ -44,6 +44,34 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/dictionary_error_row"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="4dp"
+        >
+
+        <ImageView
+            android:id="@+id/dictionary_error_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:baselineAlignBottom="true"
+            android:layout_marginRight="4dp"
+            android:layout_marginEnd="4dp"
+            />
+
+        <TextView
+            android:id="@+id/dictionary_error"
+            style="@android:style/TextAppearance.Holo.Small"
+            android:text="File does not exist"
+            android:textColor="@android:color/holo_red_dark"
+            android:visibility="visible"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+    </LinearLayout>
+
+    <LinearLayout
         android:id="@+id/dictionary_details"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -169,34 +197,6 @@
                 android:textStyle="italic"
                 />
         </LinearLayout>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/dictionary_error_row"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginTop="4dp"
-        >
-
-        <ImageView
-            android:id="@+id/dictionary_error_icon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:baselineAlignBottom="true"
-            android:layout_marginRight="4dp"
-            android:layout_marginEnd="4dp"
-            />
-
-        <TextView
-            android:id="@+id/dictionary_error"
-            style="@android:style/TextAppearance.Holo.Small"
-            android:text="File does not exist"
-            android:textColor="@android:color/holo_red_dark"
-            android:visibility="visible"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
 
     </LinearLayout>
 
