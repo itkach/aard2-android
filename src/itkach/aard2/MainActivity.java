@@ -171,6 +171,11 @@ public class MainActivity extends FragmentActivity implements
         int getDeleteConfirmationItemCountResId() {
             return R.plurals.confirm_delete_bookmark_count;
         }
+
+        @Override
+        String getPreferencesNS() {
+            return "bookmarks";
+        }
     }
 
     public static class HistoryFragment extends BlobDescriptorListFragment {
@@ -199,6 +204,11 @@ public class MainActivity extends FragmentActivity implements
         @Override
         int getDeleteConfirmationItemCountResId() {
             return R.plurals.confirm_delete_history_count;
+        }
+
+        @Override
+        String getPreferencesNS() {
+            return "history";
         }
 
     }

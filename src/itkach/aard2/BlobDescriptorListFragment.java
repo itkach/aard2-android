@@ -1,8 +1,10 @@
 package itkach.aard2;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.SparseBooleanArray;
@@ -27,6 +29,9 @@ abstract class BlobDescriptorListFragment extends BaseListFragment {
     private BlobDescriptorListAdapter       listAdapter;
     private AlertDialog                     deleteConfirmationDialog = null;
 
+    private final static String PREF_SORT_ORDER = "sortOrder";
+    private final static String PREF_SORT_DIRECTION = "sortDir";
+
     abstract BlobDescriptorList getDescriptorList();
 
     abstract String getItemClickAction();
@@ -40,6 +45,13 @@ abstract class BlobDescriptorListFragment extends BaseListFragment {
     }
 
     abstract int getDeleteConfirmationItemCountResId();
+
+    abstract String getPreferencesNS();
+
+    private SharedPreferences prefs() {
+        return getActivity().getSharedPreferences(getPreferencesNS(), Activity.MODE_PRIVATE);
+    }
+
 
     protected boolean onSelectionActionItemClicked(final ActionMode mode, MenuItem item) {
         ListView listView = getListView();
@@ -84,7 +96,19 @@ abstract class BlobDescriptorListFragment extends BaseListFragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        listAdapter = new BlobDescriptorListAdapter(getDescriptorList());
+        BlobDescriptorList descriptorList = getDescriptorList();
+
+        SharedPreferences p = this.prefs();
+
+        String sortOrderStr = p.getString(PREF_SORT_ORDER,
+                                          BlobDescriptorList.SortOrder.TIME.name());
+        BlobDescriptorList.SortOrder sortOrder = BlobDescriptorList.SortOrder.valueOf(sortOrderStr);
+
+        boolean sortDir = p.getBoolean(PREF_SORT_DIRECTION, false);
+
+        descriptorList.setSort(sortOrder, sortDir);
+
+        listAdapter = new BlobDescriptorListAdapter(descriptorList);
 
         icFilter = Icons.FILTER.forActionBar();
         icClock = Icons.CLOCK.forActionBar();
@@ -170,6 +194,10 @@ abstract class BlobDescriptorListFragment extends BaseListFragment {
         }
         mi.setIcon(icon);
         mi.setTitle(textRes);
+        SharedPreferences p = this.prefs();
+        SharedPreferences.Editor editor = p.edit();
+        editor.putString(PREF_SORT_ORDER, order.name());
+        editor.commit();
     }
 
     private void setAscending(MenuItem mi, boolean ascending) {
@@ -184,6 +212,10 @@ abstract class BlobDescriptorListFragment extends BaseListFragment {
         }
         mi.setIcon(icon);
         mi.setTitle(textRes);
+        SharedPreferences p = this.prefs();
+        SharedPreferences.Editor editor = p.edit();
+        editor.putBoolean(PREF_SORT_DIRECTION, ascending);
+        editor.commit();
     }
 
     @Override
