@@ -69,4 +69,19 @@
         <item quantity="many">%,d записей</item>
     </plurals>
     <string name="setting_user_style_confirm_forget">Исключить %1$s?</string>
+    <string name="action_goto_parent_dir">Вверх</string>
+    <string name="action_reload_directory">Перезагрузить</string>
+    <string name="action_settings">Настройки</string>
+    <string name="blob_descriptor_confirm_delete">Удалить %1$s?</string>
+    <string name="msg_dictionary_added">Добавлен словарь из файла %1$s</string>
+    <string name="msg_dictionary_already_open">Словарь уже открыт</string>
+    <string name="msg_failed_to_read_file">Не удалось прочитать файл</string>
+    <string name="msg_failed_to_store_user_style">Не удалось сохранить пользовательский стиль</string>
+    <string name="msg_file_not_css">Это не CSS файл</string>
+    <string name="msg_file_too_big">Слишком большой файл</string>
+    <string name="msg_no_activity_to_get_content">Нечем открыть файл</string>
+    <string name="setting_user_styles">Стили пользователя</string>
+    <string name="setting_user_styles_empty">Нет стилей</string>
+    <string name="title_activity_file_select">Выберите файл словаря</string>
+    <string name="action_add_dictionaries">Добавить</string>
 </resources>
