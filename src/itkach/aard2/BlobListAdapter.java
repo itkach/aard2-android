@@ -20,19 +20,29 @@ import itkach.slob.Slob;
 
 public class BlobListAdapter extends BaseAdapter {
 
+    private static final String TAG = BlobListAdapter.class.getSimpleName();
+
     Handler             mainHandler;
     List<Slob.Blob>     list;
     Iterator<Slob.Blob> iter;
     Iterator<Slob.Blob> emptyIter = new ArrayList<Slob.Blob>().iterator();
     ExecutorService     executor;
 
-    int                 CHUNK_SIZE = 50;
+    private final int   chunkSize;
+    private final int   loadMoreThreashold;
     int                 MAX_SIZE   = 10000;
 
+
     public BlobListAdapter(Context context) {
+        this(context, 20, 5);
+    }
+
+    public BlobListAdapter(Context context, int chunkSize, int loadMoreThreashold) {
         this.mainHandler = new Handler(context.getMainLooper());
         this.executor = Executors.newSingleThreadExecutor();
-        this.list = new ArrayList<Slob.Blob>();
+        this.list = new ArrayList<Slob.Blob>(chunkSize);
+        this.chunkSize = chunkSize;
+        this.loadMoreThreashold = loadMoreThreashold;
     }
 
     void setData(Iterator<Slob.Blob> lookupResultsIter) {
@@ -52,27 +62,29 @@ public class BlobListAdapter extends BaseAdapter {
     }
 
     private void loadChunkSync() {
+        long t0 = System.currentTimeMillis();
+        int count = 0;
         synchronized (list) {
-            int count = 0;
-            while (iter.hasNext() && count < CHUNK_SIZE
+            while (iter.hasNext() && count < chunkSize
                     && list.size() <= MAX_SIZE) {
                 count++;
-                list.add(iter.next());
+                Slob.Blob b = iter.next();
+                list.add(b);
             }
         }
         if (Looper.getMainLooper().getThread() == Thread.currentThread()) {
-            Log.i("lookup result adapter", "size: " + list.size());
             notifyDataSetChanged();
         } else {
             mainHandler.post(new Runnable() {
                 @Override
                 public void run() {
-                    Log.i("lookup result adapter",
-                            "size: " + list.size());
                     notifyDataSetChanged();
                 }
             });
         }
+        Log.d(TAG,
+                String.format("Loaded chunk of %d (adapter size %d) in %d ms",
+                        count, list.size(), (System.currentTimeMillis() - t0)));
     }
 
     private void loadChunk() {
@@ -111,7 +123,7 @@ public class BlobListAdapter extends BaseAdapter {
 
     private void maybeLoadMore(int position) {
         synchronized (list) {
-            if (position > list.size() - 5) {
+            if (position >= list.size() - loadMoreThreashold) {
                 loadChunk();
             }
         }

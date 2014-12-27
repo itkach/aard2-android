@@ -150,7 +150,7 @@ public class ArticleCollectionActivity extends FragmentActivity {
     private ArticleCollectionPagerAdapter createFromUri(Application app, Uri articleUrl) {
         BlobDescriptor bd = BlobDescriptor.fromUri(articleUrl);
         Iterator<Slob.Blob> result = app.find(bd.key, bd.slobId);
-        BlobListAdapter data = new BlobListAdapter(this);
+        BlobListAdapter data = new BlobListAdapter(this, 3, 1);
         data.setData(result);
         return new ArticleCollectionPagerAdapter(
                 app, data, blobToBlob, getSupportFragmentManager());
@@ -198,7 +198,7 @@ public class ArticleCollectionActivity extends FragmentActivity {
         if (lookupKey == null) {
             lookupKey = intent.getStringExtra(SearchManager.QUERY);
         }
-        BlobListAdapter data = new BlobListAdapter(this);
+        BlobListAdapter data = new BlobListAdapter(this, 3, 1);
         if (lookupKey == null || lookupKey.length() == 0) {
             Toast.makeText(this, R.string.article_collection_nothing_to_lookup, Toast.LENGTH_SHORT).show();
         }
@@ -246,6 +246,7 @@ public class ArticleCollectionActivity extends FragmentActivity {
         Application app = (Application)getApplication();
         app.pop(this);
         super.onDestroy();
+        System.gc();
     }
 
     @Override
@@ -277,14 +278,17 @@ public class ArticleCollectionActivity extends FragmentActivity {
         private DataSetObserver observer;
         private BaseAdapter data;
         private ToBlob toBlob;
+        private int count;
 
         public ArticleCollectionPagerAdapter(Application app, BaseAdapter data, ToBlob toBlob, FragmentManager fm) {
             super(fm);
             this.app = app;
             this.data = data;
+            this.count = data.getCount();
             this.observer = new DataSetObserver(){
                 @Override
                 public void onChanged() {
+                    count = ArticleCollectionPagerAdapter.this.data.getCount();
                     notifyDataSetChanged();
                 }
             };
@@ -316,7 +320,7 @@ public class ArticleCollectionActivity extends FragmentActivity {
 
         @Override
         public int getCount() {
-            return data.getCount();
+            return count;
         }
 
         Slob.Blob get(int position) {

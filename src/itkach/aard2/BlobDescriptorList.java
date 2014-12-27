@@ -205,12 +205,7 @@ final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
         }
         String slobId = slob.getId().toString();
         if (slobId.equals(bd.slobId)) {
-            try {
-                blob = new Slob.Blob(slob, bd.blobId, bd.key, bd.fragment,
-                        slob.get(bd.blobId));
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+            blob = new Slob.Blob(slob, bd.blobId, bd.key, bd.fragment);
         } else {
             Iterator<Slob.Blob> result = slob.find(bd.key,
                     Slob.Strength.QUATERNARY);
