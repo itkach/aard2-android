@@ -4,7 +4,7 @@
 <string name="subtitle_bookmark">Segnalibri</string>
 <string name="subtitle_history">Cronologia</string>
 <string name="subtitle_dictionaries">Dizionari</string>
-<string name="action_find_dictionaries">Nuova scansione</string>
+<string name="action_find_dictionaries">Trova dizionari</string>
 <string name="action_find_in_page">Trova nella pagina</string>
 <string name="action_bookmark_article">Segnalibro</string>
 <string name="action_filter_bookmarks">Filtro</string>

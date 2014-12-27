@@ -6,7 +6,7 @@
     <string name="subtitle_history">История</string>
     <string name="subtitle_dictionaries">Словари</string>
         
-    <string name="action_find_dictionaries">Обновить</string>
+    <string name="action_find_dictionaries">Искать словари</string>
     <string name="action_find_in_page">Поиск на странице</string>
     <string name="action_bookmark_article">Закладка</string>
     <string name="action_filter_bookmarks">Фильтр</string>
