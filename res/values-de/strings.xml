@@ -86,4 +86,11 @@
     <string name="setting_user_style_confirm_forget">Vergesse %1$s?</string>
     <string name="msg_file_not_css">Scheint kein CSS file zu sein</string>
     <string name="msg_no_activity_to_get_content">Kann Datei nicht öffnen</string>
+    <string name="action_add_dictionaries">Hinzufügen</string>
+    <string name="title_activity_file_select">Wähle Wörterbuch</string>
+    <string name="action_settings">Einstellungen</string>
+    <string name="action_goto_parent_dir">Hoch</string>
+    <string name="action_reload_directory">Neu laden</string>
+    <string name="msg_dictionary_already_open">Schon geöffnet</string>
+    <string name="msg_dictionary_added">Wörterbuch hinzugefügt von %1$s</string>
 </resources>
