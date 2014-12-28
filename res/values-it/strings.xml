@@ -1,4 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
+
 <string name="app_name">Aard 2</string>
 <string name="subtitle_lookup">Ricerca</string>
 <string name="subtitle_bookmark">Segnalibri</string>
@@ -15,8 +17,6 @@
 <string name="action_sort_by_title">Per titolo</string>
 <string name="action_sort_by_time">Per data</string>
 <string name="action_lookup">Ricerca</string>
-<string name="dict_label"><![CDATA[<big><b>%1$s</b></big>]]></string>
-<string name="dict_path"><![CDATA[<small>%1$s</small>]]></string>
 <!--
 English only uses "one" and "other" for plurals.
 Other quantities are included as a fallback if some translation
@@ -30,6 +30,7 @@ is missing a quantity used in that language, otherwise the app will crash
 <item quantity="many">%,d voci</item>
 <item quantity="other">%,d voci</item>
 </plurals>
+
 <string name="action_zoom_out">Ingrandisci</string>
 <string name="action_zoom_in">Riduci</string>
 <string name="action_zoom_reset">Reset zoom</string>
@@ -43,12 +44,16 @@ is missing a quantity used in that language, otherwise the app will crash
 <string name="setting_remote_content_never">Mai</string>
 <string name="setting_remote_content">Carica contenuto remoto</string>
 <string name="setting_about">Informazioni su %1$s</string>
-<string name="application_home_url">http://aarddict.org</string>
-<string name="application_copyright">\u00a9 2014 Igor Tkach</string>
+<string name="application_home_url" translatable="false">http://aarddict.org</string>
+<string name="application_copyright">2014 Igor Tkach</string>
 <string name="application_license_name">GNU General Public License v3</string>
 <string name="application_license_url">https://gnu.org/licenses/gpl.html</string>
-<string name="application_license"><![CDATA[<strong>License:</strong> <a href="%1$s">%2$s</a>]]></string>
-<string name="application_version"><![CDATA[<strong>Version:</strong> %1$s]]></string>
+<string name="application_license" translatable="false">
+<![CDATA[
+<a href="%1$s">%2$s</a>
+]]>
+</string>
+<string name="application_version">Version %1$s</string>
 <string name="setting_clear_cache">Ripulisci la cache</string>
 <string name="setting_clear_cache_subtitle">Cancella il contenuto della cache (comprese le immagini remote)</string>
 <string name="confirm_clear_cached_content">Vuoi davvero ripulire la cache?</string>
@@ -58,22 +63,14 @@ is missing a quantity used in that language, otherwise the app will crash
 <string name="article_view_msg_not_found">Non trovato</string>
 <string name="dictionaries_please_wait">Attendere prego...</string>
 <string name="dictionaries_scanning_device">Rilevamento di dizionari nel dispositivo in corso...</string>
-<plurals name="selected_dict_count">
-<item quantity="zero">%,d dizionari</item>
-<item quantity="one">%,d dizionario</item>
-<item quantity="two">%,d dizionari</item>
-<item quantity="few">%,d dizionari</item>
-<item quantity="many">%,d dizionari</item>
-<item quantity="other">%,d dizionari</item>
-</plurals>
 <string name="dictionaries_confirm_forget">Sei sicuro di voler dimenticare %1$s?</string>
-<string name="dict_license"><![CDATA[License: <a href=\'%1$s\'>%2$s</a>]]></string>
 <string name="lookup_nothing_found">Nessun risultato</string>
 <string name="main_empty_bookmarks">Niente segnalibri</string>
 <string name="main_empty_history">Niente cronologia</string>
-<string name="main_empty_dictionaries"><![CDATA[Visit<br><a href=\'http://aarddict.org\'>http://aarddict.org</a>]]></string>
+<string name="main_empty_dictionaries">Niente dizionari</string>
 <string name="delete">Cancella</string>
 <string name="action_forget">Dimentica</string>
+
 <plurals name="confirm_delete_bookmark_count">
 <item quantity="zero">%,d segnalibri</item>
 <item quantity="one">%,d segnalibro</item>
@@ -90,5 +87,22 @@ is missing a quantity used in that language, otherwise the app will crash
 <item quantity="many">%,d risultati</item>
 <item quantity="other">%,d risulati</item>
 </plurals>
+
 <string name="blob_descriptor_confirm_delete">Sei sicuro di voler cancellare %1$s?</string>
+<string name="msg_failed_to_read_file">Lettura file non riuscita</string>
+<string name="msg_file_too_big">Il file è troppo grande</string>
+<string name="setting_user_styles">Stili utente</string>
+<string name="setting_user_styles_empty">Niente stili</string>
+<string name="msg_failed_to_store_user_style">Salvataggio stile utente non riuscito</string>
+<string name="setting_user_style_confirm_forget">Sei sicuro di voler dimenticare %1$s?</string>
+<string name="msg_file_not_css">File CSS non riconosciuto</string>
+<string name="msg_no_activity_to_get_content">Nessuna attività disponibile per aprire il file</string>
+<string name="action_add_dictionaries">Aggiungi</string>
+<string name="title_activity_file_select">Seleziona file</string>
+<string name="action_settings">Impostazioni</string>
+<string name="action_goto_parent_dir">Torna su</string>
+<string name="action_reload_directory">Ricarica</string>
+<string name="msg_dictionary_already_open">Già aperto</string>
+<string name="msg_dictionary_added">Aggiunto dizionario da %1$s</string>
+
 </resources>
