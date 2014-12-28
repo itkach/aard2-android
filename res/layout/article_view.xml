@@ -1,22 +1,24 @@
-<LinearLayout
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
+
+    <itkach.aard2.ArticleWebView android:id="@+id/webView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        />
 
     <ProgressBar
         android:id="@+id/webViewPogress"
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="-8dp"
-        android:layout_marginTop="-6dp"
+        android:layout_gravity="top"
+        android:layout_marginTop="-3dp"
+        android:maxHeight="7dp"
+        android:minHeight="7dp"
+        android:padding="0dp"
         android:indeterminate="false"
-        android:max="100"
-        android:padding="0dp"/>
+        android:max="100"/>
 
-    <itkach.aard2.ArticleWebView android:id="@+id/webView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        />
-</LinearLayout>
+</FrameLayout>
