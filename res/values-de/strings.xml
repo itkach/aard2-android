@@ -35,7 +35,7 @@
     <string name="action_zoom_out">Verkleinern</string>
     <string name="action_zoom_in">Vergrössern</string>
     <string name="action_zoom_reset">Zoom Reset</string>
-    <string name="action_select_style">Stile....</string>
+    <string name="action_select_style">Stile...</string>
     <string name="select_style">Wähle Stil</string>
     <string name="default_style_title">Default</string>
     <string name="subtitle_settings">Einstellung</string>
