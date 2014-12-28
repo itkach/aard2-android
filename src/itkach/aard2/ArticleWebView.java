@@ -204,7 +204,6 @@ public class ArticleWebView extends WebView {
     boolean allowRemoteContent(Context context) {
         SharedPreferences prefs = this.prefs();
         String prefValue = prefs.getString(PREF_REMOTE_CONTENT, PREF_REMOTE_CONTENT_WIFI);
-        Log.d(TAG, "Remote content preference: " + prefValue);
         if (prefValue.equals(PREF_REMOTE_CONTENT_ALWAYS)) {
             return true;
         }
