@@ -1,4 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
+
 <string name="app_name">Aard 2</string>
 <string name="subtitle_lookup">Ricerca</string>
 <string name="subtitle_bookmark">Segnalibri</string>
@@ -28,6 +30,7 @@ is missing a quantity used in that language, otherwise the app will crash
 <item quantity="many">%,d voci</item>
 <item quantity="other">%,d voci</item>
 </plurals>
+
 <string name="action_zoom_out">Riduci</string>
 <string name="action_zoom_in">Ingrandisci</string>
 <string name="action_zoom_reset">Reset zoom</string>
@@ -54,9 +57,10 @@ is missing a quantity used in that language, otherwise the app will crash
 <string name="lookup_nothing_found">Nessun risultato</string>
 <string name="main_empty_bookmarks">Niente segnalibri</string>
 <string name="main_empty_history">Niente cronologia</string>
-<string name="main_empty_dictionaries">Nessun dizionario</string>
+<string name="main_empty_dictionaries">Niente dizionari</string>
 <string name="delete">Cancella</string>
 <string name="action_forget">Dimentica</string>
+
 <plurals name="confirm_delete_bookmark_count">
 <item quantity="zero">%,d segnalibri</item>
 <item quantity="one">%,d segnalibro</item>
@@ -73,6 +77,21 @@ is missing a quantity used in that language, otherwise the app will crash
 <item quantity="many">%,d risultati</item>
 <item quantity="other">%,d risulati</item>
 </plurals>
+
 <string name="blob_descriptor_confirm_delete">Sei sicuro di voler cancellare %1$s?</string>
+<string name="msg_failed_to_read_file">Lettura file non riuscita</string>
+<string name="msg_file_too_big">Il file è troppo grande</string>
+<string name="setting_user_styles">Stili utente</string>
+<string name="setting_user_styles_empty">Niente stili</string>
+<string name="msg_failed_to_store_user_style">Salvataggio stile utente non riuscito</string>
 <string name="setting_user_style_confirm_forget">Sei sicuro di voler dimenticare %1$s?</string>
+<string name="msg_file_not_css">File CSS non riconosciuto</string>
+<string name="msg_no_activity_to_get_content">Nessuna attività disponibile per aprire il file</string>
+<string name="action_add_dictionaries">Aggiungi</string>
+<string name="title_activity_file_select">Seleziona file</string>
+<string name="action_settings">Impostazioni</string>
+<string name="action_goto_parent_dir">Torna su</string>
+<string name="action_reload_directory">Ricarica</string>
+<string name="msg_dictionary_already_open">Già aperto</string>
+<string name="msg_dictionary_added">Aggiunto dizionario da %1$s</string>
 </resources>
