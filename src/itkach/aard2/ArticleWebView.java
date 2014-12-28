@@ -161,7 +161,7 @@ public class ArticleWebView extends WebView {
                 if (host == null || host.toLowerCase().equals("localhost")) {
                     return null;
                 }
-                if (allowRemoteContent(getContext())) {
+                if (allowRemoteContent()) {
                     return null;
                 }
                 return new WebResourceResponse("text/plain", "UTF-8",
@@ -201,7 +201,7 @@ public class ArticleWebView extends WebView {
         applyTextZoomPref();
     }
 
-    boolean allowRemoteContent(Context context) {
+    boolean allowRemoteContent() {
         SharedPreferences prefs = this.prefs();
         String prefValue = prefs.getString(PREF_REMOTE_CONTENT, PREF_REMOTE_CONTENT_WIFI);
         if (prefValue.equals(PREF_REMOTE_CONTENT_ALWAYS)) {
