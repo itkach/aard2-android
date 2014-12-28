@@ -9,8 +9,6 @@
     <string name="action_find_dictionaries">Find Dictionaries</string>
     <string name="action_find_in_page">Find in page</string>
     <string name="action_bookmark_article">Bookmark</string>
-    <string name="action_filter_bookmarks">Filter</string>
-    <string name="action_filter_history">Filter</string>
     <string name="action_filter">Filter</string>
     <string name="action_ascending">Ascending</string>
     <string name="action_descending">Descending</string>
@@ -38,7 +36,6 @@
     <string name="select_style">Select style</string>
     <string name="default_style_title">Default</string>
     <string name="subtitle_settings">Settings</string>
-    <string name="select_remote_content_mode">Load Remote Content</string>
     <string name="setting_remote_content_always">Always</string>
     <string name="setting_remote_content_wifi">When on Wi-Fi</string>
     <string name="setting_remote_content_never">Never</string>
@@ -69,7 +66,6 @@
     <string name="main_empty_history">No history</string>
     <string name="main_empty_dictionaries">No dictionaries</string>
     <string name="delete">Delete</string>
-    <string name="action_forget">Forget</string>
 
     <plurals name="confirm_delete_bookmark_count">
         <item quantity="zero">%,d bookmarks</item>
@@ -99,7 +95,6 @@
     <string name="msg_no_activity_to_get_content">No activity is available to open file</string>
     <string name="action_add_dictionaries">Add</string>
     <string name="title_activity_file_select">Select Dictionary File</string>
-    <string name="action_settings">Settings</string>
     <string name="action_goto_parent_dir">Up</string>
     <string name="action_reload_directory">Reload</string>
     <string name="msg_dictionary_already_open">Already open</string>

@@ -9,8 +9,6 @@
 <string name="action_find_dictionaries">Trova dizionari</string>
 <string name="action_find_in_page">Trova nella pagina</string>
 <string name="action_bookmark_article">Segnalibro</string>
-<string name="action_filter_bookmarks">Filtro</string>
-<string name="action_filter_history">Filtro</string>
 <string name="action_filter">Filtro</string>
 <string name="action_ascending">Ascendente</string>
 <string name="action_descending">Discendente</string>
@@ -38,7 +36,6 @@ is missing a quantity used in that language, otherwise the app will crash
 <string name="select_style">Seleziona stile</string>
 <string name="default_style_title">Default</string>
 <string name="subtitle_settings">Impostazioni</string>
-<string name="select_remote_content_mode">Carica contenuto remoto</string>
 <string name="setting_remote_content_always">Sempre</string>
 <string name="setting_remote_content_wifi">Solo in Wi-Fi</string>
 <string name="setting_remote_content_never">Mai</string>
@@ -59,7 +56,6 @@ is missing a quantity used in that language, otherwise the app will crash
 <string name="main_empty_history">Niente cronologia</string>
 <string name="main_empty_dictionaries">Niente dizionari</string>
 <string name="delete">Cancella</string>
-<string name="action_forget">Dimentica</string>
 
 <plurals name="confirm_delete_bookmark_count">
 <item quantity="zero">%,d segnalibri</item>
@@ -89,7 +85,6 @@ is missing a quantity used in that language, otherwise the app will crash
 <string name="msg_no_activity_to_get_content">Nessuna attività disponibile per aprire il file</string>
 <string name="action_add_dictionaries">Aggiungi</string>
 <string name="title_activity_file_select">Seleziona file</string>
-<string name="action_settings">Impostazioni</string>
 <string name="action_goto_parent_dir">Torna su</string>
 <string name="action_reload_directory">Ricarica</string>
 <string name="msg_dictionary_already_open">Già aperto</string>
