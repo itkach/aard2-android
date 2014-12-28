@@ -246,7 +246,6 @@ public class ArticleCollectionActivity extends FragmentActivity {
         Application app = (Application)getApplication();
         app.pop(this);
         super.onDestroy();
-        System.gc();
     }
 
     @Override
