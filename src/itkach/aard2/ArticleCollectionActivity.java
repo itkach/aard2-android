@@ -21,6 +21,7 @@ import android.app.SearchManager;
 import android.content.Intent;
 import android.database.DataSetObserver;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -60,6 +61,9 @@ public class ArticleCollectionActivity extends FragmentActivity {
 
     };
 
+
+
+
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_PROGRESS);
@@ -68,83 +72,104 @@ public class ArticleCollectionActivity extends FragmentActivity {
         app.push(this);
         final ActionBar actionBar = getActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
-        Intent intent = getIntent();
+        actionBar.setSubtitle("...");
+        final Intent intent = getIntent();
+        final int position = intent.getIntExtra("position", 0);
 
-        Uri articleUrl = intent.getData();
-        if (articleUrl != null) {
-            articleCollectionPagerAdapter = createFromUri(app, articleUrl);
-        }
-        else {
-            String action = intent.getAction();
-            if (action == null) {
-                articleCollectionPagerAdapter = createFromLastResult(app);
-            }
-            else if (action.equals("showRandom")) {
-                articleCollectionPagerAdapter = createFromRandom(app);
-            }
-            else if (action.equals("showBookmarks")) {
-                articleCollectionPagerAdapter = createFromBookmarks(app);
-            }
-            else if (action.equals("showHistory")) {
-                articleCollectionPagerAdapter = createFromHistory(app);
-            }
-            else {
-                articleCollectionPagerAdapter = createFromIntent(app, intent);
-            }
-        }
-
-        if (articleCollectionPagerAdapter == null || articleCollectionPagerAdapter.getCount() == 0) {
-            Toast.makeText(this, R.string.article_collection_nothing_found,
-                    Toast.LENGTH_SHORT).show();
-            this.finish();
-            return;
-        }
-
-        findViewById(R.id.pager_title_strip).setVisibility(
-                articleCollectionPagerAdapter.getCount() == 1 ? ViewGroup.GONE : ViewGroup.VISIBLE);
-
-        int position = intent.getIntExtra("position", 0);
-        if (position > articleCollectionPagerAdapter.getCount() - 1) {
-            Toast.makeText(this, R.string.article_collection_selected_not_available,
-                    Toast.LENGTH_SHORT).show();
-            this.finish();
-            return;
-        }
-        viewPager = (ViewPager) findViewById(R.id.pager);
-        viewPager.setAdapter(articleCollectionPagerAdapter);
-        viewPager.setOnPageChangeListener(new OnPageChangeListener(){
+        AsyncTask<Void, Void, ArticleCollectionPagerAdapter> createAdapterTask = new AsyncTask<Void, Void, ArticleCollectionPagerAdapter>(){
 
             @Override
-            public void onPageScrollStateChanged(int arg0) {}
-
-            @Override
-            public void onPageScrolled(int arg0, float arg1, int arg2) {}
-
-            @Override
-            public void onPageSelected(final int position) {
-                updateTitle(position);
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        ArticleFragment fragment =(ArticleFragment) articleCollectionPagerAdapter.getItem(position);
-                        fragment.applyTextZoomPref();
-                    }
-                });
-
-            }});
-        viewPager.setCurrentItem(position);
-
-        PagerTitleStrip titleStrip = (PagerTitleStrip)findViewById(R.id.pager_title_strip);
-        titleStrip.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 10);
-        updateTitle(position);
-        articleCollectionPagerAdapter.registerDataSetObserver(new DataSetObserver() {
-            @Override
-            public void onChanged() {
-                if (articleCollectionPagerAdapter.getCount() == 0) {
-                    finish();
+            protected ArticleCollectionPagerAdapter doInBackground(Void ... params) {
+                ArticleCollectionPagerAdapter result;
+                Uri articleUrl = intent.getData();
+                if (articleUrl != null) {
+                    result = createFromUri(app, articleUrl);
                 }
+                else {
+                    String action = intent.getAction();
+                    if (action == null) {
+                        result = createFromLastResult(app);
+                    }
+                    else if (action.equals("showRandom")) {
+                        result = createFromRandom(app);
+                    }
+                    else if (action.equals("showBookmarks")) {
+                        result = createFromBookmarks(app);
+                    }
+                    else if (action.equals("showHistory")) {
+                        result = createFromHistory(app);
+                    }
+                    else {
+                        result = createFromIntent(app, intent);
+                    }
+                }
+                return result;
             }
-        });
+
+            @Override
+            protected void onPostExecute(ArticleCollectionPagerAdapter adapter) {
+                if (isFinishing() || isDestroyed()) {
+                    return;
+                }
+                articleCollectionPagerAdapter = adapter;
+                if (articleCollectionPagerAdapter == null || articleCollectionPagerAdapter.getCount() == 0) {
+                    Toast.makeText(ArticleCollectionActivity.this, R.string.article_collection_nothing_found,
+                            Toast.LENGTH_SHORT).show();
+                    finish();
+                    return;
+                }
+
+                findViewById(R.id.pager_title_strip).setVisibility(
+                        articleCollectionPagerAdapter.getCount() == 1 ? ViewGroup.GONE : ViewGroup.VISIBLE);
+
+
+                    if (position > articleCollectionPagerAdapter.getCount() - 1) {
+                        Toast.makeText(ArticleCollectionActivity.this, R.string.article_collection_selected_not_available,
+                                Toast.LENGTH_SHORT).show();
+                        finish();
+                        return;
+                    }
+                    viewPager = (ViewPager) findViewById(R.id.pager);
+                    viewPager.setAdapter(articleCollectionPagerAdapter);
+                    viewPager.setOnPageChangeListener(new OnPageChangeListener(){
+
+                        @Override
+                        public void onPageScrollStateChanged(int arg0) {}
+
+                        @Override
+                        public void onPageScrolled(int arg0, float arg1, int arg2) {}
+
+                        @Override
+                        public void onPageSelected(final int position) {
+                            updateTitle(position);
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    ArticleFragment fragment =(ArticleFragment) articleCollectionPagerAdapter.getItem(position);
+                                    fragment.applyTextZoomPref();
+                                }
+                            });
+
+                        }});
+                    viewPager.setCurrentItem(position);
+
+                    PagerTitleStrip titleStrip = (PagerTitleStrip)findViewById(R.id.pager_title_strip);
+                    titleStrip.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 10);
+                    updateTitle(position);
+                    articleCollectionPagerAdapter.registerDataSetObserver(new DataSetObserver() {
+                        @Override
+                        public void onChanged() {
+                            if (articleCollectionPagerAdapter.getCount() == 0) {
+                                finish();
+                            }
+                        }
+                    });
+
+            }
+        };
+
+        createAdapterTask.execute();
+
     }
 
     private ArticleCollectionPagerAdapter createFromUri(Application app, Uri articleUrl) {
