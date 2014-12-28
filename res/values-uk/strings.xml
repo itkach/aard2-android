@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Aard 2</string>
+    <string name="action_add_dictionaries">Додати</string>
+    <string name="action_bookmark_article">Закладинки</string>
+    <string name="action_filter">Фільтр</string>
+    <string name="action_filter_bookmarks">Фільтр</string>
+    <string name="action_filter_history">Фільтр</string>
+    <string name="action_find_dictionaries">Шукати словники</string>
+    <string name="action_find_in_page">Пошук на сторінці</string>
+    <string name="action_forget">Забути</string>
+    <string name="action_goto_parent_dir">Вверх</string>
+    <string name="action_lookup">Пошук</string>
+    <string name="action_reload_directory">Перезавантажити</string>
+    <string name="action_select_style">Стиль...</string>
+    <string name="action_sort_by_time">За часом</string>
+    <string name="action_sort_by_title">За назвою</string>
+    <string name="action_zoom_in">Збільшити</string>
+    <string name="action_zoom_out">Зменшити</string>
+    <string name="article_collection_nothing_found">Нічого не знайдено</string>
+    <string name="article_collection_nothing_to_lookup">Не вказано що шукати</string>
+    <string name="article_view_msg_not_found">Ресурс не знайдено</string>
+    <string name="blob_descriptor_confirm_delete">Видалити %1$s?</string>
+    <string name="confirm_clear_cached_content">Зпорожнити кеш?</string>
+    <string name="delete">Видалити</string>
+    <string name="lookup_nothing_found">Нічого не знайдено</string>
+    <string name="main_empty_bookmarks">Немає закладинок</string>
+    <string name="main_empty_dictionaries">Немає словників</string>
+    <string name="main_empty_history">Немає історії</string>
+    <string name="msg_dictionary_added">Додано словник з файла %1$s</string>
+    <string name="msg_dictionary_already_open">Словник вже відкрито</string>
+    <string name="msg_failed_to_read_file">Не вдалося прочитати файл</string>
+    <string name="action_ascending">За збільшенням</string>
+    <string name="action_descending">За зменшенням</string>
+    <string name="application_version">Версія %1$s</string>
+    <string name="article_collection_selected_not_available">Вибрана стаття недоступна</string>
+    <string name="dictionaries_scanning_device">Йде пошук словників на пристрої</string>
+    <string name="msg_file_too_big">Файл занадто великий</string>
+    <string name="msg_no_activity_to_get_content">Немає чим відкрити файл</string>
+    <string name="select_style">Вибрати стиль</string>
+    <string name="title_activity_file_select">Оберіть файл словника</string>
+    <string name="subtitle_lookup">Пошук</string>
+    <string name="subtitle_history">Історія</string>
+    <string name="subtitle_dictionaries">Словники</string>
+    <string name="subtitle_bookmark">Закладинки</string>
+    <string name="setting_user_styles_empty">Немає стилів</string>
+    <string name="setting_user_styles">Стилі користувача</string>
+    <string name="setting_user_style_confirm_forget">Видалити %1$s?</string>
+    <string name="setting_remote_content_wifi">Тільки по Wi-Fi</string>
+    <string name="setting_remote_content_never">Ніколи</string>
+    <string name="setting_remote_content_always">Завжди</string>
+    <string name="setting_remote_content">Завантажувати віддалений контент</string>
+    <string name="setting_clear_cache">Випорожнити кеш</string>
+    <string name="msg_file_not_css">Це не CSS файл</string>
+    <string name="action_settings">Налаштування</string>
+    <string name="subtitle_settings">Налаштування</string>
+    <string name="setting_clear_cache_subtitle">Видалити кешований контент, в тому числі завантаженні зображення</string>
+    <string name="setting_about">Про %1$s</string>
+    <string name="msg_failed_to_store_user_style">Не вдалося зберегти стиль користувача</string>
+    <string name="dictionaries_please_wait">Зачекайте</string>
+    <string name="dictionaries_confirm_forget">Забути %1$s?</string>
+    <string name="default_style_title">Типовий</string>
+    <string name="select_remote_content_mode">Завантажувати віддалений контент</string>
+    <string name="action_zoom_reset">Початковий розмір</string>
+
+    <plurals name="dict_item_count">
+        <item quantity="zero">%,d записів</item>
+        <item quantity="one">%,d запис</item>
+        <item quantity="two">%,d записа</item>
+        <item quantity="few">%,d записа</item>
+        <item quantity="many">%,d записів</item>
+        <item quantity="other">%,d записів</item>
+    </plurals>
+
+    <plurals name="confirm_delete_bookmark_count">
+        <item quantity="zero">%,d закладинок</item>
+        <item quantity="one">%,d закладинку</item>
+        <item quantity="two">%,d закладинки</item>
+        <item quantity="few">%,d закладинки</item>
+        <item quantity="many">%,d закладинок</item>
+        <item quantity="other">%,d закладинок</item>
+    </plurals>
+
+    <plurals name="confirm_delete_history_count">
+        <item quantity="zero">%,d записів</item>
+        <item quantity="one">%,d запис</item>
+        <item quantity="two">%,d записи</item>
+        <item quantity="few">%,d записи</item>
+        <item quantity="many">%,d записів</item>
+        <item quantity="other">%,d записів</item>
+    </plurals>
+
+
+</resources>
