@@ -14,9 +14,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="top"
-        android:layout_marginTop="-3dp"
-        android:maxHeight="7dp"
-        android:minHeight="7dp"
+        android:layout_marginTop="-4dp"
+        android:maxHeight="10dp"
+        android:minHeight="10dp"
         android:padding="0dp"
         android:indeterminate="false"
         android:max="100"/>
