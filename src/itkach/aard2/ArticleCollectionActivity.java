@@ -67,7 +67,7 @@ public class ArticleCollectionActivity extends FragmentActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_PROGRESS);
-        setContentView(R.layout.activity_article_collection);
+        setContentView(R.layout.activity_article_collection_loading);
         final Application app = (Application)getApplication();
         app.push(this);
         final ActionBar actionBar = getActionBar();
@@ -119,52 +119,53 @@ public class ArticleCollectionActivity extends FragmentActivity {
                     return;
                 }
 
+                if (position > articleCollectionPagerAdapter.getCount() - 1) {
+                    Toast.makeText(ArticleCollectionActivity.this, R.string.article_collection_selected_not_available,
+                            Toast.LENGTH_SHORT).show();
+                    finish();
+                    return;
+                }
+
+                setContentView(R.layout.activity_article_collection);
+
                 findViewById(R.id.pager_title_strip).setVisibility(
                         articleCollectionPagerAdapter.getCount() == 1 ? ViewGroup.GONE : ViewGroup.VISIBLE);
 
+                viewPager = (ViewPager) findViewById(R.id.pager);
+                viewPager.setAdapter(articleCollectionPagerAdapter);
+                viewPager.setOnPageChangeListener(new OnPageChangeListener(){
 
-                    if (position > articleCollectionPagerAdapter.getCount() - 1) {
-                        Toast.makeText(ArticleCollectionActivity.this, R.string.article_collection_selected_not_available,
-                                Toast.LENGTH_SHORT).show();
-                        finish();
-                        return;
-                    }
-                    viewPager = (ViewPager) findViewById(R.id.pager);
-                    viewPager.setAdapter(articleCollectionPagerAdapter);
-                    viewPager.setOnPageChangeListener(new OnPageChangeListener(){
+                    @Override
+                    public void onPageScrollStateChanged(int arg0) {}
 
-                        @Override
-                        public void onPageScrollStateChanged(int arg0) {}
+                    @Override
+                    public void onPageScrolled(int arg0, float arg1, int arg2) {}
 
-                        @Override
-                        public void onPageScrolled(int arg0, float arg1, int arg2) {}
-
-                        @Override
-                        public void onPageSelected(final int position) {
-                            updateTitle(position);
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    ArticleFragment fragment =(ArticleFragment) articleCollectionPagerAdapter.getItem(position);
-                                    fragment.applyTextZoomPref();
-                                }
-                            });
-
-                        }});
-                    viewPager.setCurrentItem(position);
-
-                    PagerTitleStrip titleStrip = (PagerTitleStrip)findViewById(R.id.pager_title_strip);
-                    titleStrip.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 10);
-                    updateTitle(position);
-                    articleCollectionPagerAdapter.registerDataSetObserver(new DataSetObserver() {
-                        @Override
-                        public void onChanged() {
-                            if (articleCollectionPagerAdapter.getCount() == 0) {
-                                finish();
+                    @Override
+                    public void onPageSelected(final int position) {
+                        updateTitle(position);
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                ArticleFragment fragment =(ArticleFragment) articleCollectionPagerAdapter.getItem(position);
+                                fragment.applyTextZoomPref();
                             }
-                        }
-                    });
+                        });
 
+                    }});
+                viewPager.setCurrentItem(position);
+
+                PagerTitleStrip titleStrip = (PagerTitleStrip)findViewById(R.id.pager_title_strip);
+                titleStrip.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 10);
+                updateTitle(position);
+                articleCollectionPagerAdapter.registerDataSetObserver(new DataSetObserver() {
+                    @Override
+                    public void onChanged() {
+                        if (articleCollectionPagerAdapter.getCount() == 0) {
+                            finish();
+                        }
+                    }
+                });
             }
         };
 
