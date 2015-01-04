@@ -108,13 +108,6 @@ public class ArticleWebView extends WebView {
 
             byte[] noBytes = new byte[0];
 
-            TimerTask applyStylePref = new TimerTask() {
-                @Override
-                public void run() {
-                    getHandler().post(applyStyleRunnable);
-                }
-            };
-
             Runnable applyStyleRunnable = new Runnable() {
                 @Override
                 public void run() {
@@ -122,6 +115,15 @@ public class ArticleWebView extends WebView {
                 }
             };
 
+            TimerTask applyStylePref = new TimerTask() {
+                @Override
+                public void run() {
+                    android.os.Handler handler = getHandler();
+                    if (handler != null) {
+                        handler.post(applyStyleRunnable);
+                    }
+                }
+            };
 
             @Override
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
