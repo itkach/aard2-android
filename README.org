@@ -8,27 +8,80 @@
    - [[https://github.com/itkach/aard2-android/releases][Aard 2 for Android]]
    - [[https://github.com/itkach/slob/wiki/Dictionaries][Dictionaries]]
 
-** Launching from Other Applications
 
-   Aard 2 lookup can be initiated from other applications, either
-   through standard /Share/ action or directly, if application
-   implemented an action to start Aard 2 with lookup intent.
+** Features
 
-   Applications can launch Aard 2 lookup by starting activity with intent
-   ~aard2.lookup~ with text to look up passed as an extra string
-    parameter [[http://developer.android.com/reference/android/app/SearchManager.html#QUERY][SearchManager.QUERY]]. For example:
+*** Lookup
+    Lookup queries are punctuation, diacritics and case
+    insensitive.
 
-   #+BEGIN_SRC java
-   Intent intent = new Intent("aard2.lookup");
-   intent.putExtra(SearchManager.QUERY, "Foo Bar");
-   startActivity(intent);
-   #+END_SRC
+    [[images/sm-lookup.png]]
 
-   Same thing from a command line using /adb/:
 
-   #+BEGIN_SRC sh
-   adb shell am start -a aard2.lookup -e query "Foo Bar"
-   #+END_SRC
+*** Bookmarks and History
+    Visited articles are automatically added to history and appear in
+    History tab. Articles can also be bookmarked (tap Bookmark icon
+    when viewing article). Bookmarked articles
+    appear in Bookmarks tab. Bookmarks and history can be
+    filtered and sorted by time or article title. Both bookmarks and
+    history are limited to a hundred of most recently used items. To
+    remove bookmark or history record, long tap a list item to enter
+    selection mode, tap items to be removed, tap Trash Can icon and
+    confirm. A bookmark can also be removed by tapping Bookmark icon
+    when viewing article.
+
+    [[images/sm-bookmarks.png]]
+    [[images/sm-history.png]]
+
+
+*** Dictionary Management
+    Dictionaries can be added by scanning device or by manually
+    selecting dictionary files.
+
+    Note that application itself does not download dictionary files.
+
+    Opened dictionaries can be ordered by
+    marking and unmarking them as "favorite" (tap dictionary
+    title). Lookup results of equal match strength from multiple
+    dictionaries are presented in the order of dictionaries in the
+    dictionary list. Dictionaries can also be turned on or
+    off. Turned off dictionaries do not participate in word lookup,
+    but are still available when opening articles from bookmarks,
+    history or when following links in other articles.
+
+
+    [[images/sm-dictionaries.png]]
+
+
+*** Article Appearance
+    Dictionaries may include alternate style sheets. User may
+    also add custom style sheets via Settings tab. Dictionary built-in and
+    user styles appear in the "Style..." menu in article view.
+
+    [[images/sm-article_appearance_default.png]]
+    [[images/sm-article_menu.png]]
+    [[images/sm-article_appearance_select_style.png]]
+    [[images/sm-article_appearance_dark.png]]
+
+*** Random Article
+    Tapping application logo in main activity opens random article.
+
+
+** Requested Permissions
+*** android.permission.INTERNET
+    Aard 2 uses local embedded web server to provide article content. This
+    permission is necessary to run the server.
+
+    Also, articles may reference remote content such as images. This
+    permission is necessary to load it.
+
+*** android.permission.ACCESS_NETWORK_STATE
+    User chooses when to allow loading remote content: always,
+    when on Wi-Fi or never. This permission is necessary to implement
+    this.
+
+*** android.permission.READ_EXTERNAL_STORAGE
+    This permission is needed to access dictionary files on external storage.
 
 
 ** Developing
@@ -72,4 +125,26 @@
 
    #+BEGIN_SRC sh
    adb install -r build/outputs/apk/aard2-android-debug.apk
+   #+END_SRC
+
+** Launching from Other Applications
+
+   Aard 2 lookup can be initiated from other applications, either
+   through standard /Share/ action or directly, if application
+   implemented an action to start Aard 2 with lookup intent.
+
+   Applications can launch Aard 2 lookup by starting activity with intent
+   ~aard2.lookup~ with text to look up passed as an extra string
+    parameter [[http://developer.android.com/reference/android/app/SearchManager.html#QUERY][SearchManager.QUERY]]. For example:
+
+   #+BEGIN_SRC java
+   Intent intent = new Intent("aard2.lookup");
+   intent.putExtra(SearchManager.QUERY, "Foo Bar");
+   startActivity(intent);
+   #+END_SRC
+
+   Same thing from a command line using /adb/:
+
+   #+BEGIN_SRC sh
+   adb shell am start -a aard2.lookup -e query "Foo Bar"
    #+END_SRC

@@ -1,0 +1,4 @@
+#!/usr/bin/env sh
+cd images
+for i in `ls *.png | grep -v sm-`; do convert $i -resize 33% sm-$i; done
+cd ..
