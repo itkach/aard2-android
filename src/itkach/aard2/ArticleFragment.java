@@ -37,6 +37,10 @@ public class ArticleFragment extends Fragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        //Looks like this may be called multiple times with the same menu
+        //for some reason when activity is restored, so need to clear
+        //to avoid duplicates
+        menu.clear();
         inflater.inflate(R.menu.article, menu);
         miBookmark = menu.findItem(R.id.action_bookmark_article);
     }
