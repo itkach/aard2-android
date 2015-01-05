@@ -47,8 +47,9 @@
     dictionary list. Dictionaries can also be turned on or
     off. Turned off dictionaries do not participate in word lookup,
     but are still available when opening articles from bookmarks,
-    history or when following links in other articles.
-
+    history or when following links in other articles. Unwanted dictionaries
+    can also be completely removed from the program (but dictionary files
+    are not deleted).
 
     [[images/sm-dictionaries.png]]
 
