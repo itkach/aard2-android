@@ -1,3 +1,4 @@
+
 buildscript {
     repositories {
         mavenCentral()
@@ -10,6 +11,8 @@ buildscript {
 apply plugin: 'android'
 apply plugin: 'eclipse'
 apply plugin: 'idea'
+
+sourceCompatibility = '1.7'
 
 repositories {
     mavenCentral()
