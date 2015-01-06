@@ -360,7 +360,8 @@ public class ArticleCollectionActivity extends FragmentActivity {
                     return ((BlobDescriptor) item).key;
                 }
                 if (item instanceof Slob.Blob) {
-                    return ((Blob)item).key;
+                    return ((Blob) item).key;
+                }
             }
             return "???";
         }
