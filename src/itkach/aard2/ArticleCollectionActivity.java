@@ -354,12 +354,13 @@ public class ArticleCollectionActivity extends FragmentActivity {
 
         @Override
         public CharSequence getPageTitle(int position) {
-            Object item = data.getItem(position);
-            if (item instanceof BlobDescriptor) {
-                return ((BlobDescriptor) item).key;
-            }
-            if (item instanceof Slob.Blob) {
-                return ((Blob)item).key;
+            if (position < data.getCount()) {
+                Object item = data.getItem(position);
+                if (item instanceof BlobDescriptor) {
+                    return ((BlobDescriptor) item).key;
+                }
+                if (item instanceof Slob.Blob) {
+                    return ((Blob)item).key;
             }
             return "???";
         }
