@@ -62,7 +62,7 @@ public class ArticleCollectionActivity extends FragmentActivity {
     };
 
 
-
+    private boolean onDestroyCalled = false;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -108,7 +108,7 @@ public class ArticleCollectionActivity extends FragmentActivity {
 
             @Override
             protected void onPostExecute(ArticleCollectionPagerAdapter adapter) {
-                if (isFinishing() || isDestroyed()) {
+                if (isFinishing() || onDestroyCalled) {
                     return;
                 }
                 articleCollectionPagerAdapter = adapter;
@@ -263,6 +263,7 @@ public class ArticleCollectionActivity extends FragmentActivity {
 
     @Override
     protected void onDestroy() {
+        onDestroyCalled = true;
         if (viewPager != null) {
             viewPager.setAdapter(null);
         }
