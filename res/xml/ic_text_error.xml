@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<font-icon
+    xmlns:android="http://schemas.android.com/apk/res-auto"
+    android:text="@string/ic_error"
+    android:textSize="@dimen/text_icon"
+    android:textColor="@android:color/holo_red_dark"
+    />

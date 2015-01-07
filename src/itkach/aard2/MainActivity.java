@@ -2,28 +2,20 @@ package itkach.aard2;
 
 import android.app.ActionBar;
 import android.app.ActionBar.Tab;
-import android.app.Activity;
 import android.app.FragmentTransaction;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Toast;
 
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.StringWriter;
-import java.util.List;
+import com.shamanland.fonticon.FontIconDrawable;
 
 public class MainActivity extends FragmentActivity implements
         ActionBar.TabListener {
@@ -65,11 +57,11 @@ public class MainActivity extends FragmentActivity implements
                 });
 
         Drawable[] tabIcons = new Drawable[5];
-        tabIcons[0] = Icons.SEARCH.forTab();
-        tabIcons[1] = Icons.BOOKMARK.forTab();
-        tabIcons[2] = Icons.HISTORY.forTab();
-        tabIcons[3] = Icons.DICTIONARY.forTab();
-        tabIcons[4] = Icons.SETTINGS.forTab();
+        tabIcons[0] = FontIconDrawable.inflate(this, R.xml.ic_tab_search);
+        tabIcons[1] = FontIconDrawable.inflate(this, R.xml.ic_tab_bookmark);
+        tabIcons[2] = FontIconDrawable.inflate(this, R.xml.ic_tab_history);
+        tabIcons[3] = FontIconDrawable.inflate(this, R.xml.ic_tab_dictionary);
+        tabIcons[4] = FontIconDrawable.inflate(this, R.xml.ic_tab_settings);
         // For each of the sections in the app, add a tab to the action bar.
         for (int i = 0; i < mAppSectionsPagerAdapter.getCount(); i++) {
             Tab tab = actionBar.newTab();
@@ -158,8 +150,8 @@ public class MainActivity extends FragmentActivity implements
         }
 
         @Override
-        Icons getEmptyIcon() {
-            return Icons.BOOKMARK;
+        int getEmptyIcon() {
+            return R.xml.ic_empty_view_bookmark;
         }
 
         @Override
@@ -192,8 +184,8 @@ public class MainActivity extends FragmentActivity implements
         }
 
         @Override
-        Icons getEmptyIcon() {
-            return Icons.HISTORY;
+        int getEmptyIcon() {
+            return R.xml.ic_empty_view_history;
         }
 
         @Override

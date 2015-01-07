@@ -12,6 +12,7 @@ import android.webkit.WebView;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.shamanland.fonticon.FontIconTypefaceHolder;
 
 import java.io.File;
 import java.io.IOException;
@@ -78,7 +79,9 @@ public class Application extends android.app.Application {
             }
         }
         articleActivities = Collections.synchronizedList(new ArrayList<Activity>());
-        Icons.init(getAssets(), getResources());
+
+        FontIconTypefaceHolder.init(getAssets(), "fontawesome-4.2.0.ttf");
+
         mapper = new ObjectMapper();
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES,
                 false);

@@ -23,6 +23,8 @@ import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.shamanland.fonticon.FontIconDrawable;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -110,7 +112,7 @@ public class SettingsListAdapter extends BaseAdapter implements SharedPreference
             view = inflater.inflate(R.layout.settings_user_styles_item, parent,
                     false);
             ImageView btnAdd = (ImageView)view.findViewById(R.id.setting_btn_add_user_style);
-            btnAdd.setImageDrawable(Icons.ADD.forList());
+            btnAdd.setImageDrawable(FontIconDrawable.inflate(context, R.xml.ic_list_add));
             btnAdd.setOnClickListener(new View.OnClickListener(){
                 @Override
                 public void onClick(View view) {
@@ -139,7 +141,7 @@ public class SettingsListAdapter extends BaseAdapter implements SharedPreference
             View styleItemView = inflater.inflate(R.layout.user_styles_list_item, parent,
                     false);
             ImageView btnDelete = (ImageView)styleItemView.findViewById(R.id.user_styles_list_btn_delete);
-            btnDelete.setImageDrawable(Icons.TRASH.forListSmall());
+            btnDelete.setImageDrawable(FontIconDrawable.inflate(context, R.xml.ic_list_trash));
             btnDelete.setOnClickListener(onDeleteUserStyle);
 
             String name = userStyleNames.get(i);
@@ -267,13 +269,13 @@ public class SettingsListAdapter extends BaseAdapter implements SharedPreference
                     false);
 
             ImageView copyrightIcon = (ImageView) view.findViewById(R.id.setting_about_copyright_icon);
-            copyrightIcon.setImageDrawable(Icons.COPYRIGHT.forText());
+            copyrightIcon.setImageDrawable(FontIconDrawable.inflate(context, R.xml.ic_text_copyright));
 
             ImageView licenseIcon = (ImageView) view.findViewById(R.id.setting_about_license_icon);
-            licenseIcon.setImageDrawable(Icons.LICENSE.forText());
+            licenseIcon.setImageDrawable(FontIconDrawable.inflate(context, R.xml.ic_text_license));
 
             ImageView sourceIcon = (ImageView) view.findViewById(R.id.setting_about_source_icon);
-            sourceIcon.setImageDrawable(Icons.EXTERNAL_LINK.forText());
+            sourceIcon.setImageDrawable(FontIconDrawable.inflate(context, R.xml.ic_text_external_link));
 
             String appName = context.getString(R.string.app_name);
 

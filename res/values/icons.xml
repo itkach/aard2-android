@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="ic_search">&#xf002;</string>
+    <string name="ic_bookmark">&#xf02e;</string>
+    <string name="ic_bookmark_o">&#xf097;</string>
+    <string name="ic_history">&#xf1da;</string>
+    <string name="ic_dictionary">&#xf02d;</string>
+    <string name="ic_settings">&#xf013;</string>
+    <string name="ic_reload">&#xf021;</string>
+    <string name="ic_filter">&#xf0b0;</string>
+    <string name="ic_sort_desc">&#xf161;</string>
+    <string name="ic_sort_asc">&#xf160;</string>
+    <string name="ic_clock">&#xf017;</string>
+    <string name="ic_list">&#xf03a;</string>
+    <string name="ic_trash">&#xf1f8;</string>
+    <string name="ic_license">&#xf19c;</string>
+    <string name="ic_external_link">&#xf08e;</string>
+    <string name="ic_file_archive">&#xf1c6;</string>
+    <string name="ic_error">&#xf071;</string>
+    <string name="ic_copyright">&#xf1f9;</string>
+    <string name="ic_select_all">&#xf046;</string>
+    <string name="ic_add">&#xf067;</string>
+    <string name="ic_angle_up">&#xf106;</string>
+    <string name="ic_angle_down">&#xf107;</string>
+    <string name="ic_star">&#xf005;</string>
+    <string name="ic_star_o">&#xf006;</string>
+    <string name="ic_folder">&#xf07b;</string>
+    <string name="ic_level_up">&#xf148;</string>
+</resources>

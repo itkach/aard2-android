@@ -24,8 +24,8 @@ public class LookupFragment extends BaseListFragment implements LookupListener {
 
 
     @Override
-    Icons getEmptyIcon() {
-        return Icons.SEARCH;
+    int getEmptyIcon() {
+        return R.xml.ic_empty_view_search;
     }
 
     @Override

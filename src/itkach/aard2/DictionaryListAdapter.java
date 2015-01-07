@@ -19,6 +19,8 @@ import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import com.shamanland.fonticon.FontIconDrawable;
+
 import java.util.Comparator;
 import java.util.Locale;
 
@@ -183,19 +185,19 @@ public class DictionaryListAdapter extends BaseAdapter {
 
         ImageView btnToggleDetail = (ImageView) view
                 .findViewById(R.id.dictionary_btn_toggle_detail);
-        Icons toggleIcon = desc.expandDetail ? Icons.ANGLE_UP: Icons.ANGLE_DOWN;
-        btnToggleDetail.setImageDrawable(toggleIcon.forList());
+        int toggleIcon = desc.expandDetail ? R.xml.ic_list_angle_up : R.xml.ic_list_angle_down;
+        btnToggleDetail.setImageDrawable(FontIconDrawable.inflate(context, toggleIcon));
         btnToggleDetail.setTag(position);
 
         ImageView btnForget = (ImageView) view
                 .findViewById(R.id.dictionary_btn_forget);
-        btnForget.setImageDrawable(Icons.TRASH.forList());
+        btnForget.setImageDrawable(FontIconDrawable.inflate(context, R.xml.ic_list_trash));
         btnForget.setTag(position);
 
         ImageView btnToggleFav = (ImageView) view
                 .findViewById(R.id.dictionary_btn_toggle_fav);
-        Icons favIcon = desc.priority > 0 ? Icons.STAR: Icons.STAR_O;
-        btnToggleFav.setImageDrawable(favIcon.forList());
+        int favIcon = desc.priority > 0 ? R.xml.ic_list_star: R.xml.ic_list_star_o;
+        btnToggleFav.setImageDrawable(FontIconDrawable.inflate(context, favIcon));
         btnToggleFav.setTag(position);
         return view;
     }
@@ -204,7 +206,7 @@ public class DictionaryListAdapter extends BaseAdapter {
         View pathRow = view.findViewById(R.id.dictionary_path_row);
 
         ImageView pathIcon = (ImageView) view.findViewById(R.id.dictionary_path_icon);
-        pathIcon.setImageDrawable(Icons.FILE_ARCHIVE.forText());
+        pathIcon.setImageDrawable(FontIconDrawable.inflate(context, R.xml.ic_text_file_archive));
 
         TextView pathView = (TextView) view.findViewById(R.id.dictionary_path);
         pathView.setText(path);
@@ -216,8 +218,7 @@ public class DictionaryListAdapter extends BaseAdapter {
         View errorRow= view.findViewById(R.id.dictionary_error_row);
 
         ImageView errorIcon = (ImageView) view.findViewById(R.id.dictionary_error_icon);
-        errorIcon.setImageDrawable(Icons.ERROR.forText(
-                context.getResources().getColor(android.R.color.holo_red_dark)));
+        errorIcon.setImageDrawable(FontIconDrawable.inflate(context, R.xml.ic_text_error));
 
         TextView errorView = (TextView) view
                 .findViewById(R.id.dictionary_error);
@@ -240,7 +241,7 @@ public class DictionaryListAdapter extends BaseAdapter {
         View copyrightRow= view.findViewById(R.id.dictionary_copyright_row);
 
         ImageView copyrightIcon = (ImageView) view.findViewById(R.id.dictionary_copyright_icon);
-        copyrightIcon.setImageDrawable(Icons.COPYRIGHT.forText());
+        copyrightIcon.setImageDrawable(FontIconDrawable.inflate(context, R.xml.ic_text_copyright));
 
         TextView copyrightView = (TextView) view.findViewById(R.id.dictionary_copyright);
         String copyright = desc.tags.get("copyright");
@@ -254,7 +255,7 @@ public class DictionaryListAdapter extends BaseAdapter {
         View sourceRow = view.findViewById(R.id.dictionary_license_row);
 
         ImageView sourceIcon = (ImageView) view.findViewById(R.id.dictionary_source_icon);
-        sourceIcon.setImageDrawable(Icons.EXTERNAL_LINK.forText());
+        sourceIcon.setImageDrawable(FontIconDrawable.inflate(context, R.xml.ic_text_external_link));
 
         TextView sourceView = (TextView) view.findViewById(R.id.dictionary_source);
         String source = desc.tags.get("source");
@@ -275,7 +276,7 @@ public class DictionaryListAdapter extends BaseAdapter {
         View licenseRow= view.findViewById(R.id.dictionary_license_row);
 
         ImageView licenseIcon = (ImageView) view.findViewById(R.id.dictionary_license_icon);
-        licenseIcon.setImageDrawable(Icons.LICENSE.forText());
+        licenseIcon.setImageDrawable(FontIconDrawable.inflate(context, R.xml.ic_text_license));
 
         TextView licenseView = (TextView) view.findViewById(R.id.dictionary_license);
         String licenseName = desc.tags.get("license.name");

@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.util.SparseBooleanArray;
 import android.view.ActionMode;
 import android.view.Menu;
@@ -17,6 +18,8 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.SearchView;
+
+import com.shamanland.fonticon.FontIconDrawable;
 
 abstract class BlobDescriptorListFragment extends BaseListFragment {
 
@@ -110,18 +113,20 @@ abstract class BlobDescriptorListFragment extends BaseListFragment {
 
         listAdapter = new BlobDescriptorListAdapter(descriptorList);
 
-        icFilter = Icons.FILTER.forActionBar();
-        icClock = Icons.CLOCK.forActionBar();
-        icList = Icons.LIST.forActionBar();
-        icArrowUp = Icons.SORT_ASC.forActionBar();
-        icArrowDown = Icons.SORT_DESC.forActionBar();
+        final FragmentActivity activity = getActivity();
+
+        icFilter = FontIconDrawable.inflate(activity, R.xml.ic_actionbar_filter);
+        icClock =  FontIconDrawable.inflate(activity, R.xml.ic_actionbar_clock);
+        icList = FontIconDrawable.inflate(activity, R.xml.ic_actionbar_list);
+        icArrowUp = FontIconDrawable.inflate(activity, R.xml.ic_actionbar_sort_asc);
+        icArrowDown = FontIconDrawable.inflate(activity, R.xml.ic_actionbar_sort_desc);
 
         final ListView listView = getListView();
         listView.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
-                Intent intent = new Intent(getActivity(),
+                Intent intent = new Intent(activity,
                         ArticleCollectionActivity.class);
                 intent.setAction(getItemClickAction());
                 intent.putExtra("position", position);

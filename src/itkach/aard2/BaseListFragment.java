@@ -15,12 +15,14 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.shamanland.fonticon.FontIconDrawable;
+
 public abstract class BaseListFragment extends ListFragment {
 
     protected View emptyView;
     ActionMode actionMode;
 
-    abstract Icons getEmptyIcon();
+    abstract int getEmptyIcon();
 
     abstract CharSequence getEmptyText();
 
@@ -38,7 +40,7 @@ public abstract class BaseListFragment extends ListFragment {
         emptyText.setMovementMethod(LinkMovementMethod.getInstance());
         emptyText.setText(getEmptyText());
         ImageView emptyIcon = (ImageView)(emptyView.findViewById(R.id.empty_icon));
-        emptyIcon.setImageDrawable(getEmptyIcon().forEmptyView());
+        emptyIcon.setImageDrawable(FontIconDrawable.inflate(getActivity(), getEmptyIcon()));
         return super.onCreateView(inflater, container, savedInstanceState);
     }
 
@@ -79,11 +81,11 @@ public abstract class BaseListFragment extends ListFragment {
                     inflater.inflate(getSelectionMenuId(), menu);
                     MenuItem miDelete = menu.findItem(R.id.blob_descriptor_delete);
                     if (miDelete != null) {
-                        miDelete.setIcon(Icons.TRASH.forActionBar());
+                        miDelete.setIcon(FontIconDrawable.inflate(getActivity(), R.xml.ic_actionbar_trash));
                     }
                     MenuItem miSelectAll = menu.findItem(R.id.blob_descriptor_select_all);
                     if (miSelectAll != null) {
-                        miSelectAll.setIcon(Icons.SELECT_ALL.forActionBar());
+                        miSelectAll.setIcon(FontIconDrawable.inflate(getActivity(), R.xml.ic_actionbar_select_all));
                     }
                     setSelectionMode(true);
                     return true;
