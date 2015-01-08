@@ -2,6 +2,8 @@ package itkach.aard2;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -31,6 +33,24 @@ public class DictionariesFragment extends BaseListFragment {
 
     private DictionaryListAdapter listAdapter;
     private boolean findDictionariesOnAttach = false;
+
+    private class DiscoveryProgressDialog extends ProgressDialog {
+
+        public DiscoveryProgressDialog(Context context) {
+            super(context);
+            setIndeterminate(true);
+            setCancelable(false);
+            setTitle(getString(R.string.dictionaries_please_wait));
+            setMessage(getString(R.string.dictionaries_scanning_device));
+        }
+
+        @Override
+        public void onBackPressed() {
+            final Application app = (Application)getActivity().getApplication();
+            app.cancelFindDictionaries();
+        }
+    }
+
 
     protected int getEmptyIcon() {
         return R.xml.ic_empty_view_dictionary;
@@ -112,10 +132,7 @@ public class DictionariesFragment extends BaseListFragment {
         }
         this.findDictionariesOnAttach = false;
         final Application app = ((Application)activity.getApplication());
-        final ProgressDialog p = new ProgressDialog(getActivity());
-        p.setIndeterminate(true);
-        p.setTitle(getString(R.string.dictionaries_please_wait));
-        p.setMessage(getString(R.string.dictionaries_scanning_device));
+        final ProgressDialog p = new DiscoveryProgressDialog(getActivity());
         app.findDictionaries(new DictionaryDiscoveryCallback() {
             @Override
             public void onDiscoveryFinished() {
@@ -124,6 +141,8 @@ public class DictionariesFragment extends BaseListFragment {
         });
         p.show();
     }
+
+
 
     @Override
     public void onAttach(Activity activity) {

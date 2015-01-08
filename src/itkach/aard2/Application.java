@@ -278,6 +278,11 @@ public class Application extends android.app.Application {
     }
 
     private Thread discoveryThread;
+    private DictionaryFinder dictFinder = new DictionaryFinder();
+
+    synchronized void cancelFindDictionaries() {
+        dictFinder.cancel();
+    }
 
     synchronized void findDictionaries(
             final DictionaryDiscoveryCallback callback) {
@@ -289,8 +294,7 @@ public class Application extends android.app.Application {
         discoveryThread = new Thread(new Runnable() {
             @Override
             public void run() {
-                DictionaryFinder finder = new DictionaryFinder();
-                final List<SlobDescriptor> result = finder.findDictionaries();
+                final List<SlobDescriptor> result = dictFinder.findDictionaries();
                 discoveryThread = null;
                 Handler h = new Handler(Looper.getMainLooper());
                 h.post(new Runnable() {
@@ -423,6 +427,7 @@ public class Application extends android.app.Application {
     void removeLookupListener(LookupListener listener){
         lookupListeners.remove(listener);
     }
+
 
     static class FileTooBigException extends IOException {
     }

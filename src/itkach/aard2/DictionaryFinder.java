@@ -26,6 +26,8 @@ public class DictionaryFinder {
         }
     };
 
+    private boolean cancelRequested;
+
     private FilenameFilter fileFilter = new FilenameFilter() {
         public boolean accept(File dir, String filename) {
             return filename.toLowerCase().endsWith(
@@ -41,6 +43,9 @@ public class DictionaryFinder {
     }
 
     private List<File> scanDir(File dir) {
+        if (cancelRequested) {
+            return Collections.emptyList();
+        }
         String absolutePath = dir.getAbsolutePath();
         if (excludedScanDirs.contains(absolutePath)) {
             Log.d(T, String.format("%s is excluded", absolutePath));
@@ -69,6 +74,9 @@ public class DictionaryFinder {
         File[] files = dir.listFiles(fileFilter);
         if (files != null) {
             for (int i = 0; i < files.length; i++) {
+                if (cancelRequested) {
+                    break;
+                }
                 File file = files[i];
                 if (file.isDirectory()) {
                     candidates.addAll(scanDir(file));
@@ -99,6 +107,7 @@ public class DictionaryFinder {
     }
 
     synchronized List<SlobDescriptor> findDictionaries() {
+        cancelRequested = false;
         Log.d(T, "starting dictionary discovery");
         long t0 = System.currentTimeMillis();
         List<File> candidates = discover();
@@ -119,5 +128,9 @@ public class DictionaryFinder {
             }
         }
         return descriptors;
+    }
+
+    public void cancel() {
+        cancelRequested = true;
     }
 }
