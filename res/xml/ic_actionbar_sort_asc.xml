@@ -2,6 +2,6 @@
 <font-icon
     xmlns:android="http://schemas.android.com/apk/res-auto"
     android:text="@string/ic_sort_asc"
-    android:textSize="@dimen/actionbar_icon"
+    android:textSize="@dimen/sort_asc_desc_icon"
     android:textColor="@color/actionbar_icon"
     />
