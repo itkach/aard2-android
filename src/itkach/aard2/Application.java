@@ -61,6 +61,9 @@ public class Application extends android.app.Application {
     static String jsClearUserStyle;
     static String jsSetCannedStyle;
 
+    static final String PREF                   = "app";
+    static final String PREF_RANDOM_FAV_LOOKUP = "onlyFavDictsForRandomLookup";
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -225,25 +228,32 @@ public class Application extends android.app.Application {
     }
 
 
-    boolean isActive(Slob slob) {
-        for (SlobDescriptor sd : dictionaries) {
-            if (slob.getId().toString().equals(sd.id)) {
-                return sd.active;
-            }
-        }
-        return false;
-    }
-
     Slob[] getActiveSlobs() {
-        Slob[] all = slobber.getSlobs();
-        List<Slob> active = new ArrayList(all.length);
-        for (Slob slob : all) {
-            if (isActive(slob)) {
-                active.add(slob);
+        List<Slob> result = new ArrayList(dictionaries.size());
+        for (SlobDescriptor sd : dictionaries) {
+            if (sd.active) {
+                Slob s = slobber.getSlob(sd.id);
+                if (s != null) {
+                    result.add(s);
+                }
             }
         }
-        return active.toArray(new Slob[active.size()]);
+        return result.toArray(new Slob[result.size()]);
     };
+
+    Slob[] getFavoriteSlobs() {
+        List<Slob> result = new ArrayList(dictionaries.size());
+        for (SlobDescriptor sd : dictionaries) {
+            if (sd.active && sd.priority > 0) {
+                Slob s = slobber.getSlob(sd.id);
+                if (s != null) {
+                    result.add(s);
+                }
+            }
+        }
+        return result.toArray(new Slob[result.size()]);
+    };
+
 
     Iterator<Blob> find(String key) {
         return Slob.find(key, 1000, getActiveSlobs());
@@ -264,8 +274,23 @@ public class Application extends android.app.Application {
         return result;
     }
 
+    boolean isOnlyFavDictsForRandomLookup() {
+        final SharedPreferences prefs = getSharedPreferences(
+                Application.PREF, Activity.MODE_PRIVATE);
+        return prefs.getBoolean(Application.PREF_RANDOM_FAV_LOOKUP, false);
+    }
+
+    void setOnlyFavDictsForRandomLookup(boolean value) {
+        final SharedPreferences prefs = getSharedPreferences(
+                Application.PREF, Activity.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean(Application.PREF_RANDOM_FAV_LOOKUP, value);
+        editor.commit();
+    }
+
     Blob random() {
-        return slobber.findRandom(getActiveSlobs());
+        Slob[] slobs = isOnlyFavDictsForRandomLookup() ? getFavoriteSlobs() : getActiveSlobs();
+        return slobber.findRandom(slobs);
     }
 
     String getUrl(Blob blob) {

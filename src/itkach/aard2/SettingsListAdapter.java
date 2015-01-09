@@ -17,6 +17,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.CheckedTextView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
@@ -44,6 +45,12 @@ public class SettingsListAdapter extends BaseAdapter implements SharedPreference
     private Fragment                fragment;
 
 
+    final static int POS_REMOTE_CONTENT = 0;
+    final static int POS_FAV_RANDOM = 1;
+    final static int POS_USER_STYLES = 2;
+    final static int POS_CLEAR_CACHE = 3;
+    final static int POS_ABOUT = 4;
+
     SettingsListAdapter(Fragment fragment) {
         this.fragment = fragment;
         this.context = fragment.getActivity();
@@ -63,7 +70,7 @@ public class SettingsListAdapter extends BaseAdapter implements SharedPreference
 
     @Override
     public int getCount() {
-        return 4;
+        return 5;
     }
 
     @Override
@@ -89,12 +96,41 @@ public class SettingsListAdapter extends BaseAdapter implements SharedPreference
     @Override
     public View getView(int i, View convertView, ViewGroup parent) {
         switch (i) {
-            case 0: return getRemoteContentSettingsView(convertView, parent);
-            case 1: return getUserStylesView(convertView, parent);
-            case 2: return getClearCacheView(convertView, parent);
-            case 3: return getAboutView(convertView, parent);
+            case POS_REMOTE_CONTENT: return getRemoteContentSettingsView(convertView, parent);
+            case POS_FAV_RANDOM: return getFavRandomSwitchView(convertView, parent);
+            case POS_USER_STYLES: return getUserStylesView(convertView, parent);
+            case POS_CLEAR_CACHE: return getClearCacheView(convertView, parent);
+            case POS_ABOUT: return getAboutView(convertView, parent);
         }
         return null;
+    }
+
+    private View getFavRandomSwitchView(View convertView, ViewGroup parent) {
+        View view;
+        LayoutInflater inflater = (LayoutInflater) parent.getContext()
+                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        final Application app = (Application)context.getApplication();
+        if (convertView != null) {
+            view = convertView;
+        }
+        else {
+            view = inflater.inflate(R.layout.settings_fav_random_search, parent,
+                    false);
+            final CheckedTextView toggle = (CheckedTextView)view.findViewById(R.id.setting_fav_random_search);
+            toggle.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    boolean currentValue = app.isOnlyFavDictsForRandomLookup();
+                    boolean newValue = !currentValue;
+                    app.setOnlyFavDictsForRandomLookup(newValue);
+                    toggle.setChecked(newValue);
+                }
+            });
+        }
+        boolean currentValue = app.isOnlyFavDictsForRandomLookup();
+        CheckedTextView toggle = (CheckedTextView)view.findViewById(R.id.setting_fav_random_search);
+        toggle.setChecked(currentValue);
+        return view;
     }
 
     private View getUserStylesView(View convertView, final ViewGroup parent) {

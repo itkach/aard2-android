@@ -34,7 +34,7 @@ public class SettingsFragment extends ListFragment {
 
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
-        if (position == 2) {
+        if (position == SettingsListAdapter.POS_CLEAR_CACHE) {
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
             builder.setMessage(R.string.confirm_clear_cached_content)
                     .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
