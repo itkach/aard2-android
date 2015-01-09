@@ -265,7 +265,7 @@ public class Application extends android.app.Application {
     }
 
     Blob random() {
-        return slobber.findRandom();
+        return slobber.findRandom(getActiveSlobs());
     }
 
     String getUrl(Blob blob) {
