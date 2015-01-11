@@ -44,8 +44,9 @@
     marking and unmarking them as "favorite" (tap dictionary
     title). Lookup results of equal match strength from multiple
     dictionaries are presented in the order of dictionaries in the
-    dictionary list. Dictionaries can also be turned on or
-    off. Turned off dictionaries do not participate in word lookup,
+    dictionary list. Dictionaries can also be deactivated (turned
+    off). Turned off dictionaries do not participate in word lookup or
+    random article lookup,
     but are still available when opening articles from bookmarks,
     history or when following links in other articles. Unwanted dictionaries
     can also be completely removed from the program (but dictionary files
@@ -64,8 +65,18 @@
     [[images/sm-article_appearance_select_style.png]]
     [[images/sm-article_appearance_dark.png]]
 
+*** Math
+    Mathematical [[https://meta.wikimedia.org/wiki/Help:Displaying_a_formula][formulas in Wikipedia]] articles are rendered as text
+    using [[http://www.mathjax.org/][MathJax]] - scalable, styleable, beautiful on any screen.
+
+    [[images/sm-article-integral.png]]
+    [[images/sm-article-ru-ryad-taylora.png]]
+    [[images/sm-article-ru-zam-predely.png]]
+
 *** Random Article
-    Tapping application logo in main activity opens random article.
+    Tapping application logo in main activity opens random article
+    from an active dictionary. User may optionally limit random
+    lookup to only use favorite dictionaries.
 
 
 ** Requested Permissions
