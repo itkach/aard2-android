@@ -88,4 +88,5 @@
     <string name="action_reload_directory">Neu laden</string>
     <string name="msg_dictionary_already_open">Schon geöffnet</string>
     <string name="msg_dictionary_added">Wörterbuch hinzugefügt von %1$s</string>
+    <string name="setting_fav_random_search">Für zufällige Suche nur favorisierte Wörterbücher verwenden</string>
 </resources>
