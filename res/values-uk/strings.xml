@@ -84,6 +84,7 @@
         <item quantity="many">%,d записів</item>
         <item quantity="other">%,d записів</item>
     </plurals>
+    <string name="setting_fav_random_search">Використовувати тільки обрані словники для випадкового пошуку</string>
 
 
 </resources>
