@@ -79,4 +79,5 @@
     <string name="setting_user_styles_empty">Нет стилей</string>
     <string name="title_activity_file_select">Выберите файл словаря</string>
     <string name="action_add_dictionaries">Добавить</string>
+    <string name="setting_fav_random_search">Использовать только избранные словари для случайного поиска</string>
 </resources>
