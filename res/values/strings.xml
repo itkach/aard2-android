@@ -100,5 +100,6 @@
     <string name="msg_dictionary_already_open">Already open</string>
     <string name="msg_dictionary_added">Added dictionary from %1$s</string>
     <string name="setting_fav_random_search">Use only favorite dictionaries for random lookup</string>
+    <string name="article_collection_invalid_link">Invalid link</string>
 
 </resources>

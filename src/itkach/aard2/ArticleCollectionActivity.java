@@ -113,7 +113,14 @@ public class ArticleCollectionActivity extends FragmentActivity {
                 }
                 articleCollectionPagerAdapter = adapter;
                 if (articleCollectionPagerAdapter == null || articleCollectionPagerAdapter.getCount() == 0) {
-                    Toast.makeText(ArticleCollectionActivity.this, R.string.article_collection_nothing_found,
+                    int messageId;
+                    if (articleCollectionPagerAdapter == null) {
+                        messageId = R.string.article_collection_invalid_link;
+                    }
+                    else {
+                        messageId = R.string.article_collection_nothing_found;
+                    }
+                    Toast.makeText(ArticleCollectionActivity.this, messageId,
                             Toast.LENGTH_SHORT).show();
                     finish();
                     return;
@@ -175,6 +182,9 @@ public class ArticleCollectionActivity extends FragmentActivity {
 
     private ArticleCollectionPagerAdapter createFromUri(Application app, Uri articleUrl) {
         BlobDescriptor bd = BlobDescriptor.fromUri(articleUrl);
+        if (bd == null) {
+            return null;
+        }
         Iterator<Slob.Blob> result = app.find(bd.key, bd.slobId);
         BlobListAdapter data = new BlobListAdapter(this, 3, 1);
         data.setData(result);
