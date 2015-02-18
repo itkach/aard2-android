@@ -89,4 +89,5 @@ is missing a quantity used in that language, otherwise the app will crash
 <string name="action_reload_directory">Ricarica</string>
 <string name="msg_dictionary_already_open">Già aperto</string>
 <string name="msg_dictionary_added">Aggiunto dizionario da %1$s</string>
+<string name="setting_fav_random_search">Usa solo i dizionari preferiti per la ricerca casuale</string>
 </resources>
