@@ -128,12 +128,9 @@ public class Application extends android.app.Application {
             synchronized public void onChanged() {
                 lastResult.setData(new ArrayList<Slob.Blob>().iterator());
                 slobber.setSlobs(null);
-                for (SlobDescriptor sd : dictionaries) {
-                    sd.close();
-                }
                 List<Slob> slobs = new ArrayList<Slob>();
                 for (SlobDescriptor sd : dictionaries) {
-                    Slob s = sd.open();
+                    Slob s = sd.load();
                     if (s != null) {
                         slobs.add(s);
                     }

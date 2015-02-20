@@ -3,7 +3,6 @@ package itkach.aard2;
 import android.util.Log;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -22,30 +21,29 @@ public class SlobDescriptor extends BaseDescriptor {
     public String error;
     public boolean expandDetail = false;
 
-    private Slob slob;
-
     void update(Slob s) {
         this.id = s.getId().toString();
         this.path = s.file.getAbsolutePath();
         this.tags = s.getTags();
         this.blobCount = s.getBlobCount();
         this.error = null;
-        this.slob = s;
     }
 
-    Slob open() {
-        if (slob == null || slob.isClosed()) {
-            File f = new File(path);
-            try {
-                slob = new Slob(f);
-                this.update(slob);
+    Slob load() {
+        Slob slob = null;
+        File f = new File(path);
+        try {
+            slob = new Slob(f);
+            this.update(slob);
+        }
+        catch (Exception e) {
+            Log.e(TAG, "Error while opening " + this.path, e);
+            error = e.getMessage();
+            if (Log.isLoggable(TAG, Log.DEBUG)) {
+                Log.d(TAG, "Error while opening " + this.path, e);
             }
-            catch (Exception e) {
-                error = e.getMessage();
-                if (Log.isLoggable(TAG, Log.DEBUG)) {
-                    Log.d(TAG, "Error while opening " + this.path, e);
-                }
-            }
+            expandDetail = true;
+            active = false;
         }
         return slob;
     }
@@ -58,24 +56,10 @@ public class SlobDescriptor extends BaseDescriptor {
         return label;
     }
 
-    void close() {
-        if (slob != null && !slob.isClosed()) {
-            try {
-                slob.close();
-            } catch (IOException e) {
-                Log.d(TAG, "Error while closing " + this.path, e);
-            }
-        }
-    }
-
     static SlobDescriptor fromFile(File file) {
         SlobDescriptor s = new SlobDescriptor();
         s.path = file.getAbsolutePath();
-        s.open();
-        if (s.error != null) {
-            s.expandDetail = true;
-            s.active = false;
-        }
+        s.load();
         return s;
     }
 

@@ -117,15 +117,13 @@ public class DictionaryFinder {
         for (File f : candidates) {
             SlobDescriptor sd = SlobDescriptor.fromFile(f);
             if (sd.id != null && seen.contains(sd.id)) {
-                sd.close();
+                continue;
             }
-            else {
-                seen.add(sd.id);
-                long currentTime = System.currentTimeMillis();
-                sd.createdAt = currentTime;
-                sd.lastAccess = currentTime;
-                descriptors.add(sd);
-            }
+            seen.add(sd.id);
+            long currentTime = System.currentTimeMillis();
+            sd.createdAt = currentTime;
+            sd.lastAccess = currentTime;
+            descriptors.add(sd);
         }
         return descriptors;
     }
