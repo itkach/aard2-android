@@ -35,6 +35,9 @@ import itkach.slobber.Slobber;
 
 public class Application extends android.app.Application {
 
+    public static final String LOCALHOST = "127.0.0.1";
+    public static final String CONTENT_URL_TEMPLATE = "http://" + LOCALHOST + ":%s%s";
+
     private Slobber                         slobber;
 
     BlobDescriptorList                      bookmarks;
@@ -291,7 +294,7 @@ public class Application extends android.app.Application {
     }
 
     String getUrl(Blob blob) {
-        return String.format("http://localhost:%s%s",
+        return String.format(CONTENT_URL_TEMPLATE,
                 port, Slobber.mkContentURL(blob));
     }
 

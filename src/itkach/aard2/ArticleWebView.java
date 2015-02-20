@@ -28,6 +28,7 @@ import java.util.TimerTask;
 
 public class ArticleWebView extends WebView {
 
+    public static final String LOCALHOST = Application.LOCALHOST;
     private final String styleSwitcherJs;
 
     String TAG = getClass().getSimpleName();
@@ -160,7 +161,7 @@ public class ArticleWebView extends WebView {
                     return null;
                 }
                 String host = parsed.getHost();
-                if (host == null || host.toLowerCase().equals("localhost")) {
+                if (host == null || host.toLowerCase().equals(LOCALHOST)) {
                     return null;
                 }
                 if (allowRemoteContent()) {
@@ -181,13 +182,13 @@ public class ArticleWebView extends WebView {
                 String host = uri.getHost();
 
                 if (externalSchemes.contains(scheme) ||
-                        (scheme.equals("http") && !host.equals("localhost"))) {
+                        (scheme.equals("http") && !host.equals(LOCALHOST))) {
                     Intent browserIntent = new Intent(Intent.ACTION_VIEW, uri);
                     getContext().startActivity(browserIntent);
                     return true;
                 }
 
-                if (scheme.equals("http") && host.equals("localhost") && uri.getQueryParameter("blob") == null) {
+                if (scheme.equals("http") && host.equals(LOCALHOST) && uri.getQueryParameter("blob") == null) {
                       Intent intent = new Intent(getContext(), ArticleCollectionActivity.class);
                       intent.setData(uri);
                       getContext().startActivity(intent);
