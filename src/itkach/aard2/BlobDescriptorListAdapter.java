@@ -69,7 +69,6 @@ public class BlobDescriptorListAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         BlobDescriptor item = list.get(position);
-        Slob slob = list.resolveOwner(item);
         CharSequence timestamp = DateUtils.getRelativeTimeSpanString(item.createdAt);
         View view;
         if (convertView != null) {
@@ -85,6 +84,7 @@ public class BlobDescriptorListAdapter extends BaseAdapter {
         titleView.setText(item.key);
         TextView sourceView = (TextView) view
                 .findViewById(R.id.blob_descriptor_source);
+        Slob slob = list.resolveOwner(item);
         sourceView.setText(slob == null ? "???" : slob.getTags().get("label"));
         TextView timestampView = (TextView) view
                 .findViewById(R.id.blob_descriptor_timestamp);

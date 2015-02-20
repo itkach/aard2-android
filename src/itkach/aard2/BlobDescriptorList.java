@@ -191,7 +191,7 @@ final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
 
     Slob resolveOwner(BlobDescriptor bd) {
         Slob slob = app.getSlob(bd.slobId);
-        if (slob == null) {
+        if (slob == null || !slob.file.exists()) {
             slob = app.findSlob(bd.slobUri);
         }
         return slob;
