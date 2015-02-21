@@ -189,6 +189,11 @@ final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
         notifyDataSetChanged();
     }
 
+    void updateLastAccess(BlobDescriptor bd) {
+        bd.lastAccess = System.currentTimeMillis();
+        store.save(bd);
+    }
+
     Slob resolveOwner(BlobDescriptor bd) {
         Slob slob = app.getSlob(bd.slobId);
         if (slob == null || !slob.file.exists()) {
@@ -214,10 +219,6 @@ final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
                 bd.slobId = slobId;
                 bd.blobId = blob.id;
             }
-        }
-        if (blob != null) {
-            bd.lastAccess = System.currentTimeMillis();
-            store.save(bd);
         }
         return blob;
     }

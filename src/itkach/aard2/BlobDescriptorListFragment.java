@@ -126,6 +126,8 @@ abstract class BlobDescriptorListFragment extends BaseListFragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
+                BlobDescriptor bd = (BlobDescriptor)getListAdapter().getItem(position);
+                getDescriptorList().updateLastAccess(bd);
                 Intent intent = new Intent(activity,
                         ArticleCollectionActivity.class);
                 intent.setAction(getItemClickAction());
