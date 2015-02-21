@@ -15,7 +15,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.shamanland.fonticon.FontIconDrawable;
 
@@ -111,18 +113,24 @@ public class ArticleFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
+
+        Bundle args = getArguments();
+        this.url = args == null ? null : args.getString(ARG_URL);
+        if (url == null) {
+            View layout = inflater.inflate(R.layout.empty_view, container, false);
+            TextView textView = (TextView)layout.findViewById(R.id.empty_text);
+            textView.setText("");
+            ImageView icon = (ImageView)layout.findViewById(R.id.empty_icon);
+            icon.setImageDrawable(FontIconDrawable.inflate(getActivity(),
+                    R.xml.ic_empty_view_not_available));
+            return layout;
+        }
+
         View layout = inflater.inflate(R.layout.article_view, container, false);
         final ProgressBar progressBar = (ProgressBar)layout.findViewById(R.id.webViewPogress);
         view = (ArticleWebView)layout.findViewById(R.id.webView);
         view.restoreState(savedInstanceState);
-        Bundle args = getArguments();
-        this.url = args == null ? null : args.getString(ARG_URL);
-        if (url != null) {
-            view.loadUrl(url);
-        }
-        else {
-            view.loadData(getString(R.string.article_view_msg_not_found), "text/plain", "utf-8");
-        }
+        view.loadUrl(url);
         view.setWebChromeClient(new WebChromeClient() {
             public void onProgressChanged(WebView view, final int newProgress) {
                 final Activity activity = getActivity();

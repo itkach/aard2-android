@@ -26,4 +26,5 @@
     <string translatable="false" name="ic_star_o">&#xf006;</string>
     <string translatable="false" name="ic_folder">&#xf07b;</string>
     <string translatable="false" name="ic_level_up">&#xf148;</string>
+    <string translatable="false" name="ic_ban">&#xf05e;</string>
 </resources>
