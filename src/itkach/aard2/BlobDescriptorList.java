@@ -23,7 +23,7 @@ import itkach.slob.Slob;
 
 final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
 
-    private final String TAG = getClass().getName();
+    private final String TAG = getClass().getSimpleName();
 
     static enum SortOrder {
         TIME, NAME;
@@ -212,12 +212,20 @@ final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
         if (slobId.equals(bd.slobId)) {
             blob = new Slob.Blob(slob, bd.blobId, bd.key, bd.fragment);
         } else {
-            Iterator<Slob.Blob> result = slob.find(bd.key,
-                    Slob.Strength.QUATERNARY);
-            if (result.hasNext()) {
-                blob = result.next();
-                bd.slobId = slobId;
-                bd.blobId = blob.id;
+            try {
+                Iterator<Slob.Blob> result = slob.find(bd.key,
+                        Slob.Strength.QUATERNARY);
+                if (result.hasNext()) {
+                    blob = result.next();
+                    bd.slobId = slobId;
+                    bd.blobId = blob.id;
+                }
+            }
+            catch (Exception ex) {
+                Log.w(TAG,
+                      String.format("Failed to resolve descriptor %s (%s) in %s (%s)",
+                              bd.blobId, bd.key, slob.getId(), slob.file.getAbsolutePath()), ex);
+                blob = null;
             }
         }
         return blob;
