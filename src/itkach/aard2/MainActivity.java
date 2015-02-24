@@ -11,6 +11,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -134,6 +135,22 @@ public class MainActivity extends FragmentActivity implements
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        int currentItem = mViewPager.getCurrentItem();
+        Fragment frag = mAppSectionsPagerAdapter.getItem(currentItem);
+        Log.d(TAG, "current tab: " + currentItem);
+        if (frag instanceof BlobDescriptorListFragment) {
+            BlobDescriptorListFragment bdFrag = (BlobDescriptorListFragment)frag;
+            if (bdFrag.isFilterExpanded()) {
+                Log.d(TAG, "Filter is expanded");
+                bdFrag.collapseFilter();
+                return;
+            }
+        }
+        super.onBackPressed();
     }
 
     public static final class BookmarksFragment extends

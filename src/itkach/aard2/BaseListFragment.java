@@ -56,10 +56,12 @@ public abstract class BaseListFragment extends ListFragment {
         return true;
     }
 
-    void finishActionMode() {
+    boolean finishActionMode() {
         if (actionMode != null) {
             actionMode.finish();
+            return true;
         }
+        return false;
     }
 
     @Override

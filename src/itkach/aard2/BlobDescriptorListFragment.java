@@ -35,6 +35,18 @@ abstract class BlobDescriptorListFragment extends BaseListFragment {
     private final static String PREF_SORT_ORDER = "sortOrder";
     private final static String PREF_SORT_DIRECTION = "sortDir";
 
+    private MenuItem miFilter = null;
+
+    public boolean isFilterExpanded() {
+        return miFilter != null && miFilter.isActionViewExpanded();
+    }
+
+    public void collapseFilter() {
+        if (miFilter != null) {
+            miFilter.collapseActionView();
+        }
+    }
+
     abstract BlobDescriptorList getDescriptorList();
 
     abstract String getItemClickAction();
@@ -160,7 +172,7 @@ abstract class BlobDescriptorListFragment extends BaseListFragment {
 
         BlobDescriptorList list = getDescriptorList();
 
-        MenuItem miFilter = menu.findItem(R.id.action_filter);
+        miFilter = menu.findItem(R.id.action_filter);
         miFilter.setIcon(icFilter);
 
         View filterActionView = miFilter.getActionView();
