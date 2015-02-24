@@ -42,7 +42,7 @@
     <string name="setting_remote_content">Load Remote Content</string>
     <string name="setting_about">About %1$s</string>
     <string name="application_home_url" translatable="false">http://aarddict.org</string>
-    <string name="application_copyright">2014 Igor Tkach</string>
+    <string name="application_copyright">2015 Igor Tkach</string>
     <string name="application_license_name">GNU General Public License v3</string>
     <string name="application_license_url">https://gnu.org/licenses/gpl.html</string>
     <string name="application_license" translatable="false">
