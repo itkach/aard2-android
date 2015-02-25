@@ -4,6 +4,7 @@
     android:layout_height="match_parent">
 
     <android.support.v4.view.PagerTitleStrip android:id="@+id/pager_title_strip"
+        android:background="@android:drawable/divider_horizontal_dark"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="top"

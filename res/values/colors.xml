@@ -4,6 +4,5 @@
     <color name="actionbar_icon">@android:color/secondary_text_dark</color>
     <color name="empty_view_icon">#ffcccccc</color>
     <color name="list_icon">@android:color/holo_blue_dark</color>
-    <color name="text_icon">@android:color/primary_text_light</color>
 </resources>
 
