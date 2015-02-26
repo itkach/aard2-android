@@ -64,8 +64,12 @@ public class Application extends android.app.Application {
     static String jsClearUserStyle;
     static String jsSetCannedStyle;
 
-    static final String PREF                   = "app";
-    static final String PREF_RANDOM_FAV_LOOKUP = "onlyFavDictsForRandomLookup";
+    private static final String PREF                    = "app";
+    static final String PREF_RANDOM_FAV_LOOKUP          = "onlyFavDictsForRandomLookup";
+    static final String PREF_UI_THEME                   = "UITheme";
+    static final String PREF_UI_THEME_LIGHT             = "light";
+    static final String PREF_UI_THEME_DARK              = "dark";
+
 
     @Override
     public void onCreate() {
@@ -210,8 +214,19 @@ public class Application extends android.app.Application {
         }
     }
 
-    private SharedPreferences prefs() {
-        return this.getSharedPreferences("app", Activity.MODE_PRIVATE);
+    SharedPreferences prefs() {
+        return this.getSharedPreferences(PREF, Activity.MODE_PRIVATE);
+    }
+
+    void installTheme(Activity activity) {
+        String theme = prefs().getString(Application.PREF_UI_THEME,
+                Application.PREF_UI_THEME_LIGHT);
+        if (theme.equals(PREF_UI_THEME_DARK)) {
+            activity.setTheme(android.R.style.Theme_Holo);
+        }
+        else {
+            activity.setTheme(android.R.style.Theme_Holo_Light_DarkActionBar);
+        }
     }
 
     void push(Activity activity) {
@@ -275,14 +290,12 @@ public class Application extends android.app.Application {
     }
 
     boolean isOnlyFavDictsForRandomLookup() {
-        final SharedPreferences prefs = getSharedPreferences(
-                Application.PREF, Activity.MODE_PRIVATE);
+        final SharedPreferences prefs = prefs();
         return prefs.getBoolean(Application.PREF_RANDOM_FAV_LOOKUP, false);
     }
 
     void setOnlyFavDictsForRandomLookup(boolean value) {
-        final SharedPreferences prefs = getSharedPreferences(
-                Application.PREF, Activity.MODE_PRIVATE);
+        final SharedPreferences prefs = prefs();
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean(Application.PREF_RANDOM_FAV_LOOKUP, value);
         editor.commit();

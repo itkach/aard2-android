@@ -37,6 +37,7 @@ public class SettingsListAdapter extends BaseAdapter implements SharedPreference
 
     private final static String TAG = SettingsListAdapter.class.getSimpleName();
     private final Activity      context;
+    private final Application   app;
 
     private List<String>            userStyleNames;
     private Map<String, ?>          userStyleData;
@@ -45,16 +46,17 @@ public class SettingsListAdapter extends BaseAdapter implements SharedPreference
     private Fragment                fragment;
 
 
-    final static int POS_REMOTE_CONTENT = 0;
-    final static int POS_FAV_RANDOM = 1;
-    final static int POS_USER_STYLES = 2;
-    final static int POS_CLEAR_CACHE = 3;
-    final static int POS_ABOUT = 4;
+    final static int POS_UI_THEME = 0;
+    final static int POS_REMOTE_CONTENT = 1;
+    final static int POS_FAV_RANDOM = 2;
+    final static int POS_USER_STYLES = 3;
+    final static int POS_CLEAR_CACHE = 4;
+    final static int POS_ABOUT = 5;
 
     SettingsListAdapter(Fragment fragment) {
         this.fragment = fragment;
         this.context = fragment.getActivity();
-
+        this.app = (Application)this.context.getApplication();
         this.userStylePrefs = context.getSharedPreferences(
                 "userStyles", Activity.MODE_PRIVATE);
         this.userStylePrefs.registerOnSharedPreferenceChangeListener(this);
@@ -70,7 +72,7 @@ public class SettingsListAdapter extends BaseAdapter implements SharedPreference
 
     @Override
     public int getCount() {
-        return 5;
+        return 6;
     }
 
     @Override
@@ -96,6 +98,7 @@ public class SettingsListAdapter extends BaseAdapter implements SharedPreference
     @Override
     public View getView(int i, View convertView, ViewGroup parent) {
         switch (i) {
+            case POS_UI_THEME: return getUIThemeSettingsView(convertView, parent);
             case POS_REMOTE_CONTENT: return getRemoteContentSettingsView(convertView, parent);
             case POS_FAV_RANDOM: return getFavRandomSwitchView(convertView, parent);
             case POS_USER_STYLES: return getUserStylesView(convertView, parent);
@@ -103,6 +106,56 @@ public class SettingsListAdapter extends BaseAdapter implements SharedPreference
             case POS_ABOUT: return getAboutView(convertView, parent);
         }
         return null;
+    }
+
+    private View getUIThemeSettingsView(View convertView, ViewGroup parent) {
+        View view;
+        if (convertView != null) {
+            view = convertView;
+        }
+        else {
+            LayoutInflater inflater = (LayoutInflater) parent.getContext()
+                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            view = inflater.inflate(R.layout.settings_ui_theme_item, parent,
+                    false);
+
+            final SharedPreferences prefs = app.prefs();
+
+            String currentValue = prefs.getString(Application.PREF_UI_THEME,
+                    Application.PREF_UI_THEME_LIGHT);
+            Log.d("Settings", Application.PREF_UI_THEME + " current value: " + currentValue);
+
+            View.OnClickListener clickListener = new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    SharedPreferences.Editor editor = prefs.edit();
+                    String value = null;
+                    switch(view.getId()) {
+                        case R.id.setting_ui_theme_light:
+                            value = Application.PREF_UI_THEME_LIGHT;
+                            break;
+                        case R.id.setting_ui_theme_dark:
+                            value = Application.PREF_UI_THEME_DARK;
+                            break;
+                    }
+                    Log.d("Settings", Application.PREF_UI_THEME + ": " + value);
+                    if (value != null) {
+                        editor.putString(Application.PREF_UI_THEME, value);
+                        editor.commit();
+                    }
+                    context.recreate();
+                }
+            };
+            RadioButton btnLight = (RadioButton) view
+                    .findViewById(R.id.setting_ui_theme_light);
+            RadioButton btnDark = (RadioButton) view
+                    .findViewById(R.id.setting_ui_theme_dark);
+            btnLight.setOnClickListener(clickListener);
+            btnDark.setOnClickListener(clickListener);
+            btnLight.setChecked(currentValue.equals(Application.PREF_UI_THEME_LIGHT));
+            btnDark.setChecked(currentValue.equals(Application.PREF_UI_THEME_DARK));
+        };
+        return view;
     }
 
     private View getFavRandomSwitchView(View convertView, ViewGroup parent) {

@@ -27,6 +27,8 @@ public class MainActivity extends FragmentActivity implements
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        final Application app = (Application)getApplication();
+        app.installTheme(this);
         setContentView(R.layout.activity_main);
 
         mAppSectionsPagerAdapter = new AppSectionsPagerAdapter(
@@ -74,7 +76,6 @@ public class MainActivity extends FragmentActivity implements
         if (savedInstanceState != null) {
             onRestoreInstanceState(savedInstanceState);
         } else {
-            final Application app = (Application)getApplication();
             if (app.dictionaries.size() == 0) {
                 mViewPager.setCurrentItem(3);
                 DictionariesFragment df = (DictionariesFragment)mAppSectionsPagerAdapter.getItem(3);

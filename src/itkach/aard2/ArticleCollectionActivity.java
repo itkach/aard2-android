@@ -66,9 +66,10 @@ public class ArticleCollectionActivity extends FragmentActivity {
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        final Application app = (Application)getApplication();
+        app.installTheme(this);
         requestWindowFeature(Window.FEATURE_PROGRESS);
         setContentView(R.layout.activity_article_collection_loading);
-        final Application app = (Application)getApplication();
         app.push(this);
         final ActionBar actionBar = getActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);

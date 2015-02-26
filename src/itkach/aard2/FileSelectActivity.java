@@ -28,6 +28,8 @@ public class FileSelectActivity extends ListActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        final Application app = (Application)getApplication();
+        app.installTheme(this);
         final ActionBar actionBar = getActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
 

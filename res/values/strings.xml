@@ -101,5 +101,8 @@
     <string name="msg_dictionary_added">Added dictionary from %1$s</string>
     <string name="setting_fav_random_search">Use only favorite dictionaries for random lookup</string>
     <string name="article_collection_invalid_link">Invalid link</string>
+    <string name="setting_ui_theme">User Interface Style</string>
+    <string name="setting_ui_theme_light">Light</string>
+    <string name="setting_ui_theme_dark">Dark</string>
 
 </resources>
