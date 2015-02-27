@@ -15,9 +15,10 @@
         android:layout_height="wrap_content"
         android:layout_gravity="top"
         android:layout_marginTop="-4dp"
-        android:maxHeight="10dp"
-        android:minHeight="10dp"
+        android:maxHeight="6dp"
+        android:minHeight="6dp"
         android:padding="0dp"
+        android:progressDrawable="@android:color/holo_orange_dark"
         android:indeterminate="false"
         android:max="100"/>
 
