@@ -8,7 +8,7 @@
         android:layout_height="match_parent"
         />
 
-    <ProgressBar
+    <android.support.v4.widget.ContentLoadingProgressBar
         android:id="@+id/webViewPogress"
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="match_parent"
@@ -18,7 +18,7 @@
         android:maxHeight="6dp"
         android:minHeight="6dp"
         android:padding="0dp"
-        android:progressDrawable="@android:color/holo_orange_dark"
+        android:progressDrawable="@drawable/progress"
         android:indeterminate="false"
         android:max="100"/>
 
