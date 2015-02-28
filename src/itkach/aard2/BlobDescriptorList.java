@@ -3,6 +3,8 @@ package itkach.aard2;
 import android.database.DataSetObservable;
 import android.database.DataSetObserver;
 import android.net.Uri;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 
 import com.ibm.icu.text.Collator;
@@ -46,6 +48,7 @@ final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
     private Slob.KeyComparator              keyComparator;
     private int                             maxSize;
     private RuleBasedCollator               filterCollator;
+    private Handler                         handler;
 
     BlobDescriptorList(Application app, DescriptorStore<BlobDescriptor> store) {
         this(app, store, 100);
@@ -107,7 +110,7 @@ final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
         }
         filterCollator.setStrength(Collator.PRIMARY);
         filterCollator.setAlternateHandlingShifted(true);
-
+        handler = new Handler(Looper.getMainLooper());
     }
 
     public void registerDataSetObserver(DataSetObserver observer) {
@@ -189,9 +192,23 @@ final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
         notifyDataSetChanged();
     }
 
-    void updateLastAccess(BlobDescriptor bd) {
+    private void doUpdateLastAccess(BlobDescriptor bd) {
         bd.lastAccess = System.currentTimeMillis();
         store.save(bd);
+    }
+
+    void updateLastAccess(final BlobDescriptor bd) {
+        if (Looper.myLooper() == Looper.getMainLooper()) {
+            doUpdateLastAccess(bd);
+        }
+        else {
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    doUpdateLastAccess(bd);
+                }
+            });
+        }
     }
 
     Slob resolveOwner(BlobDescriptor bd) {
@@ -227,6 +244,9 @@ final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
                               bd.blobId, bd.key, slob.getId(), slob.file.getAbsolutePath()), ex);
                 blob = null;
             }
+        }
+        if (blob != null) {
+            updateLastAccess(bd);
         }
         return blob;
     }
