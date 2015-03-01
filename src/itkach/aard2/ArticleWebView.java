@@ -192,11 +192,10 @@ public class ArticleWebView extends WebView {
                       Intent intent = new Intent(getContext(), ArticleCollectionActivity.class);
                       intent.setData(uri);
                       getContext().startActivity(intent);
-                      Log.d("Overriding loading of", url);
+                      Log.d(TAG, "Overriding loading of " + url);
                       return true;
                 }
-
-                Log.d("NOT overriding loading of", url);
+                Log.d(TAG, "NOT overriding loading of " + url);
                 return false;
             }
         });
@@ -275,7 +274,7 @@ public class ArticleWebView extends WebView {
         e.putInt(PREF_TEXT_ZOOM, textZoom);
         boolean success = e.commit();
         if (!success) {
-            Log.w(getClass().getName(), "Failed to save article view text zoom pref");
+            Log.w(TAG, "Failed to save article view text zoom pref");
         }
     }
 
@@ -295,7 +294,7 @@ public class ArticleWebView extends WebView {
         editor.putString(prefName, styleTitle);
         boolean success = editor.commit();
         if (!success) {
-            Log.w(getClass().getName(), "Failed to save article view style pref");
+            Log.w(TAG, "Failed to save article view style pref");
         }
     }
 
