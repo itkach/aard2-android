@@ -6,6 +6,7 @@
     <itkach.aard2.ArticleWebView android:id="@+id/webView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="?android:attr/colorBackground"
         />
 
     <android.support.v4.widget.ContentLoadingProgressBar
