@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -19,6 +20,7 @@ import android.webkit.WebViewClient;
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -56,7 +58,9 @@ public class ArticleWebView extends WebView {
 
     private String              currentSlobId;
     private ConnectivityManager connectivityManager;
-    private Timer timer;
+
+    private Timer               timer;
+    private TimerTask           applyStylePref;
 
     @JavascriptInterface
     public void setStyleTitles(String[] titles) {
@@ -97,43 +101,40 @@ public class ArticleWebView extends WebView {
 
         defaultStyles = new String[]{getResources().getString(R.string.default_style_title)};
 
-        this.addJavascriptInterface(this, "android");
-
-        //Hardware rendering is buggy
-        //https://code.google.com/p/android/issues/detail?id=63738
-        //this.setLayerType(LAYER_TYPE_SOFTWARE, null);
+        this.addJavascriptInterface(this, "$SLOB");
 
         timer = new Timer();
+
+        final Runnable applyStyleRunnable = new Runnable() {
+            @Override
+            public void run() {
+                applyStylePref();
+            }
+        };
+
+        applyStylePref = new TimerTask() {
+            @Override
+            public void run() {
+                android.os.Handler handler = getHandler();
+                if (handler != null) {
+                    handler.post(applyStyleRunnable);
+                }
+            }
+        };
 
         this.setWebViewClient(new WebViewClient() {
 
             byte[] noBytes = new byte[0];
 
-            Runnable applyStyleRunnable = new Runnable() {
-                @Override
-                public void run() {
-                    applyStylePref();
-                }
-            };
-
-            TimerTask applyStylePref = new TimerTask() {
-                @Override
-                public void run() {
-                    android.os.Handler handler = getHandler();
-                    if (handler != null) {
-                        handler.post(applyStyleRunnable);
-                    }
-                }
-            };
+            Map<String, Long> times = new HashMap<String, Long>();
 
             @Override
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
-                BlobDescriptor bd = BlobDescriptor.fromUri(Uri.parse(url));
-                currentSlobId = bd == null ? null : bd.slobId;
                 Log.d(TAG, "onPageStarted: " + url);
+                times.put(url, System.currentTimeMillis());
                 view.loadUrl("javascript:" + styleSwitcherJs);
                 try {
-                    timer.schedule(applyStylePref, 60, 250);
+                    timer.schedule(applyStylePref, 30, 100);
                 } catch (IllegalStateException ex) {
                     Log.w(TAG, "Failed to schedule applyStylePref", ex);
                 }
@@ -141,9 +142,12 @@ public class ArticleWebView extends WebView {
 
             @Override
             public void onPageFinished(WebView view, String url) {
-                Log.d(TAG, "onPageFinished: " + url);
+                Long time = times.remove(url);
+                if (time != null && Log.isLoggable(TAG, Log.DEBUG)) {
+                    Log.d(TAG, "Page finished: " + url + " in " + (System.currentTimeMillis() - time));
+                }
                 applyStylePref.cancel();
-                view.loadUrl("javascript:" + "android.setStyleTitles($styleSwitcher.getTitles())");
+                view.loadUrl("javascript:" + "$SLOB.setStyleTitles($styleSwitcher.getTitles())");
                 applyStylePref();
             }
 
@@ -306,6 +310,22 @@ public class ArticleWebView extends WebView {
         return prefs.getString(PREF_STYLE + slobId, "");
     }
 
+    @JavascriptInterface
+    public String getPreferredStyle() {
+        return getStylePref(getCurrentSlobId());
+    }
+
+    @JavascriptInterface
+    public String exportStyleSwitcherAs() {
+        return "$styleSwitcher";
+    }
+
+    @JavascriptInterface
+    public void onStyleSet(String title) {
+        Log.d(TAG, "Style set! " + title);
+        applyStylePref.cancel();
+    }
+
     void applyStylePref() {
         String styleTitle = getStylePref(getCurrentSlobId());
         this.setStyle(styleTitle);
@@ -340,6 +360,55 @@ public class ArticleWebView extends WebView {
     void resetTextZoom() {
         getSettings().setTextZoom(100);
         saveTextZoomPref();
+    }
+
+
+    @Override
+    public void loadUrl(String url, Map<String, String> additionalHttpHeaders) {
+        beforeLoadUrl(url);
+        super.loadUrl(url, additionalHttpHeaders);
+    }
+
+    @Override
+    public void loadUrl(String url) {
+        beforeLoadUrl(url);
+        super.loadUrl(url);
+    }
+
+    private void beforeLoadUrl(String url) {
+        setCurrentSlobIdFromUrl(url);
+        updateBackgrounColor();
+    }
+
+    private void updateBackgrounColor() {
+        String preferredStyle = getPreferredStyle();
+        if (preferredStyle != null) {
+            preferredStyle = preferredStyle.toLowerCase();
+            // webview's default background may "show through" before page
+            // load started and/or before page's style applies (and even after that if
+            // style doesn't explicitly set background).
+            // this is a hack to preemptively set "right" background and prevent
+            // extra flash
+            //
+            // TODO Hack it even more - allow style title to include background color spec
+            // so that this can work with "strategically" named user css
+            if (preferredStyle.contains("night") || preferredStyle.contains("dark")) {
+                setBackgroundColor(Color.BLACK);
+                return;
+            }
+        }
+        setBackgroundColor(Color.WHITE);
+    }
+
+    private void setCurrentSlobIdFromUrl(String url) {
+        if (!url.startsWith("javascript:")) {
+            Uri uri = Uri.parse(url);
+            BlobDescriptor bd = BlobDescriptor.fromUri(uri);
+            currentSlobId = bd == null ? null : bd.slobId;
+            if (Log.isLoggable(TAG, Log.DEBUG)) {
+                Log.d(TAG, String.format("currentSlobId set from url %s to %s", url, currentSlobId));
+            }
+        }
     }
 
     @Override
