@@ -80,4 +80,7 @@
     <string name="title_activity_file_select">Выберите файл словаря</string>
     <string name="action_add_dictionaries">Добавить</string>
     <string name="setting_fav_random_search">Использовать только избранные словари для случайного поиска</string>
+    <string name="setting_ui_theme">Интерфейс</string>
+    <string name="setting_ui_theme_dark">Тёмный</string>
+    <string name="setting_ui_theme_light">Светлый</string>
 </resources>
