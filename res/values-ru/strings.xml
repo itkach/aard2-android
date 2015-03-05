@@ -83,4 +83,5 @@
     <string name="setting_ui_theme">Интерфейс</string>
     <string name="setting_ui_theme_dark">Тёмный</string>
     <string name="setting_ui_theme_light">Светлый</string>
+    <string name="article_collection_invalid_link">Некорректная ссылка</string>
 </resources>
