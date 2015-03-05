@@ -90,4 +90,8 @@ is missing a quantity used in that language, otherwise the app will crash
 <string name="msg_dictionary_already_open">Già aperto</string>
 <string name="msg_dictionary_added">Aggiunto dizionario da %1$s</string>
 <string name="setting_fav_random_search">Usa solo i dizionari preferiti per la ricerca casuale</string>
+<string name="article_collection_invalid_link">Collegamento non valido</string>
+<string name="setting_ui_theme">Stile interfaccia utente</string>
+<string name="setting_ui_theme_light">Chiaro</string>
+<string name="setting_ui_theme_dark">Scuro</string>
 </resources>
