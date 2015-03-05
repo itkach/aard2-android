@@ -89,4 +89,8 @@
     <string name="msg_dictionary_already_open">Schon geöffnet</string>
     <string name="msg_dictionary_added">Wörterbuch hinzugefügt von %1$s</string>
     <string name="setting_fav_random_search">Für zufällige Suche nur favorisierte Wörterbücher verwenden</string>
+    <string name="article_collection_invalid_link">Ungültiger Link</string>
+    <string name="setting_ui_theme">Bedieneroberfläche</string>
+    <string name="setting_ui_theme_light">Hell</string>
+    <string name="setting_ui_theme_dark">Dunkel</string>
 </resources>
