@@ -85,6 +85,9 @@
         <item quantity="other">%,d записів</item>
     </plurals>
     <string name="setting_fav_random_search">Використовувати тільки обрані словники для випадкового пошуку</string>
+    <string name="setting_ui_theme">Інтерфейс</string>
+    <string name="setting_ui_theme_dark">Темний</string>
+    <string name="setting_ui_theme_light">Світлий</string>
 
 
 </resources>
