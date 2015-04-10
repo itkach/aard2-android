@@ -62,6 +62,8 @@ public class ArticleWebView extends WebView {
     private Timer               timer;
     private TimerTask           applyStylePref;
 
+    boolean forceLoadRemoteContent;
+
     @JavascriptInterface
     public void setStyleTitles(String[] titles) {
         Log.d(TAG, String.format("Got %d style titles", titles.length));
@@ -208,6 +210,9 @@ public class ArticleWebView extends WebView {
     }
 
     boolean allowRemoteContent() {
+        if (forceLoadRemoteContent) {
+            return true;
+        }
         SharedPreferences prefs = this.prefs();
         String prefValue = prefs.getString(PREF_REMOTE_CONTENT, PREF_REMOTE_CONTENT_WIFI);
         if (prefValue.equals(PREF_REMOTE_CONTENT_ALWAYS)) {

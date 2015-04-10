@@ -34,7 +34,7 @@
     <string name="setting_remote_content_always">Всегда</string>
     <string name="setting_remote_content_wifi">Только по Wi-Fi</string>
     <string name="setting_remote_content_never">Никогда</string>
-    <string name="setting_remote_content">Загрузка удаленного содержимого</string>
+    <string name="setting_remote_content">Загружать удалённый контент</string>
     <string name="setting_about">О %1$s</string>
     <string name="application_version">Версия %1$s</string>
     <string name="setting_clear_cache">Очистка кэша</string>
@@ -84,4 +84,5 @@
     <string name="setting_ui_theme_dark">Тёмный</string>
     <string name="setting_ui_theme_light">Светлый</string>
     <string name="article_collection_invalid_link">Некорректная ссылка</string>
+    <string name="action_load_remote_content">Загрузить удалённый контент</string>
 </resources>

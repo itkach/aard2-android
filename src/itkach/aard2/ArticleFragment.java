@@ -93,6 +93,11 @@ public class ArticleFragment extends Fragment {
             view.resetTextZoom();
             return true;
         }
+        if (itemId == R.id.action_load_remote_content) {
+            view.forceLoadRemoteContent = true;
+            view.reload();
+            return true;
+        }
         if (itemId == R.id.action_select_style) {
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
             final String[] styleTitles = view.getAvailableStyles();

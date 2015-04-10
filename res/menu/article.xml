@@ -23,6 +23,11 @@
           android:showAsAction="never"
         />
 
+    <item android:id="@+id/action_load_remote_content"
+        android:title="@string/action_load_remote_content"
+        android:showAsAction="never"
+        />
+
     <item android:id="@+id/action_select_style"
           android:title="@string/action_select_style"
           android:showAsAction="never"

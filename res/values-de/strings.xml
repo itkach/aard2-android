@@ -93,4 +93,5 @@
     <string name="setting_ui_theme">Bedieneroberfläche</string>
     <string name="setting_ui_theme_light">Hell</string>
     <string name="setting_ui_theme_dark">Dunkel</string>
+    <string name="action_load_remote_content">Lade externen Inhalt</string>
 </resources>
