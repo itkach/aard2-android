@@ -57,6 +57,7 @@ public class ArticleWebView extends WebView {
     private final String[]      defaultStyles;
 
     private String              currentSlobId;
+    private String              currentSlobUri;
     private ConnectivityManager connectivityManager;
 
     private Timer               timer;
@@ -292,13 +293,16 @@ public class ArticleWebView extends WebView {
     }
 
     void saveStylePref(String styleTitle) {
-        String slobId = getCurrentSlobId();
-        String currentPref = getStylePref(slobId);
+        String currentPref = getPreferredStyle();
         if (currentPref.equals(styleTitle)) {
             return;
         }
+        if (currentSlobUri == null) {
+            Log.w(TAG, "Can't save article view style pref - slob uri is null");
+            return;
+        }
         SharedPreferences prefs = prefs();
-        String prefName = PREF_STYLE + slobId;
+        String prefName = PREF_STYLE + currentSlobUri;
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString(prefName, styleTitle);
         boolean success = editor.commit();
@@ -307,17 +311,13 @@ public class ArticleWebView extends WebView {
         }
     }
 
-    String getStylePref(String slobId) {
-        if (slobId == null) {
+    @JavascriptInterface
+    public String getPreferredStyle() {
+        if (currentSlobUri == null) {
             return "";
         }
         SharedPreferences prefs = prefs();
-        return prefs.getString(PREF_STYLE + slobId, "");
-    }
-
-    @JavascriptInterface
-    public String getPreferredStyle() {
-        return getStylePref(getCurrentSlobId());
+        return prefs.getString(PREF_STYLE + currentSlobUri, "");
     }
 
     @JavascriptInterface
@@ -332,7 +332,7 @@ public class ArticleWebView extends WebView {
     }
 
     void applyStylePref() {
-        String styleTitle = getStylePref(getCurrentSlobId());
+        String styleTitle = getPreferredStyle();
         this.setStyle(styleTitle);
     }
 
@@ -409,9 +409,18 @@ public class ArticleWebView extends WebView {
         if (!url.startsWith("javascript:")) {
             Uri uri = Uri.parse(url);
             BlobDescriptor bd = BlobDescriptor.fromUri(uri);
-            currentSlobId = bd == null ? null : bd.slobId;
+            if (bd != null) {
+                currentSlobId = bd.slobId;
+                Application app = (Application)((Activity)getContext()).getApplication();
+                currentSlobUri = app.getSlobURI(currentSlobId);
+            }
+            else {
+                currentSlobId = null;
+                currentSlobUri = null;
+            }
             if (Log.isLoggable(TAG, Log.DEBUG)) {
-                Log.d(TAG, String.format("currentSlobId set from url %s to %s", url, currentSlobId));
+                Log.d(TAG, String.format("currentSlobId set from url %s to %s, uri %s",
+                        url, currentSlobId, currentSlobUri));
             }
         }
     }
