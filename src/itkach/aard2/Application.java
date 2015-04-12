@@ -218,9 +218,13 @@ public class Application extends android.app.Application {
         return this.getSharedPreferences(PREF, Activity.MODE_PRIVATE);
     }
 
+    String getPreferredTheme() {
+        return prefs().getString(Application.PREF_UI_THEME,
+                    Application.PREF_UI_THEME_LIGHT);
+    }
+
     void installTheme(Activity activity) {
-        String theme = prefs().getString(Application.PREF_UI_THEME,
-                Application.PREF_UI_THEME_LIGHT);
+        String theme = getPreferredTheme();
         if (theme.equals(PREF_UI_THEME_DARK)) {
             activity.setTheme(android.R.style.Theme_Holo);
         }

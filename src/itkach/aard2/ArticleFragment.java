@@ -105,7 +105,8 @@ public class ArticleFragment extends Fragment {
                     .setItems(styleTitles, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             String title = styleTitles[which];
-                            view.setStyle(title);
+                            view.saveStylePref(title);
+                            view.applyStylePref();
                         }
                     });
             AlertDialog dialog = builder.create();

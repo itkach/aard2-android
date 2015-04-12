@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.ConnectivityManager;
@@ -19,25 +20,31 @@ import android.webkit.WebViewClient;
 
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedSet;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.TreeSet;
 
 public class ArticleWebView extends WebView {
 
     public static final String LOCALHOST = Application.LOCALHOST;
     private final String styleSwitcherJs;
+    private final String defaultStyleTitle;
+    private final String autoStyleTitle;
 
     String TAG = getClass().getSimpleName();
 
     static final String PREF = "articleView";
     private static final String PREF_TEXT_ZOOM = "textZoom";
     private static final String PREF_STYLE = "style.";
+    private static final String PREF_STYLE_AVAILABLE = "style.available.";
     static final String PREF_REMOTE_CONTENT = "remoteContent";
     static final String PREF_REMOTE_CONTENT_ALWAYS = "always";
     static final String PREF_REMOTE_CONTENT_WIFI = "wifi";
@@ -53,8 +60,7 @@ public class ArticleWebView extends WebView {
         }
     };
 
-    private String[]            styleTitles;
-    private final String[]      defaultStyles;
+    private SortedSet<String>   styleTitles  = new TreeSet<String>();
 
     private String              currentSlobId;
     private String              currentSlobUri;
@@ -68,21 +74,20 @@ public class ArticleWebView extends WebView {
     @JavascriptInterface
     public void setStyleTitles(String[] titles) {
         Log.d(TAG, String.format("Got %d style titles", titles.length));
-        this.styleTitles = concat(defaultStyles, titles);
+        if (titles.length == 0) {
+            return;
+        }
+        SortedSet newStyleTitlesSet = new TreeSet<String>(Arrays.asList(titles));
+        if (!this.styleTitles.equals(newStyleTitlesSet)) {
+            this.styleTitles = newStyleTitlesSet;
+            saveAvailableStylesPref(this.styleTitles);
+        }
+
         if (Log.isLoggable(TAG, Log.DEBUG)) {
             for (String title : titles) {
                 Log.d(TAG, title);
             }
         }
-    }
-
-    static String[] concat(String[] A, String[] B) {
-        int aLen = A.length;
-        int bLen = B.length;
-        String[] C= new String[aLen+bLen];
-        System.arraycopy(A, 0, C, 0, aLen);
-        System.arraycopy(B, 0, C, aLen, bLen);
-        return C;
     }
 
     public ArticleWebView(Context context) {
@@ -102,7 +107,9 @@ public class ArticleWebView extends WebView {
         settings.setBuiltInZoomControls(true);
         settings.setDisplayZoomControls(false);
 
-        defaultStyles = new String[]{getResources().getString(R.string.default_style_title)};
+        Resources r = getResources();
+        defaultStyleTitle = r.getString(R.string.default_style_title);
+        autoStyleTitle = r.getString(R.string.auto_style_title);
 
         this.addJavascriptInterface(this, "$SLOB");
 
@@ -129,27 +136,52 @@ public class ArticleWebView extends WebView {
 
             byte[] noBytes = new byte[0];
 
-            Map<String, Long> times = new HashMap<String, Long>();
+            Map<String, List<Long>> times = new HashMap<String, List<Long>>();
 
             @Override
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
                 Log.d(TAG, "onPageStarted: " + url);
-                times.put(url, System.currentTimeMillis());
-                view.loadUrl("javascript:" + styleSwitcherJs);
-                try {
-                    timer.schedule(applyStylePref, 30, 100);
-                } catch (IllegalStateException ex) {
-                    Log.w(TAG, "Failed to schedule applyStylePref", ex);
+                if (url.startsWith("about:")) {
+                    return;
                 }
+                if (times.containsKey(url)) {
+                    Log.d(TAG, "onPageStarted: already ready seen " + url);
+                    times.get(url).add(System.currentTimeMillis());
+                    return;
+                }
+                else {
+                    List<Long> tsList = new ArrayList<Long>();
+                    tsList.add(System.currentTimeMillis());
+                    times.put(url, tsList);
+                    view.loadUrl("javascript:" + styleSwitcherJs);
+                    try {
+                        timer.schedule(applyStylePref, 30, 100);
+                    } catch (IllegalStateException ex) {
+                        Log.w(TAG, "Failed to schedule applyStylePref in view " + view.getId(), ex);
+                    }
+                }
+
             }
 
             @Override
             public void onPageFinished(WebView view, String url) {
-                Long time = times.remove(url);
-                if (time != null && Log.isLoggable(TAG, Log.DEBUG)) {
-                    Log.d(TAG, "Page finished: " + url + " in " + (System.currentTimeMillis() - time));
+                Log.d(TAG, "onPageFinished: " + url);
+                if (url.startsWith("about:")) {
+                    return;
                 }
-                applyStylePref.cancel();
+                if (times.containsKey(url)) {
+                    List<Long> tsList = times.get(url);
+                    long ts = tsList.remove(tsList.size() - 1);
+                    Log.d(TAG, "onPageFinished: finished: " + url + " in " + (System.currentTimeMillis() - ts));
+                    if (tsList.isEmpty()) {
+                        Log.d(TAG, "onPageFinished: really done with " + url);
+                        times.remove(url);
+                        applyStylePref.cancel();
+                    }
+                }
+                else {
+                    Log.w(TAG, "onPageFinished: Unexpected page finished event for " + url);
+                }
                 view.loadUrl("javascript:" + "$SLOB.setStyleTitles($styleSwitcher.getTitles())");
                 applyStylePref();
             }
@@ -159,8 +191,7 @@ public class ArticleWebView extends WebView {
                 Uri parsed;
                 try {
                     parsed = Uri.parse(url);
-                }
-                catch (Exception e) {
+                } catch (Exception e) {
                     Log.d(TAG, "Failed to parse url: " + url, e);
                     return super.shouldInterceptRequest(view, url);
                 }
@@ -180,7 +211,7 @@ public class ArticleWebView extends WebView {
 
             @Override
             public boolean shouldOverrideUrlLoading(WebView view,
-                    final String url) {
+                                                    final String url) {
                 Log.d(TAG, String.format("shouldOverrideUrlLoading: %s (current %s)",
                         url, view.getUrl()));
 
@@ -196,11 +227,11 @@ public class ArticleWebView extends WebView {
                 }
 
                 if (scheme.equals("http") && host.equals(LOCALHOST) && uri.getQueryParameter("blob") == null) {
-                      Intent intent = new Intent(getContext(), ArticleCollectionActivity.class);
-                      intent.setData(uri);
-                      getContext().startActivity(intent);
-                      Log.d(TAG, "Overriding loading of " + url);
-                      return true;
+                    Intent intent = new Intent(getContext(), ArticleCollectionActivity.class);
+                    intent.setData(uri);
+                    getContext().startActivity(intent);
+                    Log.d(TAG, "Overriding loading of " + url);
+                    return true;
                 }
                 Log.d(TAG, "NOT overriding loading of " + url);
                 return false;
@@ -241,11 +272,32 @@ public class ArticleWebView extends WebView {
         Map<String, ?> data = prefs.getAll();
         List<String> names = new ArrayList<String>(data.keySet());
         Collections.sort(names);
-        return concat(styleTitles, names.toArray(new String[names.size()]));
+        names.addAll(styleTitles);
+        names.add(defaultStyleTitle);
+        names.add(autoStyleTitle);
+        return names.toArray(new String[names.size()]);
     }
 
-    void setStyle(String styleTitle) {
-        saveStylePref(styleTitle);
+    private boolean isUIDark() {
+        Application app = getApplication();
+        String uiTheme = app.getPreferredTheme();
+        return uiTheme.equals(Application.PREF_UI_THEME_DARK);
+    }
+
+    private String getAutoStyle() {
+        if (this.isUIDark()) {
+            for (String title : styleTitles) {
+                String titleLower = title.toLowerCase();
+                if (titleLower.contains("night") || titleLower.contains("dark")) {
+                    return title;
+                }
+            }
+        }
+        Log.d(TAG, "Auto style will return " + defaultStyleTitle);
+        return defaultStyleTitle;
+    }
+
+    private void setStyle(String styleTitle) {
         String js;
         final SharedPreferences prefs = getContext().getSharedPreferences(
                 "userStyles", Activity.MODE_PRIVATE);
@@ -292,11 +344,30 @@ public class ArticleWebView extends WebView {
         return currentSlobId;
     }
 
-    void saveStylePref(String styleTitle) {
-        String currentPref = getPreferredStyle();
-        if (currentPref.equals(styleTitle)) {
+    private void saveAvailableStylesPref(Set<String> styleTitles) {
+        SharedPreferences prefs = prefs();
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putStringSet(PREF_STYLE_AVAILABLE + currentSlobUri, styleTitles);
+        boolean success = editor.commit();
+        if (!success) {
+            Log.w(TAG, "Failed to save article view available styles pref");
+        }
+    }
+
+    private void loadAvailableStylesPref() {
+        if (currentSlobUri == null) {
+            Log.w(TAG, "Can't load article view available styles pref - slob uri is null");
             return;
         }
+        SharedPreferences prefs = prefs();
+        Log.d(TAG, "Available styles before pref load: " + styleTitles.size());
+        styleTitles = new TreeSet(
+                prefs.getStringSet(PREF_STYLE_AVAILABLE + currentSlobUri,
+                        Collections.EMPTY_SET));
+        Log.d(TAG, "Loaded available styles: " + styleTitles.size());
+    }
+
+    void saveStylePref(String styleTitle) {
         if (currentSlobUri == null) {
             Log.w(TAG, "Can't save article view style pref - slob uri is null");
             return;
@@ -311,13 +382,23 @@ public class ArticleWebView extends WebView {
         }
     }
 
+    private String getStylePreferenceValue() {
+        return prefs().getString(PREF_STYLE + currentSlobUri, autoStyleTitle);
+    }
+
+    private boolean isAutoStyle(String title) {
+        return title.equals(autoStyleTitle);
+    }
+
     @JavascriptInterface
     public String getPreferredStyle() {
         if (currentSlobUri == null) {
             return "";
         }
-        SharedPreferences prefs = prefs();
-        return prefs.getString(PREF_STYLE + currentSlobUri, "");
+        String styleTitle = getStylePreferenceValue();
+        String result = isAutoStyle(styleTitle) ? getAutoStyle() : styleTitle;
+        Log.d(TAG, "getPreferredStyle() will return " + result);
+        return result;
     }
 
     @JavascriptInterface
@@ -386,23 +467,24 @@ public class ArticleWebView extends WebView {
     }
 
     private void updateBackgrounColor() {
-        String preferredStyle = getPreferredStyle();
-        if (preferredStyle != null) {
-            preferredStyle = preferredStyle.toLowerCase();
-            // webview's default background may "show through" before page
-            // load started and/or before page's style applies (and even after that if
-            // style doesn't explicitly set background).
-            // this is a hack to preemptively set "right" background and prevent
-            // extra flash
-            //
-            // TODO Hack it even more - allow style title to include background color spec
-            // so that this can work with "strategically" named user css
-            if (preferredStyle.contains("night") || preferredStyle.contains("dark")) {
-                setBackgroundColor(Color.BLACK);
-                return;
-            }
+        int color = Color.WHITE;
+        String preferredStyle = getPreferredStyle().toLowerCase();
+        // webview's default background may "show through" before page
+        // load started and/or before page's style applies (and even after that if
+        // style doesn't explicitly set background).
+        // this is a hack to preemptively set "right" background and prevent
+        // extra flash
+        //
+        // TODO Hack it even more - allow style title to include background color spec
+        // so that this can work with "strategically" named user css
+        if (preferredStyle.contains("night") || preferredStyle.contains("dark")) {
+            color = Color.BLACK;
         }
-        setBackgroundColor(Color.WHITE);
+        setBackgroundColor(color);
+    }
+
+    private Application getApplication() {
+        return (Application)((Activity)getContext()).getApplication();
     }
 
     private void setCurrentSlobIdFromUrl(String url) {
@@ -411,8 +493,8 @@ public class ArticleWebView extends WebView {
             BlobDescriptor bd = BlobDescriptor.fromUri(uri);
             if (bd != null) {
                 currentSlobId = bd.slobId;
-                Application app = (Application)((Activity)getContext()).getApplication();
-                currentSlobUri = app.getSlobURI(currentSlobId);
+                currentSlobUri = getApplication().getSlobURI(currentSlobId);
+                loadAvailableStylesPref();
             }
             else {
                 currentSlobId = null;
