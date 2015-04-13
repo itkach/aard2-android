@@ -167,14 +167,19 @@ public class ArticleFragment extends Fragment {
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
-        Application app = (Application)getActivity().getApplication();
-        try {
-            Log.d(getTag(), String.format("Is %s bookmarked? %s", this.url, app.isBookmarked(this.url)));
-            displayBookmarked(app.isBookmarked(this.url));
-        }
-        catch (Exception ex) {
+        if (this.url == null) {
             miBookmark.setVisible(false);
-            Log.d(getTag(), "Not bookmarkable: " + this.url, ex);
+        }
+        else {
+            Application app = (Application)getActivity().getApplication();
+            try {
+                boolean bookmarked =  app.isBookmarked(this.url);
+                Log.d(getTag(), String.format("Is %s bookmarked? %s", this.url, bookmarked));
+                displayBookmarked(bookmarked);
+            } catch (Exception ex) {
+                miBookmark.setVisible(false);
+                Log.d(getTag(), "Not bookmarkable: " + this.url, ex);
+            }
         }
         applyTextZoomPref();
         applyStylePref();
