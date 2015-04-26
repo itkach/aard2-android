@@ -62,7 +62,7 @@ final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
         this.filteredList = new ArrayList<BlobDescriptor>();
         this.dataSetObservable = new DataSetObservable();
         this.filter = "";
-        keyComparator = Slob.COMPARATORS.get(Slob.Strength.QUATERNARY);
+        keyComparator = Slob.Strength.QUATERNARY.comparator;
 
         nameComparatorAsc = new Comparator<BlobDescriptor>() {
             @Override

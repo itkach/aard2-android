@@ -275,7 +275,7 @@ public class Application extends android.app.Application {
 
 
     Iterator<Blob> find(String key) {
-        return Slob.find(key, 1000, getActiveSlobs());
+        return Slob.find(key, getActiveSlobs());
     }
 
     Iterator<Blob> find(String key, String preferredSlobId) {
@@ -287,8 +287,7 @@ public class Application extends android.app.Application {
     Iterator<Blob> find(String key, String preferredSlobId, boolean activeOnly) {
         long t0 = System.currentTimeMillis();
         Slob[] slobs = activeOnly ? getActiveSlobs() : slobber.getSlobs();
-        Iterator<Blob> result = Slob.find(key, 10, slobber.getSlob(preferredSlobId),
-                slobs, Slob.Strength.QUATERNARY.level);
+        Iterator<Blob> result = Slob.find(key, slobs, slobber.getSlob(preferredSlobId));
         Log.d(getClass().getName(), String.format("find ran in %dms", System.currentTimeMillis() - t0));
         return result;
     }
