@@ -240,18 +240,33 @@ public class ArticleCollectionActivity extends FragmentActivity {
             Toast.makeText(this, R.string.article_collection_nothing_to_lookup, Toast.LENGTH_SHORT).show();
         }
         else {
-            Iterator<Slob.Blob> result;
-            do {
-                result = app.find(lookupKey, null, true);
-                if (result.hasNext()) {
-                    break;
-                }
-                lookupKey = lookupKey.substring(0, lookupKey.length() - 1);
-            } while (lookupKey.length() > 0);
+            Iterator<Blob> result = stemLookup(app, lookupKey);
             data.setData(result);
         }
         return new ArticleCollectionPagerAdapter(
                 app, data, blobToBlob, getSupportFragmentManager());
+    }
+
+    private Iterator<Blob> stemLookup(Application app, String lookupKey) {
+        Slob.PeekableIterator<Blob> result;
+        final int length = lookupKey.length();
+        String currentLookupKey = lookupKey;
+        int currentLength = currentLookupKey.length();
+        do {
+            result = app.find(currentLookupKey, null, true);
+            if (result.hasNext()) {
+                Blob b = result.peek();
+                if (b.key.length() - length > 3) {
+                    //we don't like this result
+                }
+                else {
+                    break;
+                }
+            }
+            currentLookupKey = currentLookupKey.substring(0, currentLength - 1);
+            currentLength = currentLookupKey.length();
+        } while (length - currentLength < 5 && currentLength > 0);
+        return result;
     }
 
     private void updateTitle(int position) {

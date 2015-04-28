@@ -220,7 +220,7 @@ public class Application extends android.app.Application {
 
     String getPreferredTheme() {
         return prefs().getString(Application.PREF_UI_THEME,
-                    Application.PREF_UI_THEME_LIGHT);
+                Application.PREF_UI_THEME_LIGHT);
     }
 
     void installTheme(Activity activity) {
@@ -284,10 +284,14 @@ public class Application extends android.app.Application {
         return find(key, preferredSlobId, false);
     }
 
-    Iterator<Blob> find(String key, String preferredSlobId, boolean activeOnly) {
+    Slob.PeekableIterator<Blob> find(String key, String preferredSlobId, boolean activeOnly) {
+        return this.find(key, preferredSlobId,  activeOnly, null);
+    }
+
+    Slob.PeekableIterator<Blob> find(String key, String preferredSlobId, boolean activeOnly, Slob.Strength upToStrength) {
         long t0 = System.currentTimeMillis();
         Slob[] slobs = activeOnly ? getActiveSlobs() : slobber.getSlobs();
-        Iterator<Blob> result = Slob.find(key, slobs, slobber.getSlob(preferredSlobId));
+        Slob.PeekableIterator<Blob> result = Slob.find(key, slobs, slobber.getSlob(preferredSlobId), upToStrength);
         Log.d(getClass().getName(), String.format("find ran in %dms", System.currentTimeMillis() - t0));
         return result;
     }
