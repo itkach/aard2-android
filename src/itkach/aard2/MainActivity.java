@@ -3,6 +3,8 @@ package itkach.aard2;
 import android.app.ActionBar;
 import android.app.ActionBar.Tab;
 import android.app.FragmentTransaction;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -22,25 +24,24 @@ public class MainActivity extends FragmentActivity implements
         ActionBar.TabListener {
 
     private static final String TAG = MainActivity.class.getSimpleName();
-    private AppSectionsPagerAdapter mAppSectionsPagerAdapter;
-    private ViewPager               mViewPager;
-
+    private AppSectionsPagerAdapter appSectionsPagerAdapter;
+    private ViewPager viewPager;
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         final Application app = (Application)getApplication();
         app.installTheme(this);
         setContentView(R.layout.activity_main);
 
-        mAppSectionsPagerAdapter = new AppSectionsPagerAdapter(
+        appSectionsPagerAdapter = new AppSectionsPagerAdapter(
                 getSupportFragmentManager());
 
         final ActionBar actionBar = getActionBar();
         actionBar.setHomeButtonEnabled(true);
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 
-        mViewPager = (ViewPager) findViewById(R.id.pager);
-        mViewPager.setOffscreenPageLimit(mAppSectionsPagerAdapter.getCount());
-        mViewPager.setAdapter(mAppSectionsPagerAdapter);
+        viewPager = (ViewPager) findViewById(R.id.pager);
+        viewPager.setOffscreenPageLimit(appSectionsPagerAdapter.getCount());
+        viewPager.setAdapter(appSectionsPagerAdapter);
 
         final String[] subtitles = new String[] {
                 getString(R.string.subtitle_lookup),
@@ -50,7 +51,7 @@ public class MainActivity extends FragmentActivity implements
                 getString(R.string.subtitle_settings),
         };
 
-        mViewPager
+        viewPager
                 .setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
                     @Override
                     public void onPageSelected(int position) {
@@ -66,7 +67,7 @@ public class MainActivity extends FragmentActivity implements
         tabIcons[3] = FontIconDrawable.inflate(this, R.xml.ic_tab_dictionary);
         tabIcons[4] = FontIconDrawable.inflate(this, R.xml.ic_tab_settings);
         // For each of the sections in the app, add a tab to the action bar.
-        for (int i = 0; i < mAppSectionsPagerAdapter.getCount(); i++) {
+        for (int i = 0; i < appSectionsPagerAdapter.getCount(); i++) {
             Tab tab = actionBar.newTab();
             tab.setTabListener(this);
             tab.setIcon(tabIcons[i]);
@@ -77,8 +78,8 @@ public class MainActivity extends FragmentActivity implements
             onRestoreInstanceState(savedInstanceState);
         } else {
             if (app.dictionaries.size() == 0) {
-                mViewPager.setCurrentItem(3);
-                DictionariesFragment df = (DictionariesFragment)mAppSectionsPagerAdapter.getItem(3);
+                viewPager.setCurrentItem(3);
+                DictionariesFragment df = (DictionariesFragment) appSectionsPagerAdapter.getItem(3);
                 df.findDictionaries();
             }
         }
@@ -88,19 +89,19 @@ public class MainActivity extends FragmentActivity implements
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         int currentSection = savedInstanceState.getInt("currentSection");
-        mViewPager.setCurrentItem(currentSection);
+        viewPager.setCurrentItem(currentSection);
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putInt("currentSection", mViewPager.getCurrentItem());
+        outState.putInt("currentSection", viewPager.getCurrentItem());
     }
 
     @Override
     public void onTabUnselected(ActionBar.Tab tab,
             FragmentTransaction fragmentTransaction) {
-        Fragment frag = mAppSectionsPagerAdapter.getItem(tab.getPosition());
+        Fragment frag = appSectionsPagerAdapter.getItem(tab.getPosition());
         if (frag instanceof BaseListFragment) {
             ((BaseListFragment)frag).finishActionMode();
         }
@@ -116,7 +117,7 @@ public class MainActivity extends FragmentActivity implements
     @Override
     public void onTabSelected(ActionBar.Tab tab,
             FragmentTransaction fragmentTransaction) {
-        mViewPager.setCurrentItem(tab.getPosition());
+        viewPager.setCurrentItem(tab.getPosition());
     }
 
     @Override
@@ -140,8 +141,8 @@ public class MainActivity extends FragmentActivity implements
 
     @Override
     public void onBackPressed() {
-        int currentItem = mViewPager.getCurrentItem();
-        Fragment frag = mAppSectionsPagerAdapter.getItem(currentItem);
+        int currentItem = viewPager.getCurrentItem();
+        Fragment frag = appSectionsPagerAdapter.getItem(currentItem);
         Log.d(TAG, "current tab: " + currentItem);
         if (frag instanceof BlobDescriptorListFragment) {
             BlobDescriptorListFragment bdFrag = (BlobDescriptorListFragment)frag;
@@ -224,12 +225,12 @@ public class MainActivity extends FragmentActivity implements
     }
 
     public static class AppSectionsPagerAdapter extends FragmentPagerAdapter {
-        private Fragment[]                 fragments;
-        private LookupFragment             tabLookup;
-        private BlobDescriptorListFragment tabBookmarks;
-        private BlobDescriptorListFragment tabHistory;
-        private DictionariesFragment       tabDictionaries;
-        private SettingsFragment           tabSettings;
+        private Fragment[]         fragments;
+        LookupFragment             tabLookup;
+        BlobDescriptorListFragment tabBookmarks;
+        BlobDescriptorListFragment tabHistory;
+        DictionariesFragment       tabDictionaries;
+        SettingsFragment           tabSettings;
 
         public AppSectionsPagerAdapter(FragmentManager fm) {
             super(fm);
@@ -255,6 +256,26 @@ public class MainActivity extends FragmentActivity implements
         @Override
         public CharSequence getPageTitle(int position) {
             return "";
+        }
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        ClipboardManager cm = (ClipboardManager)getSystemService(CLIPBOARD_SERVICE);
+        ClipData clipData = cm.getPrimaryClip();
+        if (clipData == null) {
+            return;
+        }
+        int count = clipData.getItemCount();
+        for (int i = 0; i < count; i++) {
+            ClipData.Item item = clipData.getItemAt(i);
+            CharSequence text = item.getText();
+            if (text != null && text.length() > 0) {
+                viewPager.setCurrentItem(0);
+                cm.setPrimaryClip(ClipData.newPlainText(null, ""));
+                appSectionsPagerAdapter.tabLookup.setQuery(text.toString());
+                break;
+            }
         }
     }
 }

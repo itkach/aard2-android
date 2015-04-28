@@ -21,6 +21,7 @@ public class LookupFragment extends BaseListFragment implements LookupListener {
     private Timer       timer;
     private SearchView  searchView;
     private Application app;
+    private String      initialQuery;
 
 
     @Override
@@ -107,11 +108,14 @@ public class LookupFragment extends BaseListFragment implements LookupListener {
                         scheduledLookup = null;
                     }
                 };
-                if (scheduledLookup != null) {
-                    scheduledLookup.cancel();
+                final String query = searchView.getQuery().toString();
+                if (!app.getLookupQuery().equals(query)) {
+                    if (scheduledLookup != null) {
+                        scheduledLookup.cancel();
+                    }
+                    scheduledLookup = doLookup;
+                    timer.schedule(doLookup, 600);
                 }
-                scheduledLookup = doLookup;
-                timer.schedule(doLookup, 600);
                 return true;
             }
         });
@@ -125,6 +129,10 @@ public class LookupFragment extends BaseListFragment implements LookupListener {
         });
 
         searchView.setSubmitButtonEnabled(false);
+        if (initialQuery != null) {
+            searchView.setQuery(initialQuery, true);
+            initialQuery = null;
+        }
     }
 
     @Override
@@ -181,5 +189,14 @@ public class LookupFragment extends BaseListFragment implements LookupListener {
     @Override
     public void onLookupCanceled(String query) {
         setBusy(false);
+    }
+
+    void setQuery(String query) {
+        if (searchView != null) {
+            searchView.setQuery(query, true);
+        }
+        else {
+            this.initialQuery = query;
+        }
     }
 }
