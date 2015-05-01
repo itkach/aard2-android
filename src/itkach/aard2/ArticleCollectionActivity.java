@@ -361,9 +361,6 @@ public class ArticleCollectionActivity extends FragmentActivity {
             if (blob != null) {
                 String articleUrl = app.getUrl(blob);
                 Bundle args = new Bundle();
-                Log.i("Setting article fragment url",
-                        String.format("%s (key %s slob %s)",
-                                articleUrl, blob.key, blob.owner.getTags().get("label")));
                 args.putString(ArticleFragment.ARG_URL, articleUrl);
                 fragment.setArguments(args);
             }
