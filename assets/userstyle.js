@@ -12,7 +12,7 @@
   }
 
   if (existingElement) {
-    existingElement.remove();
+    existingElement.parentNode.removeChild(existingElement);
   }
 
   var target = document.head,
