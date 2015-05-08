@@ -93,6 +93,9 @@ public class SettingsFragment extends ListFragment {
                 }
                 final SharedPreferences prefs = getActivity().getSharedPreferences(
                         "userStyles", Activity.MODE_PRIVATE);
+
+                userCss = userCss.replace("\r", "").replace("\n", "\\n");
+
                 SharedPreferences.Editor editor = prefs.edit();
                 editor.putString(fileName, userCss);
                 boolean saved = editor.commit();
