@@ -14,6 +14,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
+import android.util.Patterns;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -271,6 +272,10 @@ public class MainActivity extends FragmentActivity implements
             ClipData.Item item = clipData.getItemAt(i);
             CharSequence text = item.getText();
             if (text != null && text.length() > 0) {
+                if (Patterns.WEB_URL.matcher(text).find()) {
+                    Log.d(TAG, "Text contains web url, not pasting: " + text);
+                    return;
+                }
                 viewPager.setCurrentItem(0);
                 cm.setPrimaryClip(ClipData.newPlainText(null, ""));
                 appSectionsPagerAdapter.tabLookup.setQuery(text.toString());
