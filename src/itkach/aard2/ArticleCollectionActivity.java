@@ -79,30 +79,32 @@ public class ArticleCollectionActivity extends FragmentActivity {
 
         AsyncTask<Void, Void, ArticleCollectionPagerAdapter> createAdapterTask = new AsyncTask<Void, Void, ArticleCollectionPagerAdapter>(){
 
+            Exception exception;
+
             @Override
             protected ArticleCollectionPagerAdapter doInBackground(Void ... params) {
-                ArticleCollectionPagerAdapter result;
+                ArticleCollectionPagerAdapter result = null;
                 Uri articleUrl = intent.getData();
-                if (articleUrl != null) {
-                    result = createFromUri(app, articleUrl);
+                try {
+                    if (articleUrl != null) {
+                        result = createFromUri(app, articleUrl);
+                    } else {
+                        String action = intent.getAction();
+                        if (action == null) {
+                            result = createFromLastResult(app);
+                        } else if (action.equals("showRandom")) {
+                            result = createFromRandom(app);
+                        } else if (action.equals("showBookmarks")) {
+                            result = createFromBookmarks(app);
+                        } else if (action.equals("showHistory")) {
+                            result = createFromHistory(app);
+                        } else {
+                            result = createFromIntent(app, intent);
+                        }
+                    }
                 }
-                else {
-                    String action = intent.getAction();
-                    if (action == null) {
-                        result = createFromLastResult(app);
-                    }
-                    else if (action.equals("showRandom")) {
-                        result = createFromRandom(app);
-                    }
-                    else if (action.equals("showBookmarks")) {
-                        result = createFromBookmarks(app);
-                    }
-                    else if (action.equals("showHistory")) {
-                        result = createFromHistory(app);
-                    }
-                    else {
-                        result = createFromIntent(app, intent);
-                    }
+                catch (Exception e) {
+                    this.exception = e;
                 }
                 return result;
             }
@@ -110,6 +112,13 @@ public class ArticleCollectionActivity extends FragmentActivity {
             @Override
             protected void onPostExecute(ArticleCollectionPagerAdapter adapter) {
                 if (isFinishing() || onDestroyCalled) {
+                    return;
+                }
+                if (this.exception != null) {
+                    Toast.makeText(ArticleCollectionActivity.this,
+                            this.exception.getLocalizedMessage(),
+                            Toast.LENGTH_SHORT).show();
+                    finish();
                     return;
                 }
                 articleCollectionPagerAdapter = adapter;
@@ -237,7 +246,8 @@ public class ArticleCollectionActivity extends FragmentActivity {
         }
         BlobListAdapter data = new BlobListAdapter(this, 3, 1);
         if (lookupKey == null || lookupKey.length() == 0) {
-            Toast.makeText(this, R.string.article_collection_nothing_to_lookup, Toast.LENGTH_SHORT).show();
+            String msg = getString(R.string.article_collection_nothing_to_lookup);
+            throw new RuntimeException(msg);
         }
         else {
             Iterator<Blob> result = stemLookup(app, lookupKey);
