@@ -94,6 +94,10 @@
 
 *** android.permission.READ_EXTERNAL_STORAGE
     This permission is needed to access dictionary files on external storage.
+*** android.permission.WRITE_EXTERNAL_STORAGE
+    While Aard 2 itself currently does not write anything to external
+    storage, this permission is needed, oddly enough, to browse and
+    read dictionary files on external storage on BlackBerry 10 devices.
 
 
 ** Developing
