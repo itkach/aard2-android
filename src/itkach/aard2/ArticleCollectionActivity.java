@@ -18,6 +18,7 @@ package itkach.aard2;
 
 import android.app.ActionBar;
 import android.app.SearchManager;
+import android.content.ComponentName;
 import android.content.Intent;
 import android.database.DataSetObserver;
 import android.net.Uri;
@@ -315,7 +316,7 @@ public class ArticleCollectionActivity extends FragmentActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
         case android.R.id.home:
-            Intent upIntent = new Intent(this, MainActivity.class);
+            Intent upIntent = Intent.makeMainActivity(new ComponentName(this, MainActivity.class));
             if (NavUtils.shouldUpRecreateTask(this, upIntent)) {
                 TaskStackBuilder.create(this)
                         .addNextIntent(upIntent).startActivities();
@@ -323,7 +324,9 @@ public class ArticleCollectionActivity extends FragmentActivity {
             } else {
                 // This activity is part of the application's task, so simply
                 // navigate up to the hierarchical parent activity.
-                NavUtils.navigateUpTo(this, upIntent);
+                upIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                startActivity(upIntent);
+                finish();
             }
             return true;
         }
