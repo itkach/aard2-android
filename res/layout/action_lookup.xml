@@ -5,4 +5,5 @@
     android:actionViewClass="android.widget.SearchView"
     android:iconifiedByDefault="true"
     android:queryHint="Lookup"
+    android:imeOptions="flagNoExtractUi"
     android:showAsAction="always" />
