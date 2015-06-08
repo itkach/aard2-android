@@ -153,6 +153,7 @@
 
    #+BEGIN_SRC java
    Intent intent = new Intent("aard2.lookup");
+   intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
    intent.putExtra(SearchManager.QUERY, "Foo Bar");
    startActivity(intent);
    #+END_SRC
@@ -160,5 +161,5 @@
    Same thing from a command line using /adb/:
 
    #+BEGIN_SRC sh
-   adb shell am start -a aard2.lookup -e query "Foo Bar"
+   adb shell am start -a aard2.lookup -f 335544320 -e query "Foo Bar"
    #+END_SRC
