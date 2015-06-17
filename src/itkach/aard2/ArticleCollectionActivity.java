@@ -17,12 +17,15 @@
 package itkach.aard2;
 
 import android.app.ActionBar;
+import android.app.Activity;
 import android.app.SearchManager;
 import android.content.ComponentName;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.DataSetObserver;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -36,6 +39,7 @@ import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.BaseAdapter;
@@ -48,7 +52,14 @@ import java.util.List;
 import itkach.slob.Slob;
 import itkach.slob.Slob.Blob;
 
-public class ArticleCollectionActivity extends FragmentActivity {
+public class ArticleCollectionActivity extends FragmentActivity
+        implements  View.OnSystemUiVisibilityChangeListener,
+                    SharedPreferences.OnSharedPreferenceChangeListener {
+
+    private static final String TAG = ArticleCollectionActivity.class.getSimpleName();
+
+    static final String PREF = "articleCollection";
+    static final String PREF_FULLSCREEN = "fullscreen";
 
     ArticleCollectionPagerAdapter articleCollectionPagerAdapter;
     ViewPager viewPager;
@@ -67,9 +78,10 @@ public class ArticleCollectionActivity extends FragmentActivity {
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_PROGRESS);
         final Application app = (Application)getApplication();
         app.installTheme(this);
-        requestWindowFeature(Window.FEATURE_PROGRESS);
+        getActionBar().hide();
         setContentView(R.layout.activity_article_collection_loading);
         app.push(this);
         final ActionBar actionBar = getActionBar();
@@ -298,6 +310,76 @@ public class ArticleCollectionActivity extends FragmentActivity {
         actionBar.setSubtitle(pageTitle);
     }
 
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        if (key.equals(PREF_FULLSCREEN)) {
+            applyFullScreenPref();
+        }
+    }
+
+    private void applyFullScreenPref() {
+        if (getFullScreenPref()) {
+            fullScreen();
+        }
+        else {
+            unFullScreen();
+        }
+    }
+
+    SharedPreferences prefs() {
+        return getSharedPreferences(PREF, Activity.MODE_PRIVATE);
+    }
+
+    boolean getFullScreenPref() {
+        return prefs().getBoolean(PREF_FULLSCREEN, false);
+    }
+
+    private void setFullScreenPref(boolean value) {
+        SharedPreferences.Editor editor = prefs().edit();
+        editor.putBoolean(PREF_FULLSCREEN, value);
+        editor.commit();
+    }
+
+    private void fullScreen() {
+        Log.d(TAG, "[F] fullscreen");
+        getWindow().getDecorView().setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                | View.SYSTEM_UI_FLAG_FULLSCREEN
+                | View.SYSTEM_UI_FLAG_IMMERSIVE
+        );
+        getActionBar().hide();
+    }
+
+    private void unFullScreen() {
+        Log.d(TAG, "[F] unfullscreen");
+        getWindow().getDecorView().setSystemUiVisibility(0);
+        getActionBar().show();
+    }
+
+    void toggleFullScreen() {
+        setFullScreenPref(!getFullScreenPref());
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.d(TAG, "[F] Resume");
+        applyFullScreenPref();
+        View decorView = getWindow().getDecorView();
+        decorView.setOnSystemUiVisibilityChangeListener(this);
+        prefs().registerOnSharedPreferenceChangeListener(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.d(TAG, "[F] Pause");
+        View decorView = getWindow().getDecorView();
+        decorView.setOnSystemUiVisibilityChangeListener(null);
+        prefs().unregisterOnSharedPreferenceChangeListener(this);
+    }
+
     @Override
     protected void onDestroy() {
         onDestroyCalled = true;
@@ -331,6 +413,20 @@ public class ArticleCollectionActivity extends FragmentActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onSystemUiVisibilityChange(int visibility) {
+        if (isFinishing()) {
+            return;
+        }
+        final View decorView = getWindow().getDecorView();
+        int uiOptions = decorView.getSystemUiVisibility();
+        boolean isHideNavigation =
+                ((uiOptions | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION) == uiOptions);
+         if (!isHideNavigation) {
+            setFullScreenPref(false);
+        }
     }
 
     static interface ToBlob {

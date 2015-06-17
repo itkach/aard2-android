@@ -3,7 +3,9 @@ package itkach.aard2;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -25,11 +27,14 @@ public class ArticleFragment extends Fragment {
 
     public static final String ARG_URL = "articleUrl";
 
-    private ArticleWebView view;
-    private MenuItem miBookmark;
-    private Drawable icBookmark;
-    private Drawable icBookmarkO;
-    private String url;
+    private ArticleWebView  view;
+    private MenuItem        miBookmark;
+    private MenuItem        miFullscreen;
+    private Drawable        icBookmark;
+    private Drawable        icBookmarkO;
+    private Drawable        icFullscreen;
+    private String          url;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -37,6 +42,7 @@ public class ArticleFragment extends Fragment {
         Activity activity = getActivity();
         icBookmark = FontIconDrawable.inflate(activity, R.xml.ic_actionbar_bookmark);
         icBookmarkO = FontIconDrawable.inflate(activity, R.xml.ic_actionbar_bookmark_o);
+        icFullscreen = FontIconDrawable.inflate(activity, R.xml.ic_actionbar_fullscreen);
         setHasOptionsMenu(true);
     }
 
@@ -48,6 +54,11 @@ public class ArticleFragment extends Fragment {
         menu.clear();
         inflater.inflate(R.menu.article, menu);
         miBookmark = menu.findItem(R.id.action_bookmark_article);
+        miFullscreen = menu.findItem(R.id.action_fullscreen);
+        if (Build.VERSION.SDK_INT < 19) {
+            miFullscreen.setVisible(false);
+            miFullscreen.setEnabled(false);
+        }
     }
 
     private void displayBookmarked(boolean value) {
@@ -79,6 +90,10 @@ public class ArticleFragment extends Fragment {
                     displayBookmarked(true);
                 }
             }
+            return true;
+        }
+        if (itemId == R.id.action_fullscreen) {
+            ((ArticleCollectionActivity)getActivity()).toggleFullScreen();
             return true;
         }
         if (itemId == R.id.action_zoom_in) {
@@ -126,15 +141,15 @@ public class ArticleFragment extends Fragment {
             View layout = inflater.inflate(R.layout.empty_view, container, false);
             TextView textView = (TextView)layout.findViewById(R.id.empty_text);
             textView.setText("");
-            ImageView icon = (ImageView)layout.findViewById(R.id.empty_icon);
+            ImageView icon = (ImageView) layout.findViewById(R.id.empty_icon);
             icon.setImageDrawable(FontIconDrawable.inflate(getActivity(),
                     R.xml.ic_empty_view_not_available));
             return layout;
         }
 
         View layout = inflater.inflate(R.layout.article_view, container, false);
-        final ProgressBar progressBar = (ProgressBar)layout.findViewById(R.id.webViewPogress);
-        view = (ArticleWebView)layout.findViewById(R.id.webView);
+        final ProgressBar progressBar = (ProgressBar) layout.findViewById(R.id.webViewPogress);
+        view = (ArticleWebView) layout.findViewById(R.id.webView);
         view.restoreState(savedInstanceState);
         view.loadUrl(url);
         view.setWebChromeClient(new WebChromeClient() {
@@ -153,6 +168,7 @@ public class ArticleFragment extends Fragment {
                 }
             }
         });
+
         return layout;
     }
 
@@ -183,6 +199,7 @@ public class ArticleFragment extends Fragment {
         }
         applyTextZoomPref();
         applyStylePref();
+        miFullscreen.setIcon(icFullscreen);
     }
 
     void applyTextZoomPref() {
@@ -203,6 +220,9 @@ public class ArticleFragment extends Fragment {
             view.destroy();
             view = null;
         }
+        miFullscreen = null;
+        miBookmark = null;
         super.onDestroy();
     }
+
 }

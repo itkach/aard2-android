@@ -106,5 +106,6 @@
     <string name="setting_ui_theme_dark">Dark</string>
     <string name="action_load_remote_content">Load Remote Content</string>
     <string name="auto_style_title">Auto</string>
+    <string name="action_fullscreen">Full Screen</string>
 
 </resources>

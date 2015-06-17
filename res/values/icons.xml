@@ -27,4 +27,5 @@
     <string translatable="false" name="ic_folder">&#xf07b;</string>
     <string translatable="false" name="ic_level_up">&#xf148;</string>
     <string translatable="false" name="ic_ban">&#xf05e;</string>
+    <string translatable="false" name="ic_fullscreen">&#xf065;</string>
 </resources>
