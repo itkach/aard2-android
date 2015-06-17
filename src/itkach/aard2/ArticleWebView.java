@@ -464,7 +464,9 @@ public class ArticleWebView extends WebView {
 
     private void beforeLoadUrl(String url) {
         setCurrentSlobIdFromUrl(url);
-        updateBackgrounColor();
+        if (!url.startsWith("javascript:")) {
+            updateBackgrounColor();
+        }
     }
 
     private void updateBackgrounColor() {
