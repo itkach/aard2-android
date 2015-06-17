@@ -197,7 +197,7 @@ public class ArticleCollectionActivity extends FragmentActivity {
             return null;
         }
         Iterator<Slob.Blob> result = app.find(bd.key, bd.slobId);
-        BlobListAdapter data = new BlobListAdapter(this, 3, 1);
+        BlobListAdapter data = new BlobListAdapter(this, 20, 1);
         data.setData(result);
         return new ArticleCollectionPagerAdapter(
                 app, data, blobToBlob, getSupportFragmentManager());
