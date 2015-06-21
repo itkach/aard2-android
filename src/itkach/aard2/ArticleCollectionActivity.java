@@ -224,7 +224,7 @@ public class ArticleCollectionActivity extends FragmentActivity
         if (lookupKey == null) {
             lookupKey = intent.getStringExtra(SearchManager.QUERY);
         }
-        BlobListAdapter data = new BlobListAdapter(this, 3, 1);
+        BlobListAdapter data = new BlobListAdapter(this, 20, 1);
         if (lookupKey == null || lookupKey.length() == 0) {
             String msg = getString(R.string.article_collection_nothing_to_lookup);
             throw new RuntimeException(msg);
