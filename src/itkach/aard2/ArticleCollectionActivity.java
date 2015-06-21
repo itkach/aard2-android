@@ -105,8 +105,6 @@ public class ArticleCollectionActivity extends FragmentActivity
                         String action = intent.getAction();
                         if (action == null) {
                             result = createFromLastResult(app);
-                        } else if (action.equals("showRandom")) {
-                            result = createFromRandom(app);
                         } else if (action.equals("showBookmarks")) {
                             result = createFromBookmarks(app);
                         } else if (action.equals("showHistory")) {
@@ -238,18 +236,6 @@ public class ArticleCollectionActivity extends FragmentActivity
                 return app.history.resolve((BlobDescriptor)item);
             }
         }, getSupportFragmentManager());
-    }
-
-    private ArticleCollectionPagerAdapter createFromRandom(Application app) {
-        BlobListAdapter data = new BlobListAdapter(this);
-        List<Blob> result = new ArrayList<Blob>();
-        Blob blob = app.random();
-        if (blob != null) {
-            result.add(blob);
-        }
-        data.setData(result);
-        return new ArticleCollectionPagerAdapter(
-                app, data, blobToBlob, getSupportFragmentManager());
     }
 
     private ArticleCollectionPagerAdapter createFromIntent(Application app, Intent intent) {

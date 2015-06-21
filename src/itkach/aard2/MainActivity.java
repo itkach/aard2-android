@@ -7,6 +7,7 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -18,8 +19,11 @@ import android.util.Patterns;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Toast;
 
 import com.shamanland.fonticon.FontIconDrawable;
+
+import itkach.slob.Slob;
 
 public class MainActivity extends FragmentActivity implements
         ActionBar.TabListener {
@@ -130,9 +134,17 @@ public class MainActivity extends FragmentActivity implements
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
+                Application app = (Application)getApplication();
+                Slob.Blob blob = app.random();
+                if (blob == null) {
+                    Toast.makeText(this,
+                            R.string.article_collection_nothing_found,
+                            Toast.LENGTH_SHORT).show();
+                    return true;
+                }
                 Intent intent = new Intent(this,
                         ArticleCollectionActivity.class);
-                intent.setAction("showRandom");
+                intent.setData(Uri.parse(app.getUrl(blob)));
                 startActivity(intent);
                 return true;
             default:
