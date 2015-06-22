@@ -21,6 +21,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -312,8 +313,8 @@ public class ArticleCollectionActivity extends FragmentActivity
         Log.d(TAG, "[F] fullscreen");
         getWindow().getDecorView().setSystemUiVisibility(
                 View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                | View.SYSTEM_UI_FLAG_FULLSCREEN
-                | View.SYSTEM_UI_FLAG_IMMERSIVE
+                        | View.SYSTEM_UI_FLAG_FULLSCREEN
+                        | View.SYSTEM_UI_FLAG_IMMERSIVE
         );
         getActionBar().hide();
     }
@@ -396,6 +397,77 @@ public class ArticleCollectionActivity extends FragmentActivity
         }
     }
 
+    @Override
+    public boolean onKeyUp(int keyCode, KeyEvent event) {
+        if (event.isCanceled()) {
+            return true;
+        }
+        ArticleFragment af = articleCollectionPagerAdapter.getPrimaryItem();
+        if (af != null) {
+            ArticleWebView webView = af.getWebView();
+
+            if (keyCode == KeyEvent.KEYCODE_BACK) {
+                if (webView.canGoBack()) {
+                    webView.goBack();
+                    return true;
+                }
+            }
+
+            if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
+                boolean scrolled = webView.pageUp(false);
+                if (!scrolled) {
+                    int current = viewPager.getCurrentItem();
+                    if (current > 0) {
+                        viewPager.setCurrentItem(current - 1);
+                    }
+                    else {
+                        finish();
+                    }
+                }
+                return true;
+            }
+            if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
+                boolean scrolled = webView.pageDown(false);
+                if (!scrolled) {
+                    int current = viewPager.getCurrentItem();
+                    if (current < articleCollectionPagerAdapter.getCount() - 1) {
+                        viewPager.setCurrentItem(current + 1);
+                    }
+                }
+                return true;
+            }
+        }
+        return super.onKeyUp(keyCode, event);
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_VOLUME_UP || keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
+            event.startTracking();
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+    @Override
+    public boolean onKeyLongPress(int keyCode, KeyEvent event) {
+        ArticleFragment af = articleCollectionPagerAdapter.getPrimaryItem();
+        if (af != null) {
+            ArticleWebView webView = af.getWebView();
+
+            if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
+                webView.pageUp(true);
+                return true;
+            }
+            if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
+                webView.pageDown(true);
+                return true;
+            }
+        }
+        return super.onKeyLongPress(keyCode, event);
+    }
+
+
     static interface ToBlob {
         Slob.Blob convert(Object item);
     }
@@ -407,6 +479,7 @@ public class ArticleCollectionActivity extends FragmentActivity
         private BaseAdapter data;
         private ToBlob toBlob;
         private int count;
+        private ArticleFragment primaryItem;
 
         public ArticleCollectionPagerAdapter(Application app, BaseAdapter data, ToBlob toBlob, FragmentManager fm) {
             super(fm);
@@ -431,8 +504,19 @@ public class ArticleCollectionActivity extends FragmentActivity
         }
 
         @Override
+        public void setPrimaryItem(ViewGroup container, int position, Object object) {
+            super.setPrimaryItem(container, position, object);
+            this.primaryItem = (ArticleFragment)object;
+        }
+
+        ArticleFragment getPrimaryItem() {
+            return this.primaryItem;
+        }
+
+        @Override
         public Fragment getItem(int i) {
             Fragment fragment = new ArticleFragment();
+
             Slob.Blob blob = get(i);
             if (blob != null) {
                 String articleUrl = app.getUrl(blob);

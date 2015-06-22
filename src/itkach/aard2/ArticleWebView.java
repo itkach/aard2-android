@@ -511,24 +511,6 @@ public class ArticleWebView extends WebView {
     }
 
     @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if(event.getAction() == KeyEvent.ACTION_DOWN){
-            switch(keyCode)
-            {
-                case KeyEvent.KEYCODE_BACK:
-                    if(this.canGoBack()){
-                        this.goBack();
-                        return true;
-                    }else{
-                        return false;
-                    }
-            }
-
-        }
-        return super.onKeyDown(keyCode, event);
-    }
-
-    @Override
     public void destroy() {
         super.destroy();
         timer.cancel();

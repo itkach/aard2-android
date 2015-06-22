@@ -214,6 +214,10 @@ public class ArticleFragment extends Fragment {
         }
     }
 
+    public ArticleWebView getWebView() {
+        return view;
+    }
+
     @Override
     public void onDestroy() {
         if (view != null) {
