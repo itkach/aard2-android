@@ -397,6 +397,12 @@ public class ArticleCollectionActivity extends FragmentActivity
         }
     }
 
+    private boolean useVolumeForNav() {
+        Application app = (Application)getApplication();
+        return app.useVolumeForNav();
+    }
+
+
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
         if (event.isCanceled()) {
@@ -414,6 +420,9 @@ public class ArticleCollectionActivity extends FragmentActivity
             }
 
             if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
+                if (!useVolumeForNav()) {
+                    return false;
+                }
                 boolean scrolled = webView.pageUp(false);
                 if (!scrolled) {
                     int current = viewPager.getCurrentItem();
@@ -427,6 +436,9 @@ public class ArticleCollectionActivity extends FragmentActivity
                 return true;
             }
             if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
+                if (!useVolumeForNav()) {
+                    return false;
+                }
                 boolean scrolled = webView.pageDown(false);
                 if (!scrolled) {
                     int current = viewPager.getCurrentItem();
@@ -443,6 +455,9 @@ public class ArticleCollectionActivity extends FragmentActivity
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_VOLUME_UP || keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
+            if (!useVolumeForNav()) {
+                return false;
+            }
             event.startTracking();
             return true;
         }
@@ -451,6 +466,9 @@ public class ArticleCollectionActivity extends FragmentActivity
 
     @Override
     public boolean onKeyLongPress(int keyCode, KeyEvent event) {
+        if (!useVolumeForNav()) {
+            return false;
+        }
         ArticleFragment af = articleCollectionPagerAdapter.getPrimaryItem();
         if (af != null) {
             ArticleWebView webView = af.getWebView();

@@ -69,6 +69,7 @@ public class Application extends android.app.Application {
     static final String PREF_UI_THEME                   = "UITheme";
     static final String PREF_UI_THEME_LIGHT             = "light";
     static final String PREF_UI_THEME_DARK              = "dark";
+    static final String PREF_USE_VOLUME_FOR_NAV         = "useVolumeForNav";
 
 
     @Override
@@ -285,7 +286,7 @@ public class Application extends android.app.Application {
     }
 
     Slob.PeekableIterator<Blob> find(String key, String preferredSlobId, boolean activeOnly) {
-        return this.find(key, preferredSlobId,  activeOnly, null);
+        return this.find(key, preferredSlobId, activeOnly, null);
     }
 
     Slob.PeekableIterator<Blob> find(String key, String preferredSlobId, boolean activeOnly, Slob.Strength upToStrength) {
@@ -311,6 +312,18 @@ public class Application extends android.app.Application {
     Blob random() {
         Slob[] slobs = isOnlyFavDictsForRandomLookup() ? getFavoriteSlobs() : getActiveSlobs();
         return slobber.findRandom(slobs);
+    }
+
+    boolean useVolumeForNav() {
+        final SharedPreferences prefs = prefs();
+        return prefs.getBoolean(Application.PREF_USE_VOLUME_FOR_NAV, true);
+    }
+
+    void setUseVolumeForNav(boolean value) {
+        final SharedPreferences prefs = prefs();
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean(Application.PREF_USE_VOLUME_FOR_NAV, value);
+        editor.commit();
     }
 
     String getUrl(Blob blob) {
