@@ -16,6 +16,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.util.Patterns;
+import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -31,6 +32,7 @@ public class MainActivity extends FragmentActivity implements
     private static final String TAG = MainActivity.class.getSimpleName();
     private AppSectionsPagerAdapter appSectionsPagerAdapter;
     private ViewPager viewPager;
+
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         final Application app = (Application)getApplication();
@@ -310,4 +312,53 @@ public class MainActivity extends FragmentActivity implements
             }
         }
     }
+
+    private boolean useVolumeForNav() {
+        Application app = (Application)getApplication();
+        return app.useVolumeForNav();
+    }
+
+    @Override
+    public boolean onKeyUp(int keyCode, KeyEvent event) {
+
+        if (event.isCanceled()) {
+            return true;
+        }
+
+        if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
+            if (!useVolumeForNav()) {
+                return false;
+            }
+            int current = viewPager.getCurrentItem();
+            if (current > 0) {
+                viewPager.setCurrentItem(current - 1);
+            }
+            return true;
+        }
+
+        if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
+            if (!useVolumeForNav()) {
+                return false;
+            }
+            int current = viewPager.getCurrentItem();
+            if (current < appSectionsPagerAdapter.getCount() - 1) {
+                viewPager.setCurrentItem(current + 1);
+            }
+            return true;
+        }
+
+        return super.onKeyUp(keyCode, event);
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_VOLUME_UP || keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
+            if (!useVolumeForNav()) {
+                return false;
+            }
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
 }
