@@ -74,10 +74,20 @@
     [[images/sm-article-ru-zam-predely.png]]
 
 *** Random Article
-    Tapping application logo in main activity opens random article
-    from an active dictionary. User may optionally limit random
-    lookup to only use favorite dictionaries.
+    Tapping application logo in main activity finds a random title
+    in an active dictionary and opens corresponding articles.
+    User may optionally limit random lookup to only use favorite
+    dictionaries.
 
+*** Volume Buttons Navigation
+    When viewing articles, volume up/down buttons scroll article
+    content or, if at the bottom (top) of the page, move to the next
+    (previous) article. Long press scrolls all the way to the bottom
+    (top). In main view volume buttons cycle through tabs.
+
+*** Fullscreen Mode
+    On Android 4.4 and newer articles can be viewed in fullscreen
+    mode. Pull down the top edge to exit fullscreen mode.
 
 ** Requested Permissions
 *** android.permission.INTERNET
