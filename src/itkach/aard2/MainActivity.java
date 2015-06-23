@@ -333,6 +333,9 @@ public class MainActivity extends FragmentActivity implements
             if (current > 0) {
                 viewPager.setCurrentItem(current - 1);
             }
+            else {
+                viewPager.setCurrentItem(appSectionsPagerAdapter.getCount() - 1);
+            }
             return true;
         }
 
@@ -343,6 +346,9 @@ public class MainActivity extends FragmentActivity implements
             int current = viewPager.getCurrentItem();
             if (current < appSectionsPagerAdapter.getCount() - 1) {
                 viewPager.setCurrentItem(current + 1);
+            }
+            else {
+                viewPager.setCurrentItem(0);
             }
             return true;
         }
