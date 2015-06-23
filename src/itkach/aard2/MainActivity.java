@@ -153,6 +153,21 @@ public class MainActivity extends FragmentActivity implements
     }
 
     @Override
+    protected void onPause() {
+        //Looks like shown soft input sometimes causes a system ui visibility
+        //change event that breaks article activity launched from here out of full screen mode.
+        //Hiding it appears to reduce that.
+        InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+        try {
+            inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+        }
+        catch (Exception e) {
+            Log.w(TAG, "Hiding soft input failed", e);
+        }
+        super.onPause();
+    }
+
+    @Override
     public void onBackPressed() {
         int currentItem = viewPager.getCurrentItem();
         Fragment frag = appSectionsPagerAdapter.getItem(currentItem);
