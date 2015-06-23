@@ -94,4 +94,6 @@
     <string name="setting_ui_theme_light">Hell</string>
     <string name="setting_ui_theme_dark">Dunkel</string>
     <string name="action_load_remote_content">Lade externen Inhalt</string>
+    <string name="action_fullscreen">Vollbild</string>
+    <string name="setting_use_volume_for_nav">Verwenden Sie Lautstärketasten für die Navigation</string>
 </resources>

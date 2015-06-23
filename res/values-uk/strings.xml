@@ -90,6 +90,8 @@
     <string name="setting_ui_theme_light">Світлий</string>
     <string name="article_collection_invalid_link">Некоректне посилання</string>
     <string name="action_load_remote_content">Завантажити віддалений контент</string>
+    <string name="action_fullscreen">Весь екран</string>
+    <string name="setting_use_volume_for_nav">Використовувати кнопки гучності для навігації</string>
 
 
 </resources>
