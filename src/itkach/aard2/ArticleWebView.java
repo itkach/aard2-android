@@ -183,7 +183,8 @@ public class ArticleWebView extends WebView {
                 else {
                     Log.w(TAG, "onPageFinished: Unexpected page finished event for " + url);
                 }
-                view.loadUrl("javascript:" + "$SLOB.setStyleTitles($styleSwitcher.getTitles())");
+                view.loadUrl("javascript:" + styleSwitcherJs +
+                        ";$SLOB.setStyleTitles($styleSwitcher.getTitles())");
                 applyStylePref();
             }
 
