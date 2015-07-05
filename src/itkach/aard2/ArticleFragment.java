@@ -62,6 +62,9 @@ public class ArticleFragment extends Fragment {
     }
 
     private void displayBookmarked(boolean value) {
+        if (miBookmark == null) {
+            return;
+        }
         if (value) {
             miBookmark.setChecked(true);
             miBookmark.setIcon(icBookmark);
