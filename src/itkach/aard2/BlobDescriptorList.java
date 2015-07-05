@@ -193,7 +193,12 @@ final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
     }
 
     private void doUpdateLastAccess(BlobDescriptor bd) {
-        bd.lastAccess = System.currentTimeMillis();
+        long t = System.currentTimeMillis();
+        long dt = t - bd.lastAccess;
+        if (dt < 2000) {
+            return;
+        }
+        bd.lastAccess = t;
         store.save(bd);
     }
 
