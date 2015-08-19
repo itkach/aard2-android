@@ -24,6 +24,7 @@ import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.ibm.icu.impl.duration.impl.Utils;
 import com.shamanland.fonticon.FontIconDrawable;
 
 import java.util.ArrayList;
@@ -226,7 +227,7 @@ public class SettingsListAdapter extends BaseAdapter implements SharedPreference
         else {
             this.userStyleData = userStylePrefs.getAll();
             this.userStyleNames = new ArrayList<String>(this.userStyleData.keySet());
-            Collections.sort(this.userStyleNames);
+            Util.sort(this.userStyleNames);
 
             view = inflater.inflate(R.layout.settings_user_styles_item, parent,
                     false);
@@ -299,7 +300,7 @@ public class SettingsListAdapter extends BaseAdapter implements SharedPreference
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
         this.userStyleData = sharedPreferences.getAll();
         this.userStyleNames = new ArrayList<String>(this.userStyleData.keySet());
-        Collections.sort(userStyleNames);
+        Util.sort(userStyleNames);
         notifyDataSetChanged();
     }
 

@@ -11,7 +11,6 @@ import com.ibm.icu.text.Collator;
 import com.ibm.icu.text.RuleBasedCollator;
 import com.ibm.icu.text.StringSearch;
 
-import java.io.IOException;
 import java.text.StringCharacterIterator;
 import java.util.AbstractList;
 import java.util.ArrayList;
@@ -67,35 +66,25 @@ final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
         nameComparatorAsc = new Comparator<BlobDescriptor>() {
             @Override
             public int compare(BlobDescriptor b1, BlobDescriptor b2) {
-                return keyComparator.compare(b1.key, b2.key);
+            return keyComparator.compare(b1.key, b2.key);
             }
         };
 
-        nameComparatorDesc = new Comparator<BlobDescriptor>() {
-            @Override
-            public int compare(BlobDescriptor b1, BlobDescriptor b2) {
-                return keyComparator.compare(b2.key, b1.key);
-            }
-        };
+        nameComparatorDesc = Collections.reverseOrder(nameComparatorAsc);
 
         timeComparatorAsc = new Comparator<BlobDescriptor>() {
             @Override
             public int compare(BlobDescriptor b1, BlobDescriptor b2) {
-                return (int) (b1.createdAt - b2.createdAt);
+            return Util.compare(b1.createdAt, b2.createdAt);
             }
         };
 
-        timeComparatorDesc = new Comparator<BlobDescriptor>() {
-            @Override
-            public int compare(BlobDescriptor b1, BlobDescriptor b2) {
-                return (int) (b2.createdAt - b1.createdAt);
-            }
-        };
+        timeComparatorDesc = Collections.reverseOrder(timeComparatorAsc);
 
         lastAccessComparator = new Comparator<BlobDescriptor>() {
             @Override
             public int compare(BlobDescriptor b1, BlobDescriptor b2) {
-                return (int) (b2.lastAccess - b1.lastAccess);
+                return  Util.compare(b2.lastAccess, b1.lastAccess);
             }
         };
 
@@ -144,37 +133,7 @@ final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
     }
 
     private void sortOrderChanged() {
-        try {
-            Collections.sort(this.filteredList, comparator);
-        }
-        catch(Exception e) {
-            //From http://www.oracle.com/technetwork/java/javase/compatibility-417013.html#source
-            /*
-            Synopsis: Updated sort behavior for Arrays and Collections may throw an IllegalArgumentException
-            Description: The sorting algorithm used by java.util.Arrays.sort and (indirectly) by
-                         java.util.Collections.sort has been replaced. The new sort implementation may
-                         throw an IllegalArgumentException if it detects a Comparable that violates
-                         the Comparable contract. The previous implementation silently ignored such a situation.
-                         If the previous behavior is desired, you can use the new system property,
-                         java.util.Arrays.useLegacyMergeSort, to restore previous mergesort behavior.
-            Nature of Incompatibility: behavioral
-            RFE: 6804124
-             */
-            //Name comparators use ICU collation key comparison. Given Unicode collation complexity
-            //it's hard to be sure that collation key comparisons won't trigger an exception. It certainly
-            //does at least for some keys in ICU 53.1.
-            //Incorrect or no sorting seems preferable than a crashing app.
-            //TODO perhaps java.util.Collections.sort shouldn't be used at all
-
-            Log.w(TAG, "Error while sorting descriptors:", e);
-            StringBuffer sb = new StringBuffer("Descriptors keys that caused sort failure:");
-            for (BlobDescriptor bd : this.filteredList) {
-                sb.append("\n");
-                sb.append(bd.key);
-            }
-            Log.w(TAG, sb.toString());
-        }
-
+        Util.sort(this.filteredList, comparator);
         this.dataSetObservable.notifyChanged();
     }
 
@@ -276,7 +235,7 @@ final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
         this.list.add(bd);
         store.save(bd);
         if (this.list.size() > this.maxSize) {
-            Collections.sort(this.list, lastAccessComparator);
+            Util.sort(this.list, lastAccessComparator);
             BlobDescriptor lru = this.list.remove(this.list.size() - 1);
             store.delete(lru.id);
         }

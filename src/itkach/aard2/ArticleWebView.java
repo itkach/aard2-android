@@ -273,7 +273,7 @@ public class ArticleWebView extends WebView {
                 "userStyles", Activity.MODE_PRIVATE);
         Map<String, ?> data = prefs.getAll();
         List<String> names = new ArrayList<String>(data.keySet());
-        Collections.sort(names);
+        Util.sort(names);
         names.addAll(styleTitles);
         names.add(defaultStyleTitle);
         names.add(autoStyleTitle);
