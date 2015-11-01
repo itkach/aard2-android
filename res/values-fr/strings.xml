@@ -1,0 +1,99 @@
+﻿<resources>
+    <string name="app_name">Aard 2</string>
+    <string name="subtitle_lookup">trouver</string>
+    <string name="subtitle_bookmark">signet</string>
+    <string name="subtitle_history">cours</string>
+    <string name="subtitle_dictionaries">dictionnaires</string>
+
+    <string name="action_find_dictionaries">trouver dictionnaires</string>
+    <string name="action_find_in_page">trouver sur la page</string>
+    <string name="action_bookmark_article">signet</string>
+    <string name="action_filter">filtre</string>
+    <string name="action_ascending">croissant</string>
+    <string name="action_descending">décroissant</string>
+
+    <string name="action_sort_by_title">par titre</string>
+    <string name="action_sort_by_time">par temps</string>
+    <string name="action_lookup">chercher</string>
+
+    <!--
+    English only uses "one" and "other" for plurals.
+    Other quantities are included as a fallback if some translation
+    is missing a quantity used in that language, otherwise the app will crash
+    -->
+    <plurals name="dict_item_count">
+        <item quantity="zero">%,d termes</item>
+        <item quantity="one">%,d terme</item>
+        <item quantity="two">%,d termes</item>
+        <item quantity="few">%,d termes</item>
+        <item quantity="many">%,d termes</item>
+        <item quantity="other">%,d termes</item>
+    </plurals>
+
+    <string name="action_zoom_out">réduire le zoom</string>
+    <string name="action_zoom_in">augmenter le zoom</string>
+    <string name="action_zoom_reset">réinitialiser le zoom</string>
+    <string name="action_select_style">styles</string>
+    <string name="select_style">sélectionnez un style</string>
+    <string name="default_style_title">défaut</string>
+    <string name="subtitle_settings">paramètre</string>
+    <string name="setting_remote_content_always">toujours</string>
+    <string name="setting_remote_content_wifi">Seulement avec Wi-Fi</string>
+    <string name="setting_remote_content_never">jamais</string>
+    <string name="setting_remote_content">charger contenu extérieur</string>
+    <string name="setting_about">au sujet d' %1$s</string>
+    <string name="setting_clear_cache">effacer cache</string>
+    <string name="setting_clear_cache_subtitle">effacer cache avec de contenu de les images extérieures</string>
+    <string name="confirm_clear_cached_content">effacer cache?</string>
+    <string name="article_collection_nothing_found">rien trouvé</string>
+    <string name="article_collection_selected_not_available">article sélectionée n'est pas disponible</string>
+    <string name="article_collection_nothing_to_lookup">rien pour chercher</string>
+    <string name="article_view_msg_not_found">rien trouvé</string>
+    <string name="dictionaries_please_wait">attendre svp</string>
+    <string name="dictionaries_scanning_device">recherche de les dictionnaires est en cours...</string>
+    <string name="dictionaries_confirm_forget">oublier %1$s?</string>
+    <string name="lookup_nothing_found">rien trouvé</string>
+    <string name="main_empty_bookmarks">pas de signets</string>
+    <string name="main_empty_history">pas de cours</string>
+    <string name="main_empty_dictionaries">pas des dictionnaires</string>
+    <string name="delete">effacer</string>
+    <plurals name="confirm_delete_bookmark_count">
+        <item quantity="zero">%,d signets</item>
+        <item quantity="one">%,d signet</item>
+        <item quantity="two">%,d signets</item>
+        <item quantity="few">%,d signets</item>
+        <item quantity="many">%,d signets</item>
+        <item quantity="other">%,d signets</item>
+    </plurals>
+    <plurals name="confirm_delete_history_count">
+        <item quantity="zero">%,d vieux enregistrements</item>
+        <item quantity="one">%,d vieux enregistrement</item>
+        <item quantity="two">%,d vieux enregistrements</item>
+        <item quantity="few">%,d vieux enregistrements</item>
+        <item quantity="many">%,d vieux enregistrements</item>
+        <item quantity="other">%,d vieux enregistrements</item>
+    </plurals>
+    <string name="blob_descriptor_confirm_delete">effacer %1$s?</string>
+    <string name="msg_failed_to_read_file">fichier ne lit pas</string>
+    <string name="msg_file_too_big">fichier trop gros</string>
+    <string name="setting_user_styles">styles de utilisateur</string>
+    <string name="setting_user_styles_empty">pas des styles</string>
+    <string name="msg_failed_to_store_user_style">ne peux pas enregistrer le style</string>
+    <string name="setting_user_style_confirm_forget">oublier %1$s?</string>
+    <string name="msg_file_not_css">c'est n'est pas un fichier CSS</string>
+    <string name="msg_no_activity_to_get_content">pas possible de ouvrir ce fichier</string>
+    <string name="action_add_dictionaries">ajouter</string>
+    <string name="title_activity_file_select">choisir dictionnaire</string>
+    <string name="action_goto_parent_dir">vers le haut</string>
+    <string name="action_reload_directory">recharger</string>
+    <string name="msg_dictionary_already_open">déjà ouvert</string>
+    <string name="msg_dictionary_added">dictionnaire de %1$s ajouté</string>
+    <string name="setting_fav_random_search">utiliser seulement les dictionnaires favorisés pour une recherche randomisée</string>
+    <string name="article_collection_invalid_link">lien périmé</string>
+    <string name="setting_ui_theme">interface utilisateur</string>
+    <string name="setting_ui_theme_light">vif</string>
+    <string name="setting_ui_theme_dark">sombre</string>
+    <string name="action_load_remote_content">chargement de contenu extérieur en cours</string>
+    <string name="action_fullscreen">volubile</string>
+    <string name="setting_use_volume_for_nav">utilisez les boutons des volume pour naviger svp</string>
+</resources>
