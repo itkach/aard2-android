@@ -56,7 +56,7 @@
     <string name="main_empty_bookmarks">Pas de signets</string>
     <string name="main_empty_history">Pas de cours</string>
     <string name="main_empty_dictionaries">Pas des dictionnaires</string>
-    <string name="delete">effacer</string>
+    <string name="delete">Effacer</string>
     <plurals name="confirm_delete_bookmark_count">
         <item quantity="zero">%,d Signets</item>
         <item quantity="one">%,d Signet</item>
