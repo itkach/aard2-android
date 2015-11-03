@@ -9,11 +9,11 @@
     <string name="action_find_in_page">Suche in Seite</string>
     <string name="action_bookmark_article">Lesezeichen</string>
     <string name="action_filter">Filter</string>
-    <string name="action_ascending">aufsteigend</string>
-    <string name="action_descending">absteigend</string>
+    <string name="action_ascending">Aufsteigend</string>
+    <string name="action_descending">Absteigend</string>
 
-    <string name="action_sort_by_title">nach Titel</string>
-    <string name="action_sort_by_time">nach Zeit</string>
+    <string name="action_sort_by_title">Nach Titel</string>
+    <string name="action_sort_by_time">Nach Zeit</string>
     <string name="action_lookup">Nachschlagen</string>
 
     <!--
@@ -46,7 +46,7 @@
     <string name="setting_clear_cache_subtitle">Inhalt des Caches mit externen Bildern löschen</string>
     <string name="confirm_clear_cached_content">Cache löschen?</string>
     <string name="article_collection_nothing_found">Nichts gefunden</string>
-    <string name="article_collection_selected_not_available">Gewählter Artikel ist nicht verfügbar</string>
+    <string name="article_collection_selected_not_available">Gewählter Artikel nicht verfügbar</string>
     <string name="article_collection_nothing_to_lookup">Nichts zum Nachschlagen</string>
     <string name="article_view_msg_not_found">Nichts gefunden</string>
     <string name="dictionaries_please_wait">Bitte warten</string>
@@ -66,22 +66,22 @@
         <item quantity="other">%,d Lesezeichen</item>
     </plurals>
     <plurals name="confirm_delete_history_count">
-        <item quantity="zero">%,d alte Datensätze</item>
-        <item quantity="one">%,d alter Datensatz</item>
-        <item quantity="two">%,d alte Datensätze</item>
-        <item quantity="few">%,d alte Datensätze</item>
-        <item quantity="many">%,d alte Datensätze</item>
-        <item quantity="other">%,d alte Datensätze</item>
+        <item quantity="zero">%,d Alte Datensätze</item>
+        <item quantity="one">%,d Alter Datensatz</item>
+        <item quantity="two">%,d Alte Datensätze</item>
+        <item quantity="few">%,d Alte Datensätze</item>
+        <item quantity="many">%,d Alte Datensätze</item>
+        <item quantity="other">%,d Alte Datensätze</item>
     </plurals>
     <string name="blob_descriptor_confirm_delete">Lösche %1$s?</string>
     <string name="msg_failed_to_read_file">Datei nicht lesbar</string>
     <string name="msg_file_too_big">Datei zu gross</string>
     <string name="setting_user_styles">Anwenderstile</string>
     <string name="setting_user_styles_empty">Keine Stile</string>
-    <string name="msg_failed_to_store_user_style">Kann den Stil nicht speichern</string>
+    <string name="msg_failed_to_store_user_style">Kann Stil nicht speichern</string>
     <string name="setting_user_style_confirm_forget">Vergesse %1$s?</string>
     <string name="msg_file_not_css">Scheint keine CSS-Datei zu sein</string>
-    <string name="msg_no_activity_to_get_content">Kann die Datei nicht öffnen</string>
+    <string name="msg_no_activity_to_get_content">Kann Datei nicht öffnen</string>
     <string name="action_add_dictionaries">Hinzufügen</string>
     <string name="title_activity_file_select">Wähle Wörterbuch</string>
     <string name="action_goto_parent_dir">Hoch</string>
@@ -95,5 +95,5 @@
     <string name="setting_ui_theme_dark">Dunkel</string>
     <string name="action_load_remote_content">Lade externen Inhalt</string>
     <string name="action_fullscreen">Vollbild</string>
-    <string name="setting_use_volume_for_nav">Verwenden Sie die Lautstärketasten für die Navigation</string>
+    <string name="setting_use_volume_for_nav">Lautstärketasten für die Navigation verwenden</string>
 </resources>
