@@ -41,12 +41,12 @@
     <string name="setting_remote_content_wifi">Seulement avec Wi-Fi</string>
     <string name="setting_remote_content_never">Jamais</string>
     <string name="setting_remote_content">Charger contenu extérieur</string>
-    <string name="setting_about">Au sujet d' %1$s</string>
+    <string name="setting_about">Au sujet d\' %1$s</string>
     <string name="setting_clear_cache">Effacer cache</string>
     <string name="setting_clear_cache_subtitle">Effacer cache avec de contenu de les images extérieures</string>
     <string name="confirm_clear_cached_content">Effacer cache?</string>
     <string name="article_collection_nothing_found">Rien trouvé</string>
-    <string name="article_collection_selected_not_available">Article sélectionée n'est pas disponible</string>
+    <string name="article_collection_selected_not_available">Article sélectionée n\'est pas disponible</string>
     <string name="article_collection_nothing_to_lookup">Rien pour chercher</string>
     <string name="article_view_msg_not_found">Rien trouvé</string>
     <string name="dictionaries_please_wait">Attendre svp</string>
@@ -80,7 +80,7 @@
     <string name="setting_user_styles_empty">Pas des styles</string>
     <string name="msg_failed_to_store_user_style">Ne peux pas enregistrer le style</string>
     <string name="setting_user_style_confirm_forget">Oublier %1$s?</string>
-    <string name="msg_file_not_css">C'est n'est pas un fichier CSS</string>
+    <string name="msg_file_not_css">C\'est n\'est pas un fichier CSS</string>
     <string name="msg_no_activity_to_get_content">Pas possible de ouvrir ce fichier</string>
     <string name="action_add_dictionaries">Ajouter</string>
     <string name="title_activity_file_select">Choisir dictionnaire</string>
