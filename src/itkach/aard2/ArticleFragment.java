@@ -79,7 +79,7 @@ public class ArticleFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         int itemId = item.getItemId();
         if (itemId == R.id.action_find_in_page) {
-            view.showFindDialog(null, false);
+            view.showFindDialog(null, true);
             return true;
         }
         if (itemId == R.id.action_bookmark_article) {
