@@ -30,6 +30,7 @@ import android.widget.BaseAdapter;
 import android.widget.Toast;
 
 import java.util.Iterator;
+import java.util.List;
 
 import itkach.slob.Slob;
 import itkach.slob.Slob.Blob;
@@ -184,6 +185,10 @@ public class ArticleCollectionActivity extends FragmentActivity
     }
 
     private ArticleCollectionPagerAdapter createFromUri(Application app, Uri articleUrl) {
+        String host = articleUrl.getHost();
+        if (!(host.equals("localhost") || host.matches("127.\\d{1,3}.\\d{1,3}.\\d{1,3}"))) {
+            return createFromIntent(app, getIntent());
+        }
         BlobDescriptor bd = BlobDescriptor.fromUri(articleUrl);
         if (bd == null) {
             return null;
@@ -224,6 +229,14 @@ public class ArticleCollectionActivity extends FragmentActivity
         String lookupKey = intent.getStringExtra(Intent.EXTRA_TEXT);
         if (lookupKey == null) {
             lookupKey = intent.getStringExtra(SearchManager.QUERY);
+        }
+        if (lookupKey == null) {
+            Uri uri = intent.getData();
+            List<String> segments = uri.getPathSegments();
+            int length = segments.size();
+            if (length > 0) {
+                lookupKey = segments.get(length - 1);
+            }
         }
         BlobListAdapter data = new BlobListAdapter(this, 20, 1);
         if (lookupKey == null || lookupKey.length() == 0) {

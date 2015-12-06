@@ -1,8 +1,13 @@
 package itkach.aard2;
 
 import android.app.Activity;
+import android.content.ComponentName;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.database.DataSetObserver;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Handler;
@@ -71,6 +76,7 @@ public class Application extends android.app.Application {
     static final String PREF_UI_THEME_DARK              = "dark";
     static final String PREF_USE_VOLUME_FOR_NAV         = "useVolumeForNav";
 
+    private static final String TAG = Application.class.getSimpleName();
 
     @Override
     public void onCreate() {
@@ -81,7 +87,7 @@ public class Application extends android.app.Application {
                         "setWebContentsDebuggingEnabled", boolean.class);
                 setWebContentsDebuggingEnabledMethod.invoke(null, true);
             } catch (NoSuchMethodException e1) {
-                Log.d(getClass().getName(),
+                Log.d(TAG,
                         "setWebContentsDebuggingEnabledMethod method not found");
             } catch (InvocationTargetException e) {
                 e.printStackTrace();
@@ -107,7 +113,7 @@ public class Application extends android.app.Application {
 
         startWebServer();
 
-        Log.d(getClass().getName(), String.format("Started web server on port %d in %d ms",
+        Log.d(TAG, String.format("Started web server on port %d in %d ms",
                 port, (System.currentTimeMillis() - t0)));
         try {
             InputStream is;
@@ -144,6 +150,9 @@ public class Application extends android.app.Application {
                     }
                 }
                 slobber.setSlobs(slobs);
+
+                new EnableLinkHandling().execute(getActiveSlobs());
+
                 lookup(lookupQuery);
                 bookmarks.notifyDataSetChanged();
                 history.notifyDataSetChanged();
@@ -174,7 +183,8 @@ public class Application extends android.app.Application {
         }
         reader.close();
         return sw.toString();
-    };
+    }
+
 
     private void startWebServer() {
         int portCandidate = PREFERRED_PORT;
@@ -182,7 +192,7 @@ public class Application extends android.app.Application {
             slobber.start("127.0.0.1", portCandidate);
             port = portCandidate;
         } catch (IOException e) {
-            Log.w(getClass().getName(),
+            Log.w(TAG,
                     String.format("Failed to start on preferred port %d",
                             portCandidate), e);
             Set<Integer> seen = new HashSet<Integer>();
@@ -204,7 +214,7 @@ public class Application extends android.app.Application {
                     break;
                 } catch (IOException e1) {
                     lastError = e1;
-                    Log.w(getClass().getName(),
+                    Log.w(TAG,
                             String.format("Failed to start on port %d",
                                     portCandidate), e1);
                 }
@@ -236,9 +246,9 @@ public class Application extends android.app.Application {
 
     void push(Activity activity) {
         this.articleActivities.add(activity);
-        Log.d(getClass().getName(), "Activity added, stack size " + this.articleActivities.size());
+        Log.d(TAG, "Activity added, stack size " + this.articleActivities.size());
         if (this.articleActivities.size() > 3) {
-            Log.d(getClass().getName(), "Max stack size exceeded, finishing oldest activity");
+            Log.d(TAG, "Max stack size exceeded, finishing oldest activity");
             this.articleActivities.get(0).finish();
         }
     }
@@ -293,7 +303,7 @@ public class Application extends android.app.Application {
         long t0 = System.currentTimeMillis();
         Slob[] slobs = activeOnly ? getActiveSlobs() : slobber.getSlobs();
         Slob.PeekableIterator<Blob> result = Slob.find(key, slobs, slobber.getSlob(preferredSlobId), upToStrength);
-        Log.d(getClass().getName(), String.format("find ran in %dms", System.currentTimeMillis() - t0));
+        Log.d(TAG, String.format("find ran in %dms", System.currentTimeMillis() - t0));
         return result;
     }
 
@@ -488,5 +498,53 @@ public class Application extends android.app.Application {
 
 
     static class FileTooBigException extends IOException {
+    }
+
+
+    private class EnableLinkHandling extends AsyncTask<Slob, Void, Void> {
+
+        @Override
+        protected Void doInBackground(Slob[] slobs) {
+            Set<String> hosts = new HashSet<String>();
+            for (Slob slob : slobs) {
+                try {
+                    String uriValue = slob.getTags().get("uri");
+                    Uri uri = Uri.parse(uriValue);
+                    String host = uri.getHost();
+                    if (host != null) {
+                        hosts.add(host.toLowerCase());
+                    }
+                }
+                catch (Exception ex) {
+                    Log.w(TAG, ex);
+                }
+            }
+
+            long t0 = System.currentTimeMillis();
+            String packageName = getPackageName();
+            try {
+                PackageManager pm = getPackageManager();
+                PackageInfo p = pm.getPackageInfo(packageName,
+                        PackageManager.GET_ACTIVITIES | PackageManager.GET_DISABLED_COMPONENTS);
+                Log.d(TAG, "Done getting available activities in " + (System.currentTimeMillis() - t0));
+                t0 = System.currentTimeMillis();
+                for (ActivityInfo activityInfo : p.activities) {
+                    if (isCancelled()) break;
+                    if (activityInfo.targetActivity != null) {
+                        boolean enabled = hosts.contains(activityInfo.name);
+                        if (enabled) {
+                            Log.d(TAG, "Enabling links handling for " + activityInfo.name);
+                        }
+                        int setting = enabled ? PackageManager.COMPONENT_ENABLED_STATE_ENABLED : PackageManager.COMPONENT_ENABLED_STATE_DISABLED;
+                        pm.setComponentEnabledSetting(new ComponentName(getApplicationContext(), activityInfo.name),
+                                setting, PackageManager.DONT_KILL_APP);
+                    }
+                }
+            } catch (PackageManager.NameNotFoundException e) {
+                Log.w(TAG, e);
+            }
+            Log.d(TAG, "Done enabling activities in " + (System.currentTimeMillis() - t0));
+            return null;
+        }
     }
 }
