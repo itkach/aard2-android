@@ -1,5 +1,6 @@
 package itkach.aard2;
 
+import android.net.Uri;
 import android.util.Log;
 
 import java.util.Collections;
@@ -48,4 +49,23 @@ class Util {
             Log.w(TAG, "Error while sorting:", e);
         }
     }
+
+    static boolean isBlank(String value) {
+        return value == null || value.trim().equals("");
+    }
+
+    static String wikipediaToSlobUri(Uri uri) {
+        String host = uri.getHost();
+        if (isBlank(host)) {
+            return null;
+        }
+        String normalizedHost = host;
+        String[] parts = host.split(".");
+        //if mobile host like en.m.wikipedia.opr get rid of m
+        if (parts.length == 4) {
+            normalizedHost = String.format("%s.%s.%s", parts[0], parts[2], parts[3]);
+        }
+        return "http://"+normalizedHost;
+    }
+
 }

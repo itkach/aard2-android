@@ -230,12 +230,22 @@ public class ArticleCollectionActivity extends FragmentActivity
         if (lookupKey == null) {
             lookupKey = intent.getStringExtra(SearchManager.QUERY);
         }
+        String preferredSlobId = null;
         if (lookupKey == null) {
             Uri uri = intent.getData();
             List<String> segments = uri.getPathSegments();
             int length = segments.size();
             if (length > 0) {
                 lookupKey = segments.get(length - 1);
+            }
+            String slobUri = Util.wikipediaToSlobUri(uri);
+            Log.d(TAG, String.format("Converted URI %s to slob URI %s", uri, slobUri));
+            if (slobUri != null) {
+                Slob slob = app.findSlob(slobUri);
+                if (slob != null) {
+                    preferredSlobId = slob.getId().toString();
+                    Log.d(TAG, String.format("Found slob %s for slob URI %s", preferredSlobId, slobUri));
+                }
             }
         }
         BlobListAdapter data = new BlobListAdapter(this, 20, 1);
@@ -244,7 +254,7 @@ public class ArticleCollectionActivity extends FragmentActivity
             throw new RuntimeException(msg);
         }
         else {
-            Iterator<Blob> result = stemLookup(app, lookupKey);
+            Iterator<Blob> result = stemLookup(app, lookupKey, preferredSlobId);
             data.setData(result);
         }
         return new ArticleCollectionPagerAdapter(
@@ -252,12 +262,16 @@ public class ArticleCollectionActivity extends FragmentActivity
     }
 
     private Iterator<Blob> stemLookup(Application app, String lookupKey) {
+        return this.stemLookup(app, lookupKey, null);
+    }
+
+    private Iterator<Blob> stemLookup(Application app, String lookupKey, String preferredSlobId) {
         Slob.PeekableIterator<Blob> result;
         final int length = lookupKey.length();
         String currentLookupKey = lookupKey;
         int currentLength = currentLookupKey.length();
         do {
-            result = app.find(currentLookupKey, null, true);
+            result = app.find(currentLookupKey, preferredSlobId, true);
             if (result.hasNext()) {
                 Blob b = result.peek();
                 if (b.key.length() - length > 3) {

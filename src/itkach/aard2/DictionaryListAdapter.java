@@ -1,6 +1,5 @@
 package itkach.aard2;
 
-import android.animation.LayoutTransition;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -8,9 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.database.DataSetObserver;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.os.Build;
 import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -23,7 +20,6 @@ import android.widget.TextView;
 
 import com.shamanland.fonticon.FontIconDrawable;
 
-import java.util.Comparator;
 import java.util.Locale;
 
 import static java.lang.String.format;
@@ -59,7 +55,7 @@ public class DictionaryListAdapter extends BaseAdapter {
             @Override
             public void onClick(View v) {
                 String url = (String)v.getTag();
-                if (!isBlank(url)) {
+                if (!Util.isBlank(url)) {
                     try {
                         Uri uri = Uri.parse(url);
                         Intent browserIntent = new Intent(Intent.ACTION_VIEW, uri);
@@ -71,10 +67,6 @@ public class DictionaryListAdapter extends BaseAdapter {
                 }
             }
         };
-    }
-
-    private static boolean isBlank(String value) {
-        return value == null || value.trim().equals("");
     }
 
     @Override
@@ -250,7 +242,7 @@ public class DictionaryListAdapter extends BaseAdapter {
         String copyright = desc.tags.get("copyright");
         copyrightView.setText(copyright);
 
-        copyrightRow.setVisibility(isBlank(copyright) ? View.GONE : View.VISIBLE);
+        copyrightRow.setVisibility(Util.isBlank(copyright) ? View.GONE : View.VISIBLE);
         copyrightRow.setEnabled(available);
     }
 
@@ -266,7 +258,7 @@ public class DictionaryListAdapter extends BaseAdapter {
         sourceView.setText(sourceHtml);
         sourceView.setTag(source);
 
-        int visibility = isBlank(source) ? View.GONE : View.VISIBLE;
+        int visibility = Util.isBlank(source) ? View.GONE : View.VISIBLE;
         //Setting visibility on layout seems to have no effect
         //if one of the children is a link
         sourceIcon.setVisibility(visibility);
@@ -285,11 +277,11 @@ public class DictionaryListAdapter extends BaseAdapter {
         String licenseName = desc.tags.get("license.name");
         String licenseUrl = desc.tags.get("license.url");
         CharSequence license;
-        if (isBlank(licenseUrl)) {
+        if (Util.isBlank(licenseUrl)) {
             license = licenseName;
         }
         else {
-            if (isBlank(licenseName)) {
+            if (Util.isBlank(licenseName)) {
                 licenseName = licenseUrl;
             }
             license = Html.fromHtml(String.format(hrefTemplate, licenseUrl, licenseName));
@@ -297,7 +289,7 @@ public class DictionaryListAdapter extends BaseAdapter {
         licenseView.setText(license);
         licenseView.setTag(licenseUrl);
 
-        int visibility = (isBlank(licenseName) && isBlank(licenseUrl)) ? View.GONE : View.VISIBLE;
+        int visibility = (Util.isBlank(licenseName) && Util.isBlank(licenseUrl)) ? View.GONE : View.VISIBLE;
         licenseIcon.setVisibility(visibility);
         licenseView.setVisibility(visibility);
         licenseRow.setVisibility(visibility);
