@@ -230,6 +230,9 @@ public class ArticleCollectionActivity extends FragmentActivity
         if (lookupKey == null) {
             lookupKey = intent.getStringExtra(SearchManager.QUERY);
         }
+        if (lookupKey == null) {
+            lookupKey = intent.getStringExtra("EXTRA_QUERY");
+        }
         String preferredSlobId = null;
         if (lookupKey == null) {
             Uri uri = intent.getData();
