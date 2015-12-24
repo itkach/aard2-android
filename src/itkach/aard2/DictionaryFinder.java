@@ -51,19 +51,6 @@ public class DictionaryFinder {
             Log.d(T, String.format("%s is excluded", absolutePath));
             return Collections.emptyList();
         }
-        boolean symlink = false;
-        try {
-            symlink = isSymlink(dir);
-        } catch (IOException e) {
-            Log.e(T,
-                    String.format("Failed to check if %s is symlink",
-                            dir.getAbsolutePath()));
-        }
-
-        if (symlink) {
-            Log.d(T, String.format("%s is a symlink", absolutePath));
-            return Collections.emptyList();
-        }
 
         if (dir.isHidden()) {
             Log.d(T, String.format("%s is hidden", absolutePath));
@@ -78,32 +65,22 @@ public class DictionaryFinder {
                     break;
                 }
                 File file = files[i];
+                Log.d(T, "Considering " + file.getAbsolutePath());
                 if (file.isDirectory()) {
+                    Log.d(T, "Directory: " + file.getAbsolutePath());
                     candidates.addAll(scanDir(file));
                 } else {
                     if (!file.isHidden() && file.isFile()) {
+                        Log.d(T, "Candidate: " + file.getAbsolutePath());
                         candidates.add(file);
+                    }
+                    else {
+                        Log.d(T, "Hidden or not a file: " + file.getAbsolutePath());
                     }
                 }
             }
         }
         return candidates;
-    }
-
-    private static boolean isSymlink(File file) throws IOException {
-        File fileInCanonicalDir = null;
-        if (file.getParent() == null) {
-            fileInCanonicalDir = file;
-        } else {
-            File canonicalDir = file.getParentFile().getCanonicalFile();
-            fileInCanonicalDir = new File(canonicalDir, file.getName());
-        }
-        if (fileInCanonicalDir.getCanonicalFile().equals(
-                fileInCanonicalDir.getAbsoluteFile())) {
-            return false;
-        } else {
-            return true;
-        }
     }
 
     synchronized List<SlobDescriptor> findDictionaries() {
