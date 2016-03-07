@@ -41,15 +41,9 @@
     <string name="setting_remote_content_never">Nunca</string>
     <string name="setting_remote_content">Carregar conteúdo da web</string>
     <string name="setting_about">Sobre %1$s</string>
-    <string name="application_home_url" translatable="false">http://aarddict.org</string>
     <string name="application_copyright">2015 Igor Tkach</string>
     <string name="application_license_name">GNU General Public License v3</string>
     <string name="application_license_url">https://gnu.org/licenses/gpl.html</string>
-    <string name="application_license" translatable="false">
-        <![CDATA[
-            <a href="%1$s">%2$s</a>
-        ]]>
-    </string>
     <string name="application_version">Versão %1$s</string>
     <string name="setting_clear_cache">Limpar cache</string>
     <string name="setting_clear_cache_subtitle">Elimina o conteúdo da cache incluindo imagens transferidas da web</string>
