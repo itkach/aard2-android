@@ -22,7 +22,7 @@
     -->
     <plurals name="dict_item_count">
         <item quantity="zero">%,d itens</item>
-        <item quantity="one">%,d item</item>
+        <item quantity="one">%,d iten</item>
         <item quantity="two">%,d itens</item>
         <item quantity="few">%,d itens</item>
         <item quantity="many">%,d itens</item>
