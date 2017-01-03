@@ -4,14 +4,23 @@ import android.util.Log;
 
 import java.io.File;
 import java.io.FilenameFilter;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static android.os.Environment.getExternalStorageDirectory;
+
+
 public class DictionaryFinder {
+
+    public final static File[] FALLBACK_ROOT_LS = new File[] {
+            new File("/mnt"),
+            new File("/sdcard"),
+            new File("/storage"),
+            getExternalStorageDirectory()};
+
 
     private final static String T = "DictionaryFinder";
 
@@ -37,8 +46,15 @@ public class DictionaryFinder {
 
     private List<File> discover() {
         File scanRoot = new File("/");
+        File[] files = scanRoot.listFiles(fileFilter);
         List<File> result = new ArrayList<File>();
-        result.addAll(scanDir(scanRoot));
+
+        if (files == null || files.length == 0) {
+            files = FALLBACK_ROOT_LS;
+        }
+        for (File f : files) {
+            result.addAll(scanDir(f));
+        }
         return result;
     }
 
