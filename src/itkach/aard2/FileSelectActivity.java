@@ -22,6 +22,7 @@ public class FileSelectActivity extends ListActivity {
 
     final static String KEY_SELECTED_FILE_PATH = "selectedFilePath";
     static final String PREF = "fileSelect";
+    private MenuItem miParentDir;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -110,7 +111,7 @@ public class FileSelectActivity extends ListActivity {
 
     @Override
     public boolean onPrepareOptionsMenu(final Menu menu) {
-        MenuItem miParentDir = menu.findItem(R.id.action_goto_parent_dir);
+        miParentDir = menu.findItem(R.id.action_goto_parent_dir);
         miParentDir.setIcon(FontIconDrawable.inflate(this, R.xml.ic_actionbar_level_up));
         MenuItem miReloadDir = menu.findItem(R.id.action_reload_directory);
         miReloadDir.setIcon(FontIconDrawable.inflate(this, R.xml.ic_actionbar_reload));
@@ -127,10 +128,7 @@ public class FileSelectActivity extends ListActivity {
         FileSelectListAdapter adapter = (FileSelectListAdapter)getListAdapter();
         if (id == R.id.action_goto_parent_dir) {
             File root = adapter.getRoot();
-            File parent = root.getParentFile();
-            if (parent != null) {
-                adapter.setRoot(parent);
-            }
+            this.setRoot(root.getParentFile());
             return true;
         }
         if (id == R.id.action_reload_directory) {
@@ -145,12 +143,20 @@ public class FileSelectActivity extends ListActivity {
 
     }
 
+    private void setRoot(File newRoot) {
+        FileSelectListAdapter adapter = (FileSelectListAdapter)getListAdapter();
+        if (newRoot != null) {
+            adapter.setRoot(newRoot);
+            miParentDir.setEnabled(newRoot.getParentFile() != null);
+        }
+    }
+
     @Override
     protected void onListItemClick(ListView l, View v, int position, long id) {
         FileSelectListAdapter adapter = (FileSelectListAdapter)l.getAdapter();
         File f = (File)adapter.getItem(position);
         if (f.isDirectory()) {
-            adapter.setRoot(f);
+            this.setRoot(f);
         }
         else {
             Intent data = new Intent();
