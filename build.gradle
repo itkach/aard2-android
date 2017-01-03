@@ -2,13 +2,14 @@
 buildscript {
     repositories {
         mavenCentral()
+        jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:1.0+'
+        classpath 'com.android.tools.build:gradle:2.2.3'
     }
 }
 
-apply plugin: 'android'
+apply plugin: 'com.android.application'
 apply plugin: 'eclipse'
 apply plugin: 'idea'
 
@@ -55,9 +56,12 @@ android {
         signingConfigs {
             release {
                 storeFile file(System.getenv("KEYSTORE"))
-                storePassword new String(System.console().readPassword("\n\$ Keystore password: "))
+                storePassword System.getenv("STORE_PASSWORD")
+                keyPassword System.getenv("KEY_PASSWORD")
+                if (keyPassword == null) {
+                    keyPassword = storePassword
+                }
                 keyAlias "aard2-android"
-                keyPassword new String(System.console().readPassword("\n\$ Key password: "))
             }
         }
     }
