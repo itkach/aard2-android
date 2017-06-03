@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="itkach.aard2"
-    android:versionCode="35"
-    android:versionName="0.35" >
+    android:versionCode="36"
+    android:versionName="0.36" >
 
     <uses-sdk
         android:minSdkVersion="15"
