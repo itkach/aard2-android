@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Aard 2</string>
+    <string name="subtitle_lookup">Oppslag</string>
+    <string name="subtitle_bookmark">Bokmerker</string>
+    <string name="subtitle_history">Historikk</string>
+    <string name="subtitle_dictionaries">Ordlister</string>
+    <string name="action_find_dictionaries">Finn ordlister</string>
+    <string name="action_find_in_page">Finn på side</string>
+    <string name="action_bookmark_article">Bokmerk</string>
+    <string name="action_filter">Filtrer</string>
+    <string name="action_ascending">Stigende</string>
+    <string name="action_descending">Synkende</string>
+    <string name="action_sort_by_title">Etter tittel</string>
+    <string name="action_sort_by_time">Etter tid</string>
+    <string name="action_lookup">Slå opp</string>
+    <!--
+    English only uses "one" and "other" for plurals.
+    Other quantities are included as a fallback if some translation
+    is missing a quantity used in that language, otherwise the app will crash
+    -->
+    <plurals name="dict_item_count">
+        <item quantity="zero">%,d elementer</item>
+        <item quantity="one">%,d element</item>
+        <item quantity="two">%,d elementer</item>
+        <item quantity="few">%,d elementer</item>
+        <item quantity="many">%,d elementer</item>
+        <item quantity="other">%,d elementer</item>
+    </plurals>
+
+    <string name="action_zoom_out">Forminsk</string>
+    <string name="action_zoom_in">Forstørr</string>
+    <string name="action_zoom_reset">Tilbakestill forstørrelsesnivå</string>
+    <string name="action_select_style">Stil…</string>
+    <string name="select_style">Velg stil</string>
+    <string name="default_style_title">Forvalg</string>
+    <string name="subtitle_settings">Innstillinger</string>
+    <string name="setting_remote_content_always">Alltid</string>
+    <string name="setting_remote_content_wifi">Bare på Wi-Fi</string>
+    <string name="setting_remote_content_never">Aldri</string>
+    <string name="setting_remote_content">Last inn innhold fra annensteds hen</string>
+    <string name="setting_about">Om %1$s</string>
+    <string name="application_copyright">2017 Igor Tkach</string>
+    <string name="application_license_name">GNU General Public Lisens v3</string>
+    <string name="application_license_url">https://gnu.org/licenses/gpl.html</string>
+
+    <string name="application_version">Versjon %1$s</string>
+    <string name="setting_clear_cache">Tøm hurtiglager</string>
+    <string name="setting_clear_cache_subtitle">Tøm hurtiglagerinnhold, inkludert bilder fra annensteds hen</string>
+    <string name="confirm_clear_cached_content">Tøm hurtiglagret innhold?</string>
+    <string name="article_collection_nothing_found">Fant ikke noe</string>
+    <string name="article_collection_selected_not_available">Valgt artikkel er ikke tilgjengelig</string>
+    <string name="article_collection_nothing_to_lookup">Ingenting å slå opp</string>
+    <string name="article_view_msg_not_found">Ikke funnet</string>
+    <string name="dictionaries_please_wait">Vent</string>
+    <string name="dictionaries_scanning_device">Skanner enhet for ordlister…</string>
+    <string name="dictionaries_confirm_forget">Glem "%1$s"?</string>
+    <string name="lookup_nothing_found">Fant ikke noe</string>
+    <string name="main_empty_bookmarks">Ingen bokmerker</string>
+    <string name="main_empty_history">Ingen historikk</string>
+    <string name="main_empty_dictionaries">Ingen ordlister</string>
+    <string name="delete">Slett</string>
+
+    <plurals name="confirm_delete_bookmark_count">
+        <item quantity="zero">%,d bokmerker</item>
+        <item quantity="one">%,d bokmerke</item>
+        <item quantity="two">%,d bokmerker</item>
+        <item quantity="few">%,d bokmerker</item>
+        <item quantity="many">%,d bokmerker</item>
+        <item quantity="other">%,d bokmerker</item>
+    </plurals>
+    <plurals name="confirm_delete_history_count">
+        <item quantity="zero">%,d historikkoppføringer</item>
+        <item quantity="one">%,d historikkoppføring</item>
+        <item quantity="two">%,d historikkoppføringer</item>
+        <item quantity="few">%,d histtorikkoppføringer</item>
+        <item quantity="many">%,d historikkoppføringer</item>
+        <item quantity="other">%,d historikkoppføringer</item>
+    </plurals>
+
+    <string name="blob_descriptor_confirm_delete">Delete %1$s?</string>
+    <string name="msg_failed_to_read_file">Klarte ikke å lese fil</string>
+    <string name="msg_file_too_big">Fila er for stor</string>
+    <string name="setting_user_styles">Brukerstiler</string>
+    <string name="setting_user_styles_empty">Ingen stiler</string>
+    <string name="msg_failed_to_store_user_style">Klarte ikke å lagre brukerstil</string>
+    <string name="setting_user_style_confirm_forget">Glem %1$s?</string>
+    <string name="msg_file_not_css">Later ikke til å være ei CSS-fil</string>
+    <string name="msg_no_activity_to_get_content">Ingen aktivitet er i stand til å åpne fila</string>
+    <string name="action_add_dictionaries">Legg til</string>
+    <string name="title_activity_file_select">Velg ordlistefil</string>
+    <string name="action_goto_parent_dir">Opp</string>
+    <string name="action_reload_directory">Les inn på nytt</string>
+    <string name="msg_dictionary_already_open">Allerede åpen</string>
+    <string name="msg_dictionary_added">La til ordliste fra %1$s</string>
+    <string name="setting_fav_random_search">Bare bruk favorittordlister for tilfeldig oppslag</string>
+    <string name="article_collection_invalid_link">Ugyldig lenke</string>
+    <string name="setting_ui_theme">Brukergrensesnittstil</string>
+    <string name="setting_ui_theme_light">Lys</string>
+    <string name="setting_ui_theme_dark">Mørk</string>
+    <string name="action_load_remote_content">Last inn innhold fra annensteds hen</string>
+    <string name="auto_style_title">Auto</string>
+    <string name="action_fullscreen">Fullskjerm</string>
+    <string name="setting_use_volume_for_nav">Bruk lydstyrkeknapper for navigasjon</string>
+
+</resources>
