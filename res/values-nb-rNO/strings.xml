@@ -41,7 +41,6 @@
     <string name="setting_remote_content_never">Aldri</string>
     <string name="setting_remote_content">Last inn innhold fra annensteds hen</string>
     <string name="setting_about">Om %1$s</string>
-    <string name="application_copyright">2017 Igor Tkach</string>
     <string name="application_license_name">GNU General Public Lisens v3</string>
     <string name="application_license_url">https://gnu.org/licenses/gpl.html</string>
 
