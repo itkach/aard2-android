@@ -49,7 +49,7 @@ public class BlobListAdapter extends BaseAdapter {
         synchronized (list) {
             list.clear();
         }
-        this.iter = lookupResultsIter;
+        this.iter = new BlobListFilter(lookupResultsIter);
         loadChunkSync();
     }
 
