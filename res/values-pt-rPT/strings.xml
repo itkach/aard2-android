@@ -5,7 +5,7 @@
     <string name="subtitle_lookup">Pesquisar</string>
     <string name="subtitle_bookmark">Marcadores</string>
     <string name="subtitle_history">Histórico</string>
-    <string name="subtitle_dictionaries">Dicicionários</string>
+    <string name="subtitle_dictionaries">Dicionários</string>
     <string name="action_find_dictionaries">Procurar dicionários</string>
     <string name="action_find_in_page">Localizar na página</string>
     <string name="action_bookmark_article">Adicionar aos marcadores</string>
