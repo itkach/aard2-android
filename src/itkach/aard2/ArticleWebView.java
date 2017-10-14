@@ -12,7 +12,7 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.view.KeyEvent;
+import android.view.View;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
@@ -60,6 +60,15 @@ public class ArticleWebView extends WebView {
             add("geo");
         }
     };
+
+    boolean isExternal(Uri uri) {
+        String scheme = uri.getScheme();
+        String host = uri.getHost();
+
+        return scheme != null && (
+                externalSchemes.contains(scheme) ||
+                    (scheme.equals("http") && !host.equals(LOCALHOST)));
+    }
 
     private SortedSet<String>   styleTitles  = new TreeSet<String>();
 
@@ -221,8 +230,7 @@ public class ArticleWebView extends WebView {
                 String scheme = uri.getScheme();
                 String host = uri.getHost();
 
-                if (externalSchemes.contains(scheme) ||
-                        (scheme.equals("http") && !host.equals(LOCALHOST))) {
+                if (isExternal(uri)) {
                     Intent browserIntent = new Intent(Intent.ACTION_VIEW, uri);
                     getContext().startActivity(browserIntent);
                     return true;
@@ -236,6 +244,33 @@ public class ArticleWebView extends WebView {
                     return true;
                 }
                 Log.d(TAG, "NOT overriding loading of " + url);
+                return false;
+            }
+        });
+
+        this.setOnLongClickListener(new OnLongClickListener(){
+
+            @Override
+            public boolean onLongClick(View view) {
+                WebView.HitTestResult hitTestResult = getHitTestResult();
+                int resultType= hitTestResult.getType();
+                Log.d(TAG, String.format(
+                        "Long tap on element %s (%s)",
+                        resultType,
+                        hitTestResult.getExtra()));
+                if (resultType == WebView.HitTestResult.SRC_ANCHOR_TYPE ||
+                        resultType == WebView.HitTestResult.SRC_IMAGE_ANCHOR_TYPE) {
+                    String url = hitTestResult.getExtra();
+                    Uri uri = Uri.parse(url);
+                    if (isExternal(uri)) {
+                        Intent share = new Intent(Intent.ACTION_SEND);
+                        share.setType("text/plain");
+                        share.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
+                        share.putExtra(Intent.EXTRA_TEXT, url);
+                        getContext().startActivity(Intent.createChooser(share, "Share Link"));
+                        return true;
+                    }
+                }
                 return false;
             }
         });
