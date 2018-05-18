@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Aard 2</string>
+    <string name="subtitle_lookup">Opzoeken</string>
+    <string name="subtitle_bookmark">Bladwijzers</string>
+    <string name="subtitle_history">Geschiedenis</string>
+    <string name="subtitle_dictionaries">Woordenboeken</string>
+    <string name="action_find_dictionaries">Woordenboeken zoeken</string>
+    <string name="action_find_in_page">Zoeken in pagina</string>
+    <string name="action_bookmark_article">Toevoegen aan bladwijzers</string>
+    <string name="action_filter">Filteren</string>
+    <string name="action_ascending">Oplopend</string>
+    <string name="action_descending">Aflopend</string>
+    <string name="action_sort_by_title">Op titel</string>
+    <string name="action_sort_by_time">Op datum</string>
+    <string name="action_lookup">Opzoeken</string>
+    <!--
+    English only uses "one" and "other" for plurals.
+    Other quantities are included as a fallback if some translation
+    is missing a quantity used in that language, otherwise the app will crash
+    -->
+    <plurals name="dict_item_count">
+        <item quantity="zero">%,d items</item>
+        <item quantity="one">%,d item</item>
+        <item quantity="two">%,d items</item>
+        <item quantity="few">%,d items</item>
+        <item quantity="many">%,d items</item>
+        <item quantity="other">%,d items</item>
+    </plurals>
+
+    <string name="action_zoom_out">Uitzoomen</string>
+    <string name="action_zoom_in">Inzoomen</string>
+    <string name="action_zoom_reset">Zoom terugzetten</string>
+    <string name="action_select_style">Stijl...</string>
+    <string name="select_style">Stijl selecteren</string>
+    <string name="default_style_title">Standaard</string>
+    <string name="subtitle_settings">Instellingen</string>
+    <string name="setting_remote_content_always">Altijd</string>
+    <string name="setting_remote_content_wifi">Alleen via Wi-Fi</string>
+    <string name="setting_remote_content_never">Nooit</string>
+    <string name="setting_remote_content">Externe inhoud laden</string>
+    <string name="setting_about">Over %1$s</string>
+    <string name="application_home_url" translatable="false">http://aarddict.org</string>
+    <string name="application_copyright">2017 Igor Tkach</string>
+    <string name="application_license_name">GNU General Public License v3</string>
+    <string name="application_license_url">https://gnu.org/licenses/gpl.html</string>
+    <string name="application_license" translatable="false">
+        <![CDATA[
+            <a href="%1$s">%2$s</a>
+        ]]>
+    </string>
+    <string name="application_version">Versie %1$s</string>
+    <string name="setting_clear_cache">Cache wissen</string>
+    <string name="setting_clear_cache_subtitle">Gecachete inhoud wissen, inclusief externe afbeeldingen</string>
+    <string name="confirm_clear_cached_content">Gecachete inhoud wissen?</string>
+    <string name="article_collection_nothing_found">Niks gevonden</string>
+    <string name="article_collection_selected_not_available">Het geselecteerde artikel is niet beschikbaar.</string>
+    <string name="article_collection_nothing_to_lookup">Niks om op te zoeken</string>
+    <string name="article_view_msg_not_found">Niet gevonden</string>
+    <string name="dictionaries_please_wait">Even geduld...</string>
+    <string name="dictionaries_scanning_device">Bezig met zoeken naar woordenboeken op apparaat...</string>
+    <string name="dictionaries_confirm_forget">"%1$s" vergeten?</string>
+    <string name="lookup_nothing_found">Niks gevonden</string>
+    <string name="main_empty_bookmarks">Geen bladwijzers</string>
+    <string name="main_empty_history">Geen geschiedenis</string>
+    <string name="main_empty_dictionaries">Geen woordenboeken</string>
+    <string name="delete">Verwijderen</string>
+
+    <plurals name="confirm_delete_bookmark_count">
+        <item quantity="zero">%,d bladwijzers</item>
+        <item quantity="one">%,d bladwijzer</item>
+        <item quantity="two">%,d bladwijzers</item>
+        <item quantity="few">%,d bladwijzers</item>
+        <item quantity="many">%,d bladwijzers</item>
+        <item quantity="other">%,d bladwijzers</item>
+    </plurals>
+    <plurals name="confirm_delete_history_count">
+        <item quantity="zero">%,d geschiedenisitems</item>
+        <item quantity="one">%,d geschiedenisitem</item>
+        <item quantity="two">%,d geschiedenisitems</item>
+        <item quantity="few">%,d geschiedenisitems</item>
+        <item quantity="many">%,d geschiedenisitems</item>
+        <item quantity="other">%,d geschiedenisitems</item>
+    </plurals>
+
+    <string name="blob_descriptor_confirm_delete">%1$s verwijderen?</string>
+    <string name="msg_failed_to_read_file">Lezen van bestand mislukt</string>
+    <string name="msg_file_too_big">Bestand is te groot</string>
+    <string name="setting_user_styles">Gebruikersstijlen</string>
+    <string name="setting_user_styles_empty">Geen stijlen</string>
+    <string name="msg_failed_to_store_user_style">Opslaan van gebruikersstijl mislukt</string>
+    <string name="setting_user_style_confirm_forget">%1$s vergeten?</string>
+    <string name="msg_file_not_css">Lijkt geen CSS-bestand te zijn</string>
+    <string name="msg_no_activity_to_get_content">Geen activiteit beschikbaar om bestand te openen</string>
+    <string name="action_add_dictionaries">Toevoegen</string>
+    <string name="title_activity_file_select">Woordenboekbestand selecteren</string>
+    <string name="action_goto_parent_dir">Omhoog</string>
+    <string name="action_reload_directory">Herladen</string>
+    <string name="msg_dictionary_already_open">Reeds geopend</string>
+    <string name="msg_dictionary_added">Woordenboek toegevoegd uit %1$s</string>
+    <string name="setting_fav_random_search">Alleen favoriete woordenboeken gebruiken voor willekeurig opzoeken</string>
+    <string name="article_collection_invalid_link">Ongeldige link</string>
+    <string name="setting_ui_theme">Uiterlijk</string>
+    <string name="setting_ui_theme_light">Licht</string>
+    <string name="setting_ui_theme_dark">Donker</string>
+    <string name="action_load_remote_content">Externe inhoud laden</string>
+    <string name="auto_style_title">Automatisch</string>
+    <string name="action_fullscreen">Volledig scherm</string>
+    <string name="setting_use_volume_for_nav">Volumeknoppen gebruiken voor navigatie</string>
+
+</resources>
