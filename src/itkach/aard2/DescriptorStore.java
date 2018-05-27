@@ -10,6 +10,8 @@ import java.util.List;
 
 class DescriptorStore<T extends BaseDescriptor> {
 
+    static final String TAG = DescriptorStore.class.getSimpleName();
+
     private File         dir;
     private ObjectMapper mapper;
 
@@ -22,13 +24,17 @@ class DescriptorStore<T extends BaseDescriptor> {
         List<T> result = new ArrayList<T>();
         File[] files = dir.listFiles();
         if (files != null) {
-            try {
-                for (File f : files) {
+            for (File f : files) {
+                try {
                     T sd = mapper.readValue(f, type);
                     result.add(sd);
+                } catch (Exception e) {
+                    String path = f.getAbsolutePath();
+                    Log.w(TAG, String.format("Loading data from file %s failed", path), e);
+                    boolean deleted = f.delete();
+                    Log.w(TAG, String.format("Attempt to delete corrupted file %s succeeded? %s",
+                            deleted));
                 }
-            } catch (Exception e) {
-                throw new RuntimeException(e);
             }
         }
         return result;
