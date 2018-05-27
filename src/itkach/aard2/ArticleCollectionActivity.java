@@ -441,42 +441,43 @@ public class ArticleCollectionActivity extends FragmentActivity
         ArticleFragment af = articleCollectionPagerAdapter.getPrimaryItem();
         if (af != null) {
             ArticleWebView webView = af.getWebView();
+            if (webView != null) {
+                if (keyCode == KeyEvent.KEYCODE_BACK) {
+                    if (webView.canGoBack()) {
+                        webView.goBack();
+                        return true;
+                    }
+                }
 
-            if (keyCode == KeyEvent.KEYCODE_BACK) {
-                if (webView.canGoBack()) {
-                    webView.goBack();
+                if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
+                    if (!useVolumeForNav()) {
+                        return false;
+                    }
+                    boolean scrolled = webView.pageUp(false);
+                    if (!scrolled) {
+                        int current = viewPager.getCurrentItem();
+                        if (current > 0) {
+                            viewPager.setCurrentItem(current - 1);
+                        }
+                        else {
+                            finish();
+                        }
+                    }
                     return true;
                 }
-            }
-
-            if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
-                if (!useVolumeForNav()) {
-                    return false;
-                }
-                boolean scrolled = webView.pageUp(false);
-                if (!scrolled) {
-                    int current = viewPager.getCurrentItem();
-                    if (current > 0) {
-                        viewPager.setCurrentItem(current - 1);
+                if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
+                    if (!useVolumeForNav()) {
+                        return false;
                     }
-                    else {
-                        finish();
+                    boolean scrolled = webView.pageDown(false);
+                    if (!scrolled) {
+                        int current = viewPager.getCurrentItem();
+                        if (current < articleCollectionPagerAdapter.getCount() - 1) {
+                            viewPager.setCurrentItem(current + 1);
+                        }
                     }
+                    return true;
                 }
-                return true;
-            }
-            if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
-                if (!useVolumeForNav()) {
-                    return false;
-                }
-                boolean scrolled = webView.pageDown(false);
-                if (!scrolled) {
-                    int current = viewPager.getCurrentItem();
-                    if (current < articleCollectionPagerAdapter.getCount() - 1) {
-                        viewPager.setCurrentItem(current + 1);
-                    }
-                }
-                return true;
             }
         }
         return super.onKeyUp(keyCode, event);
