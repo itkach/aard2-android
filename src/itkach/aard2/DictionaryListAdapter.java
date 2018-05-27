@@ -114,10 +114,7 @@ public class DictionaryListAdapter extends BaseAdapter {
                 }
             });
 
-            View btnToggleDetail = view
-                    .findViewById(R.id.dictionary_btn_toggle_detail);
-
-            btnToggleDetail.setOnClickListener(new View.OnClickListener() {
+            View.OnClickListener detailToggle = new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     Integer position = (Integer)view.getTag();
@@ -125,8 +122,11 @@ public class DictionaryListAdapter extends BaseAdapter {
                     desc.expandDetail = !desc.expandDetail;
                     data.set(position, desc);
                 }
-            });
+            };
 
+            View viewDetailToggle = view
+                    .findViewById(R.id.dictionary_detail_toggle);
+            viewDetailToggle.setOnClickListener(detailToggle);
 
             View.OnClickListener toggleFavListener = new View.OnClickListener() {
                 @Override
@@ -182,7 +182,10 @@ public class DictionaryListAdapter extends BaseAdapter {
                 .findViewById(R.id.dictionary_btn_toggle_detail);
         int toggleIcon = desc.expandDetail ? R.xml.ic_list_angle_up : R.xml.ic_list_angle_down;
         btnToggleDetail.setImageDrawable(FontIconDrawable.inflate(context, toggleIcon));
-        btnToggleDetail.setTag(position);
+
+        View viewDetailToggle = view
+                .findViewById(R.id.dictionary_detail_toggle);
+        viewDetailToggle.setTag(position);
 
         ImageView btnForget = (ImageView) view
                 .findViewById(R.id.dictionary_btn_forget);
