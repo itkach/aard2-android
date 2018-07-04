@@ -438,6 +438,9 @@ public class ArticleCollectionActivity extends FragmentActivity
         if (event.isCanceled()) {
             return true;
         }
+        if (articleCollectionPagerAdapter == null) {
+            return false;
+        }
         ArticleFragment af = articleCollectionPagerAdapter.getPrimaryItem();
         if (af != null) {
             ArticleWebView webView = af.getWebView();
