@@ -26,6 +26,15 @@ android {
     compileSdkVersion 19
     buildToolsVersion "21.1.2"
 
+    defaultConfig {
+        testInstrumentationRunner 'android.support.test.runner.AndroidJUnitRunner'
+        multiDexEnabled true
+    }
+
+    configurations {
+        all*.exclude group: 'com.android.support', module: 'support-annotations'
+    }
+
     packagingOptions {
         exclude 'META-INF/LICENSE'
         exclude 'META-INF/NOTICE'
@@ -84,4 +93,9 @@ dependencies {
     compile project(':slobber')
     compile project(':slobber').files('libs/simple-5.1.7.1.itkach.jar')
     compile files('libs/android-support-v13.jar')
+    compile 'junit:junit:4.12'
+    compile 'com.android.support.test:runner:0.5'
+    testCompile 'org.robolectric:robolectric:2.2'
+    testCompile 'org.mockito:mockito-core:1.10.19'
+    androidTestCompile 'junit:junit:4.12'
 }

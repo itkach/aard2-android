@@ -48,6 +48,7 @@ public class Application extends android.app.Application {
     BlobDescriptorList                      bookmarks;
     BlobDescriptorList                      history;
     SlobDescriptorList                      dictionaries;
+    SlobDescriptorList                      downloadDictionaries; // may need a slobDescriptorList for downloaded Dictionaries
 
     private static int                      PREFERRED_PORT = 8013;
     private int                             port = -1;
@@ -57,6 +58,7 @@ public class Application extends android.app.Application {
     private DescriptorStore<BlobDescriptor> bookmarkStore;
     private DescriptorStore<BlobDescriptor> historyStore;
     private DescriptorStore<SlobDescriptor> dictStore;
+    private DescriptorStore<SlobDescriptor> downloadDictStore;  // may need the DescriptorStore array for downloaded Dictionaries too
 
     private ObjectMapper                    mapper;
 

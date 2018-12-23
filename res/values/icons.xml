@@ -6,6 +6,7 @@
     <string translatable="false" name="ic_history">&#xf1da;</string>
     <string translatable="false" name="ic_dictionary">&#xf02d;</string>
     <string translatable="false" name="ic_settings">&#xf013;</string>
+    <string translatable="false" name="ic_download">&#x2B07;</string>
     <string translatable="false" name="ic_reload">&#xf021;</string>
     <string translatable="false" name="ic_filter">&#xf0b0;</string>
     <string translatable="false" name="ic_sort_desc">&#xf161;</string>

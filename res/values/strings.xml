@@ -6,6 +6,7 @@
     <string name="subtitle_bookmark">Bookmarks</string>
     <string name="subtitle_history">History</string>
     <string name="subtitle_dictionaries">Dictionaries</string>
+    <string name="subtitle_download">Download</string>
     <string name="action_find_dictionaries">Find Dictionaries</string>
     <string name="action_find_in_page">Find in page</string>
     <string name="action_bookmark_article">Bookmark</string>

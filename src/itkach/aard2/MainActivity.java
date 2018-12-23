@@ -50,11 +50,13 @@ public class MainActivity extends FragmentActivity implements
         viewPager.setOffscreenPageLimit(appSectionsPagerAdapter.getCount());
         viewPager.setAdapter(appSectionsPagerAdapter);
 
+        // for adding a new tab, need to add a new string to it
         final String[] subtitles = new String[] {
                 getString(R.string.subtitle_lookup),
                 getString(R.string.subtitle_bookmark),
                 getString(R.string.subtitle_history),
                 getString(R.string.subtitle_dictionaries),
+                getString(R.string.subtitle_download),
                 getString(R.string.subtitle_settings),
         };
 
@@ -67,12 +69,14 @@ public class MainActivity extends FragmentActivity implements
                     }
                 });
 
-        Drawable[] tabIcons = new Drawable[5];
+        // need to add font to the word
+        Drawable[] tabIcons = new Drawable[6];
         tabIcons[0] = FontIconDrawable.inflate(this, R.xml.ic_tab_search);
         tabIcons[1] = FontIconDrawable.inflate(this, R.xml.ic_tab_bookmark);
         tabIcons[2] = FontIconDrawable.inflate(this, R.xml.ic_tab_history);
         tabIcons[3] = FontIconDrawable.inflate(this, R.xml.ic_tab_dictionary);
-        tabIcons[4] = FontIconDrawable.inflate(this, R.xml.ic_tab_settings);
+        tabIcons[4] = FontIconDrawable.inflate(this, R.xml.ic_tab_download);
+        tabIcons[5] = FontIconDrawable.inflate(this, R.xml.ic_tab_settings);
         // For each of the sections in the app, add a tab to the action bar.
         for (int i = 0; i < appSectionsPagerAdapter.getCount(); i++) {
             Tab tab = actionBar.newTab();
@@ -254,6 +258,7 @@ public class MainActivity extends FragmentActivity implements
 
     }
 
+    // need to modify this AppSectionsPagerAdapter class to add a new tab
     public static class AppSectionsPagerAdapter extends FragmentPagerAdapter {
         private Fragment[]         fragments;
         LookupFragment             tabLookup;
@@ -261,6 +266,7 @@ public class MainActivity extends FragmentActivity implements
         BlobDescriptorListFragment tabHistory;
         DictionariesFragment       tabDictionaries;
         SettingsFragment           tabSettings;
+        DictionaryDownloadFragment tabDownload;
 
         public AppSectionsPagerAdapter(FragmentManager fm) {
             super(fm);
@@ -269,8 +275,9 @@ public class MainActivity extends FragmentActivity implements
             tabHistory = new HistoryFragment();
             tabDictionaries = new DictionariesFragment();
             tabSettings = new SettingsFragment();
+            tabDownload = new DictionaryDownloadFragment();
             fragments = new Fragment[] { tabLookup, tabBookmarks, tabHistory,
-                    tabDictionaries, tabSettings };
+                    tabDictionaries, tabDownload, tabSettings };
         }
 
         @Override
