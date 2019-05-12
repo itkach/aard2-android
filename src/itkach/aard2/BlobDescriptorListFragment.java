@@ -19,7 +19,6 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.SearchView;
 
-import com.shamanland.fonticon.FontIconDrawable;
 
 abstract class BlobDescriptorListFragment extends BaseListFragment {
 
@@ -127,11 +126,11 @@ abstract class BlobDescriptorListFragment extends BaseListFragment {
 
         final FragmentActivity activity = getActivity();
 
-        icFilter = FontIconDrawable.inflate(activity, R.xml.ic_actionbar_filter);
-        icClock =  FontIconDrawable.inflate(activity, R.xml.ic_actionbar_clock);
-        icList = FontIconDrawable.inflate(activity, R.xml.ic_actionbar_list);
-        icArrowUp = FontIconDrawable.inflate(activity, R.xml.ic_actionbar_sort_asc);
-        icArrowDown = FontIconDrawable.inflate(activity, R.xml.ic_actionbar_sort_desc);
+        icFilter = IconMaker.actionBar(activity, IconMaker.IC_FILTER);
+        icClock =  IconMaker.actionBar(activity, IconMaker.IC_CLOCK);
+        icList = IconMaker.actionBar(activity, IconMaker.IC_LIST);
+        icArrowUp = IconMaker.actionBar(activity, IconMaker.IC_SORT_ASC);
+        icArrowDown = IconMaker.actionBar(activity, IconMaker.IC_SORT_DESC);
 
         final ListView listView = getListView();
         listView.setOnItemClickListener(new OnItemClickListener() {

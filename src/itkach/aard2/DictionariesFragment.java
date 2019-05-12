@@ -3,7 +3,6 @@ package itkach.aard2;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -18,8 +17,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Toast;
-
-import com.shamanland.fonticon.FontIconDrawable;
 
 import java.io.File;
 
@@ -52,8 +49,8 @@ public class DictionariesFragment extends BaseListFragment {
     }
 
 
-    protected int getEmptyIcon() {
-        return R.xml.ic_empty_view_dictionary;
+    protected char getEmptyIcon() {
+        return IconMaker.IC_DICTIONARY;
     }
 
     protected CharSequence getEmptyText() {
@@ -79,7 +76,7 @@ public class DictionariesFragment extends BaseListFragment {
         View extraEmptyView = inflater.inflate(R.layout.dictionaries_empty_view_extra, container, false);
         Button btn = (Button)extraEmptyView.findViewById(R.id.dictionaries_empty_btn_scan);
         btn.setCompoundDrawablesWithIntrinsicBounds(
-                FontIconDrawable.inflate(getActivity(), R.xml.ic_list_reload),
+                IconMaker.list(getActivity(), IconMaker.IC_RELOAD),
                 null, null, null);
         btn.setOnClickListener(new OnClickListener(){
             @Override
@@ -105,9 +102,9 @@ public class DictionariesFragment extends BaseListFragment {
     public void onPrepareOptionsMenu(final Menu menu) {
         MenuItem miFindDictionaries = menu.findItem(R.id.action_find_dictionaries);
         FragmentActivity activity = getActivity();
-        miFindDictionaries.setIcon(FontIconDrawable.inflate(activity, R.xml.ic_actionbar_reload));
+        miFindDictionaries.setIcon(IconMaker.actionBar(activity, IconMaker.IC_RELOAD));
         MenuItem miAddDictionaries = menu.findItem(R.id.action_add_dictionaries);
-        miAddDictionaries.setIcon(FontIconDrawable.inflate(activity, R.xml.ic_actionbar_add));
+        miAddDictionaries.setIcon(IconMaker.actionBar(activity, IconMaker.IC_ADD));
     }
 
     @Override

@@ -3,9 +3,13 @@ buildscript {
     repositories {
         mavenCentral()
         jcenter()
+        google()
+        maven {
+            url "https://jitpack.io"
+        }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.2.3'
+        classpath 'com.android.tools.build:gradle:3.4.0'
     }
 }
 
@@ -13,18 +17,20 @@ apply plugin: 'com.android.application'
 apply plugin: 'eclipse'
 apply plugin: 'idea'
 
-sourceCompatibility = '1.7'
-
 repositories {
     mavenCentral()
+    jcenter()
+    google()
+    maven {
+        url "https://jitpack.io"
+    }
     flatDir {
         dirs 'libs'
     }
 }
 
 android {
-    compileSdkVersion 19
-    buildToolsVersion "21.1.2"
+    compileSdkVersion 28
 
     packagingOptions {
         exclude 'META-INF/LICENSE'
@@ -73,15 +79,20 @@ android {
             }
         }
     }
+
+    defaultConfig {
+        minSdkVersion 15
+        targetSdkVersion 26
+    }
+
 }
 
 dependencies {
-    compile 'com.fasterxml.jackson.core:jackson-databind:2.4+'
-    compile 'com.fasterxml.jackson.core:jackson-core:2.4+'
-    compile 'com.fasterxml.jackson.core:jackson-annotations:2.4+'
-    compile 'com.shamanland:fonticon:0.1.8'
-    compile project(':slobj')
-    compile project(':slobber')
-    compile project(':slobber').files('libs/simple-5.1.7.1.itkach.jar')
-    compile files('libs/android-support-v13.jar')
+    api 'com.fasterxml.jackson.core:jackson-databind:2.4+'
+    api 'com.fasterxml.jackson.core:jackson-core:2.4+'
+    api 'com.fasterxml.jackson.core:jackson-annotations:2.4+'
+    api 'com.github.kazy1991:FontDrawable:0.9.4'
+    api project(':slobj')
+    api project(':slobber')
+    api project(':slobber').files('libs/simple-5.1.7.1.itkach.jar')
 }

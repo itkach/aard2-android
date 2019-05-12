@@ -13,8 +13,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
 
-import com.shamanland.fonticon.FontIconDrawable;
-
 import java.io.File;
 
 
@@ -112,9 +110,9 @@ public class FileSelectActivity extends ListActivity {
     @Override
     public boolean onPrepareOptionsMenu(final Menu menu) {
         miParentDir = menu.findItem(R.id.action_goto_parent_dir);
-        miParentDir.setIcon(FontIconDrawable.inflate(this, R.xml.ic_actionbar_level_up));
+        miParentDir.setIcon(IconMaker.actionBar(this, IconMaker.IC_LEVEL_UP));
         MenuItem miReloadDir = menu.findItem(R.id.action_reload_directory);
-        miReloadDir.setIcon(FontIconDrawable.inflate(this, R.xml.ic_actionbar_reload));
+        miReloadDir.setIcon(IconMaker.actionBar(this, IconMaker.IC_RELOAD));
         FileSelectListAdapter adapter = (FileSelectListAdapter)getListAdapter();
         File root = adapter.getRoot();
         File parent = root.getParentFile();

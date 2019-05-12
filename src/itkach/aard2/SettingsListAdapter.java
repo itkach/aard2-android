@@ -2,7 +2,6 @@ package itkach.aard2;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.support.v4.app.Fragment;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -11,6 +10,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.support.v4.app.Fragment;
 import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -24,11 +24,7 @@ import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.ibm.icu.impl.duration.impl.Utils;
-import com.shamanland.fonticon.FontIconDrawable;
-
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -232,7 +228,7 @@ public class SettingsListAdapter extends BaseAdapter implements SharedPreference
             view = inflater.inflate(R.layout.settings_user_styles_item, parent,
                     false);
             ImageView btnAdd = (ImageView)view.findViewById(R.id.setting_btn_add_user_style);
-            btnAdd.setImageDrawable(FontIconDrawable.inflate(context, R.xml.ic_list_add));
+            btnAdd.setImageDrawable(IconMaker.list(context, IconMaker.IC_ADD));
             btnAdd.setOnClickListener(new View.OnClickListener(){
                 @Override
                 public void onClick(View view) {
@@ -261,7 +257,7 @@ public class SettingsListAdapter extends BaseAdapter implements SharedPreference
             View styleItemView = inflater.inflate(R.layout.user_styles_list_item, parent,
                     false);
             ImageView btnDelete = (ImageView)styleItemView.findViewById(R.id.user_styles_list_btn_delete);
-            btnDelete.setImageDrawable(FontIconDrawable.inflate(context, R.xml.ic_list_trash));
+            btnDelete.setImageDrawable(IconMaker.list(context, IconMaker.IC_TRASH));
             btnDelete.setOnClickListener(onDeleteUserStyle);
 
             String name = userStyleNames.get(i);
@@ -389,13 +385,15 @@ public class SettingsListAdapter extends BaseAdapter implements SharedPreference
                     false);
 
             ImageView copyrightIcon = (ImageView) view.findViewById(R.id.setting_about_copyright_icon);
-            copyrightIcon.setImageDrawable(FontIconDrawable.inflate(context, R.xml.ic_text_copyright));
+
+            //copyrightIcon.setImageDrawable(FontIconDrawable.inflate(context, R.xml.ic_text_copyright));
+            copyrightIcon.setImageDrawable(IconMaker.text(context, IconMaker.IC_COPYRIGHT));
 
             ImageView licenseIcon = (ImageView) view.findViewById(R.id.setting_about_license_icon);
-            licenseIcon.setImageDrawable(FontIconDrawable.inflate(context, R.xml.ic_text_license));
+            licenseIcon.setImageDrawable(IconMaker.text(context, IconMaker.IC_LICENSE));
 
             ImageView sourceIcon = (ImageView) view.findViewById(R.id.setting_about_source_icon);
-            sourceIcon.setImageDrawable(FontIconDrawable.inflate(context, R.xml.ic_text_external_link));
+            sourceIcon.setImageDrawable(IconMaker.text(context, IconMaker.IC_EXTERNAL_LINK));
 
             String appName = context.getString(R.string.app_name);
 

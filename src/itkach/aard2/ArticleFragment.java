@@ -2,13 +2,12 @@ package itkach.aard2;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
-import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -21,7 +20,6 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.shamanland.fonticon.FontIconDrawable;
 
 public class ArticleFragment extends Fragment {
 
@@ -40,9 +38,10 @@ public class ArticleFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Activity activity = getActivity();
-        icBookmark = FontIconDrawable.inflate(activity, R.xml.ic_actionbar_bookmark);
-        icBookmarkO = FontIconDrawable.inflate(activity, R.xml.ic_actionbar_bookmark_o);
-        icFullscreen = FontIconDrawable.inflate(activity, R.xml.ic_actionbar_fullscreen);
+        Context context = activity.getActionBar().getThemedContext();
+        icBookmark =  IconMaker.actionBar(context, IconMaker.IC_BOOKMARK);
+        icBookmarkO = IconMaker.actionBar(context, IconMaker.IC_BOOKMARK_O);
+        icFullscreen = IconMaker.actionBar(context, IconMaker.IC_FULLSCREEN);
         setHasOptionsMenu(true);
     }
 
@@ -145,8 +144,8 @@ public class ArticleFragment extends Fragment {
             TextView textView = (TextView)layout.findViewById(R.id.empty_text);
             textView.setText("");
             ImageView icon = (ImageView) layout.findViewById(R.id.empty_icon);
-            icon.setImageDrawable(FontIconDrawable.inflate(getActivity(),
-                    R.xml.ic_empty_view_not_available));
+            icon.setImageDrawable(IconMaker.emptyView(getActivity(),
+                    IconMaker.IC_BAN));
             return layout;
         }
 

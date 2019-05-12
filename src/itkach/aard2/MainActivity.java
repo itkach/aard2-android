@@ -22,8 +22,6 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
-import com.shamanland.fonticon.FontIconDrawable;
-
 import itkach.slob.Slob;
 
 public class MainActivity extends FragmentActivity implements
@@ -68,11 +66,11 @@ public class MainActivity extends FragmentActivity implements
                 });
 
         Drawable[] tabIcons = new Drawable[5];
-        tabIcons[0] = FontIconDrawable.inflate(this, R.xml.ic_tab_search);
-        tabIcons[1] = FontIconDrawable.inflate(this, R.xml.ic_tab_bookmark);
-        tabIcons[2] = FontIconDrawable.inflate(this, R.xml.ic_tab_history);
-        tabIcons[3] = FontIconDrawable.inflate(this, R.xml.ic_tab_dictionary);
-        tabIcons[4] = FontIconDrawable.inflate(this, R.xml.ic_tab_settings);
+        tabIcons[0] = IconMaker.tab(this, IconMaker.IC_SEARCH);
+        tabIcons[1] = IconMaker.tab(this, IconMaker.IC_BOOKMARK);
+        tabIcons[2] = IconMaker.tab(this, IconMaker.IC_HISTORY);
+        tabIcons[3] = IconMaker.tab(this, IconMaker.IC_DICTIONARY);
+        tabIcons[4] = IconMaker.tab(this, IconMaker.IC_SETTINGS);
         // For each of the sections in the app, add a tab to the action bar.
         for (int i = 0; i < appSectionsPagerAdapter.getCount(); i++) {
             Tab tab = actionBar.newTab();
@@ -199,8 +197,8 @@ public class MainActivity extends FragmentActivity implements
         }
 
         @Override
-        int getEmptyIcon() {
-            return R.xml.ic_empty_view_bookmark;
+        char getEmptyIcon() {
+            return IconMaker.IC_BOOKMARK;
         }
 
         @Override
@@ -233,8 +231,8 @@ public class MainActivity extends FragmentActivity implements
         }
 
         @Override
-        int getEmptyIcon() {
-            return R.xml.ic_empty_view_history;
+        char getEmptyIcon() {
+            return IconMaker.IC_HISTORY;
         }
 
         @Override

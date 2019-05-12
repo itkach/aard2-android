@@ -9,8 +9,6 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.shamanland.fonticon.FontIconDrawable;
-
 import java.io.File;
 import java.io.FileFilter;
 import java.text.NumberFormat;
@@ -118,7 +116,7 @@ public class FileSelectListAdapter extends BaseAdapter {
             view = inflater.inflate(viewId, parent, false);
             if (isDir) {
                 ImageView dirIconView = (ImageView)view.findViewById(R.id.file_select_directory_icon);
-                dirIconView.setImageDrawable(FontIconDrawable.inflate(parent.getContext(), R.xml.ic_list_folder));
+                dirIconView.setImageDrawable(IconMaker.list(parent.getContext(), IconMaker.IC_FOLDER));
             }
         }
 
