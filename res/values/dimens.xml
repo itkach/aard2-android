@@ -1,13 +1,5 @@
 <resources>
 
-    <dimen name="tab_icon">21dp</dimen>
-    <dimen name="actionbar_icon">26dp</dimen>
-    <!-- These two icons looks larger than others at the same size for some reason -->
-    <dimen name="sort_asc_desc_icon">22dp</dimen>
-    <dimen name="list_icon">26dp</dimen>
-    <dimen name="text_icon">16dp</dimen>
-    <dimen name="empty_view_icon">52dp</dimen>
-
     <!-- Default screen margins, per the Android Design guidelines. -->
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
