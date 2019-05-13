@@ -300,7 +300,7 @@ public class Application extends android.app.Application {
     Slob.PeekableIterator<Blob> find(String key, String preferredSlobId, boolean activeOnly, Slob.Strength upToStrength) {
         long t0 = System.currentTimeMillis();
         Slob[] slobs = activeOnly ? getActiveSlobs() : slobber.getSlobs();
-        Slob.PeekableIterator<Blob> result = Slob.find(key, slobs, slobber.getSlob(preferredSlobId), upToStrength);
+        Slob.PeekableIterator<Blob> result = Slob.find(key, slobs, slobber.findSlob(preferredSlobId), upToStrength);
         Log.d(TAG, String.format("find ran in %dms", System.currentTimeMillis() - t0));
         return result;
     }
