@@ -17,7 +17,6 @@ import android.webkit.WebView;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-//import com.shamanland.fonticon.FontIconTypefaceHolder;
 
 import java.io.File;
 import java.io.IOException;
