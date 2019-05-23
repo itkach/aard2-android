@@ -146,6 +146,7 @@ public class ArticleFragment extends Fragment {
             ImageView icon = (ImageView) layout.findViewById(R.id.empty_icon);
             icon.setImageDrawable(IconMaker.emptyView(getActivity(),
                     IconMaker.IC_BAN));
+            this.setHasOptionsMenu(false);
             return layout;
         }
 
