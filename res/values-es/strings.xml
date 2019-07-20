@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Aard 2</string>
+    <string name="subtitle_lookup">Búsqueda</string>
+    <string name="subtitle_bookmark">Marcadores</string>
+    <string name="subtitle_history">Historial</string>
+    <string name="subtitle_dictionaries">Diccionarios</string>
+    <string name="action_find_dictionaries">Encontrar diccionarios</string>
+    <string name="action_find_in_page">Buscar en la página</string>
+    <string name="action_bookmark_article">Añadir marcadores</string>
+    <string name="action_filter">Filtrar</string>
+    <string name="action_ascending">Ascendente</string>
+    <string name="action_descending">Descendente</string>
+    <string name="action_sort_by_title">Por título</string>
+    <string name="action_sort_by_time">Por tiempo</string>
+    <string name="action_lookup">Buscar</string>
+    <!--
+    English only uses "one" and "other" for plurals.
+    Other quantities are included as a fallback if some translation
+    is missing a quantity used in that language, otherwise the app will crash
+    -->
+    <plurals name="dict_item_count">
+        <item quantity="zero">%,d elementos</item>
+        <item quantity="one">%,d elemento</item>
+        <item quantity="two">%,d elementos</item>
+        <item quantity="few">%,d elementos</item>
+        <item quantity="many">%,d elementos</item>
+        <item quantity="other">%,d elementos</item>
+    </plurals>
+
+    <string name="action_zoom_out">Reducir</string>
+    <string name="action_zoom_in">Ampliar</string>
+    <string name="action_zoom_reset">Reestablecer ampliación</string>
+    <string name="action_select_style">Tema…</string>
+    <string name="select_style">Selecione tema</string>
+    <string name="default_style_title">Predeterminado</string>
+    <string name="subtitle_settings">Ajustes</string>
+    <string name="setting_remote_content_always">Siempre</string>
+    <string name="setting_remote_content_wifi">Cuando está en Wi-Fi</string>
+    <string name="setting_remote_content_never">Nunca</string>
+    <string name="setting_remote_content">Cargar contenido de la web</string>
+    <string name="setting_about">Acerca de %1$s</string>
+    <string name="application_license_name">GNU General Public License v3</string>
+    <string name="application_license_url">https://gnu.org/licenses/gpl.html</string>
+    <string name="application_version">Versión %1$s</string>
+    <string name="setting_clear_cache">Limpiar caché</string>
+    <string name="setting_clear_cache_subtitle">Eliminar contenido de la caché incuído imágenes descargadas de la web</string>
+    <string name="confirm_clear_cached_content">¿Limpiar contenido de la caché?</string>
+    <string name="article_collection_nothing_found">Sin resultados</string>
+    <string name="article_collection_selected_not_available">El artículo seleccionado no está disponible</string>
+    <string name="article_collection_nothing_to_lookup">Nada a encontrar</string>
+    <string name="article_view_msg_not_found">No encontrado</string>
+    <string name="dictionaries_please_wait">Por favor guarde</string>
+    <string name="dictionaries_scanning_device">Localizando diccionarios en el dispositivo…</string>
+    <string name="dictionaries_confirm_forget">¿Olvidar "%1$s"?</string>
+    <string name="lookup_nothing_found">Sin resultados</string>
+    <string name="main_empty_bookmarks">Sin marcadores</string>
+    <string name="main_empty_history">Sin historial</string>
+    <string name="main_empty_dictionaries">Sin diccionarios</string>
+    <string name="delete">Borrar</string>
+
+    <plurals name="confirm_delete_bookmark_count">
+        <item quantity="zero">%,d marcadores</item>
+        <item quantity="one">%,d marcador</item>
+        <item quantity="two">%,d marcadores</item>
+        <item quantity="few">%,d marcadores</item>
+        <item quantity="many">%,d marcadores</item>
+        <item quantity="other">%,d marcadores</item>
+    </plurals>
+    <plurals name="confirm_delete_history_count">
+        <item quantity="zero">%,d registros de historial</item>
+        <item quantity="one">%,d registro de historial</item>
+        <item quantity="two">%,d registros de historial</item>
+        <item quantity="few">%,d registros de historial</item>
+        <item quantity="many">%,d registros de historial</item>
+        <item quantity="other">%,d registros de historial</item>
+    </plurals>
+
+    <string name="blob_descriptor_confirm_delete">Borrars %1$s?</string>
+    <string name="msg_failed_to_read_file">Error al leer el archivo</string>
+    <string name="msg_file_too_big">Archivo demasiado grande</string>
+    <string name="setting_user_styles">Temas de usuario</string>
+    <string name="setting_user_styles_empty">Sin temas</string>
+    <string name="msg_failed_to_store_user_style">Error al guardar tema de usuario</string>
+    <string name="setting_user_style_confirm_forget">¿Olvidar %1$s?</string>
+    <string name="msg_file_not_css">No parece ser un archivo CSS</string>
+    <string name="msg_no_activity_to_get_content">Sin actividad disponible para abrir el archivo</string>
+    <string name="action_add_dictionaries">Agregar</string>
+    <string name="title_activity_file_select">Seleccione archivo de diccionario</string>
+    <string name="action_goto_parent_dir">Subir</string>
+    <string name="action_reload_directory">Recargar</string>
+    <string name="msg_dictionary_already_open">Ya abierto</string>
+    <string name="msg_dictionary_added">Agregando diccionario de %1$s</string>
+    <string name="setting_fav_random_search">Usar únicamente diccionarios favoritos para búsquedas aleatorias</string>
+    <string name="article_collection_invalid_link">Enlace inválido</string>
+    <string name="setting_ui_theme">Estilo de Interfaz de usuario Interface Style</string>
+    <string name="setting_ui_theme_light">Claro</string>
+    <string name="setting_ui_theme_dark">Oscuro</string>
+    <string name="action_load_remote_content">Load Remote Content</string>
+    <string name="auto_style_title">Auto</string>
+    <string name="action_fullscreen">Pantalla completa</string>
+    <string name="setting_use_volume_for_nav">Usar botones de volumen para navegación</string>
+    <string name="msg_unable_to_function_without_storage_access">Acceso de archivo denegado, saliendo...</string>
+
+</resources>
