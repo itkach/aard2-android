@@ -91,7 +91,7 @@ dependencies {
     api 'com.fasterxml.jackson.core:jackson-databind:2.4+'
     api 'com.fasterxml.jackson.core:jackson-core:2.4+'
     api 'com.fasterxml.jackson.core:jackson-annotations:2.4+'
-    api 'com.github.kazy1991:FontDrawable:0.9.4'
+    api 'com.github.kazy1991:FontDrawable:0.9.5'
     api project(':slobj')
     api project(':slobber')
     api project(':slobber').files('libs/simple-5.1.7.1.itkach.jar')
