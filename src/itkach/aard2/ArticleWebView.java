@@ -449,6 +449,21 @@ public class ArticleWebView extends WebView {
         applyStylePref.cancel();
     }
 
+    private ArticleFragment callbackArticleFragment;
+
+    @JavascriptInterface
+    public void processArticleContent(String content) {
+        if (callbackArticleFragment!= null) {
+            callbackArticleFragment.articleContentCallback(content);
+        }
+    }
+
+    public void getArticleContent(ArticleFragment Callback){
+        android.util.Log.d("tts", "set callback");
+        callbackArticleFragment = Callback;
+        this.loadUrl("javascript:window.$SLOB.processArticleContent(document.getElementsByTagName('body')[0].innerText);");
+    }
+
     void applyStylePref() {
         String styleTitle = getPreferredStyle();
         this.setStyle(styleTitle);

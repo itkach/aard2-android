@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.speech.tts.TextToSpeech;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -19,6 +20,7 @@ import android.webkit.WebView;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import java.util.Locale;
 
 
 public class ArticleFragment extends Fragment {
@@ -28,11 +30,15 @@ public class ArticleFragment extends Fragment {
     private ArticleWebView  view;
     private MenuItem        miBookmark;
     private MenuItem        miFullscreen;
+    private MenuItem        miSpeak;
+    private Drawable        icSpeakUp;
+    private Drawable        icSpeakDown;
     private Drawable        icBookmark;
     private Drawable        icBookmarkO;
     private Drawable        icFullscreen;
     private String          url;
-
+    private TextToSpeech    ttSpeech;
+    private boolean ttsToggle = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -41,6 +47,8 @@ public class ArticleFragment extends Fragment {
         Context context = activity.getActionBar().getThemedContext();
         icBookmark =  IconMaker.actionBar(context, IconMaker.IC_BOOKMARK);
         icBookmarkO = IconMaker.actionBar(context, IconMaker.IC_BOOKMARK_O);
+        icSpeakUp = IconMaker.actionBar(context, IconMaker.IC_SPEAK_UP);
+        icSpeakDown = IconMaker.actionBar(context, IconMaker.IC_SPEAK_DOWN);
         icFullscreen = IconMaker.actionBar(context, IconMaker.IC_FULLSCREEN);
         setHasOptionsMenu(true);
     }
@@ -54,6 +62,7 @@ public class ArticleFragment extends Fragment {
         inflater.inflate(R.menu.article, menu);
         miBookmark = menu.findItem(R.id.action_bookmark_article);
         miFullscreen = menu.findItem(R.id.action_fullscreen);
+        miSpeak = menu.findItem(R.id.action_speak);
         if (Build.VERSION.SDK_INT < 19) {
             miFullscreen.setVisible(false);
             miFullscreen.setEnabled(false);
@@ -71,6 +80,10 @@ public class ArticleFragment extends Fragment {
             miBookmark.setChecked(false);
             miBookmark.setIcon(icBookmarkO);
         }
+    }
+
+    public void articleContentCallback(String content){
+        ttSpeech.speak(content, TextToSpeech.QUEUE_FLUSH, null);
     }
 
     @SuppressWarnings("deprecation")
@@ -93,6 +106,30 @@ public class ArticleFragment extends Fragment {
                 }
             }
             return true;
+        }
+        if (itemId == R.id.action_speak){
+            Application app = (Application)getActivity().getApplication();
+            if (this.url != null){
+                ttsToggle = !ttsToggle;
+                if (!ttsToggle){
+                    ttSpeech.stop();
+                    miSpeak.setIcon(icSpeakUp);
+                } else if (ttSpeech == null) {
+                   final ArticleFragment thisAF = this;
+                   ttSpeech = new TextToSpeech(app.getApplicationContext(), new TextToSpeech.OnInitListener () {
+                       @Override
+                       public void onInit(int status){
+                           miSpeak.setIcon(icSpeakDown);
+                           ttSpeech.setLanguage(Locale.UK);
+                           view.getArticleContent(thisAF);
+                       }
+                   });
+               } else {
+                   miSpeak.setIcon(icSpeakDown);
+                   ttSpeech.stop();
+                   view.getArticleContent(this);
+               }
+            }
         }
         if (itemId == R.id.action_fullscreen) {
             ((ArticleCollectionActivity)getActivity()).toggleFullScreen();
@@ -201,6 +238,7 @@ public class ArticleFragment extends Fragment {
         applyTextZoomPref();
         applyStylePref();
         miFullscreen.setIcon(icFullscreen);
+        miSpeak.setIcon(icSpeakUp);
     }
 
     void applyTextZoomPref() {
@@ -227,7 +265,12 @@ public class ArticleFragment extends Fragment {
         }
         miFullscreen = null;
         miBookmark = null;
+        if (ttSpeech != null) {
+            ttSpeech.stop();
+        }
         super.onDestroy();
     }
+
+
 
 }

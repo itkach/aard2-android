@@ -14,6 +14,8 @@ class IconMaker {
     static final char IC_SEARCH = '\uf002';
     static final char IC_BOOKMARK = '\uf02e';
     static final char IC_BOOKMARK_O = '\uf097';
+    static final char IC_SPEAK_UP = '\uf028';
+    static final char IC_SPEAK_DOWN = '\uf026';
     static final char IC_HISTORY = '\uf1da';
     static final char IC_DICTIONARY = '\uf02d';
     static final char IC_SETTINGS = '\uf013';
