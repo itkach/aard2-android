@@ -102,5 +102,8 @@
     <string name="auto_style_title">Auto</string>
     <string name="action_fullscreen">Plein écran</string>
     <string name="setting_use_volume_for_nav">Utiliser les boutons du volume +/- pour haut/bas</string>
+    <string name="find_hint">Rechercher sur la page</string>
+    <string name="find_next">Suivant</string>
+    <string name="find_previous">Précédent</string>
 
 </resources>
