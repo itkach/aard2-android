@@ -94,7 +94,10 @@ is missing a quantity used in that language, otherwise the app will crash
 <string name="setting_ui_theme">Stile interfaccia utente</string>
 <string name="setting_ui_theme_light">Chiaro</string>
 <string name="setting_ui_theme_dark">Scuro</string>
-    <string name="action_load_remote_content">Carica contenuto remoto</string>
-    <string name="action_fullscreen">Schermo intero</string>
-    <string name="setting_use_volume_for_nav">Usare i tasti del volume per la navigazione</string>
+<string name="action_load_remote_content">Carica contenuto remoto</string>
+<string name="action_fullscreen">Schermo intero</string>
+<string name="setting_use_volume_for_nav">Usare i tasti del volume per la navigazione</string>
+<string name="find_hint">Trova nella pagina</string>
+<string name="find_next">Successivo</string>
+<string name="find_previous">Precedente</string>
 </resources>

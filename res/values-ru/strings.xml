@@ -87,4 +87,5 @@
     <string name="action_load_remote_content">Загрузить удалённый контент</string>
     <string name="action_fullscreen">Весь экран</string>
     <string name="setting_use_volume_for_nav">Использовать кнопки громкости для навигации</string>
+    <string name="find_hint">Поиск на странице</string>
 </resources>

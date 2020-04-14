@@ -102,5 +102,8 @@
     <string name="action_fullscreen">Pantalla completa</string>
     <string name="setting_use_volume_for_nav">Usar botones de volumen para navegación</string>
     <string name="msg_unable_to_function_without_storage_access">Acceso de archivo denegado, saliendo...</string>
+    <string name="find_hint">Buscar en la página</string>
+    <string name="find_next">Siguiente</string>
+    <string name="find_previous">Anterior"</string>
 
 </resources>
