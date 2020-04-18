@@ -67,8 +67,6 @@ class FindActionModeCallback implements ActionMode.Callback, TextWatcher,
      */
     void findAll() {
         String find = editText.getText().toString();
-        if (find.length() == 0)
-            return;
 
         if (Build.VERSION.SDK_INT < 16)
             webview.findAll(find);
