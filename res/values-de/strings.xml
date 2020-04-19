@@ -96,4 +96,5 @@
     <string name="action_load_remote_content">Lade externen Inhalt</string>
     <string name="action_fullscreen">Vollbild</string>
     <string name="setting_use_volume_for_nav">Lautstärketasten für die Navigation verwenden</string>
+    <string name="find_hint">Suche in Seite</string>
 </resources>

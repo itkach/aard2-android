@@ -33,7 +33,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.TreeSet;
 
-public class ArticleWebView extends WebView {
+public class ArticleWebView extends SearchableWebView {
 
     public static final String LOCALHOST = Application.LOCALHOST;
     private final String styleSwitcherJs;
