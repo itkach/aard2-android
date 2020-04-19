@@ -73,7 +73,6 @@ public class ArticleFragment extends Fragment {
         }
     }
 
-    @SuppressWarnings("deprecation")
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int itemId = item.getItemId();

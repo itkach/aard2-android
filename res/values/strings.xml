@@ -109,4 +109,7 @@
     <string name="action_fullscreen">Full Screen</string>
     <string name="setting_use_volume_for_nav">Use volume buttons for navigation</string>
     <string name="msg_unable_to_function_without_storage_access">File access was not allowed, quitting...</string>
+    <string name="find_hint">Find in page</string>
+    <string name="find_next">Next</string>
+    <string name="find_previous">Previous</string>
 </resources>
