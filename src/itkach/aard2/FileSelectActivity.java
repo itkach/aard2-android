@@ -95,7 +95,7 @@ public class FileSelectActivity extends ListActivity {
                 }
             }
             if (root == null || !root.exists()) {
-                root = Environment.getExternalStorageDirectory();
+                root = new File(DictionaryFinder.cardDirectories().get(0));
             }
             adapter.setRoot(root);
         }

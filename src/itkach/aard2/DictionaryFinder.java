@@ -2,25 +2,78 @@ package itkach.aard2;
 
 import android.util.Log;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import static android.os.Environment.getExternalStorageDirectory;
-
+import android.os.Environment;
 
 public class DictionaryFinder {
 
-    public final static File[] FALLBACK_ROOT_LS = new File[] {
-            new File("/mnt"),
-            new File("/sdcard"),
-            new File("/storage"),
-            getExternalStorageDirectory()};
+    public static List<String> cardDirectories() {
 
+        final List<String> dirNames = new LinkedList<String>();
+        BufferedReader reader = null;
+        try {
+            reader = new BufferedReader(new FileReader("/proc/self/mounts"));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                final String[] parts = line.split("\\s+");
+                if (parts.length >= 4 &&
+                        parts[3].indexOf("rw") >= 0) {
+                    final File fsDir = new File(parts[1]);
+                    final String dirName = fsDir.getPath();
+                    final String dirNameLower = dirName.toLowerCase();
+                    if (fsDir.isDirectory() && fsDir.canRead() && (dirNameLower.contains("storage")
+                            || dirNameLower.contains("media")) ) {
+                        dirNames.add(dirName);
+                    }
+                }
+            }
+        } catch (Throwable e) {
+        } finally {
+            try {
+                reader.close();
+            } catch (Throwable t) {
+            }
+        }
+
+        if (dirNames.size() == 0) {
+            dirNames.add(Environment.getExternalStorageDirectory().getPath());
+        }
+        return dirNames;
+    }
+
+
+    private static void maybeAddDir(List<File> dirs, String path) {
+        for (File d : dirs) {
+            if (d.getPath().equals(path)) {
+                return;
+            }
+        }
+        File file = new File(path);
+        if (file.isDirectory() && file.exists() && file.canRead()) {
+            dirs.add(file);
+        }
+    }
+
+    public static File[] getFallbackRootLs() {
+        List<File> dirs = new LinkedList<File>();
+        maybeAddDir(dirs, "/sdcard");
+        maybeAddDir(dirs, "/mnt");
+        maybeAddDir(dirs, "/storage");
+        for (String path : cardDirectories()) {
+            maybeAddDir(dirs, path);
+        }
+        return dirs.toArray(new File[dirs.size()]);
+    }
 
     private final static String T = "DictionaryFinder";
 
@@ -50,7 +103,7 @@ public class DictionaryFinder {
         List<File> result = new ArrayList<File>();
 
         if (files == null || files.length == 0) {
-            files = FALLBACK_ROOT_LS;
+            files = getFallbackRootLs();
         }
         for (File f : files) {
             result.addAll(scanDir(f));
