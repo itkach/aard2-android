@@ -10,6 +10,7 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
+        android:usesCleartextTraffic="true"
         android:name=".Application"
         android:allowBackup="true"
         android:icon="@drawable/aard2"
