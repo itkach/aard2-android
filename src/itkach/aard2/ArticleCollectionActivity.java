@@ -227,6 +227,10 @@ public class ArticleCollectionActivity extends FragmentActivity
 
     private ArticleCollectionPagerAdapter createFromIntent(Application app, Intent intent) {
         String lookupKey = intent.getStringExtra(Intent.EXTRA_TEXT);
+        if (intent.getAction().equals(Intent.ACTION_PROCESS_TEXT)) {
+            lookupKey = getIntent()
+                    .getCharSequenceExtra(Intent.EXTRA_PROCESS_TEXT).toString();
+        }
         if (lookupKey == null) {
             lookupKey = intent.getStringExtra(SearchManager.QUERY);
         }
