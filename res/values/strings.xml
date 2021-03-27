@@ -102,6 +102,7 @@
     <string name="setting_fav_random_search">Use only favorite dictionaries for random lookup</string>
     <string name="article_collection_invalid_link">Invalid link</string>
     <string name="setting_ui_theme">User Interface Style</string>
+    <string name="setting_ui_theme_system">Follow system</string>
     <string name="setting_ui_theme_light">Light</string>
     <string name="setting_ui_theme_dark">Dark</string>
     <string name="action_load_remote_content">Load Remote Content</string>

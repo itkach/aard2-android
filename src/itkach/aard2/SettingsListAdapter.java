@@ -121,7 +121,7 @@ public class SettingsListAdapter extends BaseAdapter implements SharedPreference
             final SharedPreferences prefs = app.prefs();
 
             String currentValue = prefs.getString(Application.PREF_UI_THEME,
-                    Application.PREF_UI_THEME_LIGHT);
+                    Application.PREF_UI_THEME_SYSTEM);
             Log.d("Settings", Application.PREF_UI_THEME + " current value: " + currentValue);
 
             View.OnClickListener clickListener = new View.OnClickListener() {
@@ -130,6 +130,9 @@ public class SettingsListAdapter extends BaseAdapter implements SharedPreference
                     SharedPreferences.Editor editor = prefs.edit();
                     String value = null;
                     switch(view.getId()) {
+                        case R.id.setting_ui_theme_system:
+                            value = Application.PREF_UI_THEME_SYSTEM;
+                            break;
                         case R.id.setting_ui_theme_light:
                             value = Application.PREF_UI_THEME_LIGHT;
                             break;
@@ -145,12 +148,16 @@ public class SettingsListAdapter extends BaseAdapter implements SharedPreference
                     context.recreate();
                 }
             };
+            RadioButton btnSystem = (RadioButton) view
+                    .findViewById(R.id.setting_ui_theme_system);
             RadioButton btnLight = (RadioButton) view
                     .findViewById(R.id.setting_ui_theme_light);
             RadioButton btnDark = (RadioButton) view
                     .findViewById(R.id.setting_ui_theme_dark);
+            btnSystem.setOnClickListener(clickListener);
             btnLight.setOnClickListener(clickListener);
             btnDark.setOnClickListener(clickListener);
+            btnSystem.setChecked(currentValue.equals(Application.PREF_UI_THEME_SYSTEM));
             btnLight.setChecked(currentValue.equals(Application.PREF_UI_THEME_LIGHT));
             btnDark.setChecked(currentValue.equals(Application.PREF_UI_THEME_DARK));
         };
