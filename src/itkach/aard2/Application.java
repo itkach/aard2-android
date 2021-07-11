@@ -355,6 +355,7 @@ public class Application extends android.app.Application {
             Log.w(TAG, "Dictionary discovery is already running");
             return;
         }
+        callback.onDiscoveryStarting();
         dictionaries.clear();
         discoveryThread = new Thread(new Runnable() {
             @Override

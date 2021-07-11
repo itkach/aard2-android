@@ -2,5 +2,6 @@ package itkach.aard2;
 
 
 public interface DictionaryDiscoveryCallback {
-    public void onDiscoveryFinished();
+    void onDiscoveryStarting();
+    void onDiscoveryFinished();
 }

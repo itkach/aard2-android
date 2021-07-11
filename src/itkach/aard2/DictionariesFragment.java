@@ -132,11 +132,15 @@ public class DictionariesFragment extends BaseListFragment {
         final ProgressDialog p = new DiscoveryProgressDialog(getActivity());
         app.findDictionaries(new DictionaryDiscoveryCallback() {
             @Override
+            public void onDiscoveryStarting() {
+                p.show();
+            }
+
+            @Override
             public void onDiscoveryFinished() {
                 p.dismiss();
             }
         });
-        p.show();
     }
 
 
