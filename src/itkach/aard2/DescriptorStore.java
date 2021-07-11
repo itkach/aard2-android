@@ -21,7 +21,7 @@ class DescriptorStore<T extends BaseDescriptor> {
     }
 
     List<T> load(Class<T> type) {
-        List<T> result = new ArrayList<T>();
+        List<T> result = new ArrayList<>();
         File[] files = dir.listFiles();
         if (files != null) {
             for (File f : files) {
@@ -33,7 +33,7 @@ class DescriptorStore<T extends BaseDescriptor> {
                     Log.w(TAG, String.format("Loading data from file %s failed", path), e);
                     boolean deleted = f.delete();
                     Log.w(TAG, String.format("Attempt to delete corrupted file %s succeeded? %s",
-                            deleted));
+                            path, deleted));
                 }
             }
         }
