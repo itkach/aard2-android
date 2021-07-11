@@ -352,8 +352,8 @@ public class Application extends android.app.Application {
     synchronized void findDictionaries(
             final DictionaryDiscoveryCallback callback) {
         if (discoveryThread != null) {
-            throw new RuntimeException(
-                    "Dictionary discovery is already running");
+            Log.w(TAG, "Dictionary discovery is already running");
+            return;
         }
         dictionaries.clear();
         discoveryThread = new Thread(new Runnable() {
