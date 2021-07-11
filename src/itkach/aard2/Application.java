@@ -514,7 +514,7 @@ public class Application extends android.app.Application {
                     }
                 }
                 catch (Exception ex) {
-                    Log.w(TAG, ex);
+                    Log.w(TAG, String.format("Dictionary %s (%s) has no uri tag", slob.getId(), slob.getTags()), ex);
                 }
             }
 
