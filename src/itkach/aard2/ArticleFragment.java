@@ -4,7 +4,9 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -20,6 +22,16 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class ArticleFragment extends Fragment {
 
@@ -28,10 +40,12 @@ public class ArticleFragment extends Fragment {
     private ArticleWebView  view;
     private MenuItem        miBookmark;
     private MenuItem        miFullscreen;
+    private MenuItem        miShare;
     private Drawable        icBookmark;
     private Drawable        icBookmarkO;
     private Drawable        icFullscreen;
     private String          url;
+    private String          originalUrl = null;
 
 
     @Override
@@ -54,10 +68,12 @@ public class ArticleFragment extends Fragment {
         inflater.inflate(R.menu.article, menu);
         miBookmark = menu.findItem(R.id.action_bookmark_article);
         miFullscreen = menu.findItem(R.id.action_fullscreen);
+        miShare = menu.findItem(R.id.action_share_link);
         if (Build.VERSION.SDK_INT < 19) {
             miFullscreen.setVisible(false);
             miFullscreen.setEnabled(false);
         }
+        this.retrieveOriginalUrl();
     }
 
     private void displayBookmarked(boolean value) {
@@ -127,6 +143,17 @@ public class ArticleFragment extends Fragment {
                     });
             AlertDialog dialog = builder.create();
             dialog.show();
+            return true;
+        }
+        if (itemId == R.id.action_share_link) {
+            if (this.originalUrl == null) {
+                return false;
+            }
+            Intent share = new Intent(Intent.ACTION_SEND);
+            share.setType("text/plain");
+            share.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
+            share.putExtra(Intent.EXTRA_TEXT, this.originalUrl);
+            getContext().startActivity(Intent.createChooser(share, getString(R.string.action_share_link)));
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -218,6 +245,62 @@ public class ArticleFragment extends Fragment {
         return view;
     }
 
+    void enableShareButton() {
+        if (this.miShare != null) {
+            this.miShare.setEnabled(true);
+        }
+    }
+
+    void activateShareButton(final String url) {
+        this.originalUrl = url;
+        this.getActivity().runOnUiThread(new FragmentRunnable(this) {
+            @Override
+            public void run() {
+                if (url != null) {
+                    ((ArticleFragment)this.fragment).enableShareButton();
+                }
+            }
+        });
+    }
+
+    private void retrieveOriginalUrl() {
+        final String url = this.url;
+        AsyncTask.execute(new FragmentRunnable(this) {
+            @Override
+            public void run() {
+                try {
+                    URL endpoint = new URL(url);
+                    HttpURLConnection connection = (HttpURLConnection) endpoint.openConnection();
+                    if (connection.getResponseCode() != 200) {
+                        return;
+                    }
+                    InputStream responseBody = connection.getInputStream();
+                    StringBuilder htmlBuilder = new StringBuilder();
+                    Reader reader = new BufferedReader(new InputStreamReader(responseBody, "UTF-8"));
+                    int character = 0;
+                    while ((character = reader.read()) != -1) {
+                        htmlBuilder.append((char) character);
+                    }
+                    String html = htmlBuilder.toString();
+                    String articleUrl = null;
+                    Pattern pattern = Pattern.compile("<a\\s+(?:[^>]*?\\s+)?href=\"([^\"]*)\"(>|([\\s]+([^>]+)))");
+                    Matcher matcher = pattern.matcher(html);
+                    while (matcher.find()) {
+                        if (matcher.group().contains("id=\"view-online-link\"")) {
+                            articleUrl = matcher.group(1);
+                            break;
+                        }
+                    }
+                    ((ArticleFragment)this.fragment).activateShareButton(articleUrl);
+                } catch (MalformedURLException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
     @Override
     public void onDestroy() {
         if (view != null) {
@@ -226,7 +309,7 @@ public class ArticleFragment extends Fragment {
         }
         miFullscreen = null;
         miBookmark = null;
+        miShare = null;
         super.onDestroy();
     }
-
 }

@@ -40,4 +40,10 @@
           android:showAsAction="never"
         />
 
+    <item android:id="@+id/action_share_link"
+        android:title="@string/action_share_link"
+        android:enabled="false"
+        android:showAsAction="never"
+        />
+
 </menu>

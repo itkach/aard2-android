@@ -104,7 +104,7 @@ public class ArticleWebView extends SearchableWebView {
         this(context, null);
     }
 
-    public ArticleWebView(Context context, AttributeSet attrs) {
+    public ArticleWebView(final Context context, AttributeSet attrs) {
         super(context, attrs);
 
         connectivityManager = (ConnectivityManager) context
@@ -267,7 +267,7 @@ public class ArticleWebView extends SearchableWebView {
                         share.setType("text/plain");
                         share.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
                         share.putExtra(Intent.EXTRA_TEXT, url);
-                        getContext().startActivity(Intent.createChooser(share, "Share Link"));
+                        getContext().startActivity(Intent.createChooser(share, context.getString(R.string.action_share_link)));
                         return true;
                     }
                 }
