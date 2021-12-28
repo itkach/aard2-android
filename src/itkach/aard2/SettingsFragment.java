@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
+import android.support.v4.provider.DocumentFile;
 import android.util.Log;
 import android.view.View;
 import android.webkit.WebView;
@@ -69,19 +70,13 @@ public class SettingsFragment extends ListFragment {
         Uri dataUri = data == null ? null : data.getData();
         Log.d(TAG, String.format("req code %s, result code: %s, data: %s", requestCode, resultCode, dataUri));
         if (resultCode == Activity.RESULT_OK && dataUri != null) {
-            String path = dataUri.getPath().toLowerCase();
-            if (!(path.endsWith(".css") || path.endsWith(".txt"))) {
-                Log.d(TAG, "Doesn't appear to be a css: " + dataUri);
-                Toast.makeText(getActivity(), R.string.msg_file_not_css,
-                        Toast.LENGTH_LONG).show();
-                return;
-            }
             try {
                 InputStream is = getActivity().getContentResolver().openInputStream(dataUri);
+                DocumentFile documentFile = DocumentFile.fromSingleUri(getContext(), dataUri);
+                String fileName = documentFile.getName();
                 Application app = (Application)getActivity().getApplication();
                 String userCss = app.readTextFile(is, 256 * 1024);
                 List<String> pathSegments = dataUri.getPathSegments();
-                String fileName = pathSegments.get(pathSegments.size() - 1);
                 Log.d(TAG, fileName);
                 Log.d(TAG, userCss);
                 int lastIndexOfDot = fileName.lastIndexOf(".");
