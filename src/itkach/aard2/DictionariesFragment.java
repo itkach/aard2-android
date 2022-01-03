@@ -2,8 +2,10 @@ package itkach.aard2;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.text.Html;
@@ -29,24 +31,24 @@ public class DictionariesFragment extends BaseListFragment {
     final static int FILE_SELECT_REQUEST = 17;
 
     private DictionaryListAdapter listAdapter;
-    private boolean findDictionariesOnAttach = false;
+    //private boolean findDictionariesOnAttach = false;
 
-    private class DiscoveryProgressDialog extends ProgressDialog {
-
-        public DiscoveryProgressDialog(Context context) {
-            super(context);
-            setIndeterminate(true);
-            setCancelable(false);
-            setTitle(getString(R.string.dictionaries_please_wait));
-            setMessage(getString(R.string.dictionaries_scanning_device));
-        }
-
-        @Override
-        public void onBackPressed() {
-            final Application app = (Application)getActivity().getApplication();
-            app.cancelFindDictionaries();
-        }
-    }
+//    private class DiscoveryProgressDialog extends ProgressDialog {
+//
+//        public DiscoveryProgressDialog(Context context) {
+//            super(context);
+//            setIndeterminate(true);
+//            setCancelable(false);
+//            setTitle(getString(R.string.dictionaries_please_wait));
+//            setMessage(getString(R.string.dictionaries_scanning_device));
+//        }
+//
+//        @Override
+//        public void onBackPressed() {
+//            final Application app = (Application)getActivity().getApplication();
+//            app.cancelFindDictionaries();
+//        }
+//    }
 
 
     protected char getEmptyIcon() {
@@ -81,7 +83,7 @@ public class DictionariesFragment extends BaseListFragment {
         btn.setOnClickListener(new OnClickListener(){
             @Override
             public void onClick(View v) {
-                findDictionaries();
+//                findDictionaries();
             }
         });
         LinearLayout emptyViewLayout = (LinearLayout)emptyView;
@@ -109,49 +111,61 @@ public class DictionariesFragment extends BaseListFragment {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.action_find_dictionaries) {
-            findDictionaries();
-            return true;
-        }
+//        if (item.getItemId() == R.id.action_find_dictionaries) {
+//            findDictionaries();
+//            return true;
+//        }
         if (item.getItemId() == R.id.action_add_dictionaries) {
-            Intent intent = new Intent(getActivity(), FileSelectActivity.class);
-            startActivityForResult(intent, FILE_SELECT_REQUEST);
+//            Intent intent = new Intent(getActivity(), FileSelectActivity.class);
+//            startActivityForResult(intent, FILE_SELECT_REQUEST);
+            Intent intent = new Intent();
+            intent.setAction(Intent.ACTION_GET_CONTENT);
+            intent.setType("*/*");
+            Intent chooser = Intent.createChooser(intent, "Select Dictionary File");
+            try {
+                startActivityForResult(chooser, FILE_SELECT_REQUEST);
+            }
+            catch (ActivityNotFoundException e){
+                Log.d(TAG, "Not activity to get content", e);
+                Toast.makeText(getContext(), R.string.msg_no_activity_to_get_content,
+                        Toast.LENGTH_LONG).show();
+            }
             return true;
         }
         return super.onOptionsItemSelected(item);
     }
 
-    public void findDictionaries() {
-        Activity activity = getActivity();
-        if (activity == null) {
-            this.findDictionariesOnAttach = true;
-            return;
-        }
-        this.findDictionariesOnAttach = false;
-        final Application app = ((Application)activity.getApplication());
-        final ProgressDialog p = new DiscoveryProgressDialog(getActivity());
-        app.findDictionaries(new DictionaryDiscoveryCallback() {
-            @Override
-            public void onDiscoveryStarting() {
-                p.show();
-            }
+//    public void findDictionaries() {
+//        Activity activity = getActivity();
+//        if (activity == null) {
+//            this.findDictionariesOnAttach = true;
+//            return;
+//        }
+//        this.findDictionariesOnAttach = false;
+//        final Application app = ((Application)activity.getApplication());
+//        final ProgressDialog p = new DiscoveryProgressDialog(getActivity());
+//        app.findDictionaries(new DictionaryDiscoveryCallback() {
+//            @Override
+//            public void onDiscoveryStarting() {
+//                p.show();
+//            }
+//
+//            @Override
+//            public void onDiscoveryFinished() {
+//                p.dismiss();
+//            }
+//        });
+//    }
 
-            @Override
-            public void onDiscoveryFinished() {
-                p.dismiss();
-            }
-        });
-    }
 
 
-
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        if (findDictionariesOnAttach) {
-            findDictionaries();
-        }
-    }
+//    @Override
+//    public void onAttach(Activity activity) {
+//        super.onAttach(activity);
+//        if (findDictionariesOnAttach) {
+//            findDictionaries();
+//        }
+//    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -159,17 +173,19 @@ public class DictionariesFragment extends BaseListFragment {
             Log.d(TAG, "Unknown request code: " + requestCode);
             return;
         }
-        String selectedPath = data == null ? null : data.getStringExtra(FileSelectActivity.KEY_SELECTED_FILE_PATH);
-        Log.d(TAG, String.format("req code %s, result code: %s, selected: %s", requestCode, resultCode, selectedPath));
-        if (resultCode == Activity.RESULT_OK && selectedPath != null && selectedPath.length() > 0) {
+
+        Uri dataUri = data == null ? null : data.getData();
+        Log.d(TAG, String.format("req code %s, result code: %s, data: %s", requestCode, resultCode, dataUri));
+
+        if (resultCode == Activity.RESULT_OK && data != null) {
             final Application app = ((Application)getActivity().getApplication());
-            boolean alreadyExists = app.addDictionary(new File(selectedPath));
+            boolean alreadyExists = app.addDictionary(dataUri);
             String toastMessage;
             if (alreadyExists) {
                 toastMessage = getString(R.string.msg_dictionary_already_open);
             }
             else {
-                toastMessage = getString(R.string.msg_dictionary_added, selectedPath);
+                toastMessage = getString(R.string.msg_dictionary_added, dataUri);
             }
 
             Toast.makeText(getActivity(), toastMessage, Toast.LENGTH_LONG).show();

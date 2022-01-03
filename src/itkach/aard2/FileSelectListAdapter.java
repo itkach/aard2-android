@@ -65,7 +65,7 @@ public class FileSelectListAdapter extends BaseAdapter {
         files = root.listFiles(fileFilter);
         if (files == null) {
             if (root.getAbsolutePath().equals("/")) {
-                files = DictionaryFinder.getFallbackRootLs();
+                //files = DictionaryFinder.getFallbackRootLs();
             }
             else {
                 files = EMPTY;

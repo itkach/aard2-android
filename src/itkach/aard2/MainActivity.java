@@ -47,7 +47,7 @@ public class MainActivity extends FragmentActivity implements
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     viewPager.setCurrentItem(3);
                     DictionariesFragment df = (DictionariesFragment) appSectionsPagerAdapter.getItem(3);
-                    df.findDictionaries();
+                    //df.findDictionaries();
                 } else {
                     Toast.makeText(this,
                             R.string.msg_unable_to_function_without_storage_access,
@@ -113,7 +113,7 @@ public class MainActivity extends FragmentActivity implements
             if (app.dictionaries.size() == 0) {
                 viewPager.setCurrentItem(3);
                 DictionariesFragment df = (DictionariesFragment) appSectionsPagerAdapter.getItem(3);
-                df.findDictionaries();
+                //df.findDictionaries();
             }
         }
 

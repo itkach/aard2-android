@@ -141,7 +141,7 @@ public class Application extends android.app.Application {
                 slobber.setSlobs(null);
                 List<Slob> slobs = new ArrayList<Slob>();
                 for (SlobDescriptor sd : dictionaries) {
-                    Slob s = sd.load();
+                    Slob s = sd.load(getApplicationContext());
                     if (s != null) {
                         slobs.add(s);
                     }
@@ -342,41 +342,61 @@ public class Application extends android.app.Application {
         return slobber.getSlob(slobId);
     }
 
-    private Thread discoveryThread;
-    private DictionaryFinder dictFinder = new DictionaryFinder();
+//    private Thread discoveryThread;
+//    private DictionaryFinder dictFinder = new DictionaryFinder();
+//
+//    synchronized void cancelFindDictionaries() {
+//        dictFinder.cancel();
+//    }
+//
+//    synchronized void findDictionaries(
+//            final DictionaryDiscoveryCallback callback) {
+//        if (discoveryThread != null) {
+//            Log.w(TAG, "Dictionary discovery is already running");
+//            return;
+//        }
+//        callback.onDiscoveryStarting();
+//        dictionaries.clear();
+//        discoveryThread = new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                final List<SlobDescriptor> result = dictFinder.findDictionaries();
+//                discoveryThread = null;
+//                Handler h = new Handler(Looper.getMainLooper());
+//                h.post(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        dictionaries.addAll(result);
+//                        callback.onDiscoveryFinished();
+//                    }
+//                });
+//            }
+//        });
+//        discoveryThread.start();
+//    }
 
-    synchronized void cancelFindDictionaries() {
-        dictFinder.cancel();
-    }
+//    synchronized boolean addDictionary(File file) {
+//        SlobDescriptor newDesc = SlobDescriptor.fromFile(file);
+//        if (newDesc.id != null) {
+//            for (SlobDescriptor d: dictionaries) {
+//                if (d.id != null && d.id.equals(newDesc.id)) {
+//                    return true;
+//                }
+//            }
+//        }
+//        dictionaries.add(newDesc);
+//        return false;    static SlobDescriptor fromFile(File file) {
+//        SlobDescriptor s = new SlobDescriptor();
+//        s.path = file.getAbsolutePath();
+//        s.load();
+//        return s;
+//    }
+//
+//    }
 
-    synchronized void findDictionaries(
-            final DictionaryDiscoveryCallback callback) {
-        if (discoveryThread != null) {
-            Log.w(TAG, "Dictionary discovery is already running");
-            return;
-        }
-        callback.onDiscoveryStarting();
-        dictionaries.clear();
-        discoveryThread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                final List<SlobDescriptor> result = dictFinder.findDictionaries();
-                discoveryThread = null;
-                Handler h = new Handler(Looper.getMainLooper());
-                h.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        dictionaries.addAll(result);
-                        callback.onDiscoveryFinished();
-                    }
-                });
-            }
-        });
-        discoveryThread.start();
-    }
 
-    synchronized boolean addDictionary(File file) {
-        SlobDescriptor newDesc = SlobDescriptor.fromFile(file);
+    synchronized boolean addDictionary(Uri uri) {
+        SlobDescriptor newDesc = SlobDescriptor.fromUri(getApplicationContext(), uri.toString());
         if (newDesc.id != null) {
             for (SlobDescriptor d: dictionaries) {
                 if (d.id != null && d.id.equals(newDesc.id)) {
@@ -387,6 +407,7 @@ public class Application extends android.app.Application {
         dictionaries.add(newDesc);
         return false;
     }
+
 
     Slob findSlob(String slobOrUri) {
         return slobber.findSlob(slobOrUri);

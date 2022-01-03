@@ -177,7 +177,8 @@ final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
 
     Slob resolveOwner(BlobDescriptor bd) {
         Slob slob = app.getSlob(bd.slobId);
-        if (slob == null || !slob.file.exists()) {
+//        if (slob == null || !slob.file.exists()) {
+        if (slob == null) {
             slob = app.findSlob(bd.slobUri);
         }
         return slob;
@@ -205,7 +206,7 @@ final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
             catch (Exception ex) {
                 Log.w(TAG,
                       String.format("Failed to resolve descriptor %s (%s) in %s (%s)",
-                              bd.blobId, bd.key, slob.getId(), slob.file.getAbsolutePath()), ex);
+                              bd.blobId, bd.key, slob.getId(), slob.file.getURI()), ex);
                 blob = null;
             }
         }

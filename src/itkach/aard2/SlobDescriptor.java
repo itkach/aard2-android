@@ -1,8 +1,14 @@
 package itkach.aard2;
 
+import android.content.Context;
+import android.net.Uri;
+import android.support.v4.provider.DocumentFile;
 import android.util.Log;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.nio.channels.FileChannel;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -23,17 +29,31 @@ public class SlobDescriptor extends BaseDescriptor {
 
     void update(Slob s) {
         this.id = s.getId().toString();
-        this.path = s.file.getAbsolutePath();
+        this.path = s.file.getURI();
         this.tags = s.getTags();
         this.blobCount = s.getBlobCount();
         this.error = null;
     }
 
-    Slob load() {
+    Slob load(final Context context) {
         Slob slob = null;
-        File f = new File(path);
+        //File f = new File(path);
+
         try {
-            slob = new Slob(f);
+            //slob = new Slob(f);
+            final Uri uri = Uri.parse(path);
+            slob = new Slob(new Slob.FileChannelFactory() {
+                @Override
+                public FileChannel create() throws IOException {
+                    FileInputStream fis = new FileInputStream(context.getContentResolver().openFileDescriptor(uri, "r").getFileDescriptor());
+                    return fis.getChannel();
+                }
+
+                @Override
+                public String getURI() {
+                    return path;
+                }
+            });
             this.update(slob);
         }
         catch (Exception e) {
@@ -56,11 +76,19 @@ public class SlobDescriptor extends BaseDescriptor {
         return label;
     }
 
-    static SlobDescriptor fromFile(File file) {
+//    static SlobDescriptor fromFile(File file) {
+//        SlobDescriptor s = new SlobDescriptor();
+//        s.path = file.getAbsolutePath();
+//        s.load();
+//        return s;
+//    }
+
+    static SlobDescriptor fromUri(Context context, String uri) {
         SlobDescriptor s = new SlobDescriptor();
-        s.path = file.getAbsolutePath();
-        s.load();
+        s.path = uri;
+        s.load(context);
         return s;
     }
+
 
 }
