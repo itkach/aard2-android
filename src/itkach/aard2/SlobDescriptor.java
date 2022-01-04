@@ -2,6 +2,7 @@ package itkach.aard2;
 
 import android.content.Context;
 import android.net.Uri;
+import android.os.ParcelFileDescriptor;
 import android.support.v4.provider.DocumentFile;
 import android.util.Log;
 
@@ -26,10 +27,11 @@ public class SlobDescriptor extends BaseDescriptor {
     public long blobCount;
     public String error;
     public boolean expandDetail = false;
+    private transient ParcelFileDescriptor fileDescriptor;
 
     void update(Slob s) {
         this.id = s.getId().toString();
-        this.path = s.file.getURI();
+        this.path = s.fileURI;
         this.tags = s.getTags();
         this.blobCount = s.getBlobCount();
         this.error = null;
@@ -42,18 +44,11 @@ public class SlobDescriptor extends BaseDescriptor {
         try {
             //slob = new Slob(f);
             final Uri uri = Uri.parse(path);
-            slob = new Slob(new Slob.FileChannelFactory() {
-                @Override
-                public FileChannel create() throws IOException {
-                    FileInputStream fis = new FileInputStream(context.getContentResolver().openFileDescriptor(uri, "r").getFileDescriptor());
-                    return fis.getChannel();
-                }
-
-                @Override
-                public String getURI() {
-                    return path;
-                }
-            });
+            //must hold on to ParcelFileDescriptor,
+            //otherwise it gets garbage collected and trashes underlying file descriptor
+            fileDescriptor = context.getContentResolver().openFileDescriptor(uri, "r");
+            FileInputStream fileInputStream = new FileInputStream(fileDescriptor.getFileDescriptor());
+            slob = new Slob(fileInputStream.getChannel(), path);
             this.update(slob);
         }
         catch (Exception e) {

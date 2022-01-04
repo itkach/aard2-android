@@ -206,7 +206,7 @@ final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
             catch (Exception ex) {
                 Log.w(TAG,
                       String.format("Failed to resolve descriptor %s (%s) in %s (%s)",
-                              bd.blobId, bd.key, slob.getId(), slob.file.getURI()), ex);
+                              bd.blobId, bd.key, slob.getId(), slob.fileURI), ex);
                 blob = null;
             }
         }
