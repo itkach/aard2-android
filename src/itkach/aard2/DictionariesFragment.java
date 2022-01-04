@@ -119,7 +119,7 @@ public class DictionariesFragment extends BaseListFragment {
 //            Intent intent = new Intent(getActivity(), FileSelectActivity.class);
 //            startActivityForResult(intent, FILE_SELECT_REQUEST);
             Intent intent = new Intent();
-            intent.setAction(Intent.ACTION_GET_CONTENT);
+            intent.setAction(Intent.ACTION_OPEN_DOCUMENT);
             intent.setType("*/*");
             Intent chooser = Intent.createChooser(intent, "Select Dictionary File");
             try {
@@ -179,6 +179,9 @@ public class DictionariesFragment extends BaseListFragment {
 
         if (resultCode == Activity.RESULT_OK && data != null) {
             final Application app = ((Application)getActivity().getApplication());
+
+            getActivity().getContentResolver().takePersistableUriPermission(dataUri,
+                    Intent.FLAG_GRANT_READ_URI_PERMISSION);
             boolean alreadyExists = app.addDictionary(dataUri);
             String toastMessage;
             if (alreadyExists) {
