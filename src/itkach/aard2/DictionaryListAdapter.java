@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.database.DataSetObserver;
 import android.net.Uri;
+import android.support.v4.provider.DocumentFile;
 import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -71,7 +72,15 @@ public class DictionaryListAdapter extends BaseAdapter {
     public View getView(int position, final View convertView, ViewGroup parent) {
         SlobDescriptor desc = (SlobDescriptor) getItem(position);
         String label = desc.getLabel();
-        String path = desc.path;
+        String fileName;
+        try {
+            DocumentFile documentFile = DocumentFile.fromSingleUri(parent.getContext(), Uri.parse(desc.path));
+            fileName = documentFile.getName();
+        }
+        catch (Exception ex) {
+            fileName = desc.path;
+            Log.w(TAG, "Couldn't parse get document file name from uri" + desc.path, ex);
+        }
         long blobCount = desc.blobCount;
         boolean available = this.data.resolve(desc) != null;
         View view;
@@ -173,7 +182,7 @@ public class DictionaryListAdapter extends BaseAdapter {
         setupCopyrightView(desc, available, view);
         setupLicenseView(desc, available, view);
         setupSourceView(desc, available, view);
-        setupPathView(path, available, view);
+        setupPathView(fileName, available, view);
         setupErrorView(desc, view);
 
         ImageView btnToggleDetail = (ImageView) view
