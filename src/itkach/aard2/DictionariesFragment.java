@@ -3,6 +3,7 @@ package itkach.aard2;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
+import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -21,6 +22,8 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 import static android.view.View.OnClickListener;
 
@@ -120,6 +123,7 @@ public class DictionariesFragment extends BaseListFragment {
 //            startActivityForResult(intent, FILE_SELECT_REQUEST);
             Intent intent = new Intent();
             intent.setAction(Intent.ACTION_OPEN_DOCUMENT);
+            intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
             intent.setType("*/*");
             Intent chooser = Intent.createChooser(intent, "Select Dictionary File");
             try {
@@ -168,30 +172,34 @@ public class DictionariesFragment extends BaseListFragment {
 //    }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+    public void onActivityResult(int requestCode, int resultCode, Intent intent) {
         if (requestCode != FILE_SELECT_REQUEST) {
             Log.d(TAG, "Unknown request code: " + requestCode);
             return;
         }
 
-        Uri dataUri = data == null ? null : data.getData();
+        Uri dataUri = intent == null ? null : intent.getData();
         Log.d(TAG, String.format("req code %s, result code: %s, data: %s", requestCode, resultCode, dataUri));
 
-        if (resultCode == Activity.RESULT_OK && data != null) {
+        if (resultCode == Activity.RESULT_OK && intent != null) {
             final Application app = ((Application)getActivity().getApplication());
-
-            getActivity().getContentResolver().takePersistableUriPermission(dataUri,
-                    Intent.FLAG_GRANT_READ_URI_PERMISSION);
-            boolean alreadyExists = app.addDictionary(dataUri);
-            String toastMessage;
-            if (alreadyExists) {
-                toastMessage = getString(R.string.msg_dictionary_already_open);
+            List<Uri> selection = new ArrayList<>();
+            if (dataUri != null) {
+                selection.add(dataUri);
             }
-            else {
-                toastMessage = getString(R.string.msg_dictionary_added, dataUri);
+            ClipData clipData = intent.getClipData();
+            if (clipData != null) {
+                int itemCount = clipData.getItemCount();
+                for (int i = 0; i < itemCount; i++) {
+                    Uri uri = clipData.getItemAt(i).getUri();
+                    selection.add(uri);
+                }
             }
-
-            Toast.makeText(getActivity(), toastMessage, Toast.LENGTH_LONG).show();
+            for (Uri uri : selection) {
+                getActivity().getContentResolver().takePersistableUriPermission(uri,
+                        Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                app.addDictionary(uri);
+            }
         }
     }
 }
