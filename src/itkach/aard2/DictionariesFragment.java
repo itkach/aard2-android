@@ -57,14 +57,14 @@ public class DictionariesFragment extends BaseListFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View result = super.onCreateView(inflater, container, savedInstanceState);
         View extraEmptyView = inflater.inflate(R.layout.dictionaries_empty_view_extra, container, false);
-        Button btn = (Button)extraEmptyView.findViewById(R.id.dictionaries_empty_btn_scan);
+        Button btn = extraEmptyView.findViewById(R.id.dictionaries_empty_btn_scan);
         btn.setCompoundDrawablesWithIntrinsicBounds(
-                IconMaker.list(getActivity(), IconMaker.IC_RELOAD),
+                IconMaker.list(getActivity(), IconMaker.IC_ADD),
                 null, null, null);
         btn.setOnClickListener(new OnClickListener(){
             @Override
             public void onClick(View v) {
-//                findDictionaries();
+                selectDictionaryFiles();
             }
         });
         LinearLayout emptyViewLayout = (LinearLayout)emptyView;
@@ -83,9 +83,7 @@ public class DictionariesFragment extends BaseListFragment {
 
     @Override
     public void onPrepareOptionsMenu(final Menu menu) {
-        MenuItem miFindDictionaries = menu.findItem(R.id.action_find_dictionaries);
         FragmentActivity activity = getActivity();
-        miFindDictionaries.setIcon(IconMaker.actionBar(activity, IconMaker.IC_RELOAD));
         MenuItem miAddDictionaries = menu.findItem(R.id.action_add_dictionaries);
         miAddDictionaries.setIcon(IconMaker.actionBar(activity, IconMaker.IC_ADD));
     }
@@ -93,23 +91,28 @@ public class DictionariesFragment extends BaseListFragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_add_dictionaries) {
-            Intent intent = new Intent();
-            intent.setAction(Intent.ACTION_OPEN_DOCUMENT);
-            intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
-            intent.setType("*/*");
-            Intent chooser = Intent.createChooser(intent, "Select Dictionary File");
-            try {
-                startActivityForResult(chooser, FILE_SELECT_REQUEST);
-            }
-            catch (ActivityNotFoundException e){
-                Log.d(TAG, "Not activity to get content", e);
-                Toast.makeText(getContext(), R.string.msg_no_activity_to_get_content,
-                        Toast.LENGTH_LONG).show();
-            }
+            selectDictionaryFiles();
             return true;
         }
         return super.onOptionsItemSelected(item);
     }
+
+    private void selectDictionaryFiles() {
+        Intent intent = new Intent();
+        intent.setAction(Intent.ACTION_OPEN_DOCUMENT);
+        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+        intent.setType("*/*");
+        Intent chooser = Intent.createChooser(intent, getResources().getString(R.string.title_activity_file_select));
+        try {
+            startActivityForResult(chooser, FILE_SELECT_REQUEST);
+        }
+        catch (ActivityNotFoundException e){
+            Log.d(TAG, "Not activity to get content", e);
+            Toast.makeText(getContext(), R.string.msg_no_activity_to_get_content,
+                    Toast.LENGTH_LONG).show();
+        }
+    }
+
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {

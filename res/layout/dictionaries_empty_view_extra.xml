@@ -10,7 +10,7 @@
         android:layout_margin="30dp"
         android:layout_gravity="center_horizontal"
         android:drawablePadding="10dp"
-        android:text="@string/action_find_dictionaries"
+        android:text="@string/action_add_dictionaries"
     />
 
     <TextView
