@@ -117,17 +117,6 @@ public class MainActivity extends FragmentActivity implements
             }
         }
 
-        if (ContextCompat.checkSelfPermission(this,
-                Manifest.permission.READ_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
-                    PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE);
-        } else {
-            // Permission has already been granted
-        }
-
-
     }
 
     @Override
