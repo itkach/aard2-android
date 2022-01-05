@@ -342,59 +342,6 @@ public class Application extends android.app.Application {
         return slobber.getSlob(slobId);
     }
 
-//    private Thread discoveryThread;
-//    private DictionaryFinder dictFinder = new DictionaryFinder();
-//
-//    synchronized void cancelFindDictionaries() {
-//        dictFinder.cancel();
-//    }
-//
-//    synchronized void findDictionaries(
-//            final DictionaryDiscoveryCallback callback) {
-//        if (discoveryThread != null) {
-//            Log.w(TAG, "Dictionary discovery is already running");
-//            return;
-//        }
-//        callback.onDiscoveryStarting();
-//        dictionaries.clear();
-//        discoveryThread = new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//                final List<SlobDescriptor> result = dictFinder.findDictionaries();
-//                discoveryThread = null;
-//                Handler h = new Handler(Looper.getMainLooper());
-//                h.post(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        dictionaries.addAll(result);
-//                        callback.onDiscoveryFinished();
-//                    }
-//                });
-//            }
-//        });
-//        discoveryThread.start();
-//    }
-
-//    synchronized boolean addDictionary(File file) {
-//        SlobDescriptor newDesc = SlobDescriptor.fromFile(file);
-//        if (newDesc.id != null) {
-//            for (SlobDescriptor d: dictionaries) {
-//                if (d.id != null && d.id.equals(newDesc.id)) {
-//                    return true;
-//                }
-//            }
-//        }
-//        dictionaries.add(newDesc);
-//        return false;    static SlobDescriptor fromFile(File file) {
-//        SlobDescriptor s = new SlobDescriptor();
-//        s.path = file.getAbsolutePath();
-//        s.load();
-//        return s;
-//    }
-//
-//    }
-
-
     synchronized boolean addDictionary(Uri uri) {
         SlobDescriptor newDesc = SlobDescriptor.fromUri(getApplicationContext(), uri.toString());
         if (newDesc.id != null) {
