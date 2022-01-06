@@ -22,6 +22,8 @@ public class LookupFragment extends BaseListFragment implements LookupListener {
     private SearchView  searchView;
     private Application app;
     private String      initialQuery;
+    private SearchView.OnQueryTextListener queryTextListener;
+    private SearchView.OnCloseListener closeListener;
 
 
     @Override
@@ -62,23 +64,18 @@ public class LookupFragment extends BaseListFragment implements LookupListener {
                 startActivity(intent);
             }
         });
-        Application app = (Application) getActivity().getApplication();
+        final Application app = (Application) getActivity().getApplication();
         getListView().setAdapter(app.lastResult);
-    }
 
+        closeListener = new SearchView.OnCloseListener() {
 
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.lookup, menu);
-        MenuItem miFilter = menu.findItem(R.id.action_lookup);
-        View filterActionView = miFilter.getActionView();
+            @Override
+            public boolean onClose() {
+                return true;
+            }
+        };
 
-        timer = new Timer();
-
-        searchView = (SearchView) filterActionView.findViewById(R.id.fldLookup);
-        searchView.setQueryHint(miFilter.getTitle());
-        searchView.setIconified(false);
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+        queryTextListener = new SearchView.OnQueryTextListener() {
 
             TimerTask scheduledLookup = null;
 
@@ -118,15 +115,25 @@ public class LookupFragment extends BaseListFragment implements LookupListener {
                 }
                 return true;
             }
-        });
+        };
 
-        searchView.setOnCloseListener(new SearchView.OnCloseListener() {
+    }
 
-            @Override
-            public boolean onClose() {
-                return true;
-            }
-        });
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+
+        inflater.inflate(R.menu.lookup, menu);
+        MenuItem miFilter = menu.findItem(R.id.action_lookup);
+        View filterActionView = miFilter.getActionView();
+
+        timer = new Timer();
+
+        searchView = (SearchView) filterActionView.findViewById(R.id.fldLookup);
+        searchView.setQueryHint(miFilter.getTitle());
+        searchView.setIconified(false);
+        searchView.setOnQueryTextListener(queryTextListener);
+        searchView.setOnCloseListener(closeListener);
 
         searchView.setSubmitButtonEnabled(false);
         if (initialQuery != null) {
