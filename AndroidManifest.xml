@@ -9,7 +9,6 @@
 
     <application
         android:usesCleartextTraffic="true"
-        android:requestLegacyExternalStorage="true"
         android:name=".Application"
         android:allowBackup="true"
         android:icon="@drawable/aard2"
