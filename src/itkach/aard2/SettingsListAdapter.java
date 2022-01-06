@@ -47,9 +47,10 @@ public class SettingsListAdapter extends BaseAdapter implements SharedPreference
     final static int POS_REMOTE_CONTENT = 1;
     final static int POS_FAV_RANDOM = 2;
     final static int POS_USE_VOLUME_FOR_NAV = 3;
-    final static int POS_USER_STYLES = 4;
-    final static int POS_CLEAR_CACHE = 5;
-    final static int POS_ABOUT = 6;
+    final static int POS_AUTO_PASTE = 4;
+    final static int POS_USER_STYLES = 5;
+    final static int POS_CLEAR_CACHE = 6;
+    final static int POS_ABOUT = 7;
 
     SettingsListAdapter(Fragment fragment) {
         this.fragment = fragment;
@@ -70,7 +71,7 @@ public class SettingsListAdapter extends BaseAdapter implements SharedPreference
 
     @Override
     public int getCount() {
-        return 7;
+        return 8;
     }
 
     @Override
@@ -100,6 +101,7 @@ public class SettingsListAdapter extends BaseAdapter implements SharedPreference
             case POS_REMOTE_CONTENT: return getRemoteContentSettingsView(convertView, parent);
             case POS_FAV_RANDOM: return getFavRandomSwitchView(convertView, parent);
             case POS_USE_VOLUME_FOR_NAV: return getUseVolumeForNavView(convertView, parent);
+            case POS_AUTO_PASTE: return getAutoPasteView(convertView, parent);
             case POS_USER_STYLES: return getUserStylesView(convertView, parent);
             case POS_CLEAR_CACHE: return getClearCacheView(convertView, parent);
             case POS_ABOUT: return getAboutView(convertView, parent);
@@ -212,6 +214,35 @@ public class SettingsListAdapter extends BaseAdapter implements SharedPreference
         toggle.setChecked(currentValue);
         return view;
     }
+
+    private View getAutoPasteView(View convertView, ViewGroup parent) {
+        View view;
+        LayoutInflater inflater = (LayoutInflater) parent.getContext()
+                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        final Application app = (Application)context.getApplication();
+        if (convertView != null) {
+            view = convertView;
+        }
+        else {
+            view = inflater.inflate(R.layout.settings_auto_paste, parent,
+                    false);
+            final CheckedTextView toggle = (CheckedTextView)view.findViewById(R.id.setting_auto_paste);
+            toggle.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    boolean currentValue = app.autoPaste();
+                    boolean newValue = !currentValue;
+                    app.setAutoPaste(newValue);
+                    toggle.setChecked(newValue);
+                }
+            });
+        }
+        boolean currentValue = app.autoPaste();
+        CheckedTextView toggle = (CheckedTextView)view.findViewById(R.id.setting_auto_paste);
+        toggle.setChecked(currentValue);
+        return view;
+    }
+
 
     private View getUserStylesView(View convertView, final ViewGroup parent) {
         View view;

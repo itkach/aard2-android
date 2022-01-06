@@ -108,6 +108,7 @@
     <string name="auto_style_title">Auto</string>
     <string name="action_fullscreen">Full Screen</string>
     <string name="setting_use_volume_for_nav">Use volume buttons for navigation</string>
+    <string name="setting_auto_paste">Paste from clipboard on open</string>
     <string name="find_hint">Find in page</string>
     <string name="find_next">Next</string>
     <string name="find_previous">Previous</string>

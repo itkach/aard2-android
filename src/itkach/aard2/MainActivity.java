@@ -288,6 +288,14 @@ public class MainActivity extends FragmentActivity implements
 
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
+        if (!autoPaste()) {
+            Log.d(TAG, "Auto-paste is off");
+            return;
+        }
+        if (!hasFocus) {
+            Log.d(TAG, "has no focus");
+            return;
+        }
         ClipboardManager cm = (ClipboardManager)getSystemService(CLIPBOARD_SERVICE);
         ClipData clipData = cm.getPrimaryClip();
         if (clipData == null) {
@@ -313,6 +321,11 @@ public class MainActivity extends FragmentActivity implements
     private boolean useVolumeForNav() {
         Application app = (Application)getApplication();
         return app.useVolumeForNav();
+    }
+
+    private boolean autoPaste() {
+        Application app = (Application)getApplication();
+        return app.autoPaste();
     }
 
     @Override
