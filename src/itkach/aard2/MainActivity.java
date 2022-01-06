@@ -22,6 +22,8 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
+import java.util.regex.Pattern;
+
 import itkach.slob.Slob;
 
 public class MainActivity extends FragmentActivity implements
@@ -30,6 +32,12 @@ public class MainActivity extends FragmentActivity implements
     private static final String TAG = MainActivity.class.getSimpleName();
     private AppSectionsPagerAdapter appSectionsPagerAdapter;
     private ViewPager viewPager;
+
+    private Pattern[] NO_PASTE_PATTERNS = new Pattern[]{
+            Patterns.WEB_URL,
+            Patterns.EMAIL_ADDRESS,
+            Patterns.PHONE
+    };
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -306,9 +314,11 @@ public class MainActivity extends FragmentActivity implements
             ClipData.Item item = clipData.getItemAt(i);
             CharSequence text = item.getText();
             if (text != null && text.length() > 0) {
-                if (Patterns.WEB_URL.matcher(text).find()) {
-                    Log.d(TAG, "Text contains web url, not pasting: " + text);
-                    return;
+                for (Pattern p : NO_PASTE_PATTERNS) {
+                    if (p.matcher(text).find()) {
+                        Log.d(TAG, "Text matched pattern " + p.pattern() + ", not pasting: " + text);
+                        return;
+                    }
                 }
                 viewPager.setCurrentItem(0);
                 cm.setPrimaryClip(ClipData.newPlainText(null, ""));
