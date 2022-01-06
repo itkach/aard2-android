@@ -57,12 +57,6 @@
 
         {wikipedia_activities}
 
-        <activity
-            android:name=".FileSelectActivity"
-            android:configChanges="keyboard|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
-            android:label="@string/title_activity_file_select" >
-        </activity>
-
         <uses-library android:required="false" android:name="com.sec.android.app.multiwindow" />
 
         <meta-data android:name="com.sec.android.support.multiwindow" android:value="true" />
