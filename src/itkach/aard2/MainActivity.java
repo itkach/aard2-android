@@ -6,11 +6,9 @@ import android.app.FragmentTransaction;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -32,29 +30,6 @@ public class MainActivity extends FragmentActivity implements
     private static final String TAG = MainActivity.class.getSimpleName();
     private AppSectionsPagerAdapter appSectionsPagerAdapter;
     private ViewPager viewPager;
-
-    private final static int PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 1;
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        switch (requestCode) {
-            case PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE: {
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    viewPager.setCurrentItem(3);
-                    DictionariesFragment df = (DictionariesFragment) appSectionsPagerAdapter.getItem(3);
-                    //df.findDictionaries();
-                } else {
-                    Toast.makeText(this,
-                            R.string.msg_unable_to_function_without_storage_access,
-                            Toast.LENGTH_LONG).show();
-                    finish();
-                }
-                return;
-            }
-        }
-    }
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -109,8 +84,6 @@ public class MainActivity extends FragmentActivity implements
         } else {
             if (app.dictionaries.size() == 0) {
                 viewPager.setCurrentItem(3);
-                DictionariesFragment df = (DictionariesFragment) appSectionsPagerAdapter.getItem(3);
-                //df.findDictionaries();
             }
         }
 
