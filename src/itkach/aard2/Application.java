@@ -405,11 +405,11 @@ public class Application extends android.app.Application {
 
     private AsyncTask<Void, Void, Iterator<Blob>> currentLookupTask;
 
-    public void lookup(String query) {
+    void lookup(String query) {
         this.lookup(query, true);
     }
 
-    private void lookup(final String query, boolean async) {
+    void lookup(final String query, boolean async) {
         if (currentLookupTask != null) {
             currentLookupTask.cancel(false);
             notifyLookupCanceled(query);

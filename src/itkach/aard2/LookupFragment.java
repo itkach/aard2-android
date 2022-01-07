@@ -24,6 +24,7 @@ public class LookupFragment extends BaseListFragment implements LookupListener {
     private SearchView.OnQueryTextListener queryTextListener;
     private SearchView.OnCloseListener closeListener;
 
+    private final static String TAG = LookupFragment.class.getSimpleName();
 
     @Override
     char getEmptyIcon() {
@@ -80,14 +81,14 @@ public class LookupFragment extends BaseListFragment implements LookupListener {
 
             @Override
             public boolean onQueryTextSubmit(String query) {
-                Log.i("SUBMIT", query);
+                Log.d(TAG, "query text submit: " + query);
                 onQueryTextChange(query);
                 return true;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                Log.i("CHANGE", "New text: " + newText);
+                Log.d(TAG, "new query text: " + newText);
                 TimerTask doLookup = new TimerTask() {
                     @Override
                     public void run() {
@@ -121,13 +122,10 @@ public class LookupFragment extends BaseListFragment implements LookupListener {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-
+        timer = new Timer();
         inflater.inflate(R.menu.lookup, menu);
         MenuItem miFilter = menu.findItem(R.id.action_lookup);
         View filterActionView = miFilter.getActionView();
-
-        timer = new Timer();
-
         searchView = (SearchView) filterActionView.findViewById(R.id.fldLookup);
         searchView.setQueryHint(miFilter.getTitle());
         searchView.setIconified(false);
@@ -138,18 +136,18 @@ public class LookupFragment extends BaseListFragment implements LookupListener {
 
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
-        CharSequence query = null;
+        super.onPrepareOptionsMenu(menu);
         if (app.autoPaste()) {
-            query = Clipboard.take(this.getActivity());
+            CharSequence clipboard  = Clipboard.take(this.getActivity());
+            if (clipboard != null) {
+                app.lookup(clipboard.toString(), false);
+            }
         }
-        if (query == null) {
-            query = app.getLookupQuery();
-        }
+        CharSequence query = app.getLookupQuery();
         searchView.setQuery(query, true);
         if (app.lastResult.getCount() > 0) {
             searchView.clearFocus();
         }
-        super.onPrepareOptionsMenu(menu);
     }
 
     @Override
