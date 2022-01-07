@@ -88,4 +88,5 @@
     <string name="action_fullscreen">Весь экран</string>
     <string name="setting_use_volume_for_nav">Использовать кнопки громкости для навигации</string>
     <string name="find_hint">Поиск на странице</string>
+    <string name="setting_auto_paste">Авто-вставка из буфера обмена</string>
 </resources>

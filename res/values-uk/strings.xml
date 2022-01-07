@@ -92,6 +92,7 @@
     <string name="action_load_remote_content">Завантажити віддалений контент</string>
     <string name="action_fullscreen">Весь екран</string>
     <string name="setting_use_volume_for_nav">Використовувати кнопки гучності для навігації</string>
+    <string name="setting_auto_paste">Авто-вставка з буфіру обміну</string>
 
 
 </resources>
