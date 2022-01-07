@@ -21,7 +21,6 @@ public class LookupFragment extends BaseListFragment implements LookupListener {
     private Timer       timer;
     private SearchView  searchView;
     private Application app;
-    private String      initialQuery;
     private SearchView.OnQueryTextListener queryTextListener;
     private SearchView.OnCloseListener closeListener;
 
@@ -134,17 +133,19 @@ public class LookupFragment extends BaseListFragment implements LookupListener {
         searchView.setIconified(false);
         searchView.setOnQueryTextListener(queryTextListener);
         searchView.setOnCloseListener(closeListener);
-
         searchView.setSubmitButtonEnabled(false);
-        if (initialQuery != null) {
-            searchView.setQuery(initialQuery, true);
-            initialQuery = null;
-        }
     }
 
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
-        searchView.setQuery(app.getLookupQuery(), true);
+        CharSequence query = null;
+        if (app.autoPaste()) {
+            query = Clipboard.take(this.getActivity());
+        }
+        if (query == null) {
+            query = app.getLookupQuery();
+        }
+        searchView.setQuery(query, true);
         if (app.lastResult.getCount() > 0) {
             searchView.clearFocus();
         }
@@ -198,12 +199,4 @@ public class LookupFragment extends BaseListFragment implements LookupListener {
         setBusy(false);
     }
 
-    void setQuery(String query) {
-        if (searchView != null) {
-            searchView.setQuery(query, true);
-        }
-        else {
-            this.initialQuery = query;
-        }
-    }
 }

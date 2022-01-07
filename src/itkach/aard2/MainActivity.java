@@ -304,27 +304,10 @@ public class MainActivity extends FragmentActivity implements
             Log.d(TAG, "has no focus");
             return;
         }
-        ClipboardManager cm = (ClipboardManager)getSystemService(CLIPBOARD_SERVICE);
-        ClipData clipData = cm.getPrimaryClip();
-        if (clipData == null) {
-            return;
-        }
-        int count = clipData.getItemCount();
-        for (int i = 0; i < count; i++) {
-            ClipData.Item item = clipData.getItemAt(i);
-            CharSequence text = item.getText();
-            if (text != null && text.length() > 0) {
-                for (Pattern p : NO_PASTE_PATTERNS) {
-                    if (p.matcher(text).find()) {
-                        Log.d(TAG, "Text matched pattern " + p.pattern() + ", not pasting: " + text);
-                        return;
-                    }
-                }
-                viewPager.setCurrentItem(0);
-                cm.setPrimaryClip(ClipData.newPlainText(null, ""));
-                appSectionsPagerAdapter.tabLookup.setQuery(text.toString());
-                break;
-            }
+        CharSequence text = Clipboard.peek(this);
+        if (text != null) {
+            viewPager.setCurrentItem(0);
+            invalidateOptionsMenu();
         }
     }
 
