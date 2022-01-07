@@ -35,8 +35,8 @@
 
 
 *** Dictionary Management
-    Dictionaries can be added by scanning device or by manually
-    selecting dictionary files.
+    Dictionaries are added by selecting dictionary files using
+    Android's document chooser.
 
     Note that application itself does not download dictionary files.
 
@@ -83,11 +83,23 @@
     When viewing articles, volume up/down buttons scroll article
     content or, if at the bottom (top) of the page, move to the next
     (previous) article. Long press scrolls all the way to the bottom
-    (top). In main view volume buttons cycle through tabs.
+    (top). In main view volume buttons cycle through tabs. This
+    behavior can be disabled in settings.
 
 *** Fullscreen Mode
-    On Android 4.4 and newer articles can be viewed in fullscreen
+    Articles can be viewed in fullscreen
     mode. Pull down the top edge to exit fullscreen mode.
+
+*** Clipboard Auto-Paste
+    Text from clipboard can be automatically pasted into lookup field
+    (unless it contains a Web address, email or phone number). This
+    behavior is off by default and can be enabled in settings.
+
+*** External Link Sharing
+    Some dictionaries (such as Mediawiki based ones - Wikipedia,
+    Wiktionary etc.) contain external links. Long tap on the link to
+    share it without opening in a browser first.
+
 
 ** Requested Permissions
 *** android.permission.INTERNET
@@ -99,16 +111,8 @@
 
 *** android.permission.ACCESS_NETWORK_STATE
     User chooses when to allow loading remote content: always,
-    when on Wi-Fi or never. This permission is necessary to implement
-    this.
-
-*** android.permission.READ_EXTERNAL_STORAGE
-    This permission is needed to access dictionary files on external storage.
-*** android.permission.WRITE_EXTERNAL_STORAGE
-    While Aard 2 itself currently does not write anything to external
-    storage, this permission is needed, oddly enough, to browse and
-    read dictionary files on external storage on BlackBerry 10 devices.
-
+    when on Wi-Fi or never. This permission is necessary to
+    determine network connection state.
 
 ** Developing
 
