@@ -41,7 +41,6 @@
     <string name="setting_remote_content_never">Jamais</string>
     <string name="setting_remote_content">Charger contenu extérieur</string>
     <string name="setting_about">Au sujet d\' %1$s</string>
-    <string name="application_copyright">2017 Igor Tkach</string>
     <string name="application_license_name">Licence publique générale GNU version 3</string>
     <string name="application_license_url">https://gnu.org/licenses/gpl.html</string>
     <string name="application_version">Version %1$s</string>

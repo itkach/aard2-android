@@ -38,7 +38,6 @@
     <string name="setting_remote_content_never">Nigdy</string>
     <string name="setting_remote_content">Załaduj zdalną zawartość</string>
     <string name="setting_about">O aplikacji %1$s</string>
-    <string name="application_copyright">2017 Igor Tkach</string>
     <string name="application_license_name">GNU General Public License v3</string>
     <string name="application_license_url">https://gnu.org/licenses/gpl.html</string>
     <string name="application_version">Wersja %1$s</string>
