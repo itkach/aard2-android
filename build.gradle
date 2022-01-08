@@ -30,7 +30,7 @@ repositories {
 }
 
 android {
-    compileSdkVersion 29
+    compileSdkVersion 30
 
     packagingOptions {
         exclude 'META-INF/LICENSE'
@@ -82,7 +82,7 @@ android {
 
     defaultConfig {
         minSdkVersion 19
-        targetSdkVersion 29
+        targetSdkVersion 30
     }
 
 }
