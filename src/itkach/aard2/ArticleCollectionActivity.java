@@ -43,6 +43,7 @@ public class ArticleCollectionActivity extends FragmentActivity
 
     static final String PREF = "articleCollection";
     static final String PREF_FULLSCREEN = "fullscreen";
+    static String SENDER_ACTION = "";
 
     ArticleCollectionPagerAdapter articleCollectionPagerAdapter;
     ViewPager viewPager;
@@ -237,6 +238,10 @@ public class ArticleCollectionActivity extends FragmentActivity
         if (lookupKey == null) {
             lookupKey = intent.getStringExtra("EXTRA_QUERY");
         }
+        SENDER_ACTION = intent.getStringExtra("SENDER_ACTION");
+        if (SENDER_ACTION == null) SENDER_ACTION = "";
+        Log.d(TAG, String.format("Sender action is %s", SENDER_ACTION));
+
         String preferredSlobId = null;
         if (lookupKey == null) {
             Uri uri = intent.getData();

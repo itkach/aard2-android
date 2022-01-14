@@ -2,18 +2,23 @@ package itkach.aard2;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.SearchManager;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.widget.ImageView;
@@ -26,6 +31,7 @@ public class ArticleFragment extends Fragment {
     public static final String ARG_URL = "articleUrl";
 
     private ArticleWebView  view;
+    private MenuItem        miSend;
     private MenuItem        miBookmark;
     private MenuItem        miFullscreen;
     private Drawable        icBookmark;
@@ -52,6 +58,7 @@ public class ArticleFragment extends Fragment {
         //to avoid duplicates
         menu.clear();
         inflater.inflate(R.menu.article, menu);
+        miSend = menu.findItem(R.id.action_send_article);
         miBookmark = menu.findItem(R.id.action_bookmark_article);
         miFullscreen = menu.findItem(R.id.action_fullscreen);
         if (Build.VERSION.SDK_INT < 19) {
@@ -79,6 +86,26 @@ public class ArticleFragment extends Fragment {
         if (itemId == R.id.action_find_in_page) {
             view.showFindDialog(null, true);
             return true;
+        }
+        if (itemId == R.id.action_send_article) {
+            if (this.url != null)
+                if (!(ArticleCollectionActivity.SENDER_ACTION == null || ArticleCollectionActivity.SENDER_ACTION.isEmpty()))
+                    view.evaluateJavascript(
+                        //"(function() { return ('<html>'+document.getElementsByTagName('html')[0].innerHTML+'</html>'); })();",
+                        "(function() { return (document.getElementsByTagName('html')[0].innerText); })();",
+                        new ValueCallback<String>() {
+                            @Override
+                            public void onReceiveValue(String html) {
+                                Intent intentSender = new Intent(ArticleCollectionActivity.SENDER_ACTION);
+                                intentSender.putExtra("extraText", html);
+                                try
+                                {
+                                    getActivity().startActivity(intentSender);
+                                } catch ( ActivityNotFoundException e ) {
+                                    Log.e("ERR", "Intent error: " + e.getMessage());
+                                }
+                            }
+                        });
         }
         if (itemId == R.id.action_bookmark_article) {
             Application app = (Application)getActivity().getApplication();
@@ -186,6 +213,7 @@ public class ArticleFragment extends Fragment {
     public void onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
         if (this.url == null) {
+            miSend.setVisible(false);
             miBookmark.setVisible(false);
         }
         else {
@@ -197,6 +225,8 @@ public class ArticleFragment extends Fragment {
                 miBookmark.setVisible(false);
             }
         }
+        if (ArticleCollectionActivity.SENDER_ACTION == null || ArticleCollectionActivity.SENDER_ACTION.isEmpty())
+            miSend.setVisible(false);
         applyTextZoomPref();
         applyStylePref();
         miFullscreen.setIcon(icFullscreen);
@@ -225,6 +255,7 @@ public class ArticleFragment extends Fragment {
             view = null;
         }
         miFullscreen = null;
+        miSend = null;
         miBookmark = null;
         super.onDestroy();
     }

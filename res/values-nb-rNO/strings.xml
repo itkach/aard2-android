@@ -8,6 +8,7 @@
     <string name="subtitle_dictionaries">Ordlister</string>
     <string name="action_find_dictionaries">Finn ordlister</string>
     <string name="action_find_in_page">Finn på side</string>
+    <string name="action_send_article">Komme tilbake</string>
     <string name="action_bookmark_article">Bokmerk</string>
     <string name="action_filter">Filtrer</string>
     <string name="action_ascending">Stigende</string>
