@@ -3,18 +3,24 @@ package itkach.aard2;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.TextView;
 
 import java.util.Timer;
 import java.util.TimerTask;
+
+import itkach.slob.Slob;
 
 public class LookupFragment extends BaseListFragment implements LookupListener {
 
@@ -23,6 +29,11 @@ public class LookupFragment extends BaseListFragment implements LookupListener {
     private Application app;
     private SearchView.OnQueryTextListener queryTextListener;
     private SearchView.OnCloseListener closeListener;
+    public String mInitialSearch = "";
+
+    public SearchView getSearchView() {
+        return searchView;
+    }
 
     private final static String TAG = LookupFragment.class.getSimpleName();
 
@@ -64,6 +75,22 @@ public class LookupFragment extends BaseListFragment implements LookupListener {
                 startActivity(intent);
             }
         });
+        // setting key to search box on long click
+        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view,
+                                    int position, long id) {
+                Log.i("--", "Item long clicked: " + position);
+                Object o = app.lastResult.getItem(position);
+                if (o instanceof Slob.Blob) {
+                    Slob.Blob b = (Slob.Blob) o;
+                    searchView.setQuery(b.key, false);
+                    return true;
+                }
+                return false;
+            }
+        });
+
         final Application app = (Application) getActivity().getApplication();
         getListView().setAdapter(app.lastResult);
 
@@ -132,6 +159,8 @@ public class LookupFragment extends BaseListFragment implements LookupListener {
         searchView.setOnQueryTextListener(queryTextListener);
         searchView.setOnCloseListener(closeListener);
         searchView.setSubmitButtonEnabled(false);
+        if (!(mInitialSearch == null || mInitialSearch.isEmpty()))
+            searchView.setQuery(mInitialSearch, false);
     }
 
     @Override
@@ -144,7 +173,10 @@ public class LookupFragment extends BaseListFragment implements LookupListener {
             }
         }
         CharSequence query = app.getLookupQuery();
-        searchView.setQuery(query, true);
+        if (!(mInitialSearch == null || mInitialSearch.isEmpty()))
+            searchView.setQuery(mInitialSearch, true);
+        else
+            searchView.setQuery(query, true);
         if (app.lastResult.getCount() > 0) {
             searchView.clearFocus();
         }
