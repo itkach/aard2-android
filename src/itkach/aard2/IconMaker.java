@@ -9,6 +9,8 @@ import com.kazy.fontdrawable.FontDrawable;
 
 class IconMaker {
 
+    //icon codes could be seen at: https://web-stydia.com/spisok-znachenij-shrifta-awesome-dlya-ispolzovaniya-v-css/
+
     static final String CUSTOM_FONT_PATH = "fontawesome-4.2.0.ttf";
 
     static final char IC_SEARCH = '\uf002';
@@ -39,7 +41,7 @@ class IconMaker {
     static final char IC_LEVEL_UP = '\uf148';
     static final char IC_BAN = '\uf05e';
     static final char IC_FULLSCREEN = '\uf065';
-
+    static final char IC_SHARE = '\uf064';
 
     static FontDrawable make(Context context, char c, int sizeDp, int color) {
         FontDrawable drawable = new FontDrawable.Builder(context, c, CUSTOM_FONT_PATH)

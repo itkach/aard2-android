@@ -37,6 +37,7 @@ public class ArticleFragment extends Fragment {
     private Drawable        icBookmark;
     private Drawable        icBookmarkO;
     private Drawable        icFullscreen;
+    private Drawable        icReturn;
     private String          url;
 
 
@@ -48,6 +49,7 @@ public class ArticleFragment extends Fragment {
         icBookmark =  IconMaker.actionBar(context, IconMaker.IC_BOOKMARK);
         icBookmarkO = IconMaker.actionBar(context, IconMaker.IC_BOOKMARK_O);
         icFullscreen = IconMaker.actionBar(context, IconMaker.IC_FULLSCREEN);
+        icReturn = IconMaker.actionBar(context, IconMaker.IC_SHARE);
         setHasOptionsMenu(true);
     }
 
@@ -230,6 +232,7 @@ public class ArticleFragment extends Fragment {
         applyTextZoomPref();
         applyStylePref();
         miFullscreen.setIcon(icFullscreen);
+        miSend.setIcon(icReturn);
     }
 
     void applyTextZoomPref() {
