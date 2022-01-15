@@ -97,9 +97,10 @@ public class ArticleFragment extends Fragment {
                         "(function() { return (document.getElementsByTagName('html')[0].innerText); })();",
                         new ValueCallback<String>() {
                             @Override
-                            public void onReceiveValue(String html) {
+                            public void onReceiveValue(String txt) {
                                 Intent intentSender = new Intent(ArticleCollectionActivity.SENDER_ACTION);
-                                intentSender.putExtra("extraText", html);
+                                intentSender.putExtra("extraText", txt);
+                                intentSender.putExtra("extraTitle",((ArticleCollectionActivity)getActivity()).mPageTitle);
                                 try
                                 {
                                     getActivity().startActivity(intentSender);

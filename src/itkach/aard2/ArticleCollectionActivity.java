@@ -45,7 +45,7 @@ public class ArticleCollectionActivity extends FragmentActivity
     static final String PREF = "articleCollection";
     static final String PREF_FULLSCREEN = "fullscreen";
     static String SENDER_ACTION = "";
-    private String mPageTitle = "";
+    public String mPageTitle = "";
 
     ArticleCollectionPagerAdapter articleCollectionPagerAdapter;
     ViewPager viewPager;
