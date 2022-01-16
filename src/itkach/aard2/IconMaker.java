@@ -42,6 +42,7 @@ class IconMaker {
     static final char IC_BAN = '\uf05e';
     static final char IC_FULLSCREEN = '\uf065';
     static final char IC_SHARE = '\uf064';
+    static final char IC_ARROW_LEFT = '\uf060';
 
     static FontDrawable make(Context context, char c, int sizeDp, int color) {
         FontDrawable drawable = new FontDrawable.Builder(context, c, CUSTOM_FONT_PATH)

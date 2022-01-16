@@ -48,8 +48,10 @@ public class MainActivity extends FragmentActivity implements
             ArticleCollectionActivity.SENDER_ACTION = senderAction;
         if (!(mSearchText == null || mSearchText.isEmpty()))
             if (appSectionsPagerAdapter != null)
-                if (appSectionsPagerAdapter.tabLookup.getSearchView() != null)
+                if (appSectionsPagerAdapter.tabLookup.getSearchView() != null) {
                     appSectionsPagerAdapter.tabLookup.getSearchView().setQuery(mSearchText, false);
+                    viewPager.setCurrentItem(0);
+                }
     }
 
     public void onCreate(Bundle savedInstanceState) {
@@ -204,6 +206,7 @@ public class MainActivity extends FragmentActivity implements
         if (!(ArticleCollectionActivity.SENDER_ACTION == null || ArticleCollectionActivity.SENDER_ACTION.isEmpty())) {
             Intent intentSender = new Intent(ArticleCollectionActivity.SENDER_ACTION);
             intentSender.putExtra("extraText", "");
+            intentSender.putExtra("extraTitle", "");
             ArticleCollectionActivity.SENDER_ACTION = "";
             try {
                 startActivity(intentSender);

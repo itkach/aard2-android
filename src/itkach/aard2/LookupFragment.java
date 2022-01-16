@@ -2,6 +2,7 @@ package itkach.aard2;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -84,7 +85,7 @@ public class LookupFragment extends BaseListFragment implements LookupListener {
                 Object o = app.lastResult.getItem(position);
                 if (o instanceof Slob.Blob) {
                     Slob.Blob b = (Slob.Blob) o;
-                    searchView.setQuery(b.key, false);
+                    searchView.setQuery(b.key, true);
                     return true;
                 }
                 return false;
@@ -160,12 +161,13 @@ public class LookupFragment extends BaseListFragment implements LookupListener {
         searchView.setOnCloseListener(closeListener);
         searchView.setSubmitButtonEnabled(false);
         if (!(mInitialSearch == null || mInitialSearch.isEmpty()))
-            searchView.setQuery(mInitialSearch, false);
+            searchView.setQuery(mInitialSearch, true);
     }
 
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
+        FragmentActivity activity = getActivity();
         if (app.autoPaste()) {
             CharSequence clipboard  = Clipboard.take(this.getActivity());
             if (clipboard != null) {
@@ -180,6 +182,20 @@ public class LookupFragment extends BaseListFragment implements LookupListener {
         if (app.lastResult.getCount() > 0) {
             searchView.clearFocus();
         }
+        MenuItem miBackspace = menu.findItem(R.id.action_backspace);
+        miBackspace.setIcon(IconMaker.actionBar(activity, IconMaker.IC_ARROW_LEFT));
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.action_backspace) {
+            String searchText = searchView.getQuery().toString();
+            if (!(searchText == null || searchText.isEmpty()))
+                searchText = searchText.substring(0, searchText.length()-1);
+            searchView.setQuery(searchText, true);
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
