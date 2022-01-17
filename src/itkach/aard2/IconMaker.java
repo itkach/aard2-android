@@ -9,7 +9,7 @@ import com.kazy.fontdrawable.FontDrawable;
 
 class IconMaker {
 
-    //icon codes could be seen at: https://web-stydia.com/spisok-znachenij-shrifta-awesome-dlya-ispolzovaniya-v-css/
+    //icon codes could be seen at: https://fontawesome.com/v4.7/cheatsheet/
 
     static final String CUSTOM_FONT_PATH = "fontawesome-4.2.0.ttf";
 
