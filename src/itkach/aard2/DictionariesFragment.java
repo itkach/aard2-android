@@ -102,9 +102,10 @@ public class DictionariesFragment extends BaseListFragment {
         intent.setAction(Intent.ACTION_OPEN_DOCUMENT);
         intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
         intent.setType("*/*");
-        Intent chooser = Intent.createChooser(intent, getResources().getString(R.string.title_activity_file_select));
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
         try {
-            startActivityForResult(chooser, FILE_SELECT_REQUEST);
+            startActivityForResult(intent, FILE_SELECT_REQUEST);
         }
         catch (ActivityNotFoundException e){
             Log.d(TAG, "Not activity to get content", e);
