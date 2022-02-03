@@ -236,6 +236,19 @@ public class ArticleWebView extends SearchableWebView {
                     return true;
                 }
 
+                String fragment = uri.getFragment();
+                if (fragment != null ) {
+                    Uri current = Uri.parse(view.getUrl());
+                    Log.d(TAG, "shouldOverrideUrlLoading URL with fragment: " + url);
+                    if (scheme.equals(current.getScheme()) &&
+                            host.equals(current.getHost()) &&
+                            uri.getPort() == current.getPort() &&
+                            uri.getPath().equals(current.getPath())) {
+                        Log.d(TAG, "NOT overriding loading of same page link " + url);
+                        return false;
+                    }
+                }
+
                 if (scheme.equals("http") && host.equals(LOCALHOST) && uri.getQueryParameter("blob") == null) {
                     Intent intent = new Intent(getContext(), ArticleCollectionActivity.class);
                     intent.setData(uri);
