@@ -47,6 +47,22 @@ public class ArticleCollectionActivity extends FragmentActivity
     ArticleCollectionPagerAdapter articleCollectionPagerAdapter;
     ViewPager viewPager;
 
+
+    class ToBlobWithFragment implements ToBlob {
+
+        private final String fragment;
+
+        ToBlobWithFragment(String fragment){
+            this.fragment = fragment;
+        }
+
+        @Override
+        public Blob convert(Object item) {
+            Blob b = (Blob)item;
+            return new Blob(b.owner, b.id, b.key, this.fragment);
+        }
+    }
+
     ToBlob blobToBlob = new ToBlob(){
 
         @Override
@@ -196,8 +212,9 @@ public class ArticleCollectionActivity extends FragmentActivity
         Iterator<Slob.Blob> result = app.find(bd.key, bd.slobId);
         BlobListAdapter data = new BlobListAdapter(this, 20, 1);
         data.setData(result);
+        boolean hasFragment = !Util.isBlank(bd.fragment);
         return new ArticleCollectionPagerAdapter(
-                app, data, blobToBlob, getSupportFragmentManager());
+                app, data, hasFragment ? new ToBlobWithFragment(bd.fragment) : blobToBlob, getSupportFragmentManager());
     };
 
     private ArticleCollectionPagerAdapter createFromLastResult(Application app) {
