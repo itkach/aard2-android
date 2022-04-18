@@ -98,7 +98,7 @@ final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
             throw new RuntimeException(e);
         }
         filterCollator.setStrength(Collator.PRIMARY);
-        filterCollator.setAlternateHandlingShifted(true);
+        filterCollator.setAlternateHandlingShifted(false);
         handler = new Handler(Looper.getMainLooper());
     }
 
