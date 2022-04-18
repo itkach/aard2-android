@@ -73,7 +73,7 @@ com/ibm/icu/impl/data/icudt68b/bo_IN.res
 com/ibm/icu/impl/data/icudt68b/br.res
 com/ibm/icu/impl/data/icudt68b/br_FR.res
 com/ibm/icu/impl/data/icudt68b/brkitr/burmesedict.dict
-com/ibm/icu/impl/data/icudt68b/brkitr/char.brk
+#com/ibm/icu/impl/data/icudt68b/brkitr/char.brk
 com/ibm/icu/impl/data/icudt68b/brkitr/cjdict.dict
 com/ibm/icu/impl/data/icudt68b/brkitr/de.res
 com/ibm/icu/impl/data/icudt68b/brkitr/el.res
