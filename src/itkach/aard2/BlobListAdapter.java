@@ -34,7 +34,7 @@ public class BlobListAdapter extends BaseAdapter {
 
 
     public BlobListAdapter(Context context) {
-        this(context, 20, 5);
+        this(context, 20, 10);
     }
 
     public BlobListAdapter(Context context, int chunkSize, int loadMoreThreashold) {
