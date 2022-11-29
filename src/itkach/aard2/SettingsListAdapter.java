@@ -48,9 +48,10 @@ public class SettingsListAdapter extends BaseAdapter implements SharedPreference
     final static int POS_FAV_RANDOM = 2;
     final static int POS_USE_VOLUME_FOR_NAV = 3;
     final static int POS_AUTO_PASTE = 4;
-    final static int POS_USER_STYLES = 5;
-    final static int POS_CLEAR_CACHE = 6;
-    final static int POS_ABOUT = 7;
+    final static int POS_CREATE_HISTORY_ENTRIES = 5;
+    final static int POS_USER_STYLES = 6;
+    final static int POS_CLEAR_CACHE = 7;
+    final static int POS_ABOUT = 8;
 
     SettingsListAdapter(Fragment fragment) {
         this.fragment = fragment;
@@ -102,6 +103,7 @@ public class SettingsListAdapter extends BaseAdapter implements SharedPreference
             case POS_FAV_RANDOM: return getFavRandomSwitchView(convertView, parent);
             case POS_USE_VOLUME_FOR_NAV: return getUseVolumeForNavView(convertView, parent);
             case POS_AUTO_PASTE: return getAutoPasteView(convertView, parent);
+            case POS_CREATE_HISTORY_ENTRIES: return getCreateHistoryEntriesView(convertView, parent);
             case POS_USER_STYLES: return getUserStylesView(convertView, parent);
             case POS_CLEAR_CACHE: return getClearCacheView(convertView, parent);
             case POS_ABOUT: return getAboutView(convertView, parent);
@@ -239,6 +241,34 @@ public class SettingsListAdapter extends BaseAdapter implements SharedPreference
         }
         boolean currentValue = app.autoPaste();
         CheckedTextView toggle = (CheckedTextView)view.findViewById(R.id.setting_auto_paste);
+        toggle.setChecked(currentValue);
+        return view;
+    }
+
+    private View getCreateHistoryEntriesView(View convertView, ViewGroup parent) {
+        View view;
+        LayoutInflater inflater = (LayoutInflater) parent.getContext()
+                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        final Application app = (Application)context.getApplication();
+        if (convertView != null) {
+            view = convertView;
+        }
+        else {
+            view = inflater.inflate(R.layout.settings_create_history_entries, parent,
+                    false);
+            final CheckedTextView toggle = (CheckedTextView)view.findViewById(R.id.setting_create_history_entries);
+            toggle.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    boolean currentValue = app.createHistoryEntries();
+                    boolean newValue = !currentValue;
+                    app.setCreateHistoryEntries(newValue);
+                    toggle.setChecked(newValue);
+                }
+            });
+        }
+        boolean currentValue = app.createHistoryEntries();
+        CheckedTextView toggle = (CheckedTextView)view.findViewById(R.id.setting_create_history_entries);
         toggle.setChecked(currentValue);
         return view;
     }
