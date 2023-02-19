@@ -222,6 +222,7 @@ final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
         BlobDescriptor bd = BlobDescriptor.fromUri(uri);
         if (bd != null) {
             String slobUri = app.getSlobURI(bd.slobId);
+            Log.d(TAG, "Found slob uri for: " + bd.slobId + " " + slobUri);
             bd.slobUri = slobUri;
         }
         return bd;
@@ -275,11 +276,19 @@ final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
     }
 
     public boolean contains(String contentUrl) {
-        BlobDescriptor bd = createDescriptor(contentUrl);
-        int index = this.list.indexOf(bd);
-        boolean result = index > -1;
-        Log.d(TAG, "Is bookmarked?" + result);
-        return result;
+        BlobDescriptor toFind = createDescriptor(contentUrl);
+        for (BlobDescriptor bd : this.list) {
+            if (bd.equals(toFind)) {
+                Log.d(TAG, "Found exact match, bookmarked");
+                return true;
+            }
+            if (bd.key.equals(toFind.key) && bd.slobUri.equals(toFind.slobUri)) {
+                Log.d(TAG, "Found approximate match, bookmarked");
+                return true;
+            }
+        }
+        Log.d(TAG, "not bookmarked");
+        return false;
     }
 
     public void setFilter(String filter) {
