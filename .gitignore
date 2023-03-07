@@ -10,3 +10,4 @@ gen
 project.properties
 local.properties
 README.html
+.DS_Store
