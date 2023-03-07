@@ -1,7 +1,9 @@
 <activity-alias
     android:enabled="false"
     android:name="{lang}.{project}.org"
-    android:targetActivity=".ArticleCollectionActivity" >
+    android:targetActivity=".ArticleCollectionActivity"
+    android:exported="true"
+    >
 
   <intent-filter>
     <action android:name="android.intent.action.VIEW" />

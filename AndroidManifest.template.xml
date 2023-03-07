@@ -18,7 +18,9 @@
         <activity
             android:name=".MainActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
-            android:windowSoftInputMode="stateHidden" >
+            android:windowSoftInputMode="stateHidden"
+            android:exported="true"
+        >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -30,7 +32,9 @@
             android:name=".ArticleCollectionActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
             android:excludeFromRecents="true"
-            android:taskAffinity="" >
+            android:taskAffinity=""
+            android:exported="true"
+        >
             <intent-filter>
                 <action android:name="aard2.lookup" />
                 <category android:name="android.intent.category.DEFAULT" />
