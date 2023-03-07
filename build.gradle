@@ -1,31 +1,12 @@
-
-buildscript {
-    repositories {
-        mavenCentral()
-        jcenter()
-        google()
-        maven {
-            url "https://jitpack.io"
-        }
-    }
-    dependencies {
-        classpath 'com.android.tools.build:gradle:4.1.3'
-    }
+plugins {
+    id 'com.android.application' version '7.4.2'
 }
-
-apply plugin: 'com.android.application'
-apply plugin: 'eclipse'
-apply plugin: 'idea'
 
 repositories {
     mavenCentral()
-    jcenter()
     google()
     maven {
         url "https://jitpack.io"
-    }
-    flatDir {
-        dirs 'libs'
     }
 }
 
@@ -94,5 +75,4 @@ dependencies {
     api 'com.github.kazy1991:FontDrawable:0.9.5'
     api project(':slobj')
     api project(':slobber')
-    api project(':slobber').files('libs/simple-5.1.7.1.itkach.jar')
 }
