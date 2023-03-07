@@ -130,23 +130,14 @@
    git clone https://github.com/itkach/aard2-android.git
    #+END_SRC
 
-   Create /settings.gradle/ with the following content:
+   Open [[https://developer.android.com/sdk/installing/studio.html][Android Studio]], go to /File/, /Open.../, select
+   /aard2-android/ directory and click /Open/.
 
-   #+BEGIN_SRC groovy
-   include ':slobj'
-   include ':slobber'
-   include ':aard2-android'
-   #+END_SRC
-
-   Open [[https://developer.android.com/sdk/installing/studio.html][Android Studio]], go to /File/, /Import Project.../, select
-   /aard2/ directory and then /Finish/. This should create the project
-   ready for running and debugging on device or in emulator.
-
-   To build an APK on the command line:
+   To build the APK on the command line:
 
    #+BEGIN_SRC sh
    cd aard2-android
-   gradle build
+   ./gradlew build
    #+END_SRC
 
    To install the APK:
