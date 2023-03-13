@@ -1,5 +1,5 @@
 * Aard 2 for Android
-  /Aard 2 for Android/ is a successor to [[https://play.google.com/store/apps/details?id=aarddict.android][Aard Dictionary for Android]]. It
+  /Aard 2 for Android/ is a successor to [[https://github.com/aarddict/android][Aard Dictionary for Android]]. It
   comes with redesigned user interface, bookmarks, history and a
   better [[https://github.com/itkach/slob][dictionary storage format]].
 
