@@ -64,7 +64,7 @@ android {
     defaultConfig {
         namespace "itkach.aard2"
         applicationId "itkach.aard2"
-        minSdk 19
+        minSdk 21
         targetSdk 33
         versionCode 54
         versionName "0.54"
