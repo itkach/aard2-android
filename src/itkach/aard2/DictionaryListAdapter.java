@@ -3,7 +3,6 @@ package itkach.aard2;
 import static java.lang.String.format;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -18,9 +17,11 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.documentfile.provider.DocumentFile;
 
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.materialswitch.MaterialSwitch;
 
 import java.util.Locale;
@@ -261,7 +262,7 @@ public class DictionaryListAdapter extends BaseAdapter {
         SlobDescriptor desc = data.get(position);
         final String label = desc.getLabel();
         String message = context.getString(R.string.dictionaries_confirm_forget, label);
-        deleteConfirmationDialog = new AlertDialog.Builder(context)
+        deleteConfirmationDialog = new MaterialAlertDialogBuilder(context)
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setTitle("")
                 .setMessage(message)

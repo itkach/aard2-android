@@ -1,7 +1,6 @@
 package itkach.aard2;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
@@ -16,8 +15,11 @@ import android.widget.ListView;
 import android.widget.SearchView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
+
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 
 abstract class BlobDescriptorListFragment extends BaseListFragment {
@@ -27,8 +29,8 @@ abstract class BlobDescriptorListFragment extends BaseListFragment {
     private Drawable icArrowUp;
     private Drawable icArrowDown;
 
-    private BlobDescriptorListAdapter       listAdapter;
-    private AlertDialog                     deleteConfirmationDialog = null;
+    private BlobDescriptorListAdapter listAdapter;
+    private AlertDialog deleteConfirmationDialog = null;
 
     private final static String PREF_SORT_ORDER = "sortOrder";
     private final static String PREF_SORT_DIRECTION = "sortDir";
@@ -62,39 +64,39 @@ abstract class BlobDescriptorListFragment extends BaseListFragment {
     abstract String getPreferencesNS();
 
     private SharedPreferences prefs() {
-        return getActivity().getSharedPreferences(getPreferencesNS(), Activity.MODE_PRIVATE);
+        return requireActivity().getSharedPreferences(getPreferencesNS(), Activity.MODE_PRIVATE);
     }
 
 
     protected boolean onSelectionActionItemClicked(final ActionMode mode, MenuItem item) {
         ListView listView = getListView();
-        switch (item.getItemId()) {
-            case R.id.blob_descriptor_delete:
-                int count = listView.getCheckedItemCount();
-                String countStr = getResources().getQuantityString(getDeleteConfirmationItemCountResId(), count, count);
-                String message = getString(R.string.blob_descriptor_confirm_delete, countStr);
-                deleteConfirmationDialog = new AlertDialog.Builder(getActivity())
-                        .setIcon(android.R.drawable.ic_dialog_alert)
-                        .setTitle("")
-                        .setMessage(message)
-                        .setPositiveButton(android.R.string.yes, (dialog, which) -> {
-                            deleteSelectedItems();
-                            mode.finish();
-                            deleteConfirmationDialog = null;
-                        })
-                        .setNegativeButton(android.R.string.no, null).create();
-                deleteConfirmationDialog.setOnDismissListener(dialogInterface -> deleteConfirmationDialog = null);
-                deleteConfirmationDialog.show();
-                return true;
-            case R.id.blob_descriptor_select_all:
-                int itemCount = listView.getCount();
-                for (int i = itemCount - 1; i > -1; --i) {
-                    listView.setItemChecked(i, true);
-                }
-                return true;
-            default:
-                return false;
+        int itemId = item.getItemId();
+        if (itemId == R.id.blob_descriptor_delete) {
+            int count = listView.getCheckedItemCount();
+            String countStr = getResources().getQuantityString(getDeleteConfirmationItemCountResId(), count, count);
+            String message = getString(R.string.blob_descriptor_confirm_delete, countStr);
+            deleteConfirmationDialog = new MaterialAlertDialogBuilder(requireActivity())
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .setTitle("")
+                    .setMessage(message)
+                    .setPositiveButton(android.R.string.yes, (dialog, which) -> {
+                        deleteSelectedItems();
+                        mode.finish();
+                        deleteConfirmationDialog = null;
+                    })
+                    .setNegativeButton(android.R.string.no, null)
+                    .create();
+            deleteConfirmationDialog.setOnDismissListener(dialogInterface -> deleteConfirmationDialog = null);
+            deleteConfirmationDialog.show();
+            return true;
+        } else if (itemId == R.id.blob_descriptor_select_all) {
+            int itemCount = listView.getCount();
+            for (int i = itemCount - 1; i > -1; --i) {
+                listView.setItemChecked(i, true);
+            }
+            return true;
         }
+        return false;
     }
 
     @Override
@@ -106,7 +108,7 @@ abstract class BlobDescriptorListFragment extends BaseListFragment {
         SharedPreferences p = this.prefs();
 
         String sortOrderStr = p.getString(PREF_SORT_ORDER,
-                                          BlobDescriptorList.SortOrder.TIME.name());
+                BlobDescriptorList.SortOrder.TIME.name());
         BlobDescriptorList.SortOrder sortOrder = BlobDescriptorList.SortOrder.valueOf(sortOrderStr);
 
         boolean sortDir = p.getBoolean(PREF_SORT_DIRECTION, false);
@@ -116,7 +118,7 @@ abstract class BlobDescriptorListFragment extends BaseListFragment {
         listAdapter = new BlobDescriptorListAdapter(descriptorList);
 
         final FragmentActivity activity = requireActivity();
-        icClock =  ContextCompat.getDrawable(activity, R.drawable.ic_clock_time_nine);
+        icClock = ContextCompat.getDrawable(activity, R.drawable.ic_clock_time_nine);
         icList = ContextCompat.getDrawable(activity, R.drawable.ic_format_list_bulleted);
         icArrowUp = ContextCompat.getDrawable(activity, R.drawable.ic_sort_ascending);
         icArrowDown = ContextCompat.getDrawable(activity, R.drawable.sort_descending);
@@ -140,7 +142,7 @@ abstract class BlobDescriptorListFragment extends BaseListFragment {
             if (checked) {
                 getDescriptorList().remove(position);
             }
-         }
+        }
     }
 
     @Override

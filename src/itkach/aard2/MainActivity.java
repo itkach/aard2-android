@@ -182,7 +182,7 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
 
         @Override
         BlobDescriptorList getDescriptorList() {
-            Application app = (Application) getActivity().getApplication();
+            Application app = (Application) requireActivity().getApplication();
             return app.bookmarks;
         }
 
@@ -215,7 +215,7 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
 
         @Override
         BlobDescriptorList getDescriptorList() {
-            Application app = (Application) getActivity().getApplication();
+            Application app = (Application) requireActivity().getApplication();
             return app.history;
         }
 

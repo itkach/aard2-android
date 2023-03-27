@@ -1,7 +1,6 @@
 package itkach.aard2;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -17,14 +16,16 @@ import android.widget.ProgressBar;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+
 
 public class ArticleFragment extends Fragment {
 
     public static final String ARG_URL = "articleUrl";
 
-    private ArticleWebView  view;
-    private MenuItem        miBookmark;
-    private String          url;
+    private ArticleWebView view;
+    private MenuItem miBookmark;
+    private String url;
 
 
     @Override
@@ -64,7 +65,7 @@ public class ArticleFragment extends Fragment {
             return true;
         }
         if (itemId == R.id.action_bookmark_article) {
-            Application app = (Application)getActivity().getApplication();
+            Application app = (Application) requireActivity().getApplication();
             if (this.url != null) {
                 if (item.isChecked()) {
                     app.removeBookmark(this.url);
@@ -77,7 +78,7 @@ public class ArticleFragment extends Fragment {
             return true;
         }
         if (itemId == R.id.action_fullscreen) {
-            ((ArticleCollectionActivity)getActivity()).toggleFullScreen();
+            ((ArticleCollectionActivity) requireActivity()).toggleFullScreen();
             return true;
         }
         if (itemId == R.id.action_zoom_in) {
@@ -99,7 +100,7 @@ public class ArticleFragment extends Fragment {
         }
         if (itemId == R.id.action_select_style) {
             final String[] styleTitles = view.getAvailableStyles();
-            new AlertDialog.Builder(getActivity())
+            new MaterialAlertDialogBuilder(requireActivity())
                     .setTitle(R.string.select_style)
                     .setItems(styleTitles, (dialog, which) -> {
                         String title = styleTitles[which];
@@ -113,8 +114,7 @@ public class ArticleFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-            Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         Bundle args = getArguments();
         this.url = args == null ? null : args.getString(ARG_URL);
@@ -161,11 +161,10 @@ public class ArticleFragment extends Fragment {
         super.onPrepareOptionsMenu(menu);
         if (this.url == null) {
             miBookmark.setVisible(false);
-        }
-        else {
-            Application app = (Application)getActivity().getApplication();
+        } else {
+            Application app = (Application) requireActivity().getApplication();
             try {
-                boolean bookmarked =  app.isBookmarked(this.url);
+                boolean bookmarked = app.isBookmarked(this.url);
                 displayBookmarked(bookmarked);
             } catch (Exception ex) {
                 miBookmark.setVisible(false);

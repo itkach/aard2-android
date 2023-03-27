@@ -1,7 +1,6 @@
 package itkach.aard2;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
@@ -25,6 +24,7 @@ import androidx.appcompat.widget.LinearLayoutCompat;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -283,7 +283,7 @@ public class SettingsListAdapter extends BaseAdapter implements SharedPreference
 
     private void deleteUserStyle(final String name) {
         String message = context.getString(R.string.setting_user_style_confirm_forget, name);
-        new AlertDialog.Builder(context)
+        new MaterialAlertDialogBuilder(context)
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setTitle("")
                 .setMessage(message)
@@ -313,8 +313,7 @@ public class SettingsListAdapter extends BaseAdapter implements SharedPreference
         else {
             LayoutInflater inflater = (LayoutInflater) parent.getContext()
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            view = inflater.inflate(R.layout.settings_remote_content_item, parent,
-                    false);
+            view = inflater.inflate(R.layout.settings_remote_content_item, parent, false);
 
             final SharedPreferences prefs = view.getContext().getSharedPreferences(
                     ArticleWebView.PREF, Activity.MODE_PRIVATE);
