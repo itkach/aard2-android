@@ -2,7 +2,6 @@ package itkach.aard2;
 
 import android.content.Context;
 import android.os.Handler;
-import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -40,7 +39,7 @@ public class BlobListAdapter extends BaseAdapter {
     public BlobListAdapter(Context context, int chunkSize, int loadMoreThreashold) {
         this.mainHandler = new Handler(context.getMainLooper());
         this.executor = Executors.newSingleThreadExecutor();
-        this.list = new ArrayList<Slob.Blob>(chunkSize);
+        this.list = new ArrayList<>(chunkSize);
         this.chunkSize = chunkSize;
         this.loadMoreThreashold = loadMoreThreashold;
     }

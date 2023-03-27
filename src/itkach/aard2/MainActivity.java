@@ -1,19 +1,9 @@
 package itkach.aard2;
 
-import android.app.ActionBar;
-import android.app.ActionBar.Tab;
-import android.app.FragmentTransaction;
-import android.content.ClipData;
-import android.content.ClipboardManager;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.KeyEvent;
@@ -22,11 +12,19 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.viewpager.widget.ViewPager;
+
 import java.util.regex.Pattern;
 
 import itkach.slob.Slob;
 
-public class MainActivity extends FragmentActivity implements
+public class MainActivity extends AppCompatActivity implements
         ActionBar.TabListener {
 
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -48,11 +46,11 @@ public class MainActivity extends FragmentActivity implements
         appSectionsPagerAdapter = new AppSectionsPagerAdapter(
                 getSupportFragmentManager());
 
-        final ActionBar actionBar = getActionBar();
+        final ActionBar actionBar = getSupportActionBar();
         actionBar.setHomeButtonEnabled(true);
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 
-        viewPager = (ViewPager) findViewById(R.id.pager);
+        viewPager = findViewById(R.id.pager);
         viewPager.setOffscreenPageLimit(appSectionsPagerAdapter.getCount());
         viewPager.setAdapter(appSectionsPagerAdapter);
 
@@ -81,7 +79,7 @@ public class MainActivity extends FragmentActivity implements
         tabIcons[4] = IconMaker.tab(this, IconMaker.IC_SETTINGS);
         // For each of the sections in the app, add a tab to the action bar.
         for (int i = 0; i < appSectionsPagerAdapter.getCount(); i++) {
-            Tab tab = actionBar.newTab();
+            ActionBar.Tab tab = actionBar.newTab();
             tab.setTabListener(this);
             tab.setIcon(tabIcons[i]);
             actionBar.addTab(tab);

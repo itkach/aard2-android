@@ -1,7 +1,8 @@
-<menu xmlns:android="http://schemas.android.com/apk/res/android" >
-    <item android:id="@+id/action_lookup"
-          android:title="@string/action_lookup"
-          android:showAsAction="always"
-          android:actionLayout="@layout/action_lookup"
-          />
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/action_lookup"
+        android:title="@string/action_lookup"
+        app:actionLayout="@layout/action_lookup"
+        app:showAsAction="always" />
 </menu>

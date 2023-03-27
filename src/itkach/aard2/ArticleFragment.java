@@ -3,11 +3,8 @@ package itkach.aard2;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -19,6 +16,8 @@ import android.webkit.WebView;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import androidx.fragment.app.Fragment;
 
 
 public class ArticleFragment extends Fragment {
@@ -54,10 +53,6 @@ public class ArticleFragment extends Fragment {
         inflater.inflate(R.menu.article, menu);
         miBookmark = menu.findItem(R.id.action_bookmark_article);
         miFullscreen = menu.findItem(R.id.action_fullscreen);
-        if (Build.VERSION.SDK_INT < 19) {
-            miFullscreen.setVisible(false);
-            miFullscreen.setEnabled(false);
-        }
     }
 
     private void displayBookmarked(boolean value) {
@@ -115,18 +110,15 @@ public class ArticleFragment extends Fragment {
             return true;
         }
         if (itemId == R.id.action_select_style) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
             final String[] styleTitles = view.getAvailableStyles();
-            builder.setTitle(R.string.select_style)
-                    .setItems(styleTitles, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            String title = styleTitles[which];
-                            view.saveStylePref(title);
-                            view.applyStylePref();
-                        }
-                    });
-            AlertDialog dialog = builder.create();
-            dialog.show();
+            new AlertDialog.Builder(getActivity())
+                    .setTitle(R.string.select_style)
+                    .setItems(styleTitles, (dialog, which) -> {
+                        String title = styleTitles[which];
+                        view.saveStylePref(title);
+                        view.applyStylePref();
+                    })
+                    .show();
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -140,9 +132,9 @@ public class ArticleFragment extends Fragment {
         this.url = args == null ? null : args.getString(ARG_URL);
         if (url == null) {
             View layout = inflater.inflate(R.layout.empty_view, container, false);
-            TextView textView = (TextView)layout.findViewById(R.id.empty_text);
+            TextView textView = layout.findViewById(R.id.empty_text);
             textView.setText("");
-            ImageView icon = (ImageView) layout.findViewById(R.id.empty_icon);
+            ImageView icon = layout.findViewById(R.id.empty_icon);
             icon.setImageDrawable(IconMaker.emptyView(getActivity(),
                     IconMaker.IC_BAN));
             this.setHasOptionsMenu(false);
@@ -150,21 +142,18 @@ public class ArticleFragment extends Fragment {
         }
 
         View layout = inflater.inflate(R.layout.article_view, container, false);
-        final ProgressBar progressBar = (ProgressBar) layout.findViewById(R.id.webViewPogress);
-        view = (ArticleWebView) layout.findViewById(R.id.webView);
+        final ProgressBar progressBar = layout.findViewById(R.id.webViewPogress);
+        view = layout.findViewById(R.id.webView);
         view.restoreState(savedInstanceState);
         view.loadUrl(url);
         view.setWebChromeClient(new WebChromeClient() {
             public void onProgressChanged(WebView view, final int newProgress) {
                 final Activity activity = getActivity();
                 if (activity != null) {
-                    activity.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            progressBar.setProgress(newProgress);
-                            if (newProgress >= progressBar.getMax()) {
-                                progressBar.setVisibility(ViewGroup.GONE);
-                            }
+                    activity.runOnUiThread(() -> {
+                        progressBar.setProgress(newProgress);
+                        if (newProgress >= progressBar.getMax()) {
+                            progressBar.setVisibility(ViewGroup.GONE);
                         }
                     });
                 }

@@ -16,9 +16,9 @@ import itkach.slob.Slob;
 
 public class BlobDescriptorListAdapter extends BaseAdapter {
 
-    BlobDescriptorList      list;
+    final BlobDescriptorList      list;
     DateFormat              dateFormat;
-    private DataSetObserver observer;
+    private final DataSetObserver observer;
     private boolean         selectionMode;
 
     public BlobDescriptorListAdapter(BlobDescriptorList list) {
@@ -41,7 +41,7 @@ public class BlobDescriptorListAdapter extends BaseAdapter {
     @Override
     public int getCount() {
         synchronized (list) {
-            return list == null ? 0 : list.size();
+            return list.size();
         }
     }
 
@@ -79,17 +79,17 @@ public class BlobDescriptorListAdapter extends BaseAdapter {
             view = inflater.inflate(R.layout.blob_descriptor_list_item, parent,
                     false);
         }
-        TextView titleView = (TextView) view
+        TextView titleView = view
                 .findViewById(R.id.blob_descriptor_key);
         titleView.setText(item.key);
-        TextView sourceView = (TextView) view
+        TextView sourceView = view
                 .findViewById(R.id.blob_descriptor_source);
         Slob slob = list.resolveOwner(item);
         sourceView.setText(slob == null ? "???" : slob.getTags().get("label"));
-        TextView timestampView = (TextView) view
+        TextView timestampView = view
                 .findViewById(R.id.blob_descriptor_timestamp);
         timestampView.setText(timestamp);
-        CheckBox cb = (CheckBox) view
+        CheckBox cb = view
                 .findViewById(R.id.blob_descriptor_checkbox);
         cb.setVisibility(isSelectionMode() ? View.VISIBLE : View.GONE);
         return view;

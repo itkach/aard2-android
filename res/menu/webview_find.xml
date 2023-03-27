@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:id="@+id/find_prev"
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/find_prev"
         android:icon="@drawable/ic_find_previous_material"
-        android:showAsAction="always"
         android:title="@string/find_previous"
-        />
-    <item android:id="@+id/find_next"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/find_next"
         android:icon="@drawable/ic_find_next_material"
-        android:showAsAction="always"
         android:title="@string/find_next"
-        />
+        app:showAsAction="always" />
 </menu>

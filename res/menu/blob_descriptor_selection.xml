@@ -1,11 +1,10 @@
-<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
         android:id="@+id/blob_descriptor_select_all"
-        android:title="@android:string/selectAll"/>
-    
+        android:title="@android:string/selectAll" />
+
     <item
         android:id="@+id/blob_descriptor_delete"
-        android:title="@string/delete"
-        />
+        android:title="@string/delete" />
 </menu>

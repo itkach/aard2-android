@@ -10,15 +10,6 @@ import android.database.DataSetObserver;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentStatePagerAdapter;
-import android.support.v4.app.NavUtils;
-import android.support.v4.app.TaskStackBuilder;
-import android.support.v4.view.PagerTitleStrip;
-import android.support.v4.view.ViewPager;
-import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.KeyEvent;
@@ -29,13 +20,22 @@ import android.view.Window;
 import android.widget.BaseAdapter;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NavUtils;
+import androidx.core.app.TaskStackBuilder;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentStatePagerAdapter;
+import androidx.viewpager.widget.PagerTitleStrip;
+import androidx.viewpager.widget.ViewPager;
+
 import java.util.Iterator;
 import java.util.List;
 
 import itkach.slob.Slob;
 import itkach.slob.Slob.Blob;
 
-public class ArticleCollectionActivity extends FragmentActivity
+public class ArticleCollectionActivity extends AppCompatActivity
         implements  View.OnSystemUiVisibilityChangeListener,
                     SharedPreferences.OnSharedPreferenceChangeListener {
 
@@ -63,14 +63,7 @@ public class ArticleCollectionActivity extends FragmentActivity
         }
     }
 
-    ToBlob blobToBlob = new ToBlob(){
-
-        @Override
-        public Blob convert(Object item) {
-            return (Blob)item;
-        }
-
-    };
+    ToBlob blobToBlob = item -> (Blob)item;
 
 
     private boolean onDestroyCalled = false;
@@ -158,9 +151,9 @@ public class ArticleCollectionActivity extends FragmentActivity
                 findViewById(R.id.pager_title_strip).setVisibility(
                         articleCollectionPagerAdapter.getCount() == 1 ? ViewGroup.GONE : ViewGroup.VISIBLE);
 
-                viewPager = (ViewPager) findViewById(R.id.pager);
+                viewPager = findViewById(R.id.pager);
                 viewPager.setAdapter(articleCollectionPagerAdapter);
-                viewPager.setOnPageChangeListener(new OnPageChangeListener(){
+                viewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener(){
 
                     @Override
                     public void onPageScrollStateChanged(int arg0) {}
@@ -182,7 +175,7 @@ public class ArticleCollectionActivity extends FragmentActivity
                     }});
                 viewPager.setCurrentItem(position);
 
-                PagerTitleStrip titleStrip = (PagerTitleStrip)findViewById(R.id.pager_title_strip);
+                PagerTitleStrip titleStrip = findViewById(R.id.pager_title_strip);
                 titleStrip.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 10);
                 updateTitle(position);
                 articleCollectionPagerAdapter.registerDataSetObserver(new DataSetObserver() {
@@ -215,7 +208,7 @@ public class ArticleCollectionActivity extends FragmentActivity
         boolean hasFragment = !Util.isBlank(bd.fragment);
         return new ArticleCollectionPagerAdapter(
                 app, data, hasFragment ? new ToBlobWithFragment(bd.fragment) : blobToBlob, getSupportFragmentManager());
-    };
+    }
 
     private ArticleCollectionPagerAdapter createFromLastResult(Application app) {
         return new ArticleCollectionPagerAdapter(
@@ -224,22 +217,14 @@ public class ArticleCollectionActivity extends FragmentActivity
 
     private ArticleCollectionPagerAdapter createFromBookmarks(final Application app) {
         return new ArticleCollectionPagerAdapter(
-                app, new BlobDescriptorListAdapter(app.bookmarks), new ToBlob() {
-            @Override
-            public Blob convert(Object item) {
-                return app.bookmarks.resolve((BlobDescriptor)item);
-            }
-        }, getSupportFragmentManager());
+                app, new BlobDescriptorListAdapter(app.bookmarks), item ->
+                app.bookmarks.resolve((BlobDescriptor)item), getSupportFragmentManager());
     }
 
     private ArticleCollectionPagerAdapter createFromHistory(final Application app) {
         return new ArticleCollectionPagerAdapter(
-                app, new BlobDescriptorListAdapter(app.history), new ToBlob() {
-            @Override
-            public Blob convert(Object item) {
-                return app.history.resolve((BlobDescriptor)item);
-            }
-        }, getSupportFragmentManager());
+                app, new BlobDescriptorListAdapter(app.history), item ->
+                app.history.resolve((BlobDescriptor)item), getSupportFragmentManager());
     }
 
     private ArticleCollectionPagerAdapter createFromIntent(Application app, Intent intent) {
@@ -357,7 +342,7 @@ public class ArticleCollectionActivity extends FragmentActivity
     private void setFullScreenPref(boolean value) {
         SharedPreferences.Editor editor = prefs().edit();
         editor.putBoolean(PREF_FULLSCREEN, value);
-        editor.commit();
+        editor.apply();
     }
 
     private void fullScreen() {
@@ -541,7 +526,7 @@ public class ArticleCollectionActivity extends FragmentActivity
     }
 
 
-    static interface ToBlob {
+    interface ToBlob {
         Slob.Blob convert(Object item);
     }
 

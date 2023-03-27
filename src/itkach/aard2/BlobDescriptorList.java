@@ -26,8 +26,8 @@ final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
 
     private final String TAG = getClass().getSimpleName();
 
-    static enum SortOrder {
-        TIME, NAME;
+    enum SortOrder {
+        TIME, NAME
     }
     private Application                     app;
 
@@ -57,36 +57,21 @@ final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
         this.app = app;
         this.store = store;
         this.maxSize = maxSize;
-        this.list = new ArrayList<BlobDescriptor>();
-        this.filteredList = new ArrayList<BlobDescriptor>();
+        this.list = new ArrayList<>();
+        this.filteredList = new ArrayList<>();
         this.dataSetObservable = new DataSetObservable();
         this.filter = "";
         keyComparator = Slob.Strength.QUATERNARY.comparator;
 
-        nameComparatorAsc = new Comparator<BlobDescriptor>() {
-            @Override
-            public int compare(BlobDescriptor b1, BlobDescriptor b2) {
-            return keyComparator.compare(b1.key, b2.key);
-            }
-        };
+        nameComparatorAsc = (b1, b2) -> keyComparator.compare(b1.key, b2.key);
 
         nameComparatorDesc = Collections.reverseOrder(nameComparatorAsc);
 
-        timeComparatorAsc = new Comparator<BlobDescriptor>() {
-            @Override
-            public int compare(BlobDescriptor b1, BlobDescriptor b2) {
-            return Util.compare(b1.createdAt, b2.createdAt);
-            }
-        };
+        timeComparatorAsc = (b1, b2) -> Long.compare(b1.createdAt, b2.createdAt);
 
         timeComparatorDesc = Collections.reverseOrder(timeComparatorAsc);
 
-        lastAccessComparator = new Comparator<BlobDescriptor>() {
-            @Override
-            public int compare(BlobDescriptor b1, BlobDescriptor b2) {
-                return  Util.compare(b2.lastAccess, b1.lastAccess);
-            }
-        };
+        lastAccessComparator = (b1, b2) -> Long.compare(b2.lastAccess, b1.lastAccess);
 
         order = SortOrder.TIME;
         ascending = false;
@@ -166,12 +151,7 @@ final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
             doUpdateLastAccess(bd);
         }
         else {
-            handler.post(new Runnable() {
-                @Override
-                public void run() {
-                    doUpdateLastAccess(bd);
-                }
-            });
+            handler.post(() -> doUpdateLastAccess(bd));
         }
     }
 

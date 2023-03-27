@@ -7,11 +7,11 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.TextView;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -39,6 +39,7 @@ public class LookupFragment extends BaseListFragment implements LookupListener {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
         app = (Application) getActivity().getApplication();
         app.addLookupListener(this);
     }
@@ -53,27 +54,17 @@ public class LookupFragment extends BaseListFragment implements LookupListener {
         super.onViewCreated(view, savedInstanceState);
         setBusy(false);
         ListView listView = getListView();
-        listView.setOnItemClickListener(new OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view,
-                                    int position, long id) {
-                Log.i("--", "Item clicked: " + position);
-                Intent intent = new Intent(getActivity(),
-                        ArticleCollectionActivity.class);
-                intent.putExtra("position", position);
-                startActivity(intent);
-            }
+        listView.setOnItemClickListener((parent, view1, position, id) -> {
+            Log.i("--", "Item clicked: " + position);
+            Intent intent = new Intent(getActivity(),
+                    ArticleCollectionActivity.class);
+            intent.putExtra("position", position);
+            startActivity(intent);
         });
         final Application app = (Application) getActivity().getApplication();
         getListView().setAdapter(app.lastResult);
 
-        closeListener = new SearchView.OnCloseListener() {
-
-            @Override
-            public boolean onClose() {
-                return true;
-            }
-        };
+        closeListener = () -> true;
 
         queryTextListener = new SearchView.OnQueryTextListener() {
 
@@ -96,12 +87,7 @@ public class LookupFragment extends BaseListFragment implements LookupListener {
                         if (app.getLookupQuery().equals(query)) {
                             return;
                         }
-                        getActivity().runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                app.lookup(query);
-                            }
-                        });
+                        getActivity().runOnUiThread(() -> app.lookup(query));
                         scheduledLookup = null;
                     }
                 };
@@ -121,13 +107,13 @@ public class LookupFragment extends BaseListFragment implements LookupListener {
 
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    public void onCreateOptionsMenu(@NotNull Menu menu, MenuInflater inflater) {
         timer = new Timer();
         inflater.inflate(R.menu.lookup, menu);
-        MenuItem miFilter = menu.findItem(R.id.action_lookup);
-        View filterActionView = miFilter.getActionView();
-        searchView = (SearchView) filterActionView.findViewById(R.id.fldLookup);
-        searchView.setQueryHint(miFilter.getTitle());
+        MenuItem lookupMenu = menu.findItem(R.id.action_lookup);
+        View filterActionView = lookupMenu.getActionView();
+        searchView = filterActionView.findViewById(R.id.fldLookup);
+        searchView.setQueryHint(lookupMenu.getTitle());
         searchView.setIconified(false);
         searchView.setOnQueryTextListener(queryTextListener);
         searchView.setOnCloseListener(closeListener);
@@ -162,7 +148,7 @@ public class LookupFragment extends BaseListFragment implements LookupListener {
     private void setBusy(boolean busy) {
         setListShown(!busy);
         if (!busy) {
-            TextView emptyText = ((TextView)emptyView.findViewById(R.id.empty_text));
+            TextView emptyText = emptyView.findViewById(R.id.empty_text);
             String msg = "";
             String query = app.getLookupQuery();
             if (query != null && !query.toString().equals("")) {

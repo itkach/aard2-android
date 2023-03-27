@@ -18,7 +18,7 @@ public class CheckableRelativeLayout extends RelativeLayout implements
         Checkable {
 
     private boolean         isChecked;
-    private List<Checkable> checkableViews = new ArrayList<Checkable>();
+    private List<Checkable> checkableViews = new ArrayList<>();
 
     public CheckableRelativeLayout(Context context) {
         super(context);

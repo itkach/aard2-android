@@ -22,7 +22,7 @@ abstract class BaseDescriptorList<T extends BaseDescriptor> extends AbstractList
         this.typeParameterClass = typeParameterClass;
         this.store = store;
         this.dataSetObservable = new DataSetObservable();
-        this.list = new ArrayList<T>();
+        this.list = new ArrayList<>();
         this.updating = 0;
     }
 

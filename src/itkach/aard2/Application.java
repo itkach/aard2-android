@@ -9,22 +9,19 @@ import android.content.pm.PackageManager;
 import android.database.DataSetObserver;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Build;
-import android.os.Handler;
-import android.os.Looper;
 import android.util.Log;
 import android.webkit.WebView;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -81,29 +78,25 @@ public class Application extends android.app.Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        if(Build.VERSION.SDK_INT >= 19) {
-            try {
-                Method setWebContentsDebuggingEnabledMethod = WebView.class.getMethod(
-                        "setWebContentsDebuggingEnabled", boolean.class);
-                setWebContentsDebuggingEnabledMethod.invoke(null, true);
-            } catch (NoSuchMethodException e1) {
-                Log.d(TAG,
-                        "setWebContentsDebuggingEnabledMethod method not found");
-            } catch (InvocationTargetException e) {
-                e.printStackTrace();
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            }
+        try {
+            Method setWebContentsDebuggingEnabledMethod = WebView.class.getMethod(
+                    "setWebContentsDebuggingEnabled", boolean.class);
+            setWebContentsDebuggingEnabledMethod.invoke(null, true);
+        } catch (NoSuchMethodException e1) {
+            Log.d(TAG,
+                    "setWebContentsDebuggingEnabledMethod method not found");
+        } catch (InvocationTargetException | IllegalAccessException e) {
+            e.printStackTrace();
         }
-        articleActivities = Collections.synchronizedList(new ArrayList<Activity>());
+        articleActivities = Collections.synchronizedList(new ArrayList<>());
 
         mapper = new ObjectMapper();
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES,
                 false);
-        dictStore = new DescriptorStore<SlobDescriptor>(mapper, getDir("dictionaries", MODE_PRIVATE));
-        bookmarkStore = new DescriptorStore<BlobDescriptor>(mapper, getDir(
+        dictStore = new DescriptorStore<>(mapper, getDir("dictionaries", MODE_PRIVATE));
+        bookmarkStore = new DescriptorStore<>(mapper, getDir(
                 "bookmarks", MODE_PRIVATE));
-        historyStore = new DescriptorStore<BlobDescriptor>(mapper, getDir(
+        historyStore = new DescriptorStore<>(mapper, getDir(
                 "history", MODE_PRIVATE));
         slobber = new Slobber();
 
@@ -140,7 +133,7 @@ public class Application extends android.app.Application {
             synchronized public void onChanged() {
                 lastResult.setData(new ArrayList<Slob.Blob>().iterator());
                 slobber.setSlobs(null);
-                List<Slob> slobs = new ArrayList<Slob>();
+                List<Slob> slobs = new ArrayList<>();
                 for (SlobDescriptor sd : dictionaries) {
                     Slob s = sd.load(getApplicationContext());
                     if (s != null) {
@@ -164,7 +157,7 @@ public class Application extends android.app.Application {
     }
 
     static String readTextFile(InputStream is, int maxSize) throws IOException, FileTooBigException {
-        InputStreamReader reader = new InputStreamReader(is, "UTF-8");
+        InputStreamReader reader = new InputStreamReader(is, StandardCharsets.UTF_8);
         StringWriter sw = new StringWriter();
         char[] buf = new char[16384];
         int count = 0;
@@ -193,7 +186,7 @@ public class Application extends android.app.Application {
             Log.w(TAG,
                     String.format("Failed to start on preferred port %d",
                             portCandidate), e);
-            Set<Integer> seen = new HashSet<Integer>();
+            Set<Integer> seen = new HashSet<>();
             seen.add(PREFERRED_PORT);
             Random rand = new Random();
             int attemptCount = 0;
@@ -235,10 +228,10 @@ public class Application extends android.app.Application {
     void installTheme(Activity activity) {
         String theme = getPreferredTheme();
         if (theme.equals(PREF_UI_THEME_DARK)) {
-            activity.setTheme(android.R.style.Theme_Holo);
+            activity.setTheme(R.style.Theme_Material3_DayNight);
         }
         else {
-            activity.setTheme(android.R.style.Theme_Holo_Light_DarkActionBar);
+            activity.setTheme(R.style.Theme_Material3_Light);
         }
     }
 
@@ -257,7 +250,7 @@ public class Application extends android.app.Application {
 
 
     Slob[] getActiveSlobs() {
-        List<Slob> result = new ArrayList(dictionaries.size());
+        List<Slob> result = new ArrayList<>(dictionaries.size());
         for (SlobDescriptor sd : dictionaries) {
             if (sd.active) {
                 Slob s = slobber.getSlob(sd.id);
@@ -266,11 +259,11 @@ public class Application extends android.app.Application {
                 }
             }
         }
-        return result.toArray(new Slob[result.size()]);
+        return result.toArray(new Slob[0]);
     };
 
     Slob[] getFavoriteSlobs() {
-        List<Slob> result = new ArrayList(dictionaries.size());
+        List<Slob> result = new ArrayList<>(dictionaries.size());
         for (SlobDescriptor sd : dictionaries) {
             if (sd.active && sd.priority > 0) {
                 Slob s = slobber.getSlob(sd.id);
@@ -279,8 +272,8 @@ public class Application extends android.app.Application {
                 }
             }
         }
-        return result.toArray(new Slob[result.size()]);
-    };
+        return result.toArray(new Slob[0]);
+    }
 
 
     Iterator<Blob> find(String key) {
@@ -314,7 +307,7 @@ public class Application extends android.app.Application {
         final SharedPreferences prefs = prefs();
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean(Application.PREF_RANDOM_FAV_LOOKUP, value);
-        editor.commit();
+        editor.apply();
     }
 
     Blob random() {
@@ -331,7 +324,7 @@ public class Application extends android.app.Application {
         final SharedPreferences prefs = prefs();
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean(Application.PREF_USE_VOLUME_FOR_NAV, value);
-        editor.commit();
+        editor.apply();
     }
 
     boolean autoPaste() {
@@ -343,7 +336,7 @@ public class Application extends android.app.Application {
         final SharedPreferences prefs = prefs();
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean(Application.PREF_AUTO_PASTE, value);
-        editor.commit();
+        editor.apply();
     }
 
 
@@ -466,7 +459,7 @@ public class Application extends android.app.Application {
         }
     }
 
-    private List<LookupListener> lookupListeners = new ArrayList<LookupListener>();
+    private final List<LookupListener> lookupListeners = new ArrayList<>();
 
     void addLookupListener(LookupListener listener){
         lookupListeners.add(listener);
@@ -485,7 +478,7 @@ public class Application extends android.app.Application {
 
         @Override
         protected Void doInBackground(Slob[] slobs) {
-            Set<String> hosts = new HashSet<String>();
+            Set<String> hosts = new HashSet<>();
             for (Slob slob : slobs) {
                 try {
                     String uriValue = slob.getTags().get("uri");

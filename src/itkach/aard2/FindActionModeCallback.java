@@ -6,13 +6,11 @@
 package itkach.aard2;
 
 import android.content.Context;
-import android.os.Build;
 import android.text.Editable;
 import android.text.Selection;
 import android.text.Spannable;
 import android.text.TextWatcher;
 import android.view.ActionMode;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -29,7 +27,7 @@ class FindActionModeCallback implements ActionMode.Callback, TextWatcher,
 
     FindActionModeCallback(Context context, SearchableWebView webview) {
         this.webview = webview;
-        searchView = LayoutInflater.from(context).inflate(R.layout.webview_find, null);
+        searchView = View.inflate(context, R.layout.webview_find, null);
 
         editText = searchView.findViewById(R.id.edit);
         editText.setOnLongClickListener(this);
@@ -42,7 +40,7 @@ class FindActionModeCallback implements ActionMode.Callback, TextWatcher,
     /* Place text in the text field so it can be searched for. */
     void setText(String text) {
         editText.setText(text);
-        Spannable span = (Spannable) editText.getText();
+        Spannable span = editText.getText();
         int length = span.length();
         // Ideally, we would like to set the selection to the whole field,
         // but this brings up the Text selection CAB, which dismisses this
@@ -67,11 +65,7 @@ class FindActionModeCallback implements ActionMode.Callback, TextWatcher,
      */
     void findAll() {
         String find = editText.getText().toString();
-
-        if (Build.VERSION.SDK_INT < 16)
-            webview.findAll(find);
-        else
-            webview.findAllAsync(find);
+        webview.findAllAsync(find);
     }
 
     void showSoftInput() {

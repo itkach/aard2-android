@@ -2,22 +2,20 @@ package itkach.aard2;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.util.SparseBooleanArray;
 import android.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.SearchView;
+
+import androidx.fragment.app.FragmentActivity;
 
 
 abstract class BlobDescriptorListFragment extends BaseListFragment {
@@ -78,21 +76,13 @@ abstract class BlobDescriptorListFragment extends BaseListFragment {
                         .setIcon(android.R.drawable.ic_dialog_alert)
                         .setTitle("")
                         .setMessage(message)
-                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                deleteSelectedItems();
-                                mode.finish();
-                                deleteConfirmationDialog = null;
-                            }
+                        .setPositiveButton(android.R.string.yes, (dialog, which) -> {
+                            deleteSelectedItems();
+                            mode.finish();
+                            deleteConfirmationDialog = null;
                         })
                         .setNegativeButton(android.R.string.no, null).create();
-                deleteConfirmationDialog.setOnDismissListener(new DialogInterface.OnDismissListener(){
-                    @Override
-                    public void onDismiss(DialogInterface dialogInterface) {
-                        deleteConfirmationDialog = null;
-                    }
-                });
+                deleteConfirmationDialog.setOnDismissListener(dialogInterface -> deleteConfirmationDialog = null);
                 deleteConfirmationDialog.show();
                 return true;
             case R.id.blob_descriptor_select_all:
@@ -133,16 +123,12 @@ abstract class BlobDescriptorListFragment extends BaseListFragment {
         icArrowDown = IconMaker.actionBar(activity, IconMaker.IC_SORT_DESC);
 
         final ListView listView = getListView();
-        listView.setOnItemClickListener(new OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view,
-                                    int position, long id) {
-                Intent intent = new Intent(activity,
-                        ArticleCollectionActivity.class);
-                intent.setAction(getItemClickAction());
-                intent.putExtra("position", position);
-                startActivity(intent);
-            }
+        listView.setOnItemClickListener((parent, view1, position, id) -> {
+            Intent intent = new Intent(activity,
+                    ArticleCollectionActivity.class);
+            intent.setAction(getItemClickAction());
+            intent.putExtra("position", position);
+            startActivity(intent);
         });
 
         setListAdapter(listAdapter);
@@ -173,7 +159,7 @@ abstract class BlobDescriptorListFragment extends BaseListFragment {
         miFilter.setIcon(icFilter);
 
         View filterActionView = miFilter.getActionView();
-        SearchView searchView = (SearchView) filterActionView
+        SearchView searchView = filterActionView
                 .findViewById(R.id.fldFilter);
         searchView.setQueryHint(miFilter.getTitle());
         searchView.setQuery(list.getFilter(), true);
@@ -213,7 +199,7 @@ abstract class BlobDescriptorListFragment extends BaseListFragment {
         SharedPreferences p = this.prefs();
         SharedPreferences.Editor editor = p.edit();
         editor.putString(PREF_SORT_ORDER, order.name());
-        editor.commit();
+        editor.apply();
     }
 
     private void setAscending(MenuItem mi, boolean ascending) {
@@ -231,7 +217,7 @@ abstract class BlobDescriptorListFragment extends BaseListFragment {
         SharedPreferences p = this.prefs();
         SharedPreferences.Editor editor = p.edit();
         editor.putBoolean(PREF_SORT_DIRECTION, ascending);
-        editor.commit();
+        editor.apply();
     }
 
     @Override

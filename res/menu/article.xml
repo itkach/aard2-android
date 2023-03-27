@@ -1,43 +1,44 @@
-<menu xmlns:android="http://schemas.android.com/apk/res/android" >
-    <item android:id="@+id/action_bookmark_article"
-          android:title="@string/action_bookmark_article"
-          android:checkable="true"
-          android:checked="false"
-          android:showAsAction="always"
-        />
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/action_bookmark_article"
+        android:title="@string/action_bookmark_article"
+        android:checkable="true"
+        android:checked="false"
+        app:showAsAction="always" />
 
-    <item android:id="@+id/action_fullscreen"
+    <item
+        android:id="@+id/action_fullscreen"
         android:title="@string/action_fullscreen"
-        android:showAsAction="ifRoom"
-        />
+        app:showAsAction="ifRoom" />
 
-    <item android:id="@+id/action_find_in_page"
-          android:title="@string/action_find_in_page"
-          android:showAsAction="never" 
-          />
+    <item
+        android:id="@+id/action_find_in_page"
+        android:title="@string/action_find_in_page"
+        app:showAsAction="never" />
 
-    <item android:id="@+id/action_load_remote_content"
+    <item
+        android:id="@+id/action_load_remote_content"
         android:title="@string/action_load_remote_content"
-        android:showAsAction="never"
-        />
+        app:showAsAction="never" />
 
-    <item android:id="@+id/action_zoom_in"
-          android:title="@string/action_zoom_in"
-          android:showAsAction="never"
-        />
-    <item android:id="@+id/action_zoom_out"
-          android:title="@string/action_zoom_out"
-          android:showAsAction="never"
-        />
+    <item
+        android:id="@+id/action_zoom_in"
+        android:title="@string/action_zoom_in"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_zoom_out"
+        android:title="@string/action_zoom_out"
+        app:showAsAction="never" />
 
-    <item android:id="@+id/action_zoom_reset"
-          android:title="@string/action_zoom_reset"
-          android:showAsAction="never"
-        />
+    <item
+        android:id="@+id/action_zoom_reset"
+        android:title="@string/action_zoom_reset"
+        app:showAsAction="never" />
 
-    <item android:id="@+id/action_select_style"
-          android:title="@string/action_select_style"
-          android:showAsAction="never"
-        />
+    <item
+        android:id="@+id/action_select_style"
+        android:title="@string/action_select_style"
+        app:showAsAction="never" />
 
 </menu>

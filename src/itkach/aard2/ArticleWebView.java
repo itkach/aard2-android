@@ -12,7 +12,6 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.view.View;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
@@ -87,7 +86,7 @@ public class ArticleWebView extends SearchableWebView {
         if (titles.length == 0) {
             return;
         }
-        SortedSet newStyleTitlesSet = new TreeSet<String>(Arrays.asList(titles));
+        SortedSet<String> newStyleTitlesSet = new TreeSet<>(Arrays.asList(titles));
         if (!this.styleTitles.equals(newStyleTitlesSet)) {
             this.styleTitles = newStyleTitlesSet;
             saveAvailableStylesPref(this.styleTitles);
@@ -125,12 +124,7 @@ public class ArticleWebView extends SearchableWebView {
 
         timer = new Timer();
 
-        final Runnable applyStyleRunnable = new Runnable() {
-            @Override
-            public void run() {
-                applyStylePref();
-            }
-        };
+        final Runnable applyStyleRunnable = this::applyStylePref;
 
         applyStylePref = new TimerTask() {
             @Override
@@ -146,7 +140,7 @@ public class ArticleWebView extends SearchableWebView {
 
             byte[] noBytes = new byte[0];
 
-            Map<String, List<Long>> times = new HashMap<String, List<Long>>();
+            Map<String, List<Long>> times = new HashMap<>();
 
             @Override
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
@@ -160,7 +154,7 @@ public class ArticleWebView extends SearchableWebView {
                     return;
                 }
                 else {
-                    List<Long> tsList = new ArrayList<Long>();
+                    List<Long> tsList = new ArrayList<>();
                     tsList.add(System.currentTimeMillis());
                     times.put(url, tsList);
                     view.loadUrl("javascript:" + styleSwitcherJs);
@@ -261,31 +255,27 @@ public class ArticleWebView extends SearchableWebView {
             }
         });
 
-        this.setOnLongClickListener(new OnLongClickListener(){
-
-            @Override
-            public boolean onLongClick(View view) {
-                WebView.HitTestResult hitTestResult = getHitTestResult();
-                int resultType= hitTestResult.getType();
-                Log.d(TAG, String.format(
-                        "Long tap on element %s (%s)",
-                        resultType,
-                        hitTestResult.getExtra()));
-                if (resultType == WebView.HitTestResult.SRC_ANCHOR_TYPE ||
-                        resultType == WebView.HitTestResult.SRC_IMAGE_ANCHOR_TYPE) {
-                    String url = hitTestResult.getExtra();
-                    Uri uri = Uri.parse(url);
-                    if (isExternal(uri)) {
-                        Intent share = new Intent(Intent.ACTION_SEND);
-                        share.setType("text/plain");
-                        share.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
-                        share.putExtra(Intent.EXTRA_TEXT, url);
-                        getContext().startActivity(Intent.createChooser(share, "Share Link"));
-                        return true;
-                    }
+        this.setOnLongClickListener(view -> {
+            HitTestResult hitTestResult = getHitTestResult();
+            int resultType= hitTestResult.getType();
+            Log.d(TAG, String.format(
+                    "Long tap on element %s (%s)",
+                    resultType,
+                    hitTestResult.getExtra()));
+            if (resultType == HitTestResult.SRC_ANCHOR_TYPE ||
+                    resultType == HitTestResult.SRC_IMAGE_ANCHOR_TYPE) {
+                String url = hitTestResult.getExtra();
+                Uri uri = Uri.parse(url);
+                if (isExternal(uri)) {
+                    Intent share = new Intent(Intent.ACTION_SEND);
+                    share.setType("text/plain");
+                    share.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
+                    share.putExtra(Intent.EXTRA_TEXT, url);
+                    getContext().startActivity(Intent.createChooser(share, "Share Link"));
+                    return true;
                 }
-                return false;
             }
+            return false;
         });
 
         applyTextZoomPref();
@@ -320,12 +310,12 @@ public class ArticleWebView extends SearchableWebView {
         final SharedPreferences prefs = getContext().getSharedPreferences(
                 "userStyles", Activity.MODE_PRIVATE);
         Map<String, ?> data = prefs.getAll();
-        List<String> names = new ArrayList<String>(data.keySet());
+        List<String> names = new ArrayList<>(data.keySet());
         Util.sort(names);
         names.addAll(styleTitles);
         names.add(defaultStyleTitle);
         names.add(autoStyleTitle);
-        return names.toArray(new String[names.size()]);
+        return names.toArray(new String[0]);
     }
 
     private boolean isUIDark() {
@@ -411,9 +401,9 @@ public class ArticleWebView extends SearchableWebView {
         }
         SharedPreferences prefs = prefs();
         Log.d(TAG, "Available styles before pref load: " + styleTitles.size());
-        styleTitles = new TreeSet(
+        styleTitles = new TreeSet<>(
                 prefs.getStringSet(PREF_STYLE_AVAILABLE + currentSlobUri,
-                        Collections.EMPTY_SET));
+                        Collections.emptySet()));
         Log.d(TAG, "Loaded available styles: " + styleTitles.size());
     }
 

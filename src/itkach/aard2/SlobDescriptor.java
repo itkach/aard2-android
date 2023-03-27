@@ -3,13 +3,9 @@ package itkach.aard2;
 import android.content.Context;
 import android.net.Uri;
 import android.os.ParcelFileDescriptor;
-import android.support.v4.provider.DocumentFile;
 import android.util.Log;
 
-import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
-import java.nio.channels.FileChannel;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,10 +14,10 @@ import itkach.slob.Slob;
 
 public class SlobDescriptor extends BaseDescriptor {
 
-    private final static transient String TAG = SlobDescriptor.class.getSimpleName();
+    private final static String TAG = SlobDescriptor.class.getSimpleName();
 
     public String path;
-    public Map<String, String> tags = new HashMap<String, String>();
+    public Map<String, String> tags = new HashMap<>();
     public boolean active = true;
     public long priority;
     public long blobCount;

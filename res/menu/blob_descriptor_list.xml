@@ -1,17 +1,18 @@
-<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
         android:id="@+id/action_filter"
-        android:actionLayout="@layout/action_filter"
-        android:showAsAction="always|collapseActionView"
-        android:title="@string/action_filter"/>
+        android:title="@string/action_filter"
+        app:actionLayout="@layout/action_filter"
+        app:showAsAction="always|collapseActionView" />
     <item
         android:id="@+id/action_sort_asc"
         android:title="@string/action_ascending"
-        android:showAsAction="ifRoom"/>
+        app:showAsAction="ifRoom" />
     <item
         android:id="@+id/action_sort_order"
         android:title="@string/action_descending"
-        android:showAsAction="ifRoom"/>
+        app:showAsAction="ifRoom" />
 
 </menu>
