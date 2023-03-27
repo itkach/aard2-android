@@ -1,7 +1,5 @@
 package itkach.aard2;
 
-import static android.view.View.OnClickListener;
-
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.ClipData;
@@ -16,11 +14,12 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import androidx.fragment.app.FragmentActivity;
+import androidx.annotation.NonNull;
+import androidx.appcompat.widget.LinearLayoutCompat;
+
+import com.google.android.material.button.MaterialButton;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,8 +32,8 @@ public class DictionariesFragment extends BaseListFragment {
 
     private DictionaryListAdapter listAdapter;
 
-    protected char getEmptyIcon() {
-        return IconMaker.IC_DICTIONARY;
+    protected int getEmptyIcon() {
+        return R.drawable.ic_library_books;
     }
 
     protected CharSequence getEmptyText() {
@@ -58,35 +57,16 @@ public class DictionariesFragment extends BaseListFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View result = super.onCreateView(inflater, container, savedInstanceState);
         View extraEmptyView = inflater.inflate(R.layout.dictionaries_empty_view_extra, container, false);
-        Button btn = extraEmptyView.findViewById(R.id.dictionaries_empty_btn_scan);
-        btn.setCompoundDrawablesWithIntrinsicBounds(
-                IconMaker.list(getActivity(), IconMaker.IC_ADD),
-                null, null, null);
-        btn.setOnClickListener(new OnClickListener(){
-            @Override
-            public void onClick(View v) {
-                selectDictionaryFiles();
-            }
-        });
-        LinearLayout emptyViewLayout = (LinearLayout)emptyView;
-        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT
-        );
-        emptyViewLayout.addView(extraEmptyView, layoutParams);
+        MaterialButton btn = extraEmptyView.findViewById(R.id.action_add_dictionaries);
+        btn.setOnClickListener(v -> selectDictionaryFiles());
+        LinearLayoutCompat emptyViewLayout = emptyView.findViewById(R.id.container);
+        emptyViewLayout.addView(extraEmptyView);
         return result;
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         inflater.inflate(R.menu.dictionaries, menu);
-    }
-
-    @Override
-    public void onPrepareOptionsMenu(final Menu menu) {
-        FragmentActivity activity = getActivity();
-        MenuItem miAddDictionaries = menu.findItem(R.id.action_add_dictionaries);
-        miAddDictionaries.setIcon(IconMaker.actionBar(activity, IconMaker.IC_ADD));
     }
 
     @Override

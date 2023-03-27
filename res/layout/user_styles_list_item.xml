@@ -1,37 +1,37 @@
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/settings_item"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingBottom="4dip"
-    android:paddingTop="0dip"
+    android:paddingVertical="4dp"
+    android:paddingHorizontal="16dp"
     android:orientation="vertical"
     android:clickable="false"
-    android:focusable="false"
-    >
+    android:focusable="false">
 
-    <LinearLayout
+    <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        >
-        <TextView
+        android:orientation="horizontal">
+
+        <com.google.android.material.textview.MaterialTextView
             android:id="@+id/user_styles_list_name"
-            style="@android:style/TextAppearance.Holo.SearchResult.Subtitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginRight="14dip"
-            android:layout_marginLeft="14dip"
             android:layout_weight="1"
-            android:layout_gravity="left|center_vertical"
-            />
-        <ImageView
+            android:layout_gravity="start|center_vertical"
+            android:textAppearance="?attr/textAppearanceListItemSecondary"
+            tools:text="Example.js" />
+
+        <androidx.appcompat.widget.AppCompatImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/user_styles_list_btn_delete"
-            android:layout_gravity="right|center_vertical"
+            android:layout_gravity="end|center_vertical"
             android:padding="10dp"
-            android:layout_alignParentRight="true"/>
-    </LinearLayout>
+            app:srcCompat="@drawable/ic_delete_outline"
+            android:layout_alignParentRight="true" />
+    </androidx.appcompat.widget.LinearLayoutCompat>
 
-</LinearLayout>
+</androidx.appcompat.widget.LinearLayoutCompat>

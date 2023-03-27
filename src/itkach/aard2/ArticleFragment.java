@@ -2,8 +2,6 @@ package itkach.aard2;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.Context;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -15,10 +13,9 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
 
 
 public class ArticleFragment extends Fragment {
@@ -27,20 +24,12 @@ public class ArticleFragment extends Fragment {
 
     private ArticleWebView  view;
     private MenuItem        miBookmark;
-    private MenuItem        miFullscreen;
-    private Drawable        icBookmark;
-    private Drawable        icBookmarkO;
-    private Drawable        icFullscreen;
     private String          url;
 
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        FragmentActivity activity = requireActivity();
-        icBookmark =  IconMaker.actionBar(activity, IconMaker.IC_BOOKMARK);
-        icBookmarkO = IconMaker.actionBar(activity, IconMaker.IC_BOOKMARK_O);
-        icFullscreen = IconMaker.actionBar(activity, IconMaker.IC_FULLSCREEN);
         setHasOptionsMenu(true);
     }
 
@@ -52,7 +41,6 @@ public class ArticleFragment extends Fragment {
         menu.clear();
         inflater.inflate(R.menu.article, menu);
         miBookmark = menu.findItem(R.id.action_bookmark_article);
-        miFullscreen = menu.findItem(R.id.action_fullscreen);
     }
 
     private void displayBookmarked(boolean value) {
@@ -61,10 +49,10 @@ public class ArticleFragment extends Fragment {
         }
         if (value) {
             miBookmark.setChecked(true);
-            miBookmark.setIcon(icBookmark);
+            miBookmark.setIcon(R.drawable.ic_bookmark);
         } else {
             miBookmark.setChecked(false);
-            miBookmark.setIcon(icBookmarkO);
+            miBookmark.setIcon(R.drawable.ic_bookmark_border);
         }
     }
 
@@ -132,11 +120,8 @@ public class ArticleFragment extends Fragment {
         this.url = args == null ? null : args.getString(ARG_URL);
         if (url == null) {
             View layout = inflater.inflate(R.layout.empty_view, container, false);
-            TextView textView = layout.findViewById(R.id.empty_text);
-            textView.setText("");
             ImageView icon = layout.findViewById(R.id.empty_icon);
-            icon.setImageDrawable(IconMaker.emptyView(getActivity(),
-                    IconMaker.IC_BAN));
+            icon.setImageResource(R.drawable.ic_block);
             this.setHasOptionsMenu(false);
             return layout;
         }
@@ -172,7 +157,7 @@ public class ArticleFragment extends Fragment {
     }
 
     @Override
-    public void onPrepareOptionsMenu(Menu menu) {
+    public void onPrepareOptionsMenu(@NonNull Menu menu) {
         super.onPrepareOptionsMenu(menu);
         if (this.url == null) {
             miBookmark.setVisible(false);
@@ -188,7 +173,6 @@ public class ArticleFragment extends Fragment {
         }
         applyTextZoomPref();
         applyStylePref();
-        miFullscreen.setIcon(icFullscreen);
     }
 
     void applyTextZoomPref() {
@@ -213,7 +197,6 @@ public class ArticleFragment extends Fragment {
             view.destroy();
             view = null;
         }
-        miFullscreen = null;
         miBookmark = null;
         super.onDestroy();
     }

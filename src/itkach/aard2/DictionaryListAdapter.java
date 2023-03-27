@@ -16,10 +16,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
-import android.widget.Switch;
 import android.widget.TextView;
 
 import androidx.documentfile.provider.DocumentFile;
+
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.materialswitch.MaterialSwitch;
 
 import java.util.Locale;
 
@@ -27,10 +29,10 @@ public class DictionaryListAdapter extends BaseAdapter {
 
     private final static String TAG = DictionaryListAdapter.class.getName();
 
-    private final SlobDescriptorList    data;
-    private final Activity              context;
-    private View.OnClickListener        openUrlOnClick;
-    private AlertDialog                 deleteConfirmationDialog;
+    private final SlobDescriptorList data;
+    private final Activity context;
+    private View.OnClickListener openUrlOnClick;
+    private AlertDialog deleteConfirmationDialog;
 
     private final static String hrefTemplate = "<a href=\'%1$s\'>%2$s</a>";
 
@@ -51,14 +53,13 @@ public class DictionaryListAdapter extends BaseAdapter {
         this.data.registerDataSetObserver(observer);
 
         openUrlOnClick = v -> {
-            String url = (String)v.getTag();
+            String url = (String) v.getTag();
             if (!Util.isBlank(url)) {
                 try {
                     Uri uri = Uri.parse(url);
                     Intent browserIntent = new Intent(Intent.ACTION_VIEW, uri);
                     v.getContext().startActivity(browserIntent);
-                }
-                catch (Exception e) {
+                } catch (Exception e) {
                     Log.d(TAG, "Failed to launch browser with url " + url, e);
                 }
             }
@@ -73,8 +74,7 @@ public class DictionaryListAdapter extends BaseAdapter {
         try {
             DocumentFile documentFile = DocumentFile.fromSingleUri(parent.getContext(), Uri.parse(desc.path));
             fileName = documentFile.getName();
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             fileName = desc.path;
             Log.w(TAG, "Couldn't parse get document file name from uri" + desc.path, ex);
         }
@@ -84,21 +84,19 @@ public class DictionaryListAdapter extends BaseAdapter {
         if (convertView != null) {
             view = convertView;
         } else {
-
             LayoutInflater inflater = (LayoutInflater) parent.getContext()
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            view = inflater.inflate(R.layout.dictionary_list_item, parent,
-                    false);
+            view = inflater.inflate(R.layout.dictionary_list_item, parent, false);
 
-            View licenseView= view.findViewById(R.id.dictionary_license);
+            View licenseView = view.findViewById(R.id.dictionary_license);
             licenseView.setOnClickListener(openUrlOnClick);
 
-            View sourceView= view.findViewById(R.id.dictionary_source);
+            View sourceView = view.findViewById(R.id.dictionary_source);
             sourceView.setOnClickListener(openUrlOnClick);
 
-            Switch activeSwitch = view.findViewById(R.id.dictionary_active);
+            MaterialSwitch activeSwitch = view.findViewById(R.id.dictionary_active);
             activeSwitch.setOnClickListener(view14 -> {
-                Switch activeSwitch1 = (Switch) view14;
+                MaterialSwitch activeSwitch1 = (MaterialSwitch) view14;
                 Integer position14 = (Integer) view14.getTag();
                 SlobDescriptor desc13 = data.get(position14);
                 desc13.active = activeSwitch1.isChecked();
@@ -119,8 +117,7 @@ public class DictionaryListAdapter extends BaseAdapter {
                 data.set(position12, desc1);
             };
 
-            View viewDetailToggle = view
-                    .findViewById(R.id.dictionary_detail_toggle);
+            View viewDetailToggle = view.findViewById(R.id.dictionary_btn_toggle_detail);
             viewDetailToggle.setOnClickListener(detailToggle);
 
             View.OnClickListener toggleFavListener = view13 -> {
@@ -138,8 +135,7 @@ public class DictionaryListAdapter extends BaseAdapter {
                 data.sort();
                 data.endUpdate(true);
             };
-            View btnToggleFav = view
-                    .findViewById(R.id.dictionary_btn_toggle_fav);
+            View btnToggleFav = view.findViewById(R.id.dictionary_btn_toggle_fav);
             btnToggleFav.setOnClickListener(toggleFavListener);
             View dictLabel = view
                     .findViewById(R.id.dictionary_label);
@@ -148,9 +144,7 @@ public class DictionaryListAdapter extends BaseAdapter {
 
         Resources r = parent.getResources();
 
-        Switch switchView = view
-                .findViewById(R.id.dictionary_active);
-
+        MaterialSwitch switchView = view.findViewById(R.id.dictionary_active);
         switchView.setChecked(desc.active);
         switchView.setTag(position);
 
@@ -170,50 +164,32 @@ public class DictionaryListAdapter extends BaseAdapter {
         setupPathView(fileName, available, view);
         setupErrorView(desc, view);
 
-        ImageView btnToggleDetail = view
-                .findViewById(R.id.dictionary_btn_toggle_detail);
-        char toggleIcon = desc.expandDetail ? IconMaker.IC_ANGLE_UP : IconMaker.IC_ANGLE_DOWN;
-        btnToggleDetail.setImageDrawable(IconMaker.list(context, toggleIcon));
+        MaterialButton btnToggleDetail = view.findViewById(R.id.dictionary_btn_toggle_detail);
+        int toggleIcon = desc.expandDetail ? R.drawable.ic_keyboard_arrow_up : R.drawable.ic_keyboard_arrow_down;
+        btnToggleDetail.setIconResource(toggleIcon);
+        btnToggleDetail.setTag(position);
 
-        View viewDetailToggle = view
-                .findViewById(R.id.dictionary_detail_toggle);
-        viewDetailToggle.setTag(position);
-
-        ImageView btnForget = view
-                .findViewById(R.id.dictionary_btn_forget);
-        btnForget.setImageDrawable(IconMaker.list(context, IconMaker.IC_TRASH));
+        MaterialButton btnForget = view.findViewById(R.id.dictionary_btn_forget);
         btnForget.setTag(position);
 
-        ImageView btnToggleFav = view
-                .findViewById(R.id.dictionary_btn_toggle_fav);
-        char favIcon = desc.priority > 0 ? IconMaker.IC_STAR: IconMaker.IC_STAR_O;
-        btnToggleFav.setImageDrawable(IconMaker.list(context, favIcon));
+        MaterialButton btnToggleFav = view.findViewById(R.id.dictionary_btn_toggle_fav);
+        int favIcon = desc.priority > 0 ? R.drawable.ic_favorite : R.drawable.ic_favorite_border;
+        btnToggleFav.setIconResource(favIcon);
         btnToggleFav.setTag(position);
         return view;
     }
 
     private void setupPathView(String path, boolean available, View view) {
         View pathRow = view.findViewById(R.id.dictionary_path_row);
-
-        ImageView pathIcon = view.findViewById(R.id.dictionary_path_icon);
-        pathIcon.setImageDrawable(IconMaker.text(context, IconMaker.IC_FILE_ARCHIVE));
-
         TextView pathView = view.findViewById(R.id.dictionary_path);
         pathView.setText(path);
-
         pathRow.setEnabled(available);
     }
 
     private void setupErrorView(SlobDescriptor desc, View view) {
-        View errorRow= view.findViewById(R.id.dictionary_error_row);
-
-        ImageView errorIcon = view.findViewById(R.id.dictionary_error_icon);
-        errorIcon.setImageDrawable(IconMaker.errorText(context, IconMaker.IC_ERROR));
-
-        TextView errorView = view
-                .findViewById(R.id.dictionary_error);
+        View errorRow = view.findViewById(R.id.dictionary_error_row);
+        TextView errorView = view.findViewById(R.id.dictionary_error);
         errorView.setText(desc.error);
-
         errorRow.setVisibility(desc.error == null ? View.GONE : View.VISIBLE);
     }
 
@@ -224,14 +200,11 @@ public class DictionaryListAdapter extends BaseAdapter {
         blobCountView.setVisibility(desc.error == null ? View.VISIBLE : View.GONE);
 
         blobCountView.setText(format(Locale.getDefault(),
-                r.getQuantityString(R.plurals.dict_item_count, (int)blobCount), blobCount));
+                r.getQuantityString(R.plurals.dict_item_count, (int) blobCount), blobCount));
     }
 
     private void setupCopyrightView(SlobDescriptor desc, boolean available, View view) {
-        View copyrightRow= view.findViewById(R.id.dictionary_copyright_row);
-
-        ImageView copyrightIcon = view.findViewById(R.id.dictionary_copyright_icon);
-        copyrightIcon.setImageDrawable(IconMaker.text(context, IconMaker.IC_COPYRIGHT));
+        View copyrightRow = view.findViewById(R.id.dictionary_copyright_row);
 
         TextView copyrightView = view.findViewById(R.id.dictionary_copyright);
         String copyright = desc.tags.get("copyright");
@@ -243,10 +216,7 @@ public class DictionaryListAdapter extends BaseAdapter {
 
     private void setupSourceView(SlobDescriptor desc, boolean available, View view) {
         View sourceRow = view.findViewById(R.id.dictionary_license_row);
-
         ImageView sourceIcon = view.findViewById(R.id.dictionary_source_icon);
-        sourceIcon.setImageDrawable(IconMaker.text(context, IconMaker.IC_EXTERNAL_LINK));
-
         TextView sourceView = view.findViewById(R.id.dictionary_source);
         String source = desc.tags.get("source");
         CharSequence sourceHtml = Html.fromHtml(String.format(hrefTemplate, source, source));
@@ -263,19 +233,15 @@ public class DictionaryListAdapter extends BaseAdapter {
     }
 
     private void setupLicenseView(SlobDescriptor desc, boolean available, View view) {
-        View licenseRow= view.findViewById(R.id.dictionary_license_row);
-
+        View licenseRow = view.findViewById(R.id.dictionary_license_row);
         ImageView licenseIcon = view.findViewById(R.id.dictionary_license_icon);
-        licenseIcon.setImageDrawable(IconMaker.text(context, IconMaker.IC_LICENSE));
-
         TextView licenseView = view.findViewById(R.id.dictionary_license);
         String licenseName = desc.tags.get("license.name");
         String licenseUrl = desc.tags.get("license.url");
         CharSequence license;
         if (Util.isBlank(licenseUrl)) {
             license = licenseName;
-        }
-        else {
+        } else {
             if (Util.isBlank(licenseName)) {
                 licenseName = licenseUrl;
             }

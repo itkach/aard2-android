@@ -3,6 +3,7 @@
 
     <item
         android:id="@+id/action_filter"
+        android:icon="@drawable/ic_filter"
         android:title="@string/action_filter"
         app:actionLayout="@layout/action_filter"
         app:showAsAction="always|collapseActionView" />

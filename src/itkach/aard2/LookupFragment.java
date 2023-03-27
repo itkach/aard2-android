@@ -11,7 +11,7 @@ import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.TextView;
 
-import org.jetbrains.annotations.NotNull;
+import androidx.annotation.NonNull;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -27,8 +27,8 @@ public class LookupFragment extends BaseListFragment implements LookupListener {
     private final static String TAG = LookupFragment.class.getSimpleName();
 
     @Override
-    char getEmptyIcon() {
-        return IconMaker.IC_SEARCH;
+    int getEmptyIcon() {
+        return R.drawable.ic_search;
     }
 
     @Override
@@ -107,7 +107,7 @@ public class LookupFragment extends BaseListFragment implements LookupListener {
 
 
     @Override
-    public void onCreateOptionsMenu(@NotNull Menu menu, MenuInflater inflater) {
+    public void onCreateOptionsMenu(@NonNull Menu menu, MenuInflater inflater) {
         timer = new Timer();
         inflater.inflate(R.menu.lookup, menu);
         MenuItem lookupMenu = menu.findItem(R.id.action_lookup);
@@ -151,7 +151,7 @@ public class LookupFragment extends BaseListFragment implements LookupListener {
             TextView emptyText = emptyView.findViewById(R.id.empty_text);
             String msg = "";
             String query = app.getLookupQuery();
-            if (query != null && !query.toString().equals("")) {
+            if (query != null && !query.equals("")) {
                 msg = getString(R.string.lookup_nothing_found);
             }
             emptyText.setText(msg);

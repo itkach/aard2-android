@@ -22,8 +22,6 @@ import androidx.viewpager.widget.ViewPager;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.Objects;
 
 import itkach.slob.Slob;
@@ -71,7 +69,7 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
     }
 
     @Override
-    protected void onSaveInstanceState(@NotNull Bundle outState) {
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt("currentSection", viewPager.getCurrentItem());
     }
@@ -189,8 +187,8 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
         }
 
         @Override
-        char getEmptyIcon() {
-            return IconMaker.IC_BOOKMARK;
+        int getEmptyIcon() {
+            return R.drawable.ic_bookmarks;
         }
 
         @Override
@@ -222,8 +220,8 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
         }
 
         @Override
-        char getEmptyIcon() {
-            return IconMaker.IC_HISTORY;
+        int getEmptyIcon() {
+            return R.drawable.ic_history;
         }
 
         @Override
@@ -258,11 +256,10 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
             tabHistory = new HistoryFragment();
             tabDictionaries = new DictionariesFragment();
             tabSettings = new SettingsFragment();
-            fragments = new Fragment[]{tabLookup, tabBookmarks, tabHistory,
-                    tabDictionaries, tabSettings};
+            fragments = new Fragment[]{tabLookup, tabBookmarks, tabHistory, tabDictionaries, tabSettings};
         }
 
-        @NotNull
+        @NonNull
         @Override
         public Fragment getItem(int i) {
             return fragments[i];

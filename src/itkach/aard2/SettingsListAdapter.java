@@ -17,12 +17,14 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.CheckedTextView;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.widget.LinearLayoutCompat;
 import androidx.fragment.app.Fragment;
+
+import com.google.android.material.button.MaterialButton;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -126,13 +128,11 @@ public class SettingsListAdapter extends BaseAdapter implements SharedPreference
             View.OnClickListener clickListener = view1 -> {
                 SharedPreferences.Editor editor = prefs.edit();
                 String value = null;
-                switch(view1.getId()) {
-                    case R.id.setting_ui_theme_light:
-                        value = Application.PREF_UI_THEME_LIGHT;
-                        break;
-                    case R.id.setting_ui_theme_dark:
-                        value = Application.PREF_UI_THEME_DARK;
-                        break;
+                int id = view1.getId();
+                if (id == R.id.setting_ui_theme_light) {
+                    value = Application.PREF_UI_THEME_LIGHT;
+                } else if (id == R.id.setting_ui_theme_dark) {
+                    value = Application.PREF_UI_THEME_DARK;
                 }
                 Log.d("Settings", Application.PREF_UI_THEME + ": " + value);
                 if (value != null) {
@@ -243,8 +243,7 @@ public class SettingsListAdapter extends BaseAdapter implements SharedPreference
 
             view = inflater.inflate(R.layout.settings_user_styles_item, parent,
                     false);
-            ImageView btnAdd = view.findViewById(R.id.setting_btn_add_user_style);
-            btnAdd.setImageDrawable(IconMaker.list(context, IconMaker.IC_ADD));
+            MaterialButton btnAdd = view.findViewById(R.id.setting_btn_add_user_style);
             btnAdd.setOnClickListener(view1 -> {
                 Intent intent = new Intent();
                 intent.setAction(Intent.ACTION_GET_CONTENT);
@@ -264,15 +263,13 @@ public class SettingsListAdapter extends BaseAdapter implements SharedPreference
         View emptyView = view.findViewById(R.id.setting_user_styles_empty);
         emptyView.setVisibility(userStyleNames.size() == 0 ? View.VISIBLE : View.GONE);
 
-        LinearLayout userStyleListLayout = view.findViewById(R.id.setting_user_styles_list);
+        LinearLayoutCompat userStyleListLayout = view.findViewById(R.id.setting_user_styles_list);
         userStyleListLayout.removeAllViews();
         for (String userStyleName : userStyleNames) {
             View styleItemView = inflater.inflate(R.layout.user_styles_list_item, parent,
                     false);
             ImageView btnDelete = styleItemView.findViewById(R.id.user_styles_list_btn_delete);
-            btnDelete.setImageDrawable(IconMaker.list(context, IconMaker.IC_TRASH));
             btnDelete.setOnClickListener(onDeleteUserStyle);
-
             btnDelete.setTag(userStyleName);
 
             TextView nameView = styleItemView.findViewById(R.id.user_styles_list_name);
@@ -329,16 +326,13 @@ public class SettingsListAdapter extends BaseAdapter implements SharedPreference
             View.OnClickListener clickListener = view1 -> {
                 SharedPreferences.Editor editor = prefs.edit();
                 String value = null;
-                switch(view1.getId()) {
-                    case R.id.setting_remote_content_always:
-                        value = ArticleWebView.PREF_REMOTE_CONTENT_ALWAYS;
-                        break;
-                    case R.id.setting_remote_content_wifi:
-                        value = ArticleWebView.PREF_REMOTE_CONTENT_WIFI;
-                        break;
-                    case R.id.setting_remote_content_never:
-                        value = ArticleWebView.PREF_REMOTE_CONTENT_NEVER;
-                        break;
+                int id = view1.getId();
+                if (id == R.id.setting_remote_content_always) {
+                    value = ArticleWebView.PREF_REMOTE_CONTENT_ALWAYS;
+                } else if (id == R.id.setting_remote_content_wifi) {
+                    value = ArticleWebView.PREF_REMOTE_CONTENT_WIFI;
+                } else if (id == R.id.setting_remote_content_never) {
+                    value = ArticleWebView.PREF_REMOTE_CONTENT_NEVER;
                 }
                 Log.d("Settings", "Remote content: " + value);
                 if (value != null) {
@@ -386,22 +380,9 @@ public class SettingsListAdapter extends BaseAdapter implements SharedPreference
             final Context context = parent.getContext();
             LayoutInflater inflater = (LayoutInflater) context
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            view = inflater.inflate(R.layout.settings_about_item, parent,
-                    false);
-
-            ImageView copyrightIcon = view.findViewById(R.id.setting_about_copyright_icon);
-
-            //copyrightIcon.setImageDrawable(FontIconDrawable.inflate(context, R.xml.ic_text_copyright));
-            copyrightIcon.setImageDrawable(IconMaker.text(context, IconMaker.IC_COPYRIGHT));
-
-            ImageView licenseIcon = view.findViewById(R.id.setting_about_license_icon);
-            licenseIcon.setImageDrawable(IconMaker.text(context, IconMaker.IC_LICENSE));
-
-            ImageView sourceIcon = view.findViewById(R.id.setting_about_source_icon);
-            sourceIcon.setImageDrawable(IconMaker.text(context, IconMaker.IC_EXTERNAL_LINK));
+            view = inflater.inflate(R.layout.settings_about_item, parent, false);
 
             String appName = context.getString(R.string.app_name);
-
             String title = context.getString(R.string.setting_about, appName);
 
             TextView titleView = view.findViewById(R.id.setting_about);

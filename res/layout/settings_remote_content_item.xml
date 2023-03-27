@@ -1,54 +1,45 @@
-    <RelativeLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/settings_item"
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/settings_item"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingVertical="8dp"
+    android:paddingHorizontal="16dp"
+    android:orientation="vertical">
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/setting_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingBottom="8dip"
-        android:paddingLeft="8dip"
-        android:paddingRight="8dip"
-        android:paddingTop="6dip"
-        android:background="@android:drawable/list_selector_background"
-        >
-        <TextView
-            android:id="@+id/setting_name"
-            style="@android:style/TextAppearance.Holo.SearchResult.Title"
-            android:text="@string/setting_remote_content"
+        android:textAppearance="?attr/textAppearanceListItem"
+        android:text="@string/setting_remote_content" />
+
+    <RadioGroup
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/setting_name">
+
+        <RadioButton
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginRight="14dip"
-            android:textSize="20sp"/>
+            android:id="@+id/setting_remote_content_always"
+            android:textAppearance="?attr/textAppearanceListItemSecondary"
+            android:text="@string/setting_remote_content_always" />
 
-        <RadioGroup
+        <RadioButton
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/setting_name"
-            android:layout_marginTop="10dip"
-            android:layout_marginLeft="2dip"
-            android:layout_marginRight="10dip"
-            >
-            <RadioButton
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/setting_remote_content_always"
-                android:text="@string/setting_remote_content_always"
-                android:layout_marginBottom="5dip"
-                />
-            <RadioButton
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/setting_remote_content_wifi"
-                android:text="@string/setting_remote_content_wifi"
-                android:layout_marginBottom="5dip"
-                />
-            <RadioButton
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/setting_remote_content_never"
-                android:text="@string/setting_remote_content_never"
-                android:layout_marginBottom="5dip"
-                />
+            android:id="@+id/setting_remote_content_wifi"
+            android:textAppearance="?attr/textAppearanceListItemSecondary"
+            android:text="@string/setting_remote_content_wifi" />
 
-        </RadioGroup>
+        <RadioButton
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/setting_remote_content_never"
+            android:textAppearance="?attr/textAppearanceListItemSecondary"
+            android:text="@string/setting_remote_content_never" />
+
+    </RadioGroup>
 
 
-    </RelativeLayout>
+</androidx.appcompat.widget.LinearLayoutCompat>

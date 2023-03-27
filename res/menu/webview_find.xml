@@ -3,12 +3,12 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/find_prev"
-        android:icon="@drawable/ic_find_previous_material"
+        android:icon="@drawable/ic_keyboard_arrow_up"
         android:title="@string/find_previous"
         app:showAsAction="always" />
     <item
         android:id="@+id/find_next"
-        android:icon="@drawable/ic_find_next_material"
+        android:icon="@drawable/ic_keyboard_arrow_down"
         android:title="@string/find_next"
         app:showAsAction="always" />
 </menu>

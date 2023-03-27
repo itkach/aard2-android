@@ -2,6 +2,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/action_bookmark_article"
+        android:icon="@drawable/ic_bookmark_border"
         android:title="@string/action_bookmark_article"
         android:checkable="true"
         android:checked="false"
@@ -9,6 +10,7 @@
 
     <item
         android:id="@+id/action_fullscreen"
+        android:icon="@drawable/ic_open_in_full"
         android:title="@string/action_fullscreen"
         app:showAsAction="ifRoom" />
 

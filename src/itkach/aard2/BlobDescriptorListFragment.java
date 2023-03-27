@@ -15,12 +15,13 @@ import android.view.View;
 import android.widget.ListView;
 import android.widget.SearchView;
 
+import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
 
 
 abstract class BlobDescriptorListFragment extends BaseListFragment {
 
-    private Drawable icFilter;
     private Drawable icClock;
     private Drawable icList;
     private Drawable icArrowUp;
@@ -114,18 +115,15 @@ abstract class BlobDescriptorListFragment extends BaseListFragment {
 
         listAdapter = new BlobDescriptorListAdapter(descriptorList);
 
-        final FragmentActivity activity = getActivity();
-
-        icFilter = IconMaker.actionBar(activity, IconMaker.IC_FILTER);
-        icClock =  IconMaker.actionBar(activity, IconMaker.IC_CLOCK);
-        icList = IconMaker.actionBar(activity, IconMaker.IC_LIST);
-        icArrowUp = IconMaker.actionBar(activity, IconMaker.IC_SORT_ASC);
-        icArrowDown = IconMaker.actionBar(activity, IconMaker.IC_SORT_DESC);
+        final FragmentActivity activity = requireActivity();
+        icClock =  ContextCompat.getDrawable(activity, R.drawable.ic_clock_time_nine);
+        icList = ContextCompat.getDrawable(activity, R.drawable.ic_format_list_bulleted);
+        icArrowUp = ContextCompat.getDrawable(activity, R.drawable.ic_sort_ascending);
+        icArrowDown = ContextCompat.getDrawable(activity, R.drawable.sort_descending);
 
         final ListView listView = getListView();
         listView.setOnItemClickListener((parent, view1, position, id) -> {
-            Intent intent = new Intent(activity,
-                    ArticleCollectionActivity.class);
+            Intent intent = new Intent(activity, ArticleCollectionActivity.class);
             intent.setAction(getItemClickAction());
             intent.putExtra("position", position);
             startActivity(intent);
@@ -146,7 +144,7 @@ abstract class BlobDescriptorListFragment extends BaseListFragment {
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         inflater.inflate(R.menu.blob_descriptor_list, menu);
     }
 
@@ -156,7 +154,6 @@ abstract class BlobDescriptorListFragment extends BaseListFragment {
         BlobDescriptorList list = getDescriptorList();
 
         miFilter = menu.findItem(R.id.action_filter);
-        miFilter.setIcon(icFilter);
 
         View filterActionView = miFilter.getActionView();
         SearchView searchView = filterActionView

@@ -1,121 +1,97 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="8dip"
-    android:paddingLeft="8dip"
-    android:paddingRight="8dip"
-    android:paddingTop="6dip"
-    android:clickable="false"
-    >
+    android:paddingVertical="8dp"
+    android:paddingHorizontal="16dp">
 
-    <TextView
+    <com.google.android.material.textview.MaterialTextView
         android:id="@+id/setting_about"
-        style="@android:style/TextAppearance.Holo.SearchResult.Title"
-        android:text="@string/setting_about"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginRight="14dip"
-        android:textSize="20sp"/>
+        android:textAppearance="?attr/textAppearanceListItem"
+        android:text="@string/setting_about" />
 
-    <TextView
+    <com.google.android.material.textview.MaterialTextView
         android:id="@+id/application_version"
-        style="@android:style/TextAppearance.Holo.SearchResult.Subtitle"
-        android:text="@string/application_version"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_marginBottom="6dp"
-        android:layout_marginRight="14dip"
-        android:layout_marginLeft="14dip"
-        />
+        android:layout_marginBottom="4dp"
+        android:textAppearance="?attr/textAppearanceListItemSecondary"
+        android:text="@string/application_version" />
 
-    <LinearLayout
+    <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_marginBottom="2dp"
-        android:layout_marginRight="14dip"
-        android:layout_marginLeft="14dip"
-        >
+        android:layout_marginBottom="2dp">
 
-        <ImageView
+        <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/setting_about_copyright_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:baselineAlignBottom="true"
-            android:layout_marginRight="4dp"
             android:layout_marginEnd="4dp"
-            />
+            app:srcCompat="@drawable/ic_copyright" />
 
-        <TextView
+        <com.google.android.material.textview.MaterialTextView
             android:id="@+id/application_copyright"
-            style="@android:style/TextAppearance.Holo.SearchResult.Subtitle"
             android:text="@string/application_copyright"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            />
+            android:textAppearance="?attr/textAppearanceListItemSecondary"
+            android:layout_gravity="center_vertical" />
 
-    </LinearLayout>
+    </androidx.appcompat.widget.LinearLayoutCompat>
 
 
-    <LinearLayout
+    <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_marginBottom="2dp"
-        android:layout_marginRight="14dip"
-        android:layout_marginLeft="14dip"
-        >
-        <ImageView
+        android:layout_marginBottom="2dp">
+
+        <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/setting_about_license_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:baselineAlignBottom="true"
-            android:layout_marginRight="4dp"
             android:layout_marginEnd="4dp"
-            />
-        <TextView
+            app:srcCompat="@drawable/ic_license" />
+
+        <com.google.android.material.textview.MaterialTextView
             android:id="@+id/application_license"
-            style="@android:style/TextAppearance.Holo.SearchResult.Subtitle"
-            android:text="@string/application_license_name"
             android:autoLink="web"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
             android:clickable="true"
             android:focusable="false"
-            />
-    </LinearLayout>
+            android:textAppearance="?attr/textAppearanceListItemSecondary"
+            android:text="@string/application_license_name" />
+    </androidx.appcompat.widget.LinearLayoutCompat>
 
-    <LinearLayout
+    <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_marginBottom="2dp"
-        android:layout_marginRight="14dip"
-        android:layout_marginLeft="14dip"
-        >
+        android:layout_marginBottom="2dp">
 
-        <ImageView
+        <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/setting_about_source_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:baselineAlignBottom="true"
-            android:layout_marginRight="4dp"
             android:layout_marginEnd="4dp"
-            />
+            app:srcCompat="@drawable/ic_open_in_new" />
 
-        <TextView
-            style="@android:style/TextAppearance.Holo.SearchResult.Subtitle"
+        <com.google.android.material.textview.MaterialTextView
             android:text="@string/application_home_url"
             android:autoLink="web"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            />
+            android:layout_gravity="center_vertical"
+            android:textAppearance="?attr/textAppearanceListItemSecondary" />
 
-    </LinearLayout>
+    </androidx.appcompat.widget.LinearLayoutCompat>
 
 
-</LinearLayout>
+</androidx.appcompat.widget.LinearLayoutCompat>

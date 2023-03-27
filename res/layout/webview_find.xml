@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    >
-    <EditText android:id="@+id/edit"
+    android:orientation="horizontal">
+
+    <EditText
+        android:id="@+id/edit"
         android:importantForAutofill="no"
         android:layout_width="0dip"
         android:layout_weight="1"
@@ -13,8 +14,5 @@
         android:inputType="text"
         android:hint="@string/find_hint"
         android:imeOptions="actionDone|flagNoExtractUi|flagNoFullscreen"
-        android:layout_marginEnd="10dip"
-        android:layout_marginRight="10dip"
-        android:textColor="@android:color/white"
-        />
-</LinearLayout>
+        android:layout_marginEnd="10dip" />
+</androidx.appcompat.widget.LinearLayoutCompat>

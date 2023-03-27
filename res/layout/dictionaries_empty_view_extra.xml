@@ -1,26 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <Button
-        android:id="@+id/dictionaries_empty_btn_scan"
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/action_add_dictionaries"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="30dp"
         android:layout_gravity="center_horizontal"
-        android:drawablePadding="10dp"
-        android:text="@string/action_add_dictionaries"
-    />
+        app:icon="@drawable/ic_add"
+        app:iconGravity="start"
+        android:text="@string/action_add_dictionaries" />
 
-    <TextView
+    <com.google.android.material.textview.MaterialTextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
         android:layout_gravity="center_horizontal"
         android:autoLink="web"
-        android:text="@string/application_home_url"
-        />
+        android:text="@string/application_home_url" />
 
-</LinearLayout>
+</androidx.appcompat.widget.LinearLayoutCompat>

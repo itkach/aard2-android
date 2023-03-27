@@ -1,62 +1,53 @@
-    <LinearLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/settings_item"
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/settings_item"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingVertical="8dp"
+    android:paddingHorizontal="16dp"
+    android:orientation="vertical">
+
+    <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingBottom="8dip"
-        android:paddingLeft="8dip"
-        android:paddingRight="8dip"
-        android:paddingTop="6dip"
-        android:orientation="vertical"
-        >
+        android:orientation="horizontal">
 
-        <LinearLayout
-            android:layout_width="match_parent"
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/setting_user_styles"
+            android:text="@string/setting_user_styles"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            >
-            <TextView
-                android:id="@+id/setting_user_styles"
-                style="@android:style/TextAppearance.Holo.SearchResult.Title"
-                android:text="@string/setting_user_styles"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="22dip"
-                android:layout_gravity="left|top"
-                android:layout_weight="1"
-                android:textSize="20sp"/>
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/setting_btn_add_user_style"
-                android:layout_gravity="right|center_vertical"
-                android:paddingTop="6dp"
-                android:paddingLeft="10dp"
-                android:paddingRight="10dp"
-                android:paddingBottom="10dp"
-                android:layout_alignParentRight="true"
-                />
-        </LinearLayout>
-
-        <TextView
-            android:id="@+id/setting_user_styles_empty"
-            style="@android:style/TextAppearance.Holo.SearchResult.Title"
-            android:text="@string/setting_user_styles_empty"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
+            android:layout_gravity="start|center_vertical"
             android:layout_weight="1"
-            android:textColor="@android:color/darker_gray"
-            android:textAlignment="center"
-            android:gravity="center"/>
+            android:textAppearance="?attr/textAppearanceListItem" />
 
-        <LinearLayout
-            android:id="@+id/setting_user_styles_list"
-            android:layout_width="match_parent"
+        <com.google.android.material.button.MaterialButton
+            style="@style/Widget.Material3.Button.IconButton"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            >
+            android:id="@+id/setting_btn_add_user_style"
+            android:layout_gravity="end|center_vertical"
+            app:icon="@drawable/ic_add" />
+    </androidx.appcompat.widget.LinearLayoutCompat>
 
-        </LinearLayout>
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/setting_user_styles_empty"
+        style="@android:style/TextAppearance.Holo.SearchResult.Title"
+        android:text="@string/setting_user_styles_empty"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:textAppearance="?attr/textAppearanceBodyLarge"
+        android:textColor="?attr/colorSecondary"
+        android:textAlignment="center"
+        android:gravity="center" />
 
-    </LinearLayout>
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/setting_user_styles_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+</androidx.appcompat.widget.LinearLayoutCompat>
