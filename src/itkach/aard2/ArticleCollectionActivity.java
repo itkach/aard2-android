@@ -1,6 +1,5 @@
 package itkach.aard2;
 
-import android.app.ActionBar;
 import android.app.Activity;
 import android.app.SearchManager;
 import android.content.ComponentName;
@@ -20,6 +19,7 @@ import android.view.Window;
 import android.widget.BaseAdapter;
 import android.widget.Toast;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NavUtils;
 import androidx.core.app.TaskStackBuilder;
@@ -38,7 +38,6 @@ import itkach.slob.Slob.Blob;
 public class ArticleCollectionActivity extends AppCompatActivity
         implements  View.OnSystemUiVisibilityChangeListener,
                     SharedPreferences.OnSharedPreferenceChangeListener {
-
     private static final String TAG = ArticleCollectionActivity.class.getSimpleName();
 
     static final String PREF = "articleCollection";
@@ -73,10 +72,11 @@ public class ArticleCollectionActivity extends AppCompatActivity
         requestWindowFeature(Window.FEATURE_PROGRESS);
         final Application app = (Application)getApplication();
         app.installTheme(this);
-        getActionBar().hide();
         setContentView(R.layout.activity_article_collection_loading);
+        setSupportActionBar(findViewById(R.id.toolbar));
         app.push(this);
-        final ActionBar actionBar = getActionBar();
+        final ActionBar actionBar = getSupportActionBar();
+        actionBar.hide();
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setSubtitle("...");
         final Intent intent = getIntent();
@@ -147,6 +147,7 @@ public class ArticleCollectionActivity extends AppCompatActivity
                 }
 
                 setContentView(R.layout.activity_article_collection);
+                setSupportActionBar(findViewById(R.id.toolbar));
 
                 findViewById(R.id.pager_title_strip).setVisibility(
                         articleCollectionPagerAdapter.getCount() == 1 ? ViewGroup.GONE : ViewGroup.VISIBLE);
@@ -301,7 +302,7 @@ public class ArticleCollectionActivity extends AppCompatActivity
         Slob.Blob blob = articleCollectionPagerAdapter.get(position);
         CharSequence pageTitle = articleCollectionPagerAdapter.getPageTitle(position);
         Log.d("updateTitle", ""+blob);
-        ActionBar actionBar = getActionBar();
+        ActionBar actionBar = getSupportActionBar();
         if (blob != null) {
             String dictLabel = blob.owner.getTags().get("label");
             actionBar.setTitle(dictLabel);
@@ -358,7 +359,7 @@ public class ArticleCollectionActivity extends AppCompatActivity
     private void unFullScreen() {
         Log.d(TAG, "[F] unfullscreen");
         getWindow().getDecorView().setSystemUiVisibility(0);
-        getActionBar().show();
+        getSupportActionBar().show();
     }
 
     void toggleFullScreen() {
@@ -400,8 +401,7 @@ public class ArticleCollectionActivity extends AppCompatActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-        case android.R.id.home:
+        if (item.getItemId() == android.R.id.home) {
             Intent upIntent = Intent.makeMainActivity(new ComponentName(this, MainActivity.class));
             if (NavUtils.shouldUpRecreateTask(this, upIntent)) {
                 TaskStackBuilder.create(this)

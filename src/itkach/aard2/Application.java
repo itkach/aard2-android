@@ -228,10 +228,10 @@ public class Application extends android.app.Application {
     void installTheme(Activity activity) {
         String theme = getPreferredTheme();
         if (theme.equals(PREF_UI_THEME_DARK)) {
-            activity.setTheme(R.style.Theme_Material3_DayNight);
+            activity.setTheme(R.style.Theme_Material3_DayNight_NoActionBar);
         }
         else {
-            activity.setTheme(R.style.Theme_Material3_Light);
+            activity.setTheme(R.style.Theme_Material3_Light_NoActionBar);
         }
     }
 

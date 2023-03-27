@@ -1,160 +1,149 @@
 package itkach.aard2;
 
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
-import android.util.Patterns;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.viewpager.widget.ViewPager;
 
-import java.util.regex.Pattern;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.navigation.NavigationBarView;
+
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Objects;
 
 import itkach.slob.Slob;
 
-public class MainActivity extends AppCompatActivity implements
-        ActionBar.TabListener {
-
+public class MainActivity extends AppCompatActivity implements NavigationBarView.OnItemSelectedListener,
+        ViewPager.OnPageChangeListener {
     private static final String TAG = MainActivity.class.getSimpleName();
     private AppSectionsPagerAdapter appSectionsPagerAdapter;
     private ViewPager viewPager;
+    private BottomNavigationView bottomNavigationView;
+    private int oldPosition = -1;
 
-    private Pattern[] NO_PASTE_PATTERNS = new Pattern[]{
-            Patterns.WEB_URL,
-            Patterns.EMAIL_ADDRESS,
-            Patterns.PHONE
-    };
-
-    public void onCreate(Bundle savedInstanceState) {
+    public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        final Application app = (Application)getApplication();
+        final Application app = (Application) getApplication();
         app.installTheme(this);
         setContentView(R.layout.activity_main);
+        setSupportActionBar(findViewById(R.id.toolbar));
 
-        appSectionsPagerAdapter = new AppSectionsPagerAdapter(
-                getSupportFragmentManager());
+        appSectionsPagerAdapter = new AppSectionsPagerAdapter(getSupportFragmentManager());
 
-        final ActionBar actionBar = getSupportActionBar();
+        final ActionBar actionBar = Objects.requireNonNull(getSupportActionBar());
         actionBar.setHomeButtonEnabled(true);
-        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 
         viewPager = findViewById(R.id.pager);
         viewPager.setOffscreenPageLimit(appSectionsPagerAdapter.getCount());
         viewPager.setAdapter(appSectionsPagerAdapter);
+        viewPager.setOnPageChangeListener(this);
 
-        final String[] subtitles = new String[] {
-                getString(R.string.subtitle_lookup),
-                getString(R.string.subtitle_bookmark),
-                getString(R.string.subtitle_history),
-                getString(R.string.subtitle_dictionaries),
-                getString(R.string.subtitle_settings),
-        };
-
-        viewPager
-                .setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
-                    @Override
-                    public void onPageSelected(int position) {
-                        actionBar.setSelectedNavigationItem(position);
-                        actionBar.setSubtitle(subtitles[position]);
-                    }
-                });
-
-        Drawable[] tabIcons = new Drawable[5];
-        tabIcons[0] = IconMaker.tab(this, IconMaker.IC_SEARCH);
-        tabIcons[1] = IconMaker.tab(this, IconMaker.IC_BOOKMARK);
-        tabIcons[2] = IconMaker.tab(this, IconMaker.IC_HISTORY);
-        tabIcons[3] = IconMaker.tab(this, IconMaker.IC_DICTIONARY);
-        tabIcons[4] = IconMaker.tab(this, IconMaker.IC_SETTINGS);
-        // For each of the sections in the app, add a tab to the action bar.
-        for (int i = 0; i < appSectionsPagerAdapter.getCount(); i++) {
-            ActionBar.Tab tab = actionBar.newTab();
-            tab.setTabListener(this);
-            tab.setIcon(tabIcons[i]);
-            actionBar.addTab(tab);
-        }
+        bottomNavigationView = findViewById(R.id.bottom_navigation);
+        bottomNavigationView.setOnItemSelectedListener(this);
 
         if (savedInstanceState != null) {
             onRestoreInstanceState(savedInstanceState);
-        } else {
-            if (app.dictionaries.size() == 0) {
-                viewPager.setCurrentItem(3);
-            }
+        } else if (app.dictionaries.size() == 0) {
+            viewPager.setCurrentItem(3);
         }
-
     }
 
     @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         int currentSection = savedInstanceState.getInt("currentSection");
         viewPager.setCurrentItem(currentSection);
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
+    protected void onSaveInstanceState(@NotNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt("currentSection", viewPager.getCurrentItem());
     }
 
     @Override
-    public void onTabUnselected(ActionBar.Tab tab,
-            FragmentTransaction fragmentTransaction) {
-        Fragment frag = appSectionsPagerAdapter.getItem(tab.getPosition());
-        if (frag instanceof BaseListFragment) {
-            ((BaseListFragment)frag).finishActionMode();
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        int itemId = item.getItemId();
+        if (itemId == R.id.action_lookup) {
+            viewPager.setCurrentItem(0);
+        } else if (itemId == R.id.action_bookmarks) {
+            viewPager.setCurrentItem(1);
+        } else if (itemId == R.id.action_history) {
+            viewPager.setCurrentItem(2);
+        } else if (itemId == R.id.action_dictionaries) {
+            viewPager.setCurrentItem(3);
+        } else if (itemId == R.id.action_settings) {
+            viewPager.setCurrentItem(4);
+        } else return false;
+        return true;
+    }
+
+    @Override
+    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+    }
+
+    @Override
+    public void onPageSelected(int position) {
+        if (oldPosition >= 0) {
+            bottomNavigationView.getMenu().getItem(oldPosition).setChecked(false);
+        } else {
+            bottomNavigationView.getMenu().getItem(0).setChecked(false);
         }
-        if (tab.getPosition() == 0) {
+
+        bottomNavigationView.getMenu().getItem(position).setChecked(true);
+        oldPosition = position;
+
+        // Hide Ime
+        if (oldPosition >= 0) {
+            Fragment frag = appSectionsPagerAdapter.getItem(oldPosition);
+            if (frag instanceof BaseListFragment) {
+                ((BaseListFragment) frag).finishActionMode();
+            }
+        }
+        if (oldPosition == 0) {
             View v = this.getCurrentFocus();
-            if (v != null){
-                InputMethodManager mgr = (InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);
+            if (v != null) {
+                InputMethodManager mgr = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
                 mgr.hideSoftInputFromWindow(v.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
             }
         }
     }
 
     @Override
-    public void onTabSelected(ActionBar.Tab tab,
-            FragmentTransaction fragmentTransaction) {
-        viewPager.setCurrentItem(tab.getPosition());
-    }
-
-    @Override
-    public void onTabReselected(ActionBar.Tab tab,
-            FragmentTransaction fragmentTransaction) {
+    public void onPageScrollStateChanged(int state) {
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                Application app = (Application)getApplication();
-                Slob.Blob blob = app.random();
-                if (blob == null) {
-                    Toast.makeText(this,
-                            R.string.article_collection_nothing_found,
-                            Toast.LENGTH_SHORT).show();
-                    return true;
-                }
-                Intent intent = new Intent(this,
-                        ArticleCollectionActivity.class);
-                intent.setData(Uri.parse(app.getUrl(blob)));
-                startActivity(intent);
+        if (item.getItemId() == android.R.id.home) {
+            Application app = (Application) getApplication();
+            Slob.Blob blob = app.random();
+            if (blob == null) {
+                Toast.makeText(this, R.string.article_collection_nothing_found, Toast.LENGTH_SHORT).show();
                 return true;
-            default:
-                return super.onOptionsItemSelected(item);
+            }
+            Intent intent = new Intent(this,
+                    ArticleCollectionActivity.class);
+            intent.setData(Uri.parse(app.getUrl(blob)));
+            startActivity(intent);
+            return true;
         }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -165,8 +154,7 @@ public class MainActivity extends AppCompatActivity implements
         InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
         try {
             inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             Log.w(TAG, "Hiding soft input failed", e);
         }
         super.onPause();
@@ -178,7 +166,7 @@ public class MainActivity extends AppCompatActivity implements
         Fragment frag = appSectionsPagerAdapter.getItem(currentItem);
         Log.d(TAG, "current tab: " + currentItem);
         if (frag instanceof BlobDescriptorListFragment) {
-            BlobDescriptorListFragment bdFrag = (BlobDescriptorListFragment)frag;
+            BlobDescriptorListFragment bdFrag = (BlobDescriptorListFragment) frag;
             if (bdFrag.isFilterExpanded()) {
                 Log.d(TAG, "Filter is expanded");
                 bdFrag.collapseFilter();
@@ -188,8 +176,7 @@ public class MainActivity extends AppCompatActivity implements
         super.onBackPressed();
     }
 
-    public static final class BookmarksFragment extends
-            BlobDescriptorListFragment {
+    public static final class BookmarksFragment extends BlobDescriptorListFragment {
         @Override
         String getItemClickAction() {
             return "showBookmarks";
@@ -230,8 +217,7 @@ public class MainActivity extends AppCompatActivity implements
 
         @Override
         BlobDescriptorList getDescriptorList() {
-            Application app = (Application) getActivity()
-                    .getApplication();
+            Application app = (Application) getActivity().getApplication();
             return app.history;
         }
 
@@ -258,12 +244,12 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     public static class AppSectionsPagerAdapter extends FragmentPagerAdapter {
-        private Fragment[]         fragments;
-        LookupFragment             tabLookup;
+        private final Fragment[] fragments;
+        LookupFragment tabLookup;
         BlobDescriptorListFragment tabBookmarks;
         BlobDescriptorListFragment tabHistory;
-        DictionariesFragment       tabDictionaries;
-        SettingsFragment           tabSettings;
+        DictionariesFragment tabDictionaries;
+        SettingsFragment tabSettings;
 
         public AppSectionsPagerAdapter(FragmentManager fm) {
             super(fm);
@@ -272,10 +258,11 @@ public class MainActivity extends AppCompatActivity implements
             tabHistory = new HistoryFragment();
             tabDictionaries = new DictionariesFragment();
             tabSettings = new SettingsFragment();
-            fragments = new Fragment[] { tabLookup, tabBookmarks, tabHistory,
-                    tabDictionaries, tabSettings };
+            fragments = new Fragment[]{tabLookup, tabBookmarks, tabHistory,
+                    tabDictionaries, tabSettings};
         }
 
+        @NotNull
         @Override
         public Fragment getItem(int i) {
             return fragments[i];
@@ -310,12 +297,12 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     private boolean useVolumeForNav() {
-        Application app = (Application)getApplication();
+        Application app = (Application) getApplication();
         return app.useVolumeForNav();
     }
 
     private boolean autoPaste() {
-        Application app = (Application)getApplication();
+        Application app = (Application) getApplication();
         return app.autoPaste();
     }
 
@@ -333,8 +320,7 @@ public class MainActivity extends AppCompatActivity implements
             int current = viewPager.getCurrentItem();
             if (current > 0) {
                 viewPager.setCurrentItem(current - 1);
-            }
-            else {
+            } else {
                 viewPager.setCurrentItem(appSectionsPagerAdapter.getCount() - 1);
             }
             return true;
@@ -347,8 +333,7 @@ public class MainActivity extends AppCompatActivity implements
             int current = viewPager.getCurrentItem();
             if (current < appSectionsPagerAdapter.getCount() - 1) {
                 viewPager.setCurrentItem(current + 1);
-            }
-            else {
+            } else {
                 viewPager.setCurrentItem(0);
             }
             return true;

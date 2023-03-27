@@ -18,6 +18,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 
 
 public class ArticleFragment extends Fragment {
@@ -36,11 +37,10 @@ public class ArticleFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Activity activity = getActivity();
-        Context context = activity.getActionBar().getThemedContext();
-        icBookmark =  IconMaker.actionBar(context, IconMaker.IC_BOOKMARK);
-        icBookmarkO = IconMaker.actionBar(context, IconMaker.IC_BOOKMARK_O);
-        icFullscreen = IconMaker.actionBar(context, IconMaker.IC_FULLSCREEN);
+        FragmentActivity activity = requireActivity();
+        icBookmark =  IconMaker.actionBar(activity, IconMaker.IC_BOOKMARK);
+        icBookmarkO = IconMaker.actionBar(activity, IconMaker.IC_BOOKMARK_O);
+        icFullscreen = IconMaker.actionBar(activity, IconMaker.IC_FULLSCREEN);
         setHasOptionsMenu(true);
     }
 
