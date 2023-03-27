@@ -11,7 +11,7 @@ repositories {
 }
 
 android {
-    compileSdkVersion 31
+    compileSdk 33
 
     packagingOptions {
         exclude 'META-INF/LICENSE'
@@ -62,16 +62,20 @@ android {
     }
 
     defaultConfig {
-        minSdkVersion 19
-        targetSdkVersion 31
+        namespace "itkach.aard2"
+        applicationId "itkach.aard2"
+        minSdk 19
+        targetSdk 33
+        versionCode 54
+        versionName "0.54"
     }
 
 }
 
 dependencies {
-    api 'com.fasterxml.jackson.core:jackson-databind:2.4+'
-    api 'com.fasterxml.jackson.core:jackson-core:2.4+'
-    api 'com.fasterxml.jackson.core:jackson-annotations:2.4+'
+    api 'com.fasterxml.jackson.core:jackson-databind:2.11.1'
+    api 'com.fasterxml.jackson.core:jackson-core:2.11.1'
+    api 'com.fasterxml.jackson.core:jackson-annotations:2.11.1'
     api 'com.github.kazy1991:FontDrawable:0.9.5'
     api project(':slobj')
     api project(':slobber')
