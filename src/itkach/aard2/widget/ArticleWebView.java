@@ -10,6 +10,7 @@ import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.os.Handler;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.webkit.JavascriptInterface;
@@ -20,6 +21,7 @@ import android.webkit.WebView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.webkit.WebSettingsCompat;
 import androidx.webkit.WebViewClientCompat;
 
 import java.io.ByteArrayInputStream;
@@ -72,10 +74,10 @@ public class ArticleWebView extends SearchableWebView {
 
     private String currentSlobId;
     private String currentSlobUri;
-    private ConnectivityManager connectivityManager;
 
-    private Timer timer;
-    private TimerTask applyStylePref;
+    private final ConnectivityManager connectivityManager;
+    private final Timer timer;
+    private final TimerTask applyStylePref;
 
     private boolean forceLoadRemoteContent;
 
@@ -105,21 +107,23 @@ public class ArticleWebView extends SearchableWebView {
     public ArticleWebView(Context context, AttributeSet attrs) {
         super(context, attrs);
 
-        connectivityManager = (ConnectivityManager) context
-                .getSystemService(Context.CONNECTIVITY_SERVICE);
+        connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
 
         styleSwitcherJs = Application.jsStyleSwitcher;
 
-        WebSettings settings = this.getSettings();
+        WebSettings settings = getSettings();
         settings.setJavaScriptEnabled(true);
         settings.setBuiltInZoomControls(true);
         settings.setDisplayZoomControls(false);
+        if (ArticleViewPrefs.enableForceDark()) {
+            WebSettingsCompat.setAlgorithmicDarkeningAllowed(settings, true);
+        }
 
         Resources r = getResources();
         defaultStyleTitle = r.getString(R.string.default_style_title);
         autoStyleTitle = r.getString(R.string.auto_style_title);
 
-        this.addJavascriptInterface(this, "$SLOB");
+        addJavascriptInterface(this, "$SLOB");
 
         timer = new Timer();
 
@@ -128,16 +132,16 @@ public class ArticleWebView extends SearchableWebView {
         applyStylePref = new TimerTask() {
             @Override
             public void run() {
-                android.os.Handler handler = getHandler();
+                Handler handler = getHandler();
                 if (handler != null) {
                     handler.post(applyStyleRunnable);
                 }
             }
         };
 
-        this.setWebViewClient(new WebViewClient());
+        setWebViewClient(new WebViewClient());
 
-        this.setOnLongClickListener(view -> {
+        setOnLongClickListener(view -> {
             HitTestResult hitTestResult = getHitTestResult();
             int resultType = hitTestResult.getType();
             Log.d(TAG, String.format(
@@ -229,7 +233,7 @@ public class ArticleWebView extends SearchableWebView {
         if (Log.isLoggable(TAG, Log.DEBUG)) {
             Log.d(TAG, js);
         }
-        this.loadUrl(js);
+        loadUrl(js);
     }
 
     public void applyTextZoomPref() {
@@ -293,7 +297,7 @@ public class ArticleWebView extends SearchableWebView {
 
     public void applyStylePref() {
         String styleTitle = getPreferredStyle();
-        this.setStyle(styleTitle);
+        setStyle(styleTitle);
     }
 
     public boolean textZoomIn() {

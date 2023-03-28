@@ -114,4 +114,5 @@
     <string name="setting_ui_theme_auto">Auto</string>
     <string name="action_yes">Yes</string>
     <string name="action_no">No</string>
+    <string name="setting_enable_force_dark_web_view">Enable force dark in webview in dark mode</string>
 </resources>

@@ -21,6 +21,7 @@ import android.widget.Toast;
 import androidx.appcompat.widget.LinearLayoutCompat;
 import androidx.core.text.HtmlCompat;
 import androidx.fragment.app.Fragment;
+import androidx.webkit.WebViewFeature;
 
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
@@ -42,13 +43,14 @@ public class SettingsListAdapter extends BaseAdapter implements SharedPreference
     private final Fragment fragment;
 
     final static int POS_UI_THEME = 0;
-    final static int POS_REMOTE_CONTENT = 1;
-    final static int POS_FAV_RANDOM = 2;
-    final static int POS_USE_VOLUME_FOR_NAV = 3;
-    final static int POS_AUTO_PASTE = 4;
-    final static int POS_USER_STYLES = 5;
-    final static int POS_CLEAR_CACHE = 6;
-    final static int POS_ABOUT = 7;
+    final static int POS_FORCE_DARK = 1;
+    final static int POS_REMOTE_CONTENT = 2;
+    final static int POS_FAV_RANDOM = 3;
+    final static int POS_USE_VOLUME_FOR_NAV = 4;
+    final static int POS_AUTO_PASTE = 5;
+    final static int POS_USER_STYLES = 6;
+    final static int POS_CLEAR_CACHE = 7;
+    final static int POS_ABOUT = 8;
 
     SettingsListAdapter(Fragment fragment) {
         this.fragment = fragment;
@@ -64,7 +66,7 @@ public class SettingsListAdapter extends BaseAdapter implements SharedPreference
 
     @Override
     public int getCount() {
-        return 8;
+        return 9;
     }
 
     @Override
@@ -92,6 +94,8 @@ public class SettingsListAdapter extends BaseAdapter implements SharedPreference
         switch (i) {
             case POS_UI_THEME:
                 return getUIThemeSettingsView(convertView, parent);
+            case POS_FORCE_DARK:
+                return getForceDarkView(convertView, parent);
             case POS_REMOTE_CONTENT:
                 return getRemoteContentSettingsView(convertView, parent);
             case POS_FAV_RANDOM:
@@ -146,6 +150,29 @@ public class SettingsListAdapter extends BaseAdapter implements SharedPreference
             btnLight.setChecked(currentValue.equals(AppPrefs.PREF_UI_THEME_LIGHT));
             btnDark.setChecked(currentValue.equals(AppPrefs.PREF_UI_THEME_DARK));
         }
+        return view;
+    }
+
+    private View getForceDarkView(View convertView, ViewGroup parent) {
+        View view;
+        LayoutInflater inflater = (LayoutInflater) parent.getContext()
+                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        if (convertView != null) {
+            view = convertView;
+        } else {
+            view = inflater.inflate(R.layout.settings_force_dark, parent, false);
+            final MaterialSwitch toggle = view.findViewById(R.id.setting_force_dark);
+            toggle.setEnabled(WebViewFeature.isFeatureSupported(WebViewFeature.ALGORITHMIC_DARKENING));
+            toggle.setOnClickListener(v -> {
+                boolean currentValue = ArticleViewPrefs.enableForceDark();
+                boolean newValue = !currentValue;
+                ArticleViewPrefs.setEnableForceDark(newValue);
+                toggle.setChecked(newValue);
+            });
+        }
+        boolean currentValue = ArticleViewPrefs.enableForceDark();
+        MaterialSwitch toggle = view.findViewById(R.id.setting_force_dark);
+        toggle.setChecked(currentValue);
         return view;
     }
 

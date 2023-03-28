@@ -1,6 +1,7 @@
 package itkach.aard2.prefs;
 
 import androidx.annotation.NonNull;
+import androidx.webkit.WebViewFeature;
 
 import java.util.Collections;
 import java.util.Set;
@@ -44,6 +45,16 @@ public class ArticleViewPrefs extends Prefs {
 
     public static void setPreferredZoomLevel(int preferredZoomLevel) {
         getInstance().prefs.edit().putInt(PREF_TEXT_ZOOM, preferredZoomLevel).apply();
+    }
+
+    public static boolean enableForceDark() {
+        return WebViewFeature.isFeatureSupported(WebViewFeature.ALGORITHMIC_DARKENING) &&
+                getInstance().prefs.getBoolean("force_dark", true);
+    }
+
+    public static void setEnableForceDark(boolean enableForceDark) {
+        enableForceDark &= WebViewFeature.isFeatureSupported(WebViewFeature.ALGORITHMIC_DARKENING);
+        getInstance().prefs.edit().putBoolean("force_dark", enableForceDark).apply();
     }
 
     @NonNull
