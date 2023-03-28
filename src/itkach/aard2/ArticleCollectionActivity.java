@@ -71,7 +71,7 @@ public class ArticleCollectionActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_PROGRESS);
         final Application app = (Application)getApplication();
-        app.installTheme(this);
+        app.installTheme();
         setContentView(R.layout.activity_article_collection_loading);
         setSupportActionBar(findViewById(R.id.toolbar));
         app.push(this);

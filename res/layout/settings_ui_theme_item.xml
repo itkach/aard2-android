@@ -21,6 +21,13 @@
         <com.google.android.material.radiobutton.MaterialRadioButton
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:id="@+id/setting_ui_theme_auto"
+            android:textAppearance="?attr/textAppearanceListItemSecondary"
+            android:text="@string/setting_ui_theme_auto" />
+
+        <com.google.android.material.radiobutton.MaterialRadioButton
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:id="@+id/setting_ui_theme_light"
             android:textAppearance="?attr/textAppearanceListItemSecondary"
             android:text="@string/setting_ui_theme_light" />

@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         final Application app = (Application) getApplication();
-        app.installTheme(this);
+        app.installTheme();
         setContentView(R.layout.activity_main);
         setSupportActionBar(findViewById(R.id.toolbar));
 

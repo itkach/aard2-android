@@ -132,7 +132,9 @@ public class SettingsListAdapter extends BaseAdapter implements SharedPreference
                 SharedPreferences.Editor editor = prefs.edit();
                 String value = null;
                 int id = view1.getId();
-                if (id == R.id.setting_ui_theme_light) {
+                if (id == R.id.setting_ui_theme_auto) {
+                    value = Application.PREF_UI_THEME_AUTO;
+                } else if (id == R.id.setting_ui_theme_light) {
                     value = Application.PREF_UI_THEME_LIGHT;
                 } else if (id == R.id.setting_ui_theme_dark) {
                     value = Application.PREF_UI_THEME_DARK;
@@ -144,12 +146,13 @@ public class SettingsListAdapter extends BaseAdapter implements SharedPreference
                 }
                 context.recreate();
             };
-            RadioButton btnLight = view
-                    .findViewById(R.id.setting_ui_theme_light);
-            RadioButton btnDark = view
-                    .findViewById(R.id.setting_ui_theme_dark);
+            RadioButton btnAuto = view.findViewById(R.id.setting_ui_theme_auto);
+            RadioButton btnLight = view.findViewById(R.id.setting_ui_theme_light);
+            RadioButton btnDark = view.findViewById(R.id.setting_ui_theme_dark);
+            btnAuto.setOnClickListener(clickListener);
             btnLight.setOnClickListener(clickListener);
             btnDark.setOnClickListener(clickListener);
+            btnAuto.setChecked(currentValue.equals(Application.PREF_UI_THEME_AUTO));
             btnLight.setChecked(currentValue.equals(Application.PREF_UI_THEME_LIGHT));
             btnDark.setChecked(currentValue.equals(Application.PREF_UI_THEME_DARK));
         }

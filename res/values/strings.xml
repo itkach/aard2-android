@@ -111,4 +111,5 @@
     <string name="find_hint">Find in page</string>
     <string name="find_next">Next</string>
     <string name="find_previous">Previous</string>
+    <string name="setting_ui_theme_auto">Auto</string>
 </resources>

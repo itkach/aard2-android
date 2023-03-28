@@ -12,6 +12,9 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.webkit.WebView;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
+
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -39,39 +42,40 @@ public class Application extends android.app.Application {
     public static final String LOCALHOST = "127.0.0.1";
     public static final String CONTENT_URL_TEMPLATE = "http://" + LOCALHOST + ":%s%s";
 
-    private Slobber                         slobber;
+    private Slobber slobber;
 
-    BlobDescriptorList                      bookmarks;
-    BlobDescriptorList                      history;
-    SlobDescriptorList                      dictionaries;
+    BlobDescriptorList bookmarks;
+    BlobDescriptorList history;
+    SlobDescriptorList dictionaries;
 
-    private static int                      PREFERRED_PORT = 8013;
-    private int                             port = -1;
+    private static int PREFERRED_PORT = 8013;
+    private int port = -1;
 
-    BlobListAdapter                         lastResult;
+    BlobListAdapter lastResult;
 
     private DescriptorStore<BlobDescriptor> bookmarkStore;
     private DescriptorStore<BlobDescriptor> historyStore;
     private DescriptorStore<SlobDescriptor> dictStore;
 
-    private ObjectMapper                    mapper;
+    private ObjectMapper mapper;
 
-    private String                          lookupQuery = "";
+    private String lookupQuery = "";
 
-    private List<Activity>                  articleActivities;
+    private List<Activity> articleActivities;
 
     static String jsStyleSwitcher;
     static String jsUserStyle;
     static String jsClearUserStyle;
     static String jsSetCannedStyle;
 
-    private static final String PREF                    = "app";
-    static final String PREF_RANDOM_FAV_LOOKUP          = "onlyFavDictsForRandomLookup";
-    static final String PREF_UI_THEME                   = "UITheme";
-    static final String PREF_UI_THEME_LIGHT             = "light";
-    static final String PREF_UI_THEME_DARK              = "dark";
-    static final String PREF_USE_VOLUME_FOR_NAV         = "useVolumeForNav";
-    static final String PREF_AUTO_PASTE                 = "autoPaste";
+    private static final String PREF = "app";
+    static final String PREF_RANDOM_FAV_LOOKUP = "onlyFavDictsForRandomLookup";
+    static final String PREF_UI_THEME = "UITheme";
+    static final String PREF_UI_THEME_AUTO = "auto";
+    static final String PREF_UI_THEME_LIGHT = "light";
+    static final String PREF_UI_THEME_DARK = "dark";
+    static final String PREF_USE_VOLUME_FOR_NAV = "useVolumeForNav";
+    static final String PREF_AUTO_PASTE = "autoPaste";
 
     private static final String TAG = Application.class.getSimpleName();
 
@@ -191,7 +195,7 @@ public class Application extends android.app.Application {
             Random rand = new Random();
             int attemptCount = 0;
             while (true) {
-                int value = 1 + (int)Math.floor((65535-1025)*rand.nextDouble());
+                int value = 1 + (int) Math.floor((65535 - 1025) * rand.nextDouble());
                 portCandidate = 1024 + value;
                 if (seen.contains(portCandidate)) {
                     continue;
@@ -225,14 +229,20 @@ public class Application extends android.app.Application {
                 Application.PREF_UI_THEME_LIGHT);
     }
 
-    void installTheme(Activity activity) {
-        String theme = getPreferredTheme();
-        if (theme.equals(PREF_UI_THEME_DARK)) {
-            activity.setTheme(R.style.Theme_Material3_DayNight_NoActionBar);
+    void installTheme() {
+        int nightMode;
+        switch (getPreferredTheme()) {
+            case PREF_UI_THEME_DARK:
+                nightMode = AppCompatDelegate.MODE_NIGHT_YES;
+                break;
+            case PREF_UI_THEME_LIGHT:
+                nightMode = AppCompatDelegate.MODE_NIGHT_NO;
+                break;
+            case PREF_UI_THEME_AUTO:
+            default:
+                nightMode = AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM;
         }
-        else {
-            activity.setTheme(R.style.Theme_Material3_Light_NoActionBar);
-        }
+        AppCompatDelegate.setDefaultNightMode(nightMode);
     }
 
     void push(Activity activity) {
@@ -260,7 +270,9 @@ public class Application extends android.app.Application {
             }
         }
         return result.toArray(new Slob[0]);
-    };
+    }
+
+    ;
 
     Slob[] getFavoriteSlobs() {
         List<Slob> result = new ArrayList<>(dictionaries.size());
@@ -352,7 +364,7 @@ public class Application extends android.app.Application {
     synchronized boolean addDictionary(Uri uri) {
         SlobDescriptor newDesc = SlobDescriptor.fromUri(getApplicationContext(), uri.toString());
         if (newDesc.id != null) {
-            for (SlobDescriptor d: dictionaries) {
+            for (SlobDescriptor d : dictionaries) {
                 if (d.id != null && d.id.equals(newDesc.id)) {
                     return true;
                 }
@@ -368,7 +380,7 @@ public class Application extends android.app.Application {
     }
 
     String getSlobURI(String slobId) {
-        return  slobber.getSlobURI(slobId);
+        return slobber.getSlobURI(slobId);
     }
 
 
@@ -434,8 +446,7 @@ public class Application extends android.app.Application {
 
             };
             currentLookupTask.execute();
-        }
-        else {
+        } else {
             setLookupResult(query, find(query));
             notifyLookupFinished(query);
         }
@@ -453,7 +464,7 @@ public class Application extends android.app.Application {
         }
     }
 
-    private void notifyLookupCanceled (String query) {
+    private void notifyLookupCanceled(String query) {
         for (LookupListener l : lookupListeners) {
             l.onLookupCanceled(query);
         }
@@ -461,11 +472,11 @@ public class Application extends android.app.Application {
 
     private final List<LookupListener> lookupListeners = new ArrayList<>();
 
-    void addLookupListener(LookupListener listener){
+    void addLookupListener(LookupListener listener) {
         lookupListeners.add(listener);
     }
 
-    void removeLookupListener(LookupListener listener){
+    void removeLookupListener(LookupListener listener) {
         lookupListeners.remove(listener);
     }
 
@@ -487,8 +498,7 @@ public class Application extends android.app.Application {
                     if (host != null) {
                         hosts.add(host.toLowerCase());
                     }
-                }
-                catch (Exception ex) {
+                } catch (Exception ex) {
                     Log.w(TAG, String.format("Dictionary %s (%s) has no uri tag", slob.getId(), slob.getTags()), ex);
                 }
             }
