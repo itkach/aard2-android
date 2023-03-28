@@ -44,7 +44,7 @@ public class BlobListAdapter extends BaseAdapter {
         this.loadMoreThreashold = loadMoreThreashold;
     }
 
-    void setData(Iterator<Slob.Blob> lookupResultsIter) {
+    public void setData(Iterator<Slob.Blob> lookupResultsIter) {
         mainHandler.post(new Runnable() {
             @Override
             public void run() {

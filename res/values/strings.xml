@@ -112,4 +112,6 @@
     <string name="find_next">Next</string>
     <string name="find_previous">Previous</string>
     <string name="setting_ui_theme_auto">Auto</string>
+    <string name="action_yes">Yes</string>
+    <string name="action_no">No</string>
 </resources>

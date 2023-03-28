@@ -3,7 +3,7 @@
 * licensed under the Apache License, Version 2.0
 */
 
-package itkach.aard2;
+package itkach.aard2.widget;
 
 import android.content.Context;
 import android.text.Editable;
@@ -17,6 +17,8 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
+import itkach.aard2.R;
+
 class FindActionModeCallback implements ActionMode.Callback, TextWatcher,
         View.OnLongClickListener, View.OnClickListener {
 
@@ -25,7 +27,7 @@ class FindActionModeCallback implements ActionMode.Callback, TextWatcher,
     private final SearchableWebView webview;
     private final InputMethodManager imManager;
 
-    FindActionModeCallback(Context context, SearchableWebView webview) {
+    public FindActionModeCallback(Context context, SearchableWebView webview) {
         this.webview = webview;
         searchView = View.inflate(context, R.layout.webview_find, null);
 
@@ -38,7 +40,7 @@ class FindActionModeCallback implements ActionMode.Callback, TextWatcher,
     }
 
     /* Place text in the text field so it can be searched for. */
-    void setText(String text) {
+    public void setText(String text) {
         editText.setText(text);
         Spannable span = editText.getText();
         int length = span.length();
@@ -63,12 +65,12 @@ class FindActionModeCallback implements ActionMode.Callback, TextWatcher,
     /*
      * Highlight all the instances of the string from editText in webview.
      */
-    void findAll() {
+    public void findAll() {
         String find = editText.getText().toString();
         webview.findAllAsync(find);
     }
 
-    void showSoftInput() {
+    public void showSoftInput() {
         // imManager.showSoftInputMethod doesn't work
         imManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
     }

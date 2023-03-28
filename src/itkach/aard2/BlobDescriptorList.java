@@ -20,9 +20,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
+import itkach.aard2.utils.Utils;
 import itkach.slob.Slob;
 
-final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
+public final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
 
     private final String TAG = getClass().getSimpleName();
 
@@ -118,7 +119,7 @@ final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
     }
 
     private void sortOrderChanged() {
-        Util.sort(this.filteredList, comparator);
+        Utils.sort(this.filteredList, comparator);
         this.dataSetObservable.notifyChanged();
     }
 
@@ -164,7 +165,7 @@ final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
         return slob;
     }
 
-    Slob.Blob resolve(BlobDescriptor bd) {
+    public Slob.Blob resolve(BlobDescriptor bd) {
         Slob slob = resolveOwner(bd);
         Slob.Blob blob = null;
         if (slob == null) {
@@ -217,7 +218,7 @@ final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
         this.list.add(bd);
         store.save(bd);
         if (this.list.size() > this.maxSize) {
-            Util.sort(this.list, lastAccessComparator);
+            Utils.sort(this.list, lastAccessComparator);
             BlobDescriptor lru = this.list.remove(this.list.size() - 1);
             store.delete(lru.id);
         }

@@ -2,7 +2,6 @@ package itkach.aard2;
 
 import android.app.Activity;
 import android.content.ComponentName;
-import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -12,19 +11,15 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.webkit.WebView;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDelegate;
+import androidx.annotation.NonNull;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.StringWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -33,6 +28,8 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
+import itkach.aard2.prefs.AppPrefs;
+import itkach.aard2.utils.Utils;
 import itkach.slob.Slob;
 import itkach.slob.Slob.Blob;
 import itkach.slobber.Slobber;
@@ -44,14 +41,14 @@ public class Application extends android.app.Application {
 
     private Slobber slobber;
 
-    BlobDescriptorList bookmarks;
-    BlobDescriptorList history;
+    public BlobDescriptorList bookmarks;
+    public BlobDescriptorList history;
     SlobDescriptorList dictionaries;
 
     private static int PREFERRED_PORT = 8013;
     private int port = -1;
 
-    BlobListAdapter lastResult;
+    public BlobListAdapter lastResult;
 
     private DescriptorStore<BlobDescriptor> bookmarkStore;
     private DescriptorStore<BlobDescriptor> historyStore;
@@ -63,24 +60,22 @@ public class Application extends android.app.Application {
 
     private List<Activity> articleActivities;
 
-    static String jsStyleSwitcher;
-    static String jsUserStyle;
-    static String jsClearUserStyle;
-    static String jsSetCannedStyle;
-
-    private static final String PREF = "app";
-    static final String PREF_RANDOM_FAV_LOOKUP = "onlyFavDictsForRandomLookup";
-    static final String PREF_UI_THEME = "UITheme";
-    static final String PREF_UI_THEME_AUTO = "auto";
-    static final String PREF_UI_THEME_LIGHT = "light";
-    static final String PREF_UI_THEME_DARK = "dark";
-    static final String PREF_USE_VOLUME_FOR_NAV = "useVolumeForNav";
-    static final String PREF_AUTO_PASTE = "autoPaste";
+    public static String jsStyleSwitcher;
+    public static String jsUserStyle;
+    public static String jsClearUserStyle;
+    public static String jsSetCannedStyle;
 
     private static final String TAG = Application.class.getSimpleName();
 
+    private static Application instance;
+
+    public static Application get() {
+        return instance;
+    }
+
     @Override
     public void onCreate() {
+        instance = this;
         super.onCreate();
         try {
             Method setWebContentsDebuggingEnabledMethod = WebView.class.getMethod(
@@ -113,18 +108,16 @@ public class Application extends android.app.Application {
         try {
             InputStream is;
             is = getClass().getClassLoader().getResourceAsStream("styleswitcher.js");
-            jsStyleSwitcher = readTextFile(is, 0);
+            jsStyleSwitcher = Utils.readStream(is, 0);
             is = getAssets().open("userstyle.js");
-            jsUserStyle = readTextFile(is, 0);
+            jsUserStyle = Utils.readStream(is, 0);
             is = getAssets().open("clearuserstyle.js");
-            jsClearUserStyle = readTextFile(is, 0);
+            jsClearUserStyle = Utils.readStream(is, 0);
             is = getAssets().open("setcannedstyle.js");
-            jsSetCannedStyle = readTextFile(is, 0);
+            jsSetCannedStyle = Utils.readStream(is, 0);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
-        String initialQuery = prefs().getString("query", "");
 
         lastResult = new BlobListAdapter(this);
 
@@ -146,7 +139,7 @@ public class Application extends android.app.Application {
                 }
                 slobber.setSlobs(slobs);
 
-                new EnableLinkHandling().execute(getActiveSlobs());
+                new EnableLinkHandling(Application.this).execute(getActiveSlobs());
 
                 lookup(lookupQuery);
                 bookmarks.notifyDataSetChanged();
@@ -155,29 +148,9 @@ public class Application extends android.app.Application {
         });
 
         dictionaries.load();
-        lookup(initialQuery, false);
+        lookup(AppPrefs.getLastQuery(), false);
         bookmarks.load();
         history.load();
-    }
-
-    static String readTextFile(InputStream is, int maxSize) throws IOException, FileTooBigException {
-        InputStreamReader reader = new InputStreamReader(is, StandardCharsets.UTF_8);
-        StringWriter sw = new StringWriter();
-        char[] buf = new char[16384];
-        int count = 0;
-        while (true) {
-            int read = reader.read(buf);
-            if (read == -1) {
-                break;
-            }
-            count += read;
-            if (maxSize > 0 && count > maxSize) {
-                throw new FileTooBigException();
-            }
-            sw.write(buf, 0, read);
-        }
-        reader.close();
-        return sw.toString();
     }
 
 
@@ -220,46 +193,21 @@ public class Application extends android.app.Application {
         }
     }
 
-    SharedPreferences prefs() {
-        return this.getSharedPreferences(PREF, Activity.MODE_PRIVATE);
-    }
-
-    String getPreferredTheme() {
-        return prefs().getString(Application.PREF_UI_THEME,
-                Application.PREF_UI_THEME_LIGHT);
-    }
-
-    void installTheme() {
-        int nightMode;
-        switch (getPreferredTheme()) {
-            case PREF_UI_THEME_DARK:
-                nightMode = AppCompatDelegate.MODE_NIGHT_YES;
-                break;
-            case PREF_UI_THEME_LIGHT:
-                nightMode = AppCompatDelegate.MODE_NIGHT_NO;
-                break;
-            case PREF_UI_THEME_AUTO:
-            default:
-                nightMode = AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM;
-        }
-        AppCompatDelegate.setDefaultNightMode(nightMode);
-    }
-
-    void push(Activity activity) {
-        this.articleActivities.add(activity);
-        Log.d(TAG, "Activity added, stack size " + this.articleActivities.size());
-        if (this.articleActivities.size() > 3) {
+    public void push(Activity activity) {
+        articleActivities.add(activity);
+        Log.d(TAG, "Activity added, stack size " + articleActivities.size());
+        if (articleActivities.size() > 3) {
             Log.d(TAG, "Max stack size exceeded, finishing oldest activity");
-            this.articleActivities.get(0).finish();
+            articleActivities.get(0).finish();
         }
     }
 
-    void pop(Activity activity) {
-        this.articleActivities.remove(activity);
+    public void pop(Activity activity) {
+        articleActivities.remove(activity);
     }
 
-
-    Slob[] getActiveSlobs() {
+    @NonNull
+    private Slob[] getActiveSlobs() {
         List<Slob> result = new ArrayList<>(dictionaries.size());
         for (SlobDescriptor sd : dictionaries) {
             if (sd.active) {
@@ -272,9 +220,8 @@ public class Application extends android.app.Application {
         return result.toArray(new Slob[0]);
     }
 
-    ;
-
-    Slob[] getFavoriteSlobs() {
+    @NonNull
+    private Slob[] getFavoriteSlobs() {
         List<Slob> result = new ArrayList<>(dictionaries.size());
         for (SlobDescriptor sd : dictionaries) {
             if (sd.active && sd.priority > 0) {
@@ -287,22 +234,23 @@ public class Application extends android.app.Application {
         return result.toArray(new Slob[0]);
     }
 
-
-    Iterator<Blob> find(String key) {
+    @NonNull
+    private Iterator<Blob> find(String key) {
         return Slob.find(key, getActiveSlobs());
     }
 
-    Iterator<Blob> find(String key, String preferredSlobId) {
+    @NonNull
+    public Iterator<Blob> find(String key, String preferredSlobId) {
         //When following links we want to consider all dictionaries
         //including the ones user turned off
         return find(key, preferredSlobId, false);
     }
 
-    Slob.PeekableIterator<Blob> find(String key, String preferredSlobId, boolean activeOnly) {
+    public Slob.PeekableIterator<Blob> find(String key, String preferredSlobId, boolean activeOnly) {
         return this.find(key, preferredSlobId, activeOnly, null);
     }
 
-    Slob.PeekableIterator<Blob> find(String key, String preferredSlobId, boolean activeOnly, Slob.Strength upToStrength) {
+    private Slob.PeekableIterator<Blob> find(String key, String preferredSlobId, boolean activeOnly, Slob.Strength upToStrength) {
         long t0 = System.currentTimeMillis();
         Slob[] slobs = activeOnly ? getActiveSlobs() : slobber.getSlobs();
         Slob.PeekableIterator<Blob> result = Slob.find(key, slobs, slobber.findSlob(preferredSlobId), upToStrength);
@@ -310,58 +258,21 @@ public class Application extends android.app.Application {
         return result;
     }
 
-    boolean isOnlyFavDictsForRandomLookup() {
-        final SharedPreferences prefs = prefs();
-        return prefs.getBoolean(Application.PREF_RANDOM_FAV_LOOKUP, false);
-    }
-
-    void setOnlyFavDictsForRandomLookup(boolean value) {
-        final SharedPreferences prefs = prefs();
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putBoolean(Application.PREF_RANDOM_FAV_LOOKUP, value);
-        editor.apply();
-    }
-
-    Blob random() {
-        Slob[] slobs = isOnlyFavDictsForRandomLookup() ? getFavoriteSlobs() : getActiveSlobs();
+    public Blob random() {
+        Slob[] slobs = AppPrefs.useOnlyFavoritesForRandomLookups() ? getFavoriteSlobs() : getActiveSlobs();
         return slobber.findRandom(slobs);
     }
 
-    boolean useVolumeForNav() {
-        final SharedPreferences prefs = prefs();
-        return prefs.getBoolean(Application.PREF_USE_VOLUME_FOR_NAV, true);
-    }
-
-    void setUseVolumeForNav(boolean value) {
-        final SharedPreferences prefs = prefs();
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putBoolean(Application.PREF_USE_VOLUME_FOR_NAV, value);
-        editor.apply();
-    }
-
-    boolean autoPaste() {
-        final SharedPreferences prefs = prefs();
-        return prefs.getBoolean(Application.PREF_AUTO_PASTE, false);
-    }
-
-    void setAutoPaste(boolean value) {
-        final SharedPreferences prefs = prefs();
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putBoolean(Application.PREF_AUTO_PASTE, value);
-        editor.apply();
-    }
-
-
-    String getUrl(Blob blob) {
+    public String getUrl(Blob blob) {
         return String.format(CONTENT_URL_TEMPLATE,
                 port, Slobber.mkContentURL(blob));
     }
 
-    Slob getSlob(String slobId) {
+    public Slob getSlob(String slobId) {
         return slobber.getSlob(slobId);
     }
 
-    synchronized boolean addDictionary(Uri uri) {
+    public synchronized boolean addDictionary(Uri uri) {
         SlobDescriptor newDesc = SlobDescriptor.fromUri(getApplicationContext(), uri.toString());
         if (newDesc.id != null) {
             for (SlobDescriptor d : dictionaries) {
@@ -375,46 +286,44 @@ public class Application extends android.app.Application {
     }
 
 
-    Slob findSlob(String slobOrUri) {
+    public Slob findSlob(String slobOrUri) {
         return slobber.findSlob(slobOrUri);
     }
 
-    String getSlobURI(String slobId) {
+    public String getSlobURI(String slobId) {
         return slobber.getSlobURI(slobId);
     }
 
 
-    void addBookmark(String contentURL) {
+    public void addBookmark(String contentURL) {
         bookmarks.add(contentURL);
     }
 
-    void removeBookmark(String contentURL) {
+    public void removeBookmark(String contentURL) {
         bookmarks.remove(contentURL);
     }
 
-    boolean isBookmarked(String contentURL) {
+    public boolean isBookmarked(String contentURL) {
         return bookmarks.contains(contentURL);
     }
 
-    private void setLookupResult(String query, Iterator<Slob.Blob> data) {
-        this.lastResult.setData(data);
+    private void setLookupResult(@NonNull String query, Iterator<Slob.Blob> data) {
+        lastResult.setData(data);
         lookupQuery = query;
-        SharedPreferences.Editor edit = prefs().edit();
-        edit.putString("query", query);
-        edit.apply();
+        AppPrefs.setLastQuery(query);
     }
 
-    String getLookupQuery() {
+    public String getLookupQuery() {
         return lookupQuery;
     }
 
     private AsyncTask<Void, Void, Iterator<Blob>> currentLookupTask;
 
-    void lookup(String query) {
-        this.lookup(query, true);
+    public void lookup(String query) {
+        lookup(query, true);
     }
 
-    void lookup(final String query, boolean async) {
+    public void lookup(final String query, boolean async) {
         if (currentLookupTask != null) {
             currentLookupTask.cancel(false);
             notifyLookupCanceled(query);
@@ -481,11 +390,12 @@ public class Application extends android.app.Application {
     }
 
 
-    static class FileTooBigException extends IOException {
-    }
+    private static class EnableLinkHandling extends AsyncTask<Slob, Void, Void> {
+        private final Application application;
 
-
-    private class EnableLinkHandling extends AsyncTask<Slob, Void, Void> {
+        public EnableLinkHandling(@NonNull Application application) {
+            this.application = application;
+        }
 
         @Override
         protected Void doInBackground(Slob[] slobs) {
@@ -504,9 +414,9 @@ public class Application extends android.app.Application {
             }
 
             long t0 = System.currentTimeMillis();
-            String packageName = getPackageName();
+            String packageName = application.getPackageName();
             try {
-                PackageManager pm = getPackageManager();
+                PackageManager pm = application.getPackageManager();
                 PackageInfo p = pm.getPackageInfo(packageName,
                         PackageManager.GET_ACTIVITIES | PackageManager.GET_DISABLED_COMPONENTS);
                 Log.d(TAG, "Done getting available activities in " + (System.currentTimeMillis() - t0));
@@ -519,8 +429,8 @@ public class Application extends android.app.Application {
                             Log.d(TAG, "Enabling links handling for " + activityInfo.name);
                         }
                         int setting = enabled ? PackageManager.COMPONENT_ENABLED_STATE_ENABLED : PackageManager.COMPONENT_ENABLED_STATE_DISABLED;
-                        pm.setComponentEnabledSetting(new ComponentName(getApplicationContext(), activityInfo.name),
-                                setting, PackageManager.DONT_KILL_APP);
+                        pm.setComponentEnabledSetting(new ComponentName(application, activityInfo.name), setting,
+                                PackageManager.DONT_KILL_APP);
                     }
                 }
             } catch (PackageManager.NameNotFoundException e) {

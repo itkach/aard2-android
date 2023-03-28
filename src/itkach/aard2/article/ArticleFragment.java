@@ -1,4 +1,4 @@
-package itkach.aard2;
+package itkach.aard2.article;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -13,65 +13,65 @@ import android.webkit.WebView;
 import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.progressindicator.LinearProgressIndicator;
 
+import itkach.aard2.Application;
+import itkach.aard2.R;
+import itkach.aard2.widget.ArticleWebView;
+
 
 public class ArticleFragment extends Fragment {
-
     public static final String ARG_URL = "articleUrl";
 
-    private ArticleWebView view;
-    private MenuItem miBookmark;
+    private ArticleWebView webView;
+    private MenuItem bookmarkMenu;
     private String url;
 
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        //Looks like this may be called multiple times with the same menu
-        //for some reason when activity is restored, so need to clear
-        //to avoid duplicates
-        menu.clear();
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         inflater.inflate(R.menu.article, menu);
-        miBookmark = menu.findItem(R.id.action_bookmark_article);
+        bookmarkMenu = menu.findItem(R.id.action_bookmark_article);
     }
 
     private void displayBookmarked(boolean value) {
-        if (miBookmark == null) {
+        if (bookmarkMenu == null) {
             return;
         }
         if (value) {
-            miBookmark.setChecked(true);
-            miBookmark.setIcon(R.drawable.ic_bookmark);
+            bookmarkMenu.setChecked(true);
+            bookmarkMenu.setIcon(R.drawable.ic_bookmark);
         } else {
-            miBookmark.setChecked(false);
-            miBookmark.setIcon(R.drawable.ic_bookmark_border);
+            bookmarkMenu.setChecked(false);
+            bookmarkMenu.setIcon(R.drawable.ic_bookmark_border);
         }
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int itemId = item.getItemId();
         if (itemId == R.id.action_find_in_page) {
-            view.showFindDialog(null, true);
+            webView.showFindDialog(null, true);
             return true;
         }
         if (itemId == R.id.action_bookmark_article) {
             Application app = (Application) requireActivity().getApplication();
-            if (this.url != null) {
+            if (url != null) {
                 if (item.isChecked()) {
-                    app.removeBookmark(this.url);
+                    app.removeBookmark(url);
                     displayBookmarked(false);
                 } else {
-                    app.addBookmark(this.url);
+                    app.addBookmark(url);
                     displayBookmarked(true);
                 }
             }
@@ -82,30 +82,30 @@ public class ArticleFragment extends Fragment {
             return true;
         }
         if (itemId == R.id.action_zoom_in) {
-            view.textZoomIn();
+            webView.textZoomIn();
             return true;
         }
         if (itemId == R.id.action_zoom_out) {
-            view.textZoomOut();
+            webView.textZoomOut();
             return true;
         }
         if (itemId == R.id.action_zoom_reset) {
-            view.resetTextZoom();
+            webView.resetTextZoom();
             return true;
         }
         if (itemId == R.id.action_load_remote_content) {
-            view.forceLoadRemoteContent = true;
-            view.reload();
+            webView.setForceLoadRemoteContent(true);
+            webView.reload();
             return true;
         }
         if (itemId == R.id.action_select_style) {
-            final String[] styleTitles = view.getAvailableStyles();
+            final String[] styleTitles = webView.getAvailableStyles();
             new MaterialAlertDialogBuilder(requireActivity())
                     .setTitle(R.string.select_style)
                     .setItems(styleTitles, (dialog, which) -> {
                         String title = styleTitles[which];
-                        view.saveStylePref(title);
-                        view.applyStylePref();
+                        webView.saveStylePref(title);
+                        webView.applyStylePref();
                     })
                     .show();
             return true;
@@ -114,24 +114,24 @@ public class ArticleFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
         Bundle args = getArguments();
-        this.url = args == null ? null : args.getString(ARG_URL);
+        url = args == null ? null : args.getString(ARG_URL);
         if (url == null) {
             View layout = inflater.inflate(R.layout.empty_view, container, false);
             ImageView icon = layout.findViewById(R.id.empty_icon);
             icon.setImageResource(R.drawable.ic_block);
-            this.setHasOptionsMenu(false);
+            setHasOptionsMenu(false);
             return layout;
         }
 
         View layout = inflater.inflate(R.layout.article_view, container, false);
         LinearProgressIndicator progressBar = layout.findViewById(R.id.progress_horizontal);
-        view = layout.findViewById(R.id.webView);
-        view.restoreState(savedInstanceState);
-        view.loadUrl(url);
-        view.setWebChromeClient(new WebChromeClient() {
+        webView = layout.findViewById(R.id.webView);
+        webView.restoreState(savedInstanceState);
+        webView.loadUrl(url);
+        webView.setWebChromeClient(new WebChromeClient() {
             public void onProgressChanged(WebView view, final int newProgress) {
                 final Activity activity = getActivity();
                 if (activity != null) {
@@ -159,15 +159,15 @@ public class ArticleFragment extends Fragment {
     @Override
     public void onPrepareOptionsMenu(@NonNull Menu menu) {
         super.onPrepareOptionsMenu(menu);
-        if (this.url == null) {
-            miBookmark.setVisible(false);
+        if (url == null) {
+            bookmarkMenu.setVisible(false);
         } else {
             Application app = (Application) requireActivity().getApplication();
             try {
-                boolean bookmarked = app.isBookmarked(this.url);
+                boolean bookmarked = app.isBookmarked(url);
                 displayBookmarked(bookmarked);
             } catch (Exception ex) {
-                miBookmark.setVisible(false);
+                bookmarkMenu.setVisible(false);
             }
         }
         applyTextZoomPref();
@@ -175,28 +175,28 @@ public class ArticleFragment extends Fragment {
     }
 
     void applyTextZoomPref() {
-        if (view != null) {
-            view.applyTextZoomPref();
+        if (webView != null) {
+            webView.applyTextZoomPref();
         }
     }
 
     void applyStylePref() {
-        if (view != null) {
-            view.applyStylePref();
+        if (webView != null) {
+            webView.applyStylePref();
         }
     }
 
     public ArticleWebView getWebView() {
-        return view;
+        return webView;
     }
 
     @Override
     public void onDestroy() {
-        if (view != null) {
-            view.destroy();
-            view = null;
+        if (webView != null) {
+            webView.destroy();
+            webView = null;
         }
-        miBookmark = null;
+        bookmarkMenu = null;
         super.onDestroy();
     }
 

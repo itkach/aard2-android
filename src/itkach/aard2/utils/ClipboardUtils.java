@@ -1,25 +1,28 @@
-package itkach.aard2;
+package itkach.aard2.utils;
 
 import static android.content.Context.CLIPBOARD_SERVICE;
 
-import android.app.Activity;
 import android.content.ClipData;
 import android.content.ClipboardManager;
+import android.content.Context;
 import android.util.Log;
 import android.util.Patterns;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import java.util.regex.Pattern;
 
-public class Clipboard {
-
+public class ClipboardUtils {
     private final static Pattern[] NO_PASTE_PATTERNS = new Pattern[]{
             Patterns.WEB_URL,
             Patterns.EMAIL_ADDRESS,
             Patterns.PHONE
     };
 
-    static CharSequence peek(Activity activity) {
-        ClipboardManager cm = (ClipboardManager)activity.getSystemService(CLIPBOARD_SERVICE);
+    @Nullable
+    public static CharSequence peek(@NonNull Context context) {
+        ClipboardManager cm = (ClipboardManager) context.getSystemService(CLIPBOARD_SERVICE);
         ClipData clipData = cm.getPrimaryClip();
         if (clipData == null) {
             return null;
@@ -41,9 +44,10 @@ public class Clipboard {
         return null;
     }
 
-    static CharSequence take(Activity activity) {
-        CharSequence text = peek(activity);
-        ClipboardManager cm = (ClipboardManager)activity.getSystemService(CLIPBOARD_SERVICE);
+    @Nullable
+    public static CharSequence take(@NonNull Context context) {
+        CharSequence text = peek(context);
+        ClipboardManager cm = (ClipboardManager) context.getSystemService(CLIPBOARD_SERVICE);
         cm.setPrimaryClip(ClipData.newPlainText(null, ""));
         return text;
     }

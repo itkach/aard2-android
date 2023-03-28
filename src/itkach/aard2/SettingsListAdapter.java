@@ -26,19 +26,17 @@ import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.materialswitch.MaterialSwitch;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.Map;
+
+import itkach.aard2.prefs.AppPrefs;
+import itkach.aard2.prefs.ArticleViewPrefs;
+import itkach.aard2.prefs.UserStylesPrefs;
 
 public class SettingsListAdapter extends BaseAdapter implements SharedPreferences.OnSharedPreferenceChangeListener {
-    final static int CSS_SELECT_REQUEST = 13;
-
     private final static String TAG = SettingsListAdapter.class.getSimpleName();
     private final Activity context;
-    private final Application app;
-
-    private List<String> userStyleNames;
-    private Map<String, ?> userStyleData;
+    @SuppressWarnings("FieldCanBeLocal")
     private final SharedPreferences userStylePrefs;
     private final View.OnClickListener onDeleteUserStyle;
     private final Fragment fragment;
@@ -55,7 +53,6 @@ public class SettingsListAdapter extends BaseAdapter implements SharedPreference
     SettingsListAdapter(Fragment fragment) {
         this.fragment = fragment;
         this.context = fragment.requireActivity();
-        this.app = (Application) this.context.getApplication();
         this.userStylePrefs = context.getSharedPreferences("userStyles", Activity.MODE_PRIVATE);
         this.userStylePrefs.registerOnSharedPreferenceChangeListener(this);
 
@@ -122,27 +119,20 @@ public class SettingsListAdapter extends BaseAdapter implements SharedPreference
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             view = inflater.inflate(R.layout.settings_ui_theme_item, parent, false);
 
-            final SharedPreferences prefs = app.prefs();
-
-            String currentValue = prefs.getString(Application.PREF_UI_THEME,
-                    Application.PREF_UI_THEME_LIGHT);
-            Log.d("Settings", Application.PREF_UI_THEME + " current value: " + currentValue);
+            String currentValue = AppPrefs.getPreferredTheme();
 
             View.OnClickListener clickListener = view1 -> {
-                SharedPreferences.Editor editor = prefs.edit();
                 String value = null;
                 int id = view1.getId();
                 if (id == R.id.setting_ui_theme_auto) {
-                    value = Application.PREF_UI_THEME_AUTO;
+                    value = AppPrefs.PREF_UI_THEME_AUTO;
                 } else if (id == R.id.setting_ui_theme_light) {
-                    value = Application.PREF_UI_THEME_LIGHT;
+                    value = AppPrefs.PREF_UI_THEME_LIGHT;
                 } else if (id == R.id.setting_ui_theme_dark) {
-                    value = Application.PREF_UI_THEME_DARK;
+                    value = AppPrefs.PREF_UI_THEME_DARK;
                 }
-                Log.d("Settings", Application.PREF_UI_THEME + ": " + value);
                 if (value != null) {
-                    editor.putString(Application.PREF_UI_THEME, value);
-                    editor.apply();
+                    AppPrefs.setPreferredTheme(value);
                 }
                 context.recreate();
             };
@@ -152,9 +142,9 @@ public class SettingsListAdapter extends BaseAdapter implements SharedPreference
             btnAuto.setOnClickListener(clickListener);
             btnLight.setOnClickListener(clickListener);
             btnDark.setOnClickListener(clickListener);
-            btnAuto.setChecked(currentValue.equals(Application.PREF_UI_THEME_AUTO));
-            btnLight.setChecked(currentValue.equals(Application.PREF_UI_THEME_LIGHT));
-            btnDark.setChecked(currentValue.equals(Application.PREF_UI_THEME_DARK));
+            btnAuto.setChecked(currentValue.equals(AppPrefs.PREF_UI_THEME_AUTO));
+            btnLight.setChecked(currentValue.equals(AppPrefs.PREF_UI_THEME_LIGHT));
+            btnDark.setChecked(currentValue.equals(AppPrefs.PREF_UI_THEME_DARK));
         }
         return view;
     }
@@ -163,7 +153,6 @@ public class SettingsListAdapter extends BaseAdapter implements SharedPreference
         View view;
         LayoutInflater inflater = (LayoutInflater) parent.getContext()
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        final Application app = (Application) context.getApplication();
         if (convertView != null) {
             view = convertView;
         } else {
@@ -171,13 +160,13 @@ public class SettingsListAdapter extends BaseAdapter implements SharedPreference
                     false);
             final MaterialSwitch toggle = view.findViewById(R.id.setting_fav_random_search);
             toggle.setOnClickListener(v -> {
-                boolean currentValue = app.isOnlyFavDictsForRandomLookup();
+                boolean currentValue = AppPrefs.useOnlyFavoritesForRandomLookups();
                 boolean newValue = !currentValue;
-                app.setOnlyFavDictsForRandomLookup(newValue);
+                AppPrefs.setUseOnlyFavoritesForRandomLookups(newValue);
                 toggle.setChecked(newValue);
             });
         }
-        boolean currentValue = app.isOnlyFavDictsForRandomLookup();
+        boolean currentValue = AppPrefs.useOnlyFavoritesForRandomLookups();
         MaterialSwitch toggle = view.findViewById(R.id.setting_fav_random_search);
         toggle.setChecked(currentValue);
         return view;
@@ -187,7 +176,6 @@ public class SettingsListAdapter extends BaseAdapter implements SharedPreference
         View view;
         LayoutInflater inflater = (LayoutInflater) parent.getContext()
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        final Application app = (Application) context.getApplication();
         if (convertView != null) {
             view = convertView;
         } else {
@@ -195,13 +183,13 @@ public class SettingsListAdapter extends BaseAdapter implements SharedPreference
                     false);
             final MaterialSwitch toggle = view.findViewById(R.id.setting_use_volume_for_nav);
             toggle.setOnClickListener(v -> {
-                boolean currentValue = app.useVolumeForNav();
+                boolean currentValue = AppPrefs.useVolumeKeysForNavigation();
                 boolean newValue = !currentValue;
-                app.setUseVolumeForNav(newValue);
+                AppPrefs.setUseVolumeKeysForNavigation(newValue);
                 toggle.setChecked(newValue);
             });
         }
-        boolean currentValue = app.useVolumeForNav();
+        boolean currentValue = AppPrefs.useVolumeKeysForNavigation();
         MaterialSwitch toggle = view.findViewById(R.id.setting_use_volume_for_nav);
         toggle.setChecked(currentValue);
         return view;
@@ -211,20 +199,19 @@ public class SettingsListAdapter extends BaseAdapter implements SharedPreference
         View view;
         LayoutInflater inflater = (LayoutInflater) parent.getContext()
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        final Application app = (Application) context.getApplication();
         if (convertView != null) {
             view = convertView;
         } else {
             view = inflater.inflate(R.layout.settings_auto_paste, parent, false);
             final MaterialSwitch toggle = view.findViewById(R.id.setting_auto_paste);
             toggle.setOnClickListener(v -> {
-                boolean currentValue = app.autoPaste();
+                boolean currentValue = AppPrefs.autoPasteInLookup();
                 boolean newValue = !currentValue;
-                app.setAutoPaste(newValue);
+                AppPrefs.setAutoPasteInLookup(newValue);
                 toggle.setChecked(newValue);
             });
         }
-        boolean currentValue = app.autoPaste();
+        boolean currentValue = AppPrefs.autoPasteInLookup();
         MaterialSwitch toggle = view.findViewById(R.id.setting_auto_paste);
         toggle.setChecked(currentValue);
         return view;
@@ -238,20 +225,11 @@ public class SettingsListAdapter extends BaseAdapter implements SharedPreference
         if (convertView != null) {
             view = convertView;
         } else {
-            this.userStyleData = userStylePrefs.getAll();
-            this.userStyleNames = new ArrayList<>(this.userStyleData.keySet());
-            Util.sort(this.userStyleNames);
-
-            view = inflater.inflate(R.layout.settings_user_styles_item, parent,
-                    false);
+            view = inflater.inflate(R.layout.settings_user_styles_item, parent, false);
             MaterialButton btnAdd = view.findViewById(R.id.setting_btn_add_user_style);
             btnAdd.setOnClickListener(view1 -> {
-                Intent intent = new Intent();
-                intent.setAction(Intent.ACTION_GET_CONTENT);
-                intent.setType("text/*");
-                Intent chooser = Intent.createChooser(intent, "Select CSS file");
                 try {
-                    fragment.startActivityForResult(chooser, CSS_SELECT_REQUEST);
+                    ((SettingsFragment) fragment).userStylesChooser.launch("text/*");
                 } catch (ActivityNotFoundException e) {
                     Log.d(TAG, "Not activity to get content", e);
                     Toast.makeText(context, R.string.msg_no_activity_to_get_content,
@@ -259,6 +237,9 @@ public class SettingsListAdapter extends BaseAdapter implements SharedPreference
                 }
             });
         }
+
+        List<String> userStyleNames = UserStylesPrefs.listStyleNames();
+        Collections.sort(userStyleNames);
 
         View emptyView = view.findViewById(R.id.setting_user_styles_empty);
         emptyView.setVisibility(userStyleNames.size() == 0 ? View.VISIBLE : View.GONE);
@@ -287,21 +268,16 @@ public class SettingsListAdapter extends BaseAdapter implements SharedPreference
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setTitle("")
                 .setMessage(message)
-                .setPositiveButton(android.R.string.yes, (dialog, which) -> {
+                .setPositiveButton(R.string.action_yes, (dialog, which) -> {
                     Log.d(TAG, "Deleting user style " + name);
-                    SharedPreferences.Editor edit = userStylePrefs.edit();
-                    edit.remove(name);
-                    edit.apply();
+                    UserStylesPrefs.removeStyle(name);
                 })
-                .setNegativeButton(android.R.string.no, null)
+                .setNegativeButton(R.string.action_no, null)
                 .show();
     }
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
-        this.userStyleData = sharedPreferences.getAll();
-        this.userStyleNames = new ArrayList<>(this.userStyleData.keySet());
-        Util.sort(userStyleNames);
         notifyDataSetChanged();
     }
 
@@ -314,42 +290,30 @@ public class SettingsListAdapter extends BaseAdapter implements SharedPreference
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             view = inflater.inflate(R.layout.settings_remote_content_item, parent, false);
 
-            final SharedPreferences prefs = view.getContext().getSharedPreferences(
-                    ArticleWebView.PREF, Activity.MODE_PRIVATE);
-
-            String currentValue = prefs.getString(ArticleWebView.PREF_REMOTE_CONTENT,
-                    ArticleWebView.PREF_REMOTE_CONTENT_WIFI);
-            Log.d("Settings", "Remote content, current value: " + currentValue);
-
+            String currentValue = ArticleViewPrefs.getRemoteContentPreference();
             View.OnClickListener clickListener = view1 -> {
-                SharedPreferences.Editor editor = prefs.edit();
                 String value = null;
                 int id = view1.getId();
                 if (id == R.id.setting_remote_content_always) {
-                    value = ArticleWebView.PREF_REMOTE_CONTENT_ALWAYS;
+                    value = ArticleViewPrefs.PREF_REMOTE_CONTENT_ALWAYS;
                 } else if (id == R.id.setting_remote_content_wifi) {
-                    value = ArticleWebView.PREF_REMOTE_CONTENT_WIFI;
+                    value = ArticleViewPrefs.PREF_REMOTE_CONTENT_WIFI;
                 } else if (id == R.id.setting_remote_content_never) {
-                    value = ArticleWebView.PREF_REMOTE_CONTENT_NEVER;
+                    value = ArticleViewPrefs.PREF_REMOTE_CONTENT_NEVER;
                 }
-                Log.d("Settings", "Remote content: " + value);
                 if (value != null) {
-                    editor.putString(ArticleWebView.PREF_REMOTE_CONTENT, value);
-                    editor.apply();
+                    ArticleViewPrefs.setRemoteContentPreference(value);
                 }
             };
-            RadioButton btnAlways = view
-                    .findViewById(R.id.setting_remote_content_always);
-            RadioButton btnWiFi = view
-                    .findViewById(R.id.setting_remote_content_wifi);
-            RadioButton btnNever = view
-                    .findViewById(R.id.setting_remote_content_never);
+            RadioButton btnAlways = view.findViewById(R.id.setting_remote_content_always);
+            RadioButton btnWiFi = view.findViewById(R.id.setting_remote_content_wifi);
+            RadioButton btnNever = view.findViewById(R.id.setting_remote_content_never);
             btnAlways.setOnClickListener(clickListener);
             btnWiFi.setOnClickListener(clickListener);
             btnNever.setOnClickListener(clickListener);
-            btnAlways.setChecked(currentValue.equals(ArticleWebView.PREF_REMOTE_CONTENT_ALWAYS));
-            btnWiFi.setChecked(currentValue.equals(ArticleWebView.PREF_REMOTE_CONTENT_WIFI));
-            btnNever.setChecked(currentValue.equals(ArticleWebView.PREF_REMOTE_CONTENT_NEVER));
+            btnAlways.setChecked(currentValue.equals(ArticleViewPrefs.PREF_REMOTE_CONTENT_ALWAYS));
+            btnWiFi.setChecked(currentValue.equals(ArticleViewPrefs.PREF_REMOTE_CONTENT_WIFI));
+            btnNever.setChecked(currentValue.equals(ArticleViewPrefs.PREF_REMOTE_CONTENT_NEVER));
         }
         return view;
     }

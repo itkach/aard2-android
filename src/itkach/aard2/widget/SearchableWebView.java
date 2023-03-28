@@ -3,13 +3,13 @@
  * licensed under the Apache License, Version 2.0
  */
 
-package itkach.aard2;
+package itkach.aard2.widget;
 
 import android.content.Context;
 import android.util.AttributeSet;
 import android.webkit.WebView;
 
-class SearchableWebView extends WebView {
+public class SearchableWebView extends WebView {
 
     private String mLastFind = null;
 

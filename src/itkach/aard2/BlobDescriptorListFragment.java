@@ -21,6 +21,8 @@ import androidx.fragment.app.FragmentActivity;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
+import itkach.aard2.article.ArticleCollectionActivity;
+
 
 abstract class BlobDescriptorListFragment extends BaseListFragment {
 

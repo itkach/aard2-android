@@ -1,4 +1,4 @@
-package itkach.aard2;
+package itkach.aard2.article;
 
 import android.app.Activity;
 import android.app.SearchManager;
@@ -9,13 +9,12 @@ import android.database.DataSetObserver;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.MenuItem;
-import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.BaseAdapter;
 import android.widget.Toast;
 
@@ -23,6 +22,9 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NavUtils;
 import androidx.core.app.TaskStackBuilder;
+import androidx.core.view.WindowCompat;
+import androidx.core.view.WindowInsetsCompat;
+import androidx.core.view.WindowInsetsControllerCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
@@ -32,62 +34,67 @@ import androidx.viewpager.widget.ViewPager;
 import java.util.Iterator;
 import java.util.List;
 
+import itkach.aard2.Application;
+import itkach.aard2.BlobDescriptor;
+import itkach.aard2.BlobDescriptorListAdapter;
+import itkach.aard2.BlobListAdapter;
+import itkach.aard2.MainActivity;
+import itkach.aard2.R;
+import itkach.aard2.prefs.AppPrefs;
+import itkach.aard2.prefs.ArticleCollectionPrefs;
+import itkach.aard2.utils.Utils;
+import itkach.aard2.widget.ArticleWebView;
 import itkach.slob.Slob;
 import itkach.slob.Slob.Blob;
 
 public class ArticleCollectionActivity extends AppCompatActivity
-        implements  View.OnSystemUiVisibilityChangeListener,
-                    SharedPreferences.OnSharedPreferenceChangeListener {
+        implements SharedPreferences.OnSharedPreferenceChangeListener {
     private static final String TAG = ArticleCollectionActivity.class.getSimpleName();
 
-    static final String PREF = "articleCollection";
-    static final String PREF_FULLSCREEN = "fullscreen";
+    private ArticleCollectionPagerAdapter articleCollectionPagerAdapter;
+    private ViewPager viewPager;
 
-    ArticleCollectionPagerAdapter articleCollectionPagerAdapter;
-    ViewPager viewPager;
-
-
-    class ToBlobWithFragment implements ToBlob {
+    private static class ToBlobWithFragment implements ToBlob {
 
         private final String fragment;
 
-        ToBlobWithFragment(String fragment){
+        ToBlobWithFragment(String fragment) {
             this.fragment = fragment;
         }
 
         @Override
         public Blob convert(Object item) {
-            Blob b = (Blob)item;
+            Blob b = (Blob) item;
             return new Blob(b.owner, b.id, b.key, this.fragment);
         }
     }
 
-    ToBlob blobToBlob = item -> (Blob)item;
-
+    private final ToBlob blobToBlob = item -> (Blob) item;
 
     private boolean onDestroyCalled = false;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        requestWindowFeature(Window.FEATURE_PROGRESS);
-        final Application app = (Application)getApplication();
-        app.installTheme();
+        Utils.updateNightMode();
         setContentView(R.layout.activity_article_collection_loading);
         setSupportActionBar(findViewById(R.id.toolbar));
+        final Application app = (Application) getApplication();
         app.push(this);
         final ActionBar actionBar = getSupportActionBar();
-        actionBar.hide();
-        actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setSubtitle("...");
+        if (actionBar != null) {
+            actionBar.hide();
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setSubtitle("...");
+        }
         final Intent intent = getIntent();
         final int position = intent.getIntExtra("position", 0);
 
-        AsyncTask<Void, Void, ArticleCollectionPagerAdapter> createAdapterTask = new AsyncTask<Void, Void, ArticleCollectionPagerAdapter>(){
+        AsyncTask<Void, Void, ArticleCollectionPagerAdapter> createAdapterTask = new AsyncTask<Void, Void, ArticleCollectionPagerAdapter>() {
 
             Exception exception;
 
             @Override
-            protected ArticleCollectionPagerAdapter doInBackground(Void ... params) {
+            protected ArticleCollectionPagerAdapter doInBackground(Void... params) {
                 ArticleCollectionPagerAdapter result = null;
                 Uri articleUrl = intent.getData();
                 try {
@@ -105,8 +112,7 @@ public class ArticleCollectionActivity extends AppCompatActivity
                             result = createFromIntent(app, intent);
                         }
                     }
-                }
-                catch (Exception e) {
+                } catch (Exception e) {
                     this.exception = e;
                 }
                 return result;
@@ -129,8 +135,7 @@ public class ArticleCollectionActivity extends AppCompatActivity
                     int messageId;
                     if (articleCollectionPagerAdapter == null) {
                         messageId = R.string.article_collection_invalid_link;
-                    }
-                    else {
+                    } else {
                         messageId = R.string.article_collection_nothing_found;
                     }
                     Toast.makeText(ArticleCollectionActivity.this, messageId,
@@ -154,13 +159,15 @@ public class ArticleCollectionActivity extends AppCompatActivity
 
                 viewPager = findViewById(R.id.pager);
                 viewPager.setAdapter(articleCollectionPagerAdapter);
-                viewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener(){
+                viewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
 
                     @Override
-                    public void onPageScrollStateChanged(int arg0) {}
+                    public void onPageScrollStateChanged(int arg0) {
+                    }
 
                     @Override
-                    public void onPageScrolled(int arg0, float arg1, int arg2) {}
+                    public void onPageScrolled(int arg0, float arg1, int arg2) {
+                    }
 
                     @Override
                     public void onPageSelected(final int position) {
@@ -168,12 +175,13 @@ public class ArticleCollectionActivity extends AppCompatActivity
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                ArticleFragment fragment =(ArticleFragment) articleCollectionPagerAdapter.getItem(position);
+                                ArticleFragment fragment = (ArticleFragment) articleCollectionPagerAdapter.getItem(position);
                                 fragment.applyTextZoomPref();
                             }
                         });
 
-                    }});
+                    }
+                });
                 viewPager.setCurrentItem(position);
 
                 PagerTitleStrip titleStrip = findViewById(R.id.pager_title_strip);
@@ -194,6 +202,16 @@ public class ArticleCollectionActivity extends AppCompatActivity
 
     }
 
+    @Override
+    public void onBackPressed() {
+        if (ArticleCollectionPrefs.isFullscreen()) {
+            // Exit fullscreen
+            toggleFullScreen();
+            return;
+        }
+        super.onBackPressed();
+    }
+
     private ArticleCollectionPagerAdapter createFromUri(Application app, Uri articleUrl) {
         String host = articleUrl.getHost();
         if (!(host.equals("localhost") || host.matches("127.\\d{1,3}.\\d{1,3}.\\d{1,3}"))) {
@@ -206,9 +224,9 @@ public class ArticleCollectionActivity extends AppCompatActivity
         Iterator<Slob.Blob> result = app.find(bd.key, bd.slobId);
         BlobListAdapter data = new BlobListAdapter(this, 20, 1);
         data.setData(result);
-        boolean hasFragment = !Util.isBlank(bd.fragment);
-        return new ArticleCollectionPagerAdapter(
-                app, data, hasFragment ? new ToBlobWithFragment(bd.fragment) : blobToBlob, getSupportFragmentManager());
+        boolean hasFragment = !TextUtils.isEmpty(bd.fragment);
+        return new ArticleCollectionPagerAdapter(app, data,
+                hasFragment ? new ToBlobWithFragment(bd.fragment) : blobToBlob, getSupportFragmentManager());
     }
 
     private ArticleCollectionPagerAdapter createFromLastResult(Application app) {
@@ -219,13 +237,13 @@ public class ArticleCollectionActivity extends AppCompatActivity
     private ArticleCollectionPagerAdapter createFromBookmarks(final Application app) {
         return new ArticleCollectionPagerAdapter(
                 app, new BlobDescriptorListAdapter(app.bookmarks), item ->
-                app.bookmarks.resolve((BlobDescriptor)item), getSupportFragmentManager());
+                app.bookmarks.resolve((BlobDescriptor) item), getSupportFragmentManager());
     }
 
     private ArticleCollectionPagerAdapter createFromHistory(final Application app) {
         return new ArticleCollectionPagerAdapter(
                 app, new BlobDescriptorListAdapter(app.history), item ->
-                app.history.resolve((BlobDescriptor)item), getSupportFragmentManager());
+                app.history.resolve((BlobDescriptor) item), getSupportFragmentManager());
     }
 
     private ArticleCollectionPagerAdapter createFromIntent(Application app, Intent intent) {
@@ -248,7 +266,7 @@ public class ArticleCollectionActivity extends AppCompatActivity
             if (length > 0) {
                 lookupKey = segments.get(length - 1);
             }
-            String slobUri = Util.wikipediaToSlobUri(uri);
+            String slobUri = Utils.wikipediaToSlobUri(uri);
             Log.d(TAG, String.format("Converted URI %s to slob URI %s", uri, slobUri));
             if (slobUri != null) {
                 Slob slob = app.findSlob(slobUri);
@@ -262,8 +280,7 @@ public class ArticleCollectionActivity extends AppCompatActivity
         if (lookupKey == null || lookupKey.length() == 0) {
             String msg = getString(R.string.article_collection_nothing_to_lookup);
             throw new RuntimeException(msg);
-        }
-        else {
+        } else {
             Iterator<Blob> result = stemLookup(app, lookupKey, preferredSlobId);
             data.setData(result);
         }
@@ -286,8 +303,7 @@ public class ArticleCollectionActivity extends AppCompatActivity
                 Blob b = result.peek();
                 if (b.key.length() - length > 3) {
                     //we don't like this result
-                }
-                else {
+                } else {
                     break;
                 }
             }
@@ -298,18 +314,17 @@ public class ArticleCollectionActivity extends AppCompatActivity
     }
 
     private void updateTitle(int position) {
-        Log.d("updateTitle", ""+position + " count: " + articleCollectionPagerAdapter.getCount());
+        Log.d("updateTitle", "" + position + " count: " + articleCollectionPagerAdapter.getCount());
         Slob.Blob blob = articleCollectionPagerAdapter.get(position);
         CharSequence pageTitle = articleCollectionPagerAdapter.getPageTitle(position);
-        Log.d("updateTitle", ""+blob);
+        Log.d("updateTitle", "" + blob);
         ActionBar actionBar = getSupportActionBar();
         if (blob != null) {
             String dictLabel = blob.owner.getTags().get("label");
             actionBar.setTitle(dictLabel);
-            Application app = (Application)getApplication();
+            Application app = (Application) getApplication();
             app.history.add(app.getUrl(blob));
-        }
-        else {
+        } else {
             actionBar.setTitle("???");
         }
         actionBar.setSubtitle(pageTitle);
@@ -318,52 +333,32 @@ public class ArticleCollectionActivity extends AppCompatActivity
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        if (key.equals(PREF_FULLSCREEN)) {
+        if (key.equals(ArticleCollectionPrefs.PREF_FULLSCREEN)) {
             applyFullScreenPref();
         }
     }
 
     private void applyFullScreenPref() {
-        if (getFullScreenPref()) {
-            fullScreen();
-        }
-        else {
-            unFullScreen();
+        if (ArticleCollectionPrefs.isFullscreen()) {
+            WindowInsetsControllerCompat windowInsetsController = WindowCompat.getInsetsController(getWindow(),
+                    getWindow().getDecorView());
+            windowInsetsController.hide(WindowInsetsCompat.Type.systemBars());
+            windowInsetsController.setSystemBarsBehavior(WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE);
+            getSupportActionBar().hide();
+        } else {
+            WindowInsetsControllerCompat windowInsetsController = WindowCompat.getInsetsController(getWindow(),
+                    getWindow().getDecorView());
+            windowInsetsController.show(WindowInsetsCompat.Type.systemBars());
+            getSupportActionBar().show();
         }
     }
 
     SharedPreferences prefs() {
-        return getSharedPreferences(PREF, Activity.MODE_PRIVATE);
-    }
-
-    boolean getFullScreenPref() {
-        return prefs().getBoolean(PREF_FULLSCREEN, false);
-    }
-
-    private void setFullScreenPref(boolean value) {
-        SharedPreferences.Editor editor = prefs().edit();
-        editor.putBoolean(PREF_FULLSCREEN, value);
-        editor.apply();
-    }
-
-    private void fullScreen() {
-        Log.d(TAG, "[F] fullscreen");
-        getWindow().getDecorView().setSystemUiVisibility(
-                View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                        | View.SYSTEM_UI_FLAG_FULLSCREEN
-                        | View.SYSTEM_UI_FLAG_IMMERSIVE
-        );
-        getSupportActionBar().hide();
-    }
-
-    private void unFullScreen() {
-        Log.d(TAG, "[F] unfullscreen");
-        getWindow().getDecorView().setSystemUiVisibility(0);
-        getSupportActionBar().show();
+        return getSharedPreferences("articleCollection", Activity.MODE_PRIVATE);
     }
 
     void toggleFullScreen() {
-        setFullScreenPref(!getFullScreenPref());
+        ArticleCollectionPrefs.setFullscreen(!ArticleCollectionPrefs.isFullscreen());
     }
 
     @Override
@@ -371,8 +366,6 @@ public class ArticleCollectionActivity extends AppCompatActivity
         super.onResume();
         Log.d(TAG, "[F] Resume");
         applyFullScreenPref();
-        View decorView = getWindow().getDecorView();
-        decorView.setOnSystemUiVisibilityChangeListener(this);
         prefs().registerOnSharedPreferenceChangeListener(this);
     }
 
@@ -380,8 +373,6 @@ public class ArticleCollectionActivity extends AppCompatActivity
     protected void onPause() {
         super.onPause();
         Log.d(TAG, "[F] Pause");
-        View decorView = getWindow().getDecorView();
-        decorView.setOnSystemUiVisibilityChangeListener(null);
         prefs().unregisterOnSharedPreferenceChangeListener(this);
     }
 
@@ -394,7 +385,7 @@ public class ArticleCollectionActivity extends AppCompatActivity
         if (articleCollectionPagerAdapter != null) {
             articleCollectionPagerAdapter.destroy();
         }
-        Application app = (Application)getApplication();
+        Application app = (Application) getApplication();
         app.pop(this);
         super.onDestroy();
     }
@@ -420,26 +411,6 @@ public class ArticleCollectionActivity extends AppCompatActivity
     }
 
     @Override
-    public void onSystemUiVisibilityChange(int visibility) {
-        if (isFinishing()) {
-            return;
-        }
-        final View decorView = getWindow().getDecorView();
-        int uiOptions = decorView.getSystemUiVisibility();
-        boolean isHideNavigation =
-                ((uiOptions | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION) == uiOptions);
-         if (!isHideNavigation) {
-            setFullScreenPref(false);
-        }
-    }
-
-    private boolean useVolumeForNav() {
-        Application app = (Application)getApplication();
-        return app.useVolumeForNav();
-    }
-
-
-    @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
         if (event.isCanceled()) {
             return true;
@@ -459,7 +430,7 @@ public class ArticleCollectionActivity extends AppCompatActivity
                 }
 
                 if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
-                    if (!useVolumeForNav()) {
+                    if (!AppPrefs.useVolumeKeysForNavigation()) {
                         return false;
                     }
                     boolean scrolled = webView.pageUp(false);
@@ -467,15 +438,14 @@ public class ArticleCollectionActivity extends AppCompatActivity
                         int current = viewPager.getCurrentItem();
                         if (current > 0) {
                             viewPager.setCurrentItem(current - 1);
-                        }
-                        else {
+                        } else {
                             finish();
                         }
                     }
                     return true;
                 }
                 if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
-                    if (!useVolumeForNav()) {
+                    if (!AppPrefs.useVolumeKeysForNavigation()) {
                         return false;
                     }
                     boolean scrolled = webView.pageDown(false);
@@ -495,7 +465,7 @@ public class ArticleCollectionActivity extends AppCompatActivity
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_VOLUME_UP || keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
-            if (!useVolumeForNav()) {
+            if (!AppPrefs.useVolumeKeysForNavigation()) {
                 return false;
             }
             event.startTracking();
@@ -506,7 +476,7 @@ public class ArticleCollectionActivity extends AppCompatActivity
 
     @Override
     public boolean onKeyLongPress(int keyCode, KeyEvent event) {
-        if (!useVolumeForNav()) {
+        if (!AppPrefs.useVolumeKeysForNavigation()) {
             return false;
         }
         ArticleFragment af = articleCollectionPagerAdapter.getPrimaryItem();
@@ -531,11 +501,10 @@ public class ArticleCollectionActivity extends AppCompatActivity
     }
 
     public static class ArticleCollectionPagerAdapter extends FragmentStatePagerAdapter {
-
         private Application app;
-        private DataSetObserver observer;
+        private final DataSetObserver observer;
         private BaseAdapter data;
-        private ToBlob toBlob;
+        private final ToBlob toBlob;
         private int count;
         private ArticleFragment primaryItem;
 
@@ -544,7 +513,7 @@ public class ArticleCollectionActivity extends AppCompatActivity
             this.app = app;
             this.data = data;
             this.count = data.getCount();
-            this.observer = new DataSetObserver(){
+            this.observer = new DataSetObserver() {
                 @Override
                 public void onChanged() {
                     count = ArticleCollectionPagerAdapter.this.data.getCount();
@@ -564,7 +533,7 @@ public class ArticleCollectionActivity extends AppCompatActivity
         @Override
         public void setPrimaryItem(ViewGroup container, int position, Object object) {
             super.setPrimaryItem(container, position, object);
-            this.primaryItem = (ArticleFragment)object;
+            this.primaryItem = (ArticleFragment) object;
         }
 
         ArticleFragment getPrimaryItem() {

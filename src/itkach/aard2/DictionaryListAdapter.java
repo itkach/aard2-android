@@ -8,7 +8,7 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.database.DataSetObserver;
 import android.net.Uri;
-import android.text.Html;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,6 +18,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.text.HtmlCompat;
 import androidx.documentfile.provider.DocumentFile;
 
 import com.google.android.material.button.MaterialButton;
@@ -55,7 +56,7 @@ public class DictionaryListAdapter extends BaseAdapter {
 
         openUrlOnClick = v -> {
             String url = (String) v.getTag();
-            if (!Util.isBlank(url)) {
+            if (!TextUtils.isEmpty(url)) {
                 try {
                     Uri uri = Uri.parse(url);
                     Intent browserIntent = new Intent(Intent.ACTION_VIEW, uri);
@@ -211,7 +212,7 @@ public class DictionaryListAdapter extends BaseAdapter {
         String copyright = desc.tags.get("copyright");
         copyrightView.setText(copyright);
 
-        copyrightRow.setVisibility(Util.isBlank(copyright) ? View.GONE : View.VISIBLE);
+        copyrightRow.setVisibility(TextUtils.isEmpty(copyright) ? View.GONE : View.VISIBLE);
         copyrightRow.setEnabled(available);
     }
 
@@ -220,11 +221,12 @@ public class DictionaryListAdapter extends BaseAdapter {
         ImageView sourceIcon = view.findViewById(R.id.dictionary_source_icon);
         TextView sourceView = view.findViewById(R.id.dictionary_source);
         String source = desc.tags.get("source");
-        CharSequence sourceHtml = Html.fromHtml(String.format(hrefTemplate, source, source));
+        CharSequence sourceHtml = HtmlCompat.fromHtml(String.format(hrefTemplate, source, source),
+                HtmlCompat.FROM_HTML_MODE_LEGACY);
         sourceView.setText(sourceHtml);
         sourceView.setTag(source);
 
-        int visibility = Util.isBlank(source) ? View.GONE : View.VISIBLE;
+        int visibility = TextUtils.isEmpty(source) ? View.GONE : View.VISIBLE;
         //Setting visibility on layout seems to have no effect
         //if one of the children is a link
         sourceIcon.setVisibility(visibility);
@@ -240,18 +242,19 @@ public class DictionaryListAdapter extends BaseAdapter {
         String licenseName = desc.tags.get("license.name");
         String licenseUrl = desc.tags.get("license.url");
         CharSequence license;
-        if (Util.isBlank(licenseUrl)) {
+        if (TextUtils.isEmpty(licenseUrl)) {
             license = licenseName;
         } else {
-            if (Util.isBlank(licenseName)) {
+            if (TextUtils.isEmpty(licenseName)) {
                 licenseName = licenseUrl;
             }
-            license = Html.fromHtml(String.format(hrefTemplate, licenseUrl, licenseName));
+            license = HtmlCompat.fromHtml(String.format(hrefTemplate, licenseUrl, licenseName),
+                    HtmlCompat.FROM_HTML_MODE_LEGACY);
         }
         licenseView.setText(license);
         licenseView.setTag(licenseUrl);
 
-        int visibility = (Util.isBlank(licenseName) && Util.isBlank(licenseUrl)) ? View.GONE : View.VISIBLE;
+        int visibility = (TextUtils.isEmpty(licenseName) && TextUtils.isEmpty(licenseUrl)) ? View.GONE : View.VISIBLE;
         licenseIcon.setVisibility(visibility);
         licenseView.setVisibility(visibility);
         licenseRow.setVisibility(visibility);

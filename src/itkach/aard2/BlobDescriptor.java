@@ -48,7 +48,7 @@ public class BlobDescriptor extends BaseDescriptor {
     public String key;
     public String fragment;
 
-    static BlobDescriptor fromUri(Uri uri) {
+    public static BlobDescriptor fromUri(Uri uri) {
         BlobDescriptor bd = new BlobDescriptor();
         bd.id = UUID.randomUUID().toString();
         bd.createdAt = System.currentTimeMillis();

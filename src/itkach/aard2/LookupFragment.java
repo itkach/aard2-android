@@ -16,6 +16,10 @@ import androidx.appcompat.widget.SearchView;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import itkach.aard2.article.ArticleCollectionActivity;
+import itkach.aard2.prefs.AppPrefs;
+import itkach.aard2.utils.ClipboardUtils;
+
 public class LookupFragment extends BaseListFragment implements LookupListener {
 
     private Timer timer;
@@ -40,7 +44,7 @@ public class LookupFragment extends BaseListFragment implements LookupListener {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        app = (Application) getActivity().getApplication();
+        app = (Application) requireActivity().getApplication();
         app.addLookupListener(this);
     }
 
@@ -61,7 +65,7 @@ public class LookupFragment extends BaseListFragment implements LookupListener {
             intent.putExtra("position", position);
             startActivity(intent);
         });
-        final Application app = (Application) getActivity().getApplication();
+        final Application app = (Application) requireActivity().getApplication();
         getListView().setAdapter(app.lastResult);
 
         closeListener = () -> true;
@@ -87,7 +91,7 @@ public class LookupFragment extends BaseListFragment implements LookupListener {
                         if (app.getLookupQuery().equals(query)) {
                             return;
                         }
-                        getActivity().runOnUiThread(() -> app.lookup(query));
+                        requireActivity().runOnUiThread(() -> app.lookup(query));
                         scheduledLookup = null;
                     }
                 };
@@ -121,10 +125,10 @@ public class LookupFragment extends BaseListFragment implements LookupListener {
     }
 
     @Override
-    public void onPrepareOptionsMenu(Menu menu) {
+    public void onPrepareOptionsMenu(@NonNull Menu menu) {
         super.onPrepareOptionsMenu(menu);
-        if (app.autoPaste()) {
-            CharSequence clipboard = Clipboard.take(this.getActivity());
+        if (AppPrefs.autoPasteInLookup()) {
+            CharSequence clipboard = ClipboardUtils.take(requireContext());
             if (clipboard != null) {
                 app.lookup(clipboard.toString(), false);
             }
@@ -137,7 +141,7 @@ public class LookupFragment extends BaseListFragment implements LookupListener {
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
+    public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         if (searchView != null) {
             String query = searchView.getQuery().toString();
@@ -163,7 +167,7 @@ public class LookupFragment extends BaseListFragment implements LookupListener {
         if (timer != null) {
             timer.cancel();
         }
-        Application app = (Application) getActivity().getApplication();
+        Application app = (Application) requireActivity().getApplication();
         app.removeLookupListener(this);
         super.onDestroy();
     }

@@ -2,6 +2,7 @@ package itkach.aard2;
 
 import java.util.Comparator;
 
+import itkach.aard2.utils.Utils;
 import itkach.slob.Slob;
 
 public class SlobDescriptorList extends BaseDescriptorList<SlobDescriptor> {
@@ -35,7 +36,7 @@ public class SlobDescriptorList extends BaseDescriptorList<SlobDescriptor> {
     }
 
     void sort() {
-        Util.sort(this, comparator);
+        Utils.sort(this, comparator);
     }
 
     @Override

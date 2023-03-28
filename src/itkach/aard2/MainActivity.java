@@ -24,6 +24,10 @@ import com.google.android.material.navigation.NavigationBarView;
 
 import java.util.Objects;
 
+import itkach.aard2.article.ArticleCollectionActivity;
+import itkach.aard2.prefs.AppPrefs;
+import itkach.aard2.utils.ClipboardUtils;
+import itkach.aard2.utils.Utils;
 import itkach.slob.Slob;
 
 public class MainActivity extends AppCompatActivity implements NavigationBarView.OnItemSelectedListener,
@@ -36,8 +40,7 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
 
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        final Application app = (Application) getApplication();
-        app.installTheme();
+        Utils.updateNightMode();
         setContentView(R.layout.activity_main);
         setSupportActionBar(findViewById(R.id.toolbar));
 
@@ -54,6 +57,7 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
         bottomNavigationView = findViewById(R.id.bottom_navigation);
         bottomNavigationView.setOnItemSelectedListener(this);
 
+        final Application app = (Application) getApplication();
         if (savedInstanceState != null) {
             onRestoreInstanceState(savedInstanceState);
         } else if (app.dictionaries.size() == 0) {
@@ -149,11 +153,10 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
         //Looks like shown soft input sometimes causes a system ui visibility
         //change event that breaks article activity launched from here out of full screen mode.
         //Hiding it appears to reduce that.
-        InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
-        try {
-            inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
-        } catch (Exception e) {
-            Log.w(TAG, "Hiding soft input failed", e);
+        View focusedView = getCurrentFocus();
+        if (focusedView != null) {
+            InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+            inputMethodManager.hideSoftInputFromWindow(focusedView.getWindowToken(), 0);
         }
         super.onPause();
     }
@@ -278,7 +281,7 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
 
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
-        if (!autoPaste()) {
+        if (!AppPrefs.autoPasteInLookup()) {
             Log.d(TAG, "Auto-paste is off");
             return;
         }
@@ -286,21 +289,11 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
             Log.d(TAG, "has no focus");
             return;
         }
-        CharSequence text = Clipboard.peek(this);
+        CharSequence text = ClipboardUtils.peek(this);
         if (text != null) {
             viewPager.setCurrentItem(0);
             invalidateOptionsMenu();
         }
-    }
-
-    private boolean useVolumeForNav() {
-        Application app = (Application) getApplication();
-        return app.useVolumeForNav();
-    }
-
-    private boolean autoPaste() {
-        Application app = (Application) getApplication();
-        return app.autoPaste();
     }
 
     @Override
@@ -311,7 +304,7 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
         }
 
         if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
-            if (!useVolumeForNav()) {
+            if (!AppPrefs.useVolumeKeysForNavigation()) {
                 return false;
             }
             int current = viewPager.getCurrentItem();
@@ -324,7 +317,7 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
         }
 
         if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
-            if (!useVolumeForNav()) {
+            if (!AppPrefs.useVolumeKeysForNavigation()) {
                 return false;
             }
             int current = viewPager.getCurrentItem();
@@ -342,10 +335,7 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_VOLUME_UP || keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
-            if (!useVolumeForNav()) {
-                return false;
-            }
-            return true;
+            return AppPrefs.useVolumeKeysForNavigation();
         }
         return super.onKeyDown(keyCode, event);
     }
