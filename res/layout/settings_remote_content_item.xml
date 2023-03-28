@@ -18,28 +18,25 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/setting_name">
 
-        <RadioButton
+        <com.google.android.material.radiobutton.MaterialRadioButton
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/setting_remote_content_always"
             android:textAppearance="?attr/textAppearanceListItemSecondary"
             android:text="@string/setting_remote_content_always" />
 
-        <RadioButton
+        <com.google.android.material.radiobutton.MaterialRadioButton
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/setting_remote_content_wifi"
             android:textAppearance="?attr/textAppearanceListItemSecondary"
             android:text="@string/setting_remote_content_wifi" />
 
-        <RadioButton
+        <com.google.android.material.radiobutton.MaterialRadioButton
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/setting_remote_content_never"
             android:textAppearance="?attr/textAppearanceListItemSecondary"
             android:text="@string/setting_remote_content_never" />
-
     </RadioGroup>
-
-
 </androidx.appcompat.widget.LinearLayoutCompat>

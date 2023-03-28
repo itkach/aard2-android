@@ -1,4 +1,5 @@
 <androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/settings_item"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -6,15 +7,12 @@
     android:paddingHorizontal="16dp"
     android:orientation="horizontal">
 
-    <CheckedTextView
+    <com.google.android.material.materialswitch.MaterialSwitch
         android:id="@+id/setting_use_volume_for_nav"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:checked="true"
-        android:button="@null"
-        android:drawableEnd="?android:attr/listChoiceIndicatorMultiple"
         android:textAppearance="?attr/textAppearanceListItem"
-        android:text="@string/setting_use_volume_for_nav" />
+        android:text="@string/setting_use_volume_for_nav"
+        tools:checked="true" />
 
 </androidx.appcompat.widget.LinearLayoutCompat>

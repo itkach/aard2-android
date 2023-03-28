@@ -12,10 +12,10 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
-import android.widget.SearchView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.SearchView;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
 
@@ -159,7 +159,7 @@ abstract class BlobDescriptorListFragment extends BaseListFragment {
 
         View filterActionView = miFilter.getActionView();
         SearchView searchView = filterActionView
-                .findViewById(R.id.fldFilter);
+                .findViewById(R.id.search);
         searchView.setQueryHint(miFilter.getTitle());
         searchView.setQuery(list.getFilter(), true);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {

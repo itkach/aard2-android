@@ -22,7 +22,7 @@
         app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
 
         <ProgressBar
-            android:id="@+id/webViewPogress"
+            android:id="@+id/progress_horizontal"
             style="?android:attr/progressBarStyleLarge"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

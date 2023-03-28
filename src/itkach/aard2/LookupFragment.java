@@ -8,18 +8,18 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
-import android.widget.SearchView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.SearchView;
 
 import java.util.Timer;
 import java.util.TimerTask;
 
 public class LookupFragment extends BaseListFragment implements LookupListener {
 
-    private Timer       timer;
-    private SearchView  searchView;
+    private Timer timer;
+    private SearchView searchView;
     private Application app;
     private SearchView.OnQueryTextListener queryTextListener;
     private SearchView.OnCloseListener closeListener;
@@ -112,7 +112,7 @@ public class LookupFragment extends BaseListFragment implements LookupListener {
         inflater.inflate(R.menu.lookup, menu);
         MenuItem lookupMenu = menu.findItem(R.id.action_lookup);
         View filterActionView = lookupMenu.getActionView();
-        searchView = filterActionView.findViewById(R.id.fldLookup);
+        searchView = filterActionView.findViewById(R.id.search);
         searchView.setQueryHint(lookupMenu.getTitle());
         searchView.setIconified(false);
         searchView.setOnQueryTextListener(queryTextListener);
@@ -124,7 +124,7 @@ public class LookupFragment extends BaseListFragment implements LookupListener {
     public void onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
         if (app.autoPaste()) {
-            CharSequence clipboard  = Clipboard.take(this.getActivity());
+            CharSequence clipboard = Clipboard.take(this.getActivity());
             if (clipboard != null) {
                 app.lookup(clipboard.toString(), false);
             }

@@ -1,16 +1,14 @@
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <itkach.aard2.ArticleWebView android:id="@+id/webView"
+    <itkach.aard2.ArticleWebView
+        android:id="@+id/webView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        />
+        android:layout_height="match_parent" />
 
-    <androidx.core.widget.ContentLoadingProgressBar
-        android:id="@+id/webViewPogress"
-        style="?android:attr/progressBarStyleHorizontal"
+    <com.google.android.material.progressindicator.LinearProgressIndicator
+        android:id="@+id/progress_horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="top"
@@ -18,8 +16,6 @@
         android:maxHeight="6dp"
         android:minHeight="6dp"
         android:padding="0dp"
-        android:progressDrawable="@drawable/progress"
         android:indeterminate="false"
-        android:max="100"/>
-
+        android:max="100" />
 </FrameLayout>

@@ -6,7 +6,7 @@
     android:paddingVertical="8dp"
     android:paddingHorizontal="16dp">
 
-    <TextView
+    <com.google.android.material.textview.MaterialTextView
         android:id="@+id/setting_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -18,20 +18,18 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/setting_name">
 
-        <RadioButton
+        <com.google.android.material.radiobutton.MaterialRadioButton
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/setting_ui_theme_light"
             android:textAppearance="?attr/textAppearanceListItemSecondary"
             android:text="@string/setting_ui_theme_light" />
 
-        <RadioButton
+        <com.google.android.material.radiobutton.MaterialRadioButton
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/setting_ui_theme_dark"
             android:textAppearance="?attr/textAppearanceListItemSecondary"
             android:text="@string/setting_ui_theme_dark" />
-
     </RadioGroup>
-
 </androidx.appcompat.widget.LinearLayoutCompat>

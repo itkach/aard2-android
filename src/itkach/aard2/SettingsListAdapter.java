@@ -8,42 +8,40 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
-import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.CheckedTextView;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.widget.LinearLayoutCompat;
+import androidx.core.text.HtmlCompat;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.materialswitch.MaterialSwitch;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 public class SettingsListAdapter extends BaseAdapter implements SharedPreferences.OnSharedPreferenceChangeListener {
-
     final static int CSS_SELECT_REQUEST = 13;
 
     private final static String TAG = SettingsListAdapter.class.getSimpleName();
-    private final Activity      context;
-    private final Application   app;
+    private final Activity context;
+    private final Application app;
 
-    private List<String>            userStyleNames;
-    private Map<String, ?>          userStyleData;
-    private SharedPreferences       userStylePrefs;
-    private View.OnClickListener    onDeleteUserStyle;
-    private Fragment fragment;
-
+    private List<String> userStyleNames;
+    private Map<String, ?> userStyleData;
+    private final SharedPreferences userStylePrefs;
+    private final View.OnClickListener onDeleteUserStyle;
+    private final Fragment fragment;
 
     final static int POS_UI_THEME = 0;
     final static int POS_REMOTE_CONTENT = 1;
@@ -56,14 +54,13 @@ public class SettingsListAdapter extends BaseAdapter implements SharedPreference
 
     SettingsListAdapter(Fragment fragment) {
         this.fragment = fragment;
-        this.context = fragment.getActivity();
-        this.app = (Application)this.context.getApplication();
-        this.userStylePrefs = context.getSharedPreferences(
-                "userStyles", Activity.MODE_PRIVATE);
+        this.context = fragment.requireActivity();
+        this.app = (Application) this.context.getApplication();
+        this.userStylePrefs = context.getSharedPreferences("userStyles", Activity.MODE_PRIVATE);
         this.userStylePrefs.registerOnSharedPreferenceChangeListener(this);
 
         this.onDeleteUserStyle = view -> {
-            String name = (String)view.getTag();
+            String name = (String) view.getTag();
             deleteUserStyle(name);
         };
     }
@@ -96,14 +93,22 @@ public class SettingsListAdapter extends BaseAdapter implements SharedPreference
     @Override
     public View getView(int i, View convertView, ViewGroup parent) {
         switch (i) {
-            case POS_UI_THEME: return getUIThemeSettingsView(convertView, parent);
-            case POS_REMOTE_CONTENT: return getRemoteContentSettingsView(convertView, parent);
-            case POS_FAV_RANDOM: return getFavRandomSwitchView(convertView, parent);
-            case POS_USE_VOLUME_FOR_NAV: return getUseVolumeForNavView(convertView, parent);
-            case POS_AUTO_PASTE: return getAutoPasteView(convertView, parent);
-            case POS_USER_STYLES: return getUserStylesView(convertView, parent);
-            case POS_CLEAR_CACHE: return getClearCacheView(convertView, parent);
-            case POS_ABOUT: return getAboutView(convertView, parent);
+            case POS_UI_THEME:
+                return getUIThemeSettingsView(convertView, parent);
+            case POS_REMOTE_CONTENT:
+                return getRemoteContentSettingsView(convertView, parent);
+            case POS_FAV_RANDOM:
+                return getFavRandomSwitchView(convertView, parent);
+            case POS_USE_VOLUME_FOR_NAV:
+                return getUseVolumeForNavView(convertView, parent);
+            case POS_AUTO_PASTE:
+                return getAutoPasteView(convertView, parent);
+            case POS_USER_STYLES:
+                return getUserStylesView(convertView, parent);
+            case POS_CLEAR_CACHE:
+                return getClearCacheView(convertView, parent);
+            case POS_ABOUT:
+                return getAboutView(convertView, parent);
         }
         return null;
     }
@@ -112,12 +117,10 @@ public class SettingsListAdapter extends BaseAdapter implements SharedPreference
         View view;
         if (convertView != null) {
             view = convertView;
-        }
-        else {
+        } else {
             LayoutInflater inflater = (LayoutInflater) parent.getContext()
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            view = inflater.inflate(R.layout.settings_ui_theme_item, parent,
-                    false);
+            view = inflater.inflate(R.layout.settings_ui_theme_item, parent, false);
 
             final SharedPreferences prefs = app.prefs();
 
@@ -157,14 +160,13 @@ public class SettingsListAdapter extends BaseAdapter implements SharedPreference
         View view;
         LayoutInflater inflater = (LayoutInflater) parent.getContext()
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        final Application app = (Application)context.getApplication();
+        final Application app = (Application) context.getApplication();
         if (convertView != null) {
             view = convertView;
-        }
-        else {
+        } else {
             view = inflater.inflate(R.layout.settings_fav_random_search, parent,
                     false);
-            final CheckedTextView toggle = view.findViewById(R.id.setting_fav_random_search);
+            final MaterialSwitch toggle = view.findViewById(R.id.setting_fav_random_search);
             toggle.setOnClickListener(v -> {
                 boolean currentValue = app.isOnlyFavDictsForRandomLookup();
                 boolean newValue = !currentValue;
@@ -173,7 +175,7 @@ public class SettingsListAdapter extends BaseAdapter implements SharedPreference
             });
         }
         boolean currentValue = app.isOnlyFavDictsForRandomLookup();
-        CheckedTextView toggle = view.findViewById(R.id.setting_fav_random_search);
+        MaterialSwitch toggle = view.findViewById(R.id.setting_fav_random_search);
         toggle.setChecked(currentValue);
         return view;
     }
@@ -182,14 +184,13 @@ public class SettingsListAdapter extends BaseAdapter implements SharedPreference
         View view;
         LayoutInflater inflater = (LayoutInflater) parent.getContext()
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        final Application app = (Application)context.getApplication();
+        final Application app = (Application) context.getApplication();
         if (convertView != null) {
             view = convertView;
-        }
-        else {
+        } else {
             view = inflater.inflate(R.layout.settings_use_volume_for_nav, parent,
                     false);
-            final CheckedTextView toggle = view.findViewById(R.id.setting_use_volume_for_nav);
+            final MaterialSwitch toggle = view.findViewById(R.id.setting_use_volume_for_nav);
             toggle.setOnClickListener(v -> {
                 boolean currentValue = app.useVolumeForNav();
                 boolean newValue = !currentValue;
@@ -198,7 +199,7 @@ public class SettingsListAdapter extends BaseAdapter implements SharedPreference
             });
         }
         boolean currentValue = app.useVolumeForNav();
-        CheckedTextView toggle = view.findViewById(R.id.setting_use_volume_for_nav);
+        MaterialSwitch toggle = view.findViewById(R.id.setting_use_volume_for_nav);
         toggle.setChecked(currentValue);
         return view;
     }
@@ -207,14 +208,12 @@ public class SettingsListAdapter extends BaseAdapter implements SharedPreference
         View view;
         LayoutInflater inflater = (LayoutInflater) parent.getContext()
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        final Application app = (Application)context.getApplication();
+        final Application app = (Application) context.getApplication();
         if (convertView != null) {
             view = convertView;
-        }
-        else {
-            view = inflater.inflate(R.layout.settings_auto_paste, parent,
-                    false);
-            final CheckedTextView toggle = view.findViewById(R.id.setting_auto_paste);
+        } else {
+            view = inflater.inflate(R.layout.settings_auto_paste, parent, false);
+            final MaterialSwitch toggle = view.findViewById(R.id.setting_auto_paste);
             toggle.setOnClickListener(v -> {
                 boolean currentValue = app.autoPaste();
                 boolean newValue = !currentValue;
@@ -223,7 +222,7 @@ public class SettingsListAdapter extends BaseAdapter implements SharedPreference
             });
         }
         boolean currentValue = app.autoPaste();
-        CheckedTextView toggle = view.findViewById(R.id.setting_auto_paste);
+        MaterialSwitch toggle = view.findViewById(R.id.setting_auto_paste);
         toggle.setChecked(currentValue);
         return view;
     }
@@ -235,8 +234,7 @@ public class SettingsListAdapter extends BaseAdapter implements SharedPreference
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         if (convertView != null) {
             view = convertView;
-        }
-        else {
+        } else {
             this.userStyleData = userStylePrefs.getAll();
             this.userStyleNames = new ArrayList<>(this.userStyleData.keySet());
             Util.sort(this.userStyleNames);
@@ -251,8 +249,7 @@ public class SettingsListAdapter extends BaseAdapter implements SharedPreference
                 Intent chooser = Intent.createChooser(intent, "Select CSS file");
                 try {
                     fragment.startActivityForResult(chooser, CSS_SELECT_REQUEST);
-                }
-                catch (ActivityNotFoundException e){
+                } catch (ActivityNotFoundException e) {
                     Log.d(TAG, "Not activity to get content", e);
                     Toast.makeText(context, R.string.msg_no_activity_to_get_content,
                             Toast.LENGTH_LONG).show();
@@ -309,8 +306,7 @@ public class SettingsListAdapter extends BaseAdapter implements SharedPreference
         View view;
         if (convertView != null) {
             view = convertView;
-        }
-        else {
+        } else {
             LayoutInflater inflater = (LayoutInflater) parent.getContext()
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             view = inflater.inflate(R.layout.settings_remote_content_item, parent, false);
@@ -359,13 +355,11 @@ public class SettingsListAdapter extends BaseAdapter implements SharedPreference
         View view;
         if (convertView != null) {
             view = convertView;
-        }
-        else {
+        } else {
             final Context context = parent.getContext();
             LayoutInflater inflater = (LayoutInflater) context
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            view = inflater.inflate(R.layout.settings_clear_cache_item, parent,
-                    false);
+            view = inflater.inflate(R.layout.settings_clear_cache_item, parent, false);
         }
         return view;
     }
@@ -374,8 +368,7 @@ public class SettingsListAdapter extends BaseAdapter implements SharedPreference
         View view;
         if (convertView != null) {
             view = convertView;
-        }
-        else {
+        } else {
             final Context context = parent.getContext();
             LayoutInflater inflater = (LayoutInflater) context
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -396,7 +389,7 @@ public class SettingsListAdapter extends BaseAdapter implements SharedPreference
                 Intent browserIntent = new Intent(Intent.ACTION_VIEW, uri);
                 context.startActivity(browserIntent);
             });
-            licenseView.setText(Html.fromHtml(license.trim()));
+            licenseView.setText(HtmlCompat.fromHtml(license.trim(), HtmlCompat.FROM_HTML_MODE_LEGACY));
 
             PackageManager manager = context.getPackageManager();
             String versionName;
@@ -407,9 +400,8 @@ public class SettingsListAdapter extends BaseAdapter implements SharedPreference
                 versionName = "?";
             }
 
-            String version = context.getString(R.string.application_version, versionName);
             TextView versionView = view.findViewById(R.id.application_version);
-            versionView.setText(Html.fromHtml(version));
+            versionView.setText(context.getString(R.string.application_version, versionName));
 
         }
         return view;

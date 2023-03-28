@@ -44,7 +44,7 @@
         </androidx.appcompat.widget.LinearLayoutCompat>
     </androidx.appcompat.widget.LinearLayoutCompat>
 
-    <CheckBox
+    <com.google.android.material.checkbox.MaterialCheckBox
         android:id="@+id/blob_descriptor_checkbox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

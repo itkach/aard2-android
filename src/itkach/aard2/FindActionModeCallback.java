@@ -20,16 +20,16 @@ import android.widget.EditText;
 class FindActionModeCallback implements ActionMode.Callback, TextWatcher,
         View.OnLongClickListener, View.OnClickListener {
 
-    private View searchView;
-    private EditText editText;
-    private SearchableWebView webview;
-    private InputMethodManager imManager;
+    private final View searchView;
+    private final EditText editText;
+    private final SearchableWebView webview;
+    private final InputMethodManager imManager;
 
     FindActionModeCallback(Context context, SearchableWebView webview) {
         this.webview = webview;
         searchView = View.inflate(context, R.layout.webview_find, null);
 
-        editText = searchView.findViewById(R.id.edit);
+        editText = searchView.findViewById(R.id.search);
         editText.setOnLongClickListener(this);
         editText.setOnClickListener(this);
         editText.addTextChangedListener(this);
@@ -113,15 +113,13 @@ class FindActionModeCallback implements ActionMode.Callback, TextWatcher,
     @Override
     public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
         imManager.hideSoftInputFromWindow(webview.getWindowToken(), 0);
-        switch(item.getItemId()) {
-            case R.id.find_prev:
-                findNext(false);
-                break;
-            case R.id.find_next:
-                findNext(true);
-                break;
-            default:
-                return false;
+        int itemId = item.getItemId();
+        if (itemId == R.id.find_prev) {
+            findNext(false);
+        } else if (itemId == R.id.find_next) {
+            findNext(true);
+        } else {
+            return false;
         }
         return true;
     }
