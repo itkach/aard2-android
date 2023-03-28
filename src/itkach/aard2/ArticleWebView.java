@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -319,9 +320,8 @@ public class ArticleWebView extends SearchableWebView {
     }
 
     private boolean isUIDark() {
-        Application app = getApplication();
-        String uiTheme = app.getPreferredTheme();
-        return uiTheme.equals(Application.PREF_UI_THEME_DARK);
+        int nightModeFlags = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
+        return nightModeFlags == Configuration.UI_MODE_NIGHT_YES;
     }
 
     private String getAutoStyle() {
