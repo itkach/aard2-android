@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
-    <string name="app_name">Aard 2</string>
+    <string name="app_name" translatable="false">Aard 2</string>
     <string name="subtitle_lookup">Lookup</string>
     <string name="subtitle_bookmark">Bookmarks</string>
     <string name="subtitle_history">History</string>
@@ -32,7 +31,7 @@
     <string name="action_zoom_out">Zoom Out</string>
     <string name="action_zoom_in">Zoom In</string>
     <string name="action_zoom_reset">Zoom Reset</string>
-    <string name="action_select_style">Style...</string>
+    <string name="action_select_style">Style…</string>
     <string name="select_style">Select style</string>
     <string name="default_style_title">Default</string>
     <string name="subtitle_settings">Settings</string>
@@ -43,8 +42,8 @@
     <string name="setting_about">About %1$s</string>
     <string name="application_home_url" translatable="false">http://aarddict.org</string>
     <string name="application_copyright" translatable="false">Igor Tkach</string>
-    <string name="application_license_name">GNU General Public License v3</string>
-    <string name="application_license_url">https://gnu.org/licenses/gpl.html</string>
+    <string name="application_license_name" translatable="false">GNU General Public License v3</string>
+    <string name="application_license_url" translatable="false">https://gnu.org/licenses/gpl.html</string>
     <string name="application_license" translatable="false">
         <![CDATA[
             <a href="%1$s">%2$s</a>
@@ -59,7 +58,7 @@
     <string name="article_collection_nothing_to_lookup">Nothing to look up</string>
     <string name="article_view_msg_not_found">Not found</string>
     <string name="dictionaries_please_wait">Please wait</string>
-    <string name="dictionaries_scanning_device">Scanning device for dictionaries...</string>
+    <string name="dictionaries_scanning_device">Scanning device for dictionaries…</string>
     <string name="dictionaries_confirm_forget">Forget "%1$s"?</string>
     <string name="lookup_nothing_found">Nothing found</string>
     <string name="main_empty_bookmarks">No bookmarks</string>
