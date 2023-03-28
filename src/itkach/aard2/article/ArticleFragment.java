@@ -40,6 +40,7 @@ public class ArticleFragment extends Fragment {
 
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        menu.clear();
         inflater.inflate(R.menu.article, menu);
         bookmarkMenu = menu.findItem(R.id.action_bookmark_article);
     }
