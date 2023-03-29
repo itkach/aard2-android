@@ -14,16 +14,6 @@
         android:orientation="horizontal"
         android:layout_marginBottom="4dp">
 
-        <com.google.android.material.button.MaterialButton
-            style="@style/Widget.Material3.Button.IconButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/dictionary_btn_toggle_fav"
-            android:layout_gravity="center_vertical"
-            app:iconSize="25dp"
-            app:iconGravity="textStart"
-            tools:icon="@drawable/ic_favorite_border" />
-
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/dictionary_label"
             android:layout_width="wrap_content"
@@ -192,8 +182,7 @@
         android:id="@+id/dictionary_btn_row"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginTop="4dp">
+        android:orientation="horizontal">
 
         <com.google.android.material.button.MaterialButton
             style="@style/Widget.Material3.Button.IconButton"
@@ -201,7 +190,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/dictionary_btn_toggle_detail"
             android:layout_gravity="start"
-            app:iconSize="30dp"
+            app:iconSize="25dp"
             app:iconGravity="textStart"
             app:icon="@drawable/ic_keyboard_arrow_down" />
 
@@ -217,9 +206,19 @@
             android:layout_height="wrap_content"
             android:id="@+id/dictionary_btn_forget"
             android:layout_gravity="end"
-            app:iconSize="30dp"
+            app:iconSize="25dp"
             app:iconGravity="textStart"
             app:icon="@drawable/ic_delete_outline" />
+
+        <com.google.android.material.button.MaterialButton
+            style="@style/Widget.Material3.Button.IconButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/dictionary_btn_toggle_fav"
+            android:layout_gravity="center_vertical"
+            app:iconSize="25dp"
+            app:iconGravity="textStart"
+            tools:icon="@drawable/ic_favorite_border" />
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 
