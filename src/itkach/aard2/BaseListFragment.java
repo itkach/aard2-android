@@ -70,6 +70,7 @@ public abstract class BaseListFragment extends ListFragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         final ListView listView = getListView();
+        listView.setDivider(null);
         listView.setEmptyView(emptyView);
         ((ViewGroup) listView.getParent()).addView(emptyView, 0);
 

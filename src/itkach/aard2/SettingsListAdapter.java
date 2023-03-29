@@ -12,12 +12,15 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebView;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.widget.LinearLayoutCompat;
 import androidx.core.text.HtmlCompat;
 import androidx.fragment.app.Fragment;
@@ -26,6 +29,7 @@ import androidx.webkit.WebViewFeature;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.materialswitch.MaterialSwitch;
+import com.google.android.material.textview.MaterialTextView;
 
 import java.util.Collections;
 import java.util.List;
@@ -158,13 +162,16 @@ public class SettingsListAdapter extends BaseAdapter implements SharedPreference
 
     private View getForceDarkView(View convertView, ViewGroup parent) {
         View view;
-        LayoutInflater inflater = (LayoutInflater) parent.getContext()
-                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        MaterialSwitch toggle;
         if (convertView != null) {
             view = convertView;
+            toggle = view.findViewById(R.id.setting_switch);
         } else {
-            view = inflater.inflate(R.layout.settings_force_dark, parent, false);
-            final MaterialSwitch toggle = view.findViewById(R.id.setting_force_dark);
+            LayoutInflater inflater = (LayoutInflater) parent.getContext()
+                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            view = inflater.inflate(R.layout.settings_switch, parent, false);
+            toggle = view.findViewById(R.id.setting_switch);
+            toggle.setText(R.string.setting_enable_force_dark_web_view);
             toggle.setEnabled(WebViewFeature.isFeatureSupported(WebViewFeature.ALGORITHMIC_DARKENING));
             toggle.setOnClickListener(v -> {
                 boolean currentValue = ArticleViewPrefs.enableForceDark();
@@ -172,100 +179,108 @@ public class SettingsListAdapter extends BaseAdapter implements SharedPreference
                 ArticleViewPrefs.setEnableForceDark(newValue);
                 toggle.setChecked(newValue);
             });
+            view.findViewById(R.id.setting_subtitle).setVisibility(View.GONE);
         }
-        boolean currentValue = ArticleViewPrefs.enableForceDark();
-        MaterialSwitch toggle = view.findViewById(R.id.setting_force_dark);
-        toggle.setChecked(currentValue);
+        toggle.setChecked(ArticleViewPrefs.enableForceDark());
         return view;
     }
 
     private View getFavRandomSwitchView(View convertView, ViewGroup parent) {
         View view;
-        LayoutInflater inflater = (LayoutInflater) parent.getContext()
-                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        MaterialSwitch toggle;
         if (convertView != null) {
             view = convertView;
+            toggle = view.findViewById(R.id.setting_switch);
         } else {
-            view = inflater.inflate(R.layout.settings_fav_random_search, parent,
-                    false);
-            final MaterialSwitch toggle = view.findViewById(R.id.setting_fav_random_search);
+            LayoutInflater inflater = (LayoutInflater) parent.getContext()
+                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            view = inflater.inflate(R.layout.settings_switch, parent, false);
+            toggle = view.findViewById(R.id.setting_switch);
+            toggle.setText(R.string.setting_fav_random_search);
             toggle.setOnClickListener(v -> {
                 boolean currentValue = AppPrefs.useOnlyFavoritesForRandomLookups();
                 boolean newValue = !currentValue;
                 AppPrefs.setUseOnlyFavoritesForRandomLookups(newValue);
                 toggle.setChecked(newValue);
             });
+            view.findViewById(R.id.setting_subtitle).setVisibility(View.GONE);
         }
-        boolean currentValue = AppPrefs.useOnlyFavoritesForRandomLookups();
-        MaterialSwitch toggle = view.findViewById(R.id.setting_fav_random_search);
-        toggle.setChecked(currentValue);
+        toggle.setChecked(AppPrefs.useOnlyFavoritesForRandomLookups());
         return view;
     }
 
     private View getUseVolumeForNavView(View convertView, ViewGroup parent) {
         View view;
-        LayoutInflater inflater = (LayoutInflater) parent.getContext()
-                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        MaterialSwitch toggle;
         if (convertView != null) {
             view = convertView;
+            toggle = view.findViewById(R.id.setting_switch);
         } else {
-            view = inflater.inflate(R.layout.settings_use_volume_for_nav, parent,
-                    false);
-            final MaterialSwitch toggle = view.findViewById(R.id.setting_use_volume_for_nav);
+            LayoutInflater inflater = (LayoutInflater) parent.getContext()
+                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            view = inflater.inflate(R.layout.settings_switch, parent, false);
+            toggle = view.findViewById(R.id.setting_switch);
+            toggle.setText(R.string.setting_use_volume_for_nav);
             toggle.setOnClickListener(v -> {
                 boolean currentValue = AppPrefs.useVolumeKeysForNavigation();
                 boolean newValue = !currentValue;
                 AppPrefs.setUseVolumeKeysForNavigation(newValue);
                 toggle.setChecked(newValue);
             });
+            view.findViewById(R.id.setting_subtitle).setVisibility(View.GONE);
         }
-        boolean currentValue = AppPrefs.useVolumeKeysForNavigation();
-        MaterialSwitch toggle = view.findViewById(R.id.setting_use_volume_for_nav);
-        toggle.setChecked(currentValue);
+        toggle.setChecked(AppPrefs.useVolumeKeysForNavigation());
         return view;
     }
 
-    private View getAutoPasteView(View convertView, ViewGroup parent) {
+    @NonNull
+    private View getAutoPasteView(@Nullable View convertView, @NonNull ViewGroup parent) {
         View view;
-        LayoutInflater inflater = (LayoutInflater) parent.getContext()
-                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        MaterialSwitch toggle;
         if (convertView != null) {
             view = convertView;
+            toggle = view.findViewById(R.id.setting_switch);
         } else {
-            view = inflater.inflate(R.layout.settings_auto_paste, parent, false);
-            final MaterialSwitch toggle = view.findViewById(R.id.setting_auto_paste);
+            LayoutInflater inflater = (LayoutInflater) parent.getContext()
+                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            view = inflater.inflate(R.layout.settings_switch, parent, false);
+            toggle = view.findViewById(R.id.setting_switch);
+            toggle.setText(R.string.setting_auto_paste);
             toggle.setOnClickListener(v -> {
                 boolean currentValue = AppPrefs.autoPasteInLookup();
                 boolean newValue = !currentValue;
                 AppPrefs.setAutoPasteInLookup(newValue);
                 toggle.setChecked(newValue);
             });
+            view.findViewById(R.id.setting_subtitle).setVisibility(View.GONE);
         }
-        boolean currentValue = AppPrefs.autoPasteInLookup();
-        MaterialSwitch toggle = view.findViewById(R.id.setting_auto_paste);
-        toggle.setChecked(currentValue);
+        toggle.setChecked(AppPrefs.autoPasteInLookup());
         return view;
     }
 
     private View getDisableJavaScriptView(View convertView, ViewGroup parent) {
         View view;
-        LayoutInflater inflater = (LayoutInflater) parent.getContext()
-                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        MaterialSwitch toggle;
         if (convertView != null) {
             view = convertView;
+            toggle = view.findViewById(R.id.setting_switch);
         } else {
-            view = inflater.inflate(R.layout.settings_disable_js, parent, false);
-            final MaterialSwitch toggle = view.findViewById(R.id.setting_disable_js);
+            LayoutInflater inflater = (LayoutInflater) parent.getContext()
+                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            view = inflater.inflate(R.layout.settings_switch, parent, false);
+            toggle = view.findViewById(R.id.setting_switch);
+            toggle.setText(R.string.setting_disable_javascript_title);
             toggle.setOnClickListener(v -> {
                 boolean currentValue = ArticleViewPrefs.disableJavaScript();
                 boolean newValue = !currentValue;
                 ArticleViewPrefs.setDisableJavaScript(newValue);
                 toggle.setChecked(newValue);
             });
+            MaterialTextView subtitleView = view.findViewById(R.id.setting_subtitle);
+            subtitleView.setVisibility(View.VISIBLE);
+            subtitleView.setText(R.string.setting_disable_javascript_subtitle);
         }
-        boolean currentValue = ArticleViewPrefs.disableJavaScript();
-        MaterialSwitch toggle = view.findViewById(R.id.setting_disable_js);
-        toggle.setChecked(currentValue);
+        toggle.setChecked(ArticleViewPrefs.disableJavaScript());
         return view;
     }
 
@@ -318,7 +333,7 @@ public class SettingsListAdapter extends BaseAdapter implements SharedPreference
         String message = context.getString(R.string.setting_user_style_confirm_forget, name);
         new MaterialAlertDialogBuilder(context)
                 .setIcon(android.R.drawable.ic_dialog_alert)
-                .setTitle("")
+                .setTitle(R.string.setting_user_styles)
                 .setMessage(message)
                 .setPositiveButton(R.string.action_yes, (dialog, which) -> {
                     Log.d(TAG, "Deleting user style " + name);
@@ -379,6 +394,15 @@ public class SettingsListAdapter extends BaseAdapter implements SharedPreference
             LayoutInflater inflater = (LayoutInflater) context
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             view = inflater.inflate(R.layout.settings_clear_cache_item, parent, false);
+            view.findViewById(R.id.settings_item).setOnClickListener(v ->
+                    new MaterialAlertDialogBuilder(fragment.requireActivity())
+                            .setMessage(R.string.confirm_clear_cached_content)
+                            .setPositiveButton(R.string.action_yes, (dialog, id1) -> {
+                                WebView webView = new WebView(fragment.requireActivity());
+                                webView.clearCache(true);
+                            })
+                            .setNegativeButton(R.string.action_no, null)
+                            .show());
         }
         return view;
     }

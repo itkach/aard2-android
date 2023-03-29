@@ -1,97 +1,115 @@
 <androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
+    android:id="@+id/settings_item"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:paddingVertical="8dp"
-    android:paddingHorizontal="16dp">
+    android:paddingHorizontal="16dp"
+    android:orientation="horizontal">
 
-    <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/setting_about"
+    <com.google.android.material.card.MaterialCardView
+        style="@style/Widget.AppTheme.CardView.ListItem"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textAppearance="?attr/textAppearanceListItem"
-        android:text="@string/setting_about" />
+        android:minHeight="?android:attr/listPreferredItemHeightSmall"
+        android:focusable="true">
 
-    <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/application_version"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="4dp"
-        android:textAppearance="?attr/textAppearanceListItemSecondary"
-        android:text="@string/application_version" />
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingVertical="16dp"
+            android:paddingHorizontal="16dp">
 
-    <androidx.appcompat.widget.LinearLayoutCompat
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginBottom="2dp">
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/setting_about"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?attr/textAppearanceListItem"
+                android:text="@string/setting_about" />
 
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/setting_about_copyright_icon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="4dp"
-            app:srcCompat="@drawable/ic_copyright" />
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/application_version"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:textAppearance="?attr/textAppearanceListItemSecondary"
+                android:text="@string/application_version" />
 
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/application_copyright"
-            android:text="@string/application_copyright"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?attr/textAppearanceListItemSecondary"
-            android:layout_gravity="center_vertical" />
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="2dp">
 
-    </androidx.appcompat.widget.LinearLayoutCompat>
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/setting_about_copyright_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="4dp"
+                    app:srcCompat="@drawable/ic_copyright" />
 
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/application_copyright"
+                    android:text="@string/application_copyright"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?attr/textAppearanceListItemSecondary"
+                    android:layout_gravity="center_vertical" />
 
-    <androidx.appcompat.widget.LinearLayoutCompat
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginBottom="2dp">
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/setting_about_license_icon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="4dp"
-            app:srcCompat="@drawable/ic_license" />
-
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/application_license"
-            android:autoLink="web"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:clickable="true"
-            android:focusable="false"
-            android:textAppearance="?attr/textAppearanceListItemSecondary"
-            android:text="@string/application_license_name" />
-    </androidx.appcompat.widget.LinearLayoutCompat>
-
-    <androidx.appcompat.widget.LinearLayoutCompat
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginBottom="2dp">
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/setting_about_source_icon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="4dp"
-            app:srcCompat="@drawable/ic_open_in_new" />
-
-        <com.google.android.material.textview.MaterialTextView
-            android:text="@string/application_home_url"
-            android:autoLink="web"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:textAppearance="?attr/textAppearanceListItemSecondary" />
-
-    </androidx.appcompat.widget.LinearLayoutCompat>
+            </androidx.appcompat.widget.LinearLayoutCompat>
 
 
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="2dp">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/setting_about_license_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="4dp"
+                    app:srcCompat="@drawable/ic_license" />
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/application_license"
+                    android:autoLink="web"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:clickable="true"
+                    android:focusable="false"
+                    android:textAppearance="?attr/textAppearanceListItemSecondary"
+                    android:text="@string/application_license_name" />
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="2dp">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/setting_about_source_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="4dp"
+                    app:srcCompat="@drawable/ic_open_in_new" />
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:text="@string/application_home_url"
+                    android:autoLink="web"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:textAppearance="?attr/textAppearanceListItemSecondary" />
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+    </com.google.android.material.card.MaterialCardView>
 </androidx.appcompat.widget.LinearLayoutCompat>

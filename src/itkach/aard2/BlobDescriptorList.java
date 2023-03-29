@@ -7,6 +7,8 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 
+import androidx.annotation.MainThread;
+
 import com.ibm.icu.text.Collator;
 import com.ibm.icu.text.RuleBasedCollator;
 import com.ibm.icu.text.StringSearch;
@@ -99,6 +101,7 @@ public final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
      * Notifies the attached observers that the underlying data has been changed
      * and any View reflecting the data set should refresh itself.
      */
+    @MainThread
     public void notifyDataSetChanged() {
         this.filteredList.clear();
         if (filter == null || filter.length() == 0) {
@@ -126,6 +129,7 @@ public final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
      * valid or available. Once invoked this adapter is no longer valid and
      * should not report further data set changes.
      */
+    @MainThread
     public void notifyDataSetInvalidated() {
         this.dataSetObservable.notifyInvalidated();
     }

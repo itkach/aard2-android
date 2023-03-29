@@ -14,10 +14,10 @@ import android.widget.RelativeLayout;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CheckableRelativeLayout extends RelativeLayout implements
-        Checkable {
+public class CheckableRelativeLayout extends RelativeLayout implements Checkable {
 
-    private boolean         isChecked;
+    private boolean isChecked;
+
     private List<Checkable> checkableViews = new ArrayList<>();
 
     public CheckableRelativeLayout(Context context) {
@@ -29,7 +29,7 @@ public class CheckableRelativeLayout extends RelativeLayout implements
     }
 
     public CheckableRelativeLayout(Context context, AttributeSet attrs,
-            int defStyle) {
+                                   int defStyle) {
         super(context, attrs, defStyle);
     }
 

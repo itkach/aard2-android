@@ -1,60 +1,57 @@
 <itkach.aard2.CheckableRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     xmlns:tools="http://schemas.android.com/tools"
     android:paddingVertical="8dp"
-    android:paddingHorizontal="16dp"
-    android:background="?android:attr/selectableItemBackground">
+    android:paddingHorizontal="16dp">
 
-    <androidx.appcompat.widget.LinearLayoutCompat
-        android:id="@+id/blob_descriptor_item"
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/card_view"
+        style="@style/Widget.AppTheme.CardView.ListItem"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/blob_descriptor_key"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textAppearance="?attr/textAppearanceListItem"
-            tools:text="Босния и Герцеговина на зимних Олимпийских играх 1998" />
+        android:minHeight="?android:attr/listPreferredItemHeightSmall">
 
         <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/blob_descriptor_item"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="vertical"
+            android:paddingVertical="16dp"
+            android:paddingHorizontal="16dp">
 
             <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/blob_descriptor_source"
-                android:layout_width="wrap_content"
+                android:id="@+id/blob_descriptor_key"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:textAppearance="?attr/textAppearanceListItemSecondary"
-                tools:text="WordNet" />
+                android:textAppearance="?attr/textAppearanceListItem"
+                tools:text="Босния и Герцеговина на зимних Олимпийских играх 1998" />
 
-            <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/blob_descriptor_timestamp"
-                style="@android:style/TextAppearance.Holo.Small"
-                android:layout_width="wrap_content"
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="6dp"
-                android:textAppearance="?attr/textAppearanceListItemSmall"
-                android:textStyle="italic"
-                tools:text="1 day ago" />
+                android:orientation="horizontal">
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/blob_descriptor_source"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textAppearance="?attr/textAppearanceListItemSecondary"
+                    tools:text="WordNet" />
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/blob_descriptor_timestamp"
+                    style="@android:style/TextAppearance.Holo.Small"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="6dp"
+                    android:textAppearance="?attr/textAppearanceListItemSmall"
+                    android:textStyle="italic"
+                    tools:text="1 day ago" />
+            </androidx.appcompat.widget.LinearLayoutCompat>
         </androidx.appcompat.widget.LinearLayoutCompat>
-    </androidx.appcompat.widget.LinearLayoutCompat>
 
-    <com.google.android.material.checkbox.MaterialCheckBox
-        android:id="@+id/blob_descriptor_checkbox"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="-5dp"
-        android:visibility="gone"
-        android:clickable="false"
-        android:focusable="false"
-        android:checked="false"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentTop="true"
-        tools:visibility="visible" />
+    </com.google.android.material.card.MaterialCardView>
 
 </itkach.aard2.CheckableRelativeLayout>

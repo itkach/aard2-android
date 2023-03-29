@@ -1,51 +1,68 @@
 <androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/settings_item"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:paddingVertical="8dp"
     android:paddingHorizontal="16dp"
-    android:orientation="vertical">
+    android:orientation="horizontal">
 
-    <androidx.appcompat.widget.LinearLayoutCompat
+    <com.google.android.material.card.MaterialCardView
+        style="@style/Widget.AppTheme.CardView.ListItem"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:minHeight="?android:attr/listPreferredItemHeightSmall"
+        android:focusable="true">
 
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/setting_user_styles"
-            android:text="@string/setting_user_styles"
-            android:layout_width="0dp"
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="start|center_vertical"
-            android:layout_weight="1"
-            android:textAppearance="?attr/textAppearanceListItem" />
+            android:paddingVertical="16dp"
+            android:paddingHorizontal="16dp"
+            android:orientation="vertical">
 
-        <com.google.android.material.button.MaterialButton
-            style="@style/Widget.Material3.Button.IconButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/setting_btn_add_user_style"
-            android:layout_gravity="end|center_vertical"
-            app:icon="@drawable/ic_add" />
-    </androidx.appcompat.widget.LinearLayoutCompat>
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
 
-    <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/setting_user_styles_empty"
-        style="@android:style/TextAppearance.Holo.SearchResult.Title"
-        android:text="@string/setting_user_styles_empty"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:textAppearance="?attr/textAppearanceBodyLarge"
-        android:textColor="?attr/colorSecondary"
-        android:textAlignment="center"
-        android:gravity="center" />
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/setting_user_styles"
+                    android:text="@string/setting_user_styles"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start|center_vertical"
+                    android:layout_weight="1"
+                    android:textAppearance="?attr/textAppearanceListItem" />
 
-    <androidx.appcompat.widget.LinearLayoutCompat
-        android:id="@+id/setting_user_styles_list"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical" />
+                <com.google.android.material.button.MaterialButton
+                    style="@style/Widget.Material3.Button.IconButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/setting_btn_add_user_style"
+                    android:layout_gravity="end|center_vertical"
+                    app:icon="@drawable/ic_add" />
+            </androidx.appcompat.widget.LinearLayoutCompat>
 
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/setting_user_styles_empty"
+                style="@android:style/TextAppearance.Holo.SearchResult.Title"
+                android:text="@string/setting_user_styles_empty"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:textAppearance="?attr/textAppearanceBodyLarge"
+                android:textColor="?attr/colorSecondary"
+                android:textAlignment="center"
+                android:gravity="center" />
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/setting_user_styles_list"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" />
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+    </com.google.android.material.card.MaterialCardView>
 </androidx.appcompat.widget.LinearLayoutCompat>
