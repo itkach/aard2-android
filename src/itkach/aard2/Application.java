@@ -12,6 +12,7 @@ import android.util.Log;
 import android.webkit.WebView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -29,6 +30,7 @@ import java.util.Random;
 import java.util.Set;
 
 import itkach.aard2.prefs.AppPrefs;
+import itkach.aard2.utils.ThreadUtils;
 import itkach.aard2.utils.Utils;
 import itkach.slob.Slob;
 import itkach.slob.Slob.Blob;
@@ -43,7 +45,7 @@ public class Application extends android.app.Application {
 
     public BlobDescriptorList bookmarks;
     public BlobDescriptorList history;
-    SlobDescriptorList dictionaries;
+    public SlobDescriptorList dictionaries;
 
     private static int PREFERRED_PORT = 8013;
     private int port = -1;
@@ -139,11 +141,13 @@ public class Application extends android.app.Application {
                 }
                 slobber.setSlobs(slobs);
 
-                new EnableLinkHandling(Application.this).execute(getActiveSlobs());
-
-                lookup(lookupQuery);
-                bookmarks.notifyDataSetChanged();
-                history.notifyDataSetChanged();
+                ThreadUtils.postOnMainThread(() -> {
+                    new EnableLinkHandling(Application.this)
+                            .execute(getActiveSlobs());
+                    lookup(lookupQuery);
+                    bookmarks.notifyDataSetChanged();
+                    history.notifyDataSetChanged();
+                });
             }
         });
 
@@ -271,20 +275,6 @@ public class Application extends android.app.Application {
     public Slob getSlob(String slobId) {
         return slobber.getSlob(slobId);
     }
-
-    public synchronized boolean addDictionary(Uri uri) {
-        SlobDescriptor newDesc = SlobDescriptor.fromUri(getApplicationContext(), uri.toString());
-        if (newDesc.id != null) {
-            for (SlobDescriptor d : dictionaries) {
-                if (d.id != null && d.id.equals(newDesc.id)) {
-                    return true;
-                }
-            }
-        }
-        dictionaries.add(newDesc);
-        return false;
-    }
-
 
     public Slob findSlob(String slobOrUri) {
         return slobber.findSlob(slobOrUri);

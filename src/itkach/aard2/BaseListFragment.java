@@ -24,9 +24,9 @@ public abstract class BaseListFragment extends ListFragment {
     ActionMode actionMode;
 
     @DrawableRes
-    abstract int getEmptyIcon();
+    protected abstract int getEmptyIcon();
 
-    abstract CharSequence getEmptyText();
+    protected abstract CharSequence getEmptyText();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

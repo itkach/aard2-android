@@ -31,12 +31,12 @@ public class LookupFragment extends BaseListFragment implements LookupListener {
     private final static String TAG = LookupFragment.class.getSimpleName();
 
     @Override
-    int getEmptyIcon() {
+    protected int getEmptyIcon() {
         return R.drawable.ic_search;
     }
 
     @Override
-    CharSequence getEmptyText() {
+    protected CharSequence getEmptyText() {
         return "";
     }
 

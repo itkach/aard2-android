@@ -214,6 +214,16 @@
             style="@style/Widget.Material3.Button.IconButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:id="@+id/dictionary_btn_update"
+            android:layout_gravity="end"
+            app:iconSize="25dp"
+            app:iconGravity="textStart"
+            app:icon="@drawable/ic_update" />
+
+        <com.google.android.material.button.MaterialButton
+            style="@style/Widget.Material3.Button.IconButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:id="@+id/dictionary_btn_toggle_fav"
             android:layout_gravity="center_vertical"
             app:iconSize="25dp"

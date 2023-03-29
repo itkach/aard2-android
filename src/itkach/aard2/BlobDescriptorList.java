@@ -24,31 +24,30 @@ import itkach.aard2.utils.Utils;
 import itkach.slob.Slob;
 
 public final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
-
     private final String TAG = getClass().getSimpleName();
 
     enum SortOrder {
         TIME, NAME
     }
-    private Application                     app;
 
+    private Application app;
     private DescriptorStore<BlobDescriptor> store;
-    private List<BlobDescriptor>            list;
-    private List<BlobDescriptor>            filteredList;
-    private String                          filter;
-    private SortOrder                       order;
-    private boolean                         ascending;
-    private final DataSetObservable         dataSetObservable;
-    private Comparator<BlobDescriptor>      nameComparatorAsc;
-    private Comparator<BlobDescriptor>      nameComparatorDesc;
-    private Comparator<BlobDescriptor>      timeComparatorAsc;
-    private Comparator<BlobDescriptor>      timeComparatorDesc;
-    private Comparator<BlobDescriptor>      comparator;
-    private Comparator<BlobDescriptor>      lastAccessComparator;
-    private Slob.KeyComparator              keyComparator;
-    private int                             maxSize;
-    private RuleBasedCollator               filterCollator;
-    private Handler                         handler;
+    private List<BlobDescriptor> list;
+    private List<BlobDescriptor> filteredList;
+    private String filter;
+    private SortOrder order;
+    private boolean ascending;
+    private final DataSetObservable dataSetObservable;
+    private Comparator<BlobDescriptor> nameComparatorAsc;
+    private Comparator<BlobDescriptor> nameComparatorDesc;
+    private Comparator<BlobDescriptor> timeComparatorAsc;
+    private Comparator<BlobDescriptor> timeComparatorDesc;
+    private Comparator<BlobDescriptor> comparator;
+    private Comparator<BlobDescriptor> lastAccessComparator;
+    private Slob.KeyComparator keyComparator;
+    private int maxSize;
+    private RuleBasedCollator filterCollator;
+    private Handler handler;
 
     BlobDescriptorList(Application app, DescriptorStore<BlobDescriptor> store) {
         this(app, store, 100);
@@ -104,8 +103,7 @@ public final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
         this.filteredList.clear();
         if (filter == null || filter.length() == 0) {
             this.filteredList.addAll(this.list);
-        }
-        else {
+        } else {
             for (BlobDescriptor bd : this.list) {
                 StringSearch stringSearch = new StringSearch(
                         filter, new StringCharacterIterator(bd.key), filterCollator);
@@ -150,8 +148,7 @@ public final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
     void updateLastAccess(final BlobDescriptor bd) {
         if (Looper.myLooper() == Looper.getMainLooper()) {
             doUpdateLastAccess(bd);
-        }
-        else {
+        } else {
             handler.post(() -> doUpdateLastAccess(bd));
         }
     }
@@ -183,11 +180,10 @@ public final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
                     bd.slobId = slobId;
                     bd.blobId = blob.id;
                 }
-            }
-            catch (Exception ex) {
+            } catch (Exception ex) {
                 Log.w(TAG,
-                      String.format("Failed to resolve descriptor %s (%s) in %s (%s)",
-                              bd.blobId, bd.key, slob.getId(), slob.fileURI), ex);
+                        String.format("Failed to resolve descriptor %s (%s) in %s (%s)",
+                                bd.blobId, bd.key, slob.getId(), slob.fileURI), ex);
                 blob = null;
             }
         }
@@ -284,6 +280,10 @@ public final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
     @Override
     public BlobDescriptor get(int location) {
         return this.filteredList.get(location);
+    }
+
+    public List<BlobDescriptor> getList() {
+        return list;
     }
 
     @Override

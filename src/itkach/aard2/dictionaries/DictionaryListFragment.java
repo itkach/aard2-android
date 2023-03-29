@@ -1,8 +1,7 @@
-package itkach.aard2;
+package itkach.aard2.dictionaries;
 
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
-import android.content.ClipData;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -21,41 +20,41 @@ import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.LinearLayoutCompat;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.material.button.MaterialButton;
 
-import java.util.ArrayList;
-import java.util.List;
+import itkach.aard2.Application;
+import itkach.aard2.BaseListFragment;
+import itkach.aard2.R;
+import itkach.aard2.SlobDescriptor;
 
-public class DictionariesFragment extends BaseListFragment {
-    private final static String TAG = DictionariesFragment.class.getSimpleName();
+public class DictionaryListFragment extends BaseListFragment {
+    private final static String TAG = DictionaryListFragment.class.getSimpleName();
 
+    private DictionaryListViewModel viewModel;
     private final ActivityResultLauncher<Intent> dictionarySelector = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(), result -> {
                 if (result == null || result.getResultCode() != Activity.RESULT_OK) {
                     return;
                 }
                 Intent intent = result.getData();
-                Uri dataUri = intent == null ? null : intent.getData();
-                if (dataUri == null) {
+                if (intent == null) {
                     return;
                 }
-                final Application app = ((Application) requireActivity().getApplication());
-                List<Uri> selection = new ArrayList<>();
-                selection.add(dataUri);
-                ClipData clipData = intent.getClipData();
-                if (clipData != null) {
-                    int itemCount = clipData.getItemCount();
-                    for (int i = 0; i < itemCount; i++) {
-                        Uri uri = clipData.getItemAt(i).getUri();
-                        selection.add(uri);
-                    }
+                viewModel.addDictionaries(intent);
+            });
+    private final ActivityResultLauncher<Intent> dictionaryUpdater = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(), result -> {
+                if (result == null || result.getResultCode() != Activity.RESULT_OK) {
+                    return;
                 }
-                for (Uri uri : selection) {
-                    requireActivity().getContentResolver().takePersistableUriPermission(uri,
-                            Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                    app.addDictionary(uri);
+                Intent intent = result.getData();
+                Uri uri = intent != null ? intent.getData() : null;
+                if (uri == null) {
+                    return;
                 }
+                viewModel.updateDictionary(uri);
             });
 
     @DrawableRes
@@ -78,8 +77,9 @@ public class DictionariesFragment extends BaseListFragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        viewModel = new ViewModelProvider(this).get(DictionaryListViewModel.class);
         final Application app = (Application) requireActivity().getApplication();
-        DictionaryListAdapter listAdapter = new DictionaryListAdapter(app.dictionaries, getActivity());
+        DictionaryListAdapter listAdapter = new DictionaryListAdapter(app.dictionaries, this);
         setListAdapter(listAdapter);
     }
 
@@ -118,6 +118,22 @@ public class DictionariesFragment extends BaseListFragment {
         intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
         try {
             dictionarySelector.launch(intent);
+        } catch (ActivityNotFoundException e) {
+            Log.d(TAG, "Not activity to get content", e);
+            Toast.makeText(getContext(), R.string.msg_no_activity_to_get_content, Toast.LENGTH_LONG).show();
+        }
+    }
+
+    public void updateDictionary(@NonNull SlobDescriptor sd) {
+        viewModel.setDictionaryToBeReplaced(sd);
+        Intent intent = new Intent();
+        intent.setAction(Intent.ACTION_OPEN_DOCUMENT);
+        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, false);
+        intent.setType("*/*");
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
+        try {
+            dictionaryUpdater.launch(intent);
         } catch (ActivityNotFoundException e) {
             Log.d(TAG, "Not activity to get content", e);
             Toast.makeText(getContext(), R.string.msg_no_activity_to_get_content, Toast.LENGTH_LONG).show();

@@ -1,19 +1,37 @@
 package itkach.aard2;
 
-import java.util.Comparator;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import itkach.aard2.utils.Utils;
 import itkach.slob.Slob;
 
 public class SlobDescriptorList extends BaseDescriptorList<SlobDescriptor> {
+    private final Application app;
 
-    private final Application            app;
-    private Comparator<SlobDescriptor>   comparator;
-
-    SlobDescriptorList(Application app, DescriptorStore<SlobDescriptor> store) {
+    SlobDescriptorList(@NonNull Application app, @NonNull DescriptorStore<SlobDescriptor> store) {
         super(SlobDescriptor.class, store);
         this.app = app;
-        comparator = (d1, d2) -> {
+    }
+
+    public boolean hasId(@Nullable String id) {
+        if (id == null) {
+            return false;
+        }
+        for (SlobDescriptor d : this) {
+            if (id.equals(d.id)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public Slob resolve(SlobDescriptor sd) {
+        return this.app.getSlob(sd.id);
+    }
+
+    public void sort() {
+        Utils.sort(this, (d1, d2) -> {
             //Dictionaries that are unfavorited
             //go immediately after favorites
             if (d1.priority == 0 && d2.priority == 0) {
@@ -28,15 +46,7 @@ public class SlobDescriptorList extends BaseDescriptorList<SlobDescriptor> {
             }
             //Old favorites are above more recent ones
             return Long.compare(d1.priority, d2.priority);
-        };
-    }
-
-    Slob resolve(SlobDescriptor sd) {
-        return this.app.getSlob(sd.id);
-    }
-
-    void sort() {
-        Utils.sort(this, comparator);
+        });
     }
 
     @Override

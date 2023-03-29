@@ -3,7 +3,10 @@ package itkach.aard2;
 import android.content.Context;
 import android.net.Uri;
 import android.os.ParcelFileDescriptor;
+import android.text.TextUtils;
 import android.util.Log;
+
+import androidx.annotation.NonNull;
 
 import java.io.FileInputStream;
 import java.util.HashMap;
@@ -13,7 +16,6 @@ import itkach.slob.Slob;
 
 
 public class SlobDescriptor extends BaseDescriptor {
-
     private final static String TAG = SlobDescriptor.class.getSimpleName();
 
     public String path;
@@ -25,7 +27,10 @@ public class SlobDescriptor extends BaseDescriptor {
     public boolean expandDetail = false;
     private transient ParcelFileDescriptor fileDescriptor;
 
-    void update(Slob s) {
+    private SlobDescriptor() {
+    }
+
+    private void update(Slob s) {
         this.id = s.getId().toString();
         this.path = s.fileURI;
         this.tags = s.getTags();
@@ -33,21 +38,17 @@ public class SlobDescriptor extends BaseDescriptor {
         this.error = null;
     }
 
-    Slob load(final Context context) {
+    public Slob load(final Context context) {
         Slob slob = null;
-        //File f = new File(path);
-
         try {
-            //slob = new Slob(f);
             final Uri uri = Uri.parse(path);
-            //must hold on to ParcelFileDescriptor,
-            //otherwise it gets garbage collected and trashes underlying file descriptor
+            // Must hold on to ParcelFileDescriptor,
+            // Otherwise it gets garbage collected and trashes underlying file descriptor
             fileDescriptor = context.getContentResolver().openFileDescriptor(uri, "r");
             FileInputStream fileInputStream = new FileInputStream(fileDescriptor.getFileDescriptor());
             slob = new Slob(fileInputStream.getChannel(), path);
-            this.update(slob);
-        }
-        catch (Exception e) {
+            update(slob);
+        } catch (Exception e) {
             Log.e(TAG, "Error while opening " + this.path, e);
             error = e.getMessage();
             if (Log.isLoggable(TAG, Log.DEBUG)) {
@@ -59,27 +60,19 @@ public class SlobDescriptor extends BaseDescriptor {
         return slob;
     }
 
-    String getLabel() {
+    public String getLabel() {
         String label = tags.get("label");
-        if (label == null || label.trim().length() == 0) {
-            label = "???";
+        if (TextUtils.isEmpty(label)) {
+            return "???";
         }
         return label;
     }
 
-//    static SlobDescriptor fromFile(File file) {
-//        SlobDescriptor s = new SlobDescriptor();
-//        s.path = file.getAbsolutePath();
-//        s.load();
-//        return s;
-//    }
-
-    static SlobDescriptor fromUri(Context context, String uri) {
+    @NonNull
+    public static SlobDescriptor fromUri(@NonNull Context context, @NonNull Uri uri) {
         SlobDescriptor s = new SlobDescriptor();
-        s.path = uri;
+        s.path = uri.toString();
         s.load(context);
         return s;
     }
-
-
 }

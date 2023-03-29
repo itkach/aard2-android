@@ -1,8 +1,7 @@
-package itkach.aard2;
+package itkach.aard2.dictionaries;
 
 import static java.lang.String.format;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -27,29 +26,34 @@ import com.google.android.material.materialswitch.MaterialSwitch;
 
 import java.util.Locale;
 
+import itkach.aard2.R;
+import itkach.aard2.SlobDescriptor;
+import itkach.aard2.SlobDescriptorList;
+import itkach.aard2.utils.ThreadUtils;
+
 public class DictionaryListAdapter extends BaseAdapter {
 
     private final static String TAG = DictionaryListAdapter.class.getName();
 
     private final SlobDescriptorList data;
-    private final Activity context;
+    private final DictionaryListFragment fragment;
     private View.OnClickListener openUrlOnClick;
     private AlertDialog deleteConfirmationDialog;
 
     private final static String hrefTemplate = "<a href=\'%1$s\'>%2$s</a>";
 
-    DictionaryListAdapter(SlobDescriptorList data, Activity context) {
+    DictionaryListAdapter(SlobDescriptorList data, DictionaryListFragment fragment) {
         this.data = data;
-        this.context = context;
+        this.fragment = fragment;
         DataSetObserver observer = new DataSetObserver() {
             @Override
             public void onChanged() {
-                notifyDataSetChanged();
+                ThreadUtils.postOnMainThread(() -> notifyDataSetChanged());
             }
 
             @Override
             public void onInvalidated() {
-                notifyDataSetInvalidated();
+                ThreadUtils.postOnMainThread(() -> notifyDataSetInvalidated());
             }
         };
         this.data.registerDataSetObserver(observer);
@@ -105,8 +109,7 @@ public class DictionaryListAdapter extends BaseAdapter {
                 data.set(position14, desc13);
             });
 
-            View btnForget = view
-                    .findViewById(R.id.dictionary_btn_forget);
+            View btnForget = view.findViewById(R.id.dictionary_btn_forget);
             btnForget.setOnClickListener(view1 -> {
                 Integer position1 = (Integer) view1.getTag();
                 forget(position1);
@@ -139,8 +142,7 @@ public class DictionaryListAdapter extends BaseAdapter {
             };
             View btnToggleFav = view.findViewById(R.id.dictionary_btn_toggle_fav);
             btnToggleFav.setOnClickListener(toggleFavListener);
-            View dictLabel = view
-                    .findViewById(R.id.dictionary_label);
+            View dictLabel = view.findViewById(R.id.dictionary_label);
             dictLabel.setOnClickListener(toggleFavListener);
         }
 
@@ -150,8 +152,7 @@ public class DictionaryListAdapter extends BaseAdapter {
         switchView.setChecked(desc.active);
         switchView.setTag(position);
 
-        TextView titleView = view
-                .findViewById(R.id.dictionary_label);
+        TextView titleView = view.findViewById(R.id.dictionary_label);
         titleView.setEnabled(available);
         titleView.setText(label);
         titleView.setTag(position);
@@ -173,6 +174,9 @@ public class DictionaryListAdapter extends BaseAdapter {
 
         MaterialButton btnForget = view.findViewById(R.id.dictionary_btn_forget);
         btnForget.setTag(position);
+
+        MaterialButton btnUpdate = view.findViewById(R.id.dictionary_btn_update);
+        btnUpdate.setOnClickListener(v -> fragment.updateDictionary(desc));
 
         MaterialButton btnToggleFav = view.findViewById(R.id.dictionary_btn_toggle_fav);
         int favIcon = desc.priority > 0 ? R.drawable.ic_favorite : R.drawable.ic_favorite_border;
@@ -264,13 +268,13 @@ public class DictionaryListAdapter extends BaseAdapter {
     private void forget(final int position) {
         SlobDescriptor desc = data.get(position);
         final String label = desc.getLabel();
-        String message = context.getString(R.string.dictionaries_confirm_forget, label);
-        deleteConfirmationDialog = new MaterialAlertDialogBuilder(context)
+        String message = fragment.getString(R.string.dictionaries_confirm_forget, label);
+        deleteConfirmationDialog = new MaterialAlertDialogBuilder(fragment.requireContext())
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setTitle("")
                 .setMessage(message)
-                .setPositiveButton(android.R.string.yes, (dialog, which) -> data.remove(position))
-                .setNegativeButton(android.R.string.no, null)
+                .setPositiveButton(R.string.action_yes, (dialog, which) -> data.remove(position))
+                .setNegativeButton(R.string.action_no, null)
                 .create();
         deleteConfirmationDialog.setOnDismissListener(dialogInterface -> deleteConfirmationDialog = null);
         deleteConfirmationDialog.show();

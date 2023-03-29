@@ -25,6 +25,7 @@ import com.google.android.material.navigation.NavigationBarView;
 import java.util.Objects;
 
 import itkach.aard2.article.ArticleCollectionActivity;
+import itkach.aard2.dictionaries.DictionaryListFragment;
 import itkach.aard2.prefs.AppPrefs;
 import itkach.aard2.utils.ClipboardUtils;
 import itkach.aard2.utils.Utils;
@@ -190,12 +191,12 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
         }
 
         @Override
-        int getEmptyIcon() {
+        protected int getEmptyIcon() {
             return R.drawable.ic_bookmarks;
         }
 
         @Override
-        String getEmptyText() {
+        protected String getEmptyText() {
             return getString(R.string.main_empty_bookmarks);
         }
 
@@ -223,12 +224,12 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
         }
 
         @Override
-        int getEmptyIcon() {
+        protected int getEmptyIcon() {
             return R.drawable.ic_history;
         }
 
         @Override
-        String getEmptyText() {
+        protected String getEmptyText() {
             return getString(R.string.main_empty_history);
         }
 
@@ -249,7 +250,7 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
         LookupFragment tabLookup;
         BlobDescriptorListFragment tabBookmarks;
         BlobDescriptorListFragment tabHistory;
-        DictionariesFragment tabDictionaries;
+        DictionaryListFragment tabDictionaries;
         SettingsFragment tabSettings;
 
         public AppSectionsPagerAdapter(FragmentManager fm) {
@@ -257,7 +258,7 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
             tabLookup = new LookupFragment();
             tabBookmarks = new BookmarksFragment();
             tabHistory = new HistoryFragment();
-            tabDictionaries = new DictionariesFragment();
+            tabDictionaries = new DictionaryListFragment();
             tabSettings = new SettingsFragment();
             fragments = new Fragment[]{tabLookup, tabBookmarks, tabHistory, tabDictionaries, tabSettings};
         }
