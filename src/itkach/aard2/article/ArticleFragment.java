@@ -21,6 +21,7 @@ import com.google.android.material.progressindicator.LinearProgressIndicator;
 
 import itkach.aard2.Application;
 import itkach.aard2.R;
+import itkach.aard2.prefs.ArticleViewPrefs;
 import itkach.aard2.widget.ArticleWebView;
 
 
@@ -29,6 +30,7 @@ public class ArticleFragment extends Fragment {
 
     private ArticleWebView webView;
     private MenuItem bookmarkMenu;
+    private MenuItem stylesMenu;
     private String url;
 
 
@@ -43,6 +45,7 @@ public class ArticleFragment extends Fragment {
         menu.clear();
         inflater.inflate(R.menu.article, menu);
         bookmarkMenu = menu.findItem(R.id.action_bookmark_article);
+        stylesMenu = menu.findItem(R.id.action_select_style);
     }
 
     private void displayBookmarked(boolean value) {
@@ -160,6 +163,9 @@ public class ArticleFragment extends Fragment {
     @Override
     public void onPrepareOptionsMenu(@NonNull Menu menu) {
         super.onPrepareOptionsMenu(menu);
+        if (stylesMenu != null) {
+            stylesMenu.setVisible(!ArticleViewPrefs.disableJavaScript());
+        }
         if (url == null) {
             bookmarkMenu.setVisible(false);
         } else {

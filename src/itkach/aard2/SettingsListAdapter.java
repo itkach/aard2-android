@@ -48,9 +48,10 @@ public class SettingsListAdapter extends BaseAdapter implements SharedPreference
     final static int POS_FAV_RANDOM = 3;
     final static int POS_USE_VOLUME_FOR_NAV = 4;
     final static int POS_AUTO_PASTE = 5;
-    final static int POS_USER_STYLES = 6;
-    final static int POS_CLEAR_CACHE = 7;
-    final static int POS_ABOUT = 8;
+    final static int POS_DISABLE_JS = 6;
+    final static int POS_USER_STYLES = 7;
+    final static int POS_CLEAR_CACHE = 8;
+    final static int POS_ABOUT = 9;
 
     SettingsListAdapter(Fragment fragment) {
         this.fragment = fragment;
@@ -66,7 +67,7 @@ public class SettingsListAdapter extends BaseAdapter implements SharedPreference
 
     @Override
     public int getCount() {
-        return 9;
+        return 10;
     }
 
     @Override
@@ -104,6 +105,8 @@ public class SettingsListAdapter extends BaseAdapter implements SharedPreference
                 return getUseVolumeForNavView(convertView, parent);
             case POS_AUTO_PASTE:
                 return getAutoPasteView(convertView, parent);
+            case POS_DISABLE_JS:
+                return getDisableJavaScriptView(convertView, parent);
             case POS_USER_STYLES:
                 return getUserStylesView(convertView, parent);
             case POS_CLEAR_CACHE:
@@ -240,6 +243,28 @@ public class SettingsListAdapter extends BaseAdapter implements SharedPreference
         }
         boolean currentValue = AppPrefs.autoPasteInLookup();
         MaterialSwitch toggle = view.findViewById(R.id.setting_auto_paste);
+        toggle.setChecked(currentValue);
+        return view;
+    }
+
+    private View getDisableJavaScriptView(View convertView, ViewGroup parent) {
+        View view;
+        LayoutInflater inflater = (LayoutInflater) parent.getContext()
+                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        if (convertView != null) {
+            view = convertView;
+        } else {
+            view = inflater.inflate(R.layout.settings_disable_js, parent, false);
+            final MaterialSwitch toggle = view.findViewById(R.id.setting_disable_js);
+            toggle.setOnClickListener(v -> {
+                boolean currentValue = ArticleViewPrefs.disableJavaScript();
+                boolean newValue = !currentValue;
+                ArticleViewPrefs.setDisableJavaScript(newValue);
+                toggle.setChecked(newValue);
+            });
+        }
+        boolean currentValue = ArticleViewPrefs.disableJavaScript();
+        MaterialSwitch toggle = view.findViewById(R.id.setting_disable_js);
         toggle.setChecked(currentValue);
         return view;
     }

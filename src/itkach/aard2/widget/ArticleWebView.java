@@ -112,7 +112,7 @@ public class ArticleWebView extends SearchableWebView {
         styleSwitcherJs = Application.jsStyleSwitcher;
 
         WebSettings settings = getSettings();
-        settings.setJavaScriptEnabled(true);
+        settings.setJavaScriptEnabled(!ArticleViewPrefs.disableJavaScript());
         settings.setBuiltInZoomControls(true);
         settings.setDisplayZoomControls(false);
         if (ArticleViewPrefs.enableForceDark()) {

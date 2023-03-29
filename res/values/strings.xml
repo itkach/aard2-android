@@ -115,4 +115,6 @@
     <string name="action_yes">Yes</string>
     <string name="action_no">No</string>
     <string name="setting_enable_force_dark_web_view">Enable force dark in webview in dark mode</string>
+    <string name="setting_disable_javascript_title">Disable JavaScript</string>
+    <string name="setting_disable_javascript_subtitle">Disabling JavaScript has unintended side effects such as applying custom styles and loading remote contents.</string>
 </resources>

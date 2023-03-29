@@ -39,6 +39,14 @@ public class ArticleViewPrefs extends Prefs {
         getInstance().prefs.edit().putString(PREF_REMOTE_CONTENT, remoteContentPreference).apply();
     }
 
+    public static boolean disableJavaScript() {
+        return getInstance().prefs.getBoolean("disable_js", false);
+    }
+
+    public static void setDisableJavaScript(boolean disableJavaScript) {
+        getInstance().prefs.edit().putBoolean("disable_js", disableJavaScript).apply();
+    }
+
     public static int getPreferredZoomLevel() {
         return getInstance().prefs.getInt(PREF_TEXT_ZOOM, 100);
     }
