@@ -9,6 +9,9 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+import com.google.android.material.card.MaterialCardView;
+import com.google.android.material.elevation.SurfaceColors;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -129,13 +132,15 @@ public class BlobListAdapter extends BaseAdapter {
             LayoutInflater inflater = (LayoutInflater) parent.getContext()
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             view = inflater.inflate(R.layout.blob_descriptor_list_item, parent, false);
+            MaterialCardView cardView = view.findViewById(R.id.card_view);
+            cardView.setCardBackgroundColor(SurfaceColors.SURFACE_1.getColor(view.getContext()));
         }
 
-        TextView titleView = (TextView)view.findViewById(R.id.blob_descriptor_key);
+        TextView titleView = view.findViewById(R.id.blob_descriptor_key);
         titleView.setText(item.key);
-        TextView sourceView = (TextView)view.findViewById(R.id.blob_descriptor_source);
+        TextView sourceView = view.findViewById(R.id.blob_descriptor_source);
         sourceView.setText(slob == null ? "???" : slob.getTags().get("label"));
-        TextView timestampView = (TextView)view.findViewById(R.id.blob_descriptor_timestamp);
+        TextView timestampView = view.findViewById(R.id.blob_descriptor_timestamp);
         timestampView.setText("");
         timestampView.setVisibility(View.GONE);
         return view;

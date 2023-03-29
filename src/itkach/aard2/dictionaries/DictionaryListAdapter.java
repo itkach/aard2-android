@@ -21,7 +21,9 @@ import androidx.core.text.HtmlCompat;
 import androidx.documentfile.provider.DocumentFile;
 
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.elevation.SurfaceColors;
 import com.google.android.material.materialswitch.MaterialSwitch;
 
 import java.util.Locale;
@@ -94,6 +96,9 @@ public class DictionaryListAdapter extends BaseAdapter {
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             view = inflater.inflate(R.layout.dictionary_list_item, parent, false);
 
+            MaterialCardView cardView = view.findViewById(R.id.card_view);
+            cardView.setCardBackgroundColor(SurfaceColors.SURFACE_1.getColor(view.getContext()));
+
             View licenseView = view.findViewById(R.id.dictionary_license);
             licenseView.setOnClickListener(openUrlOnClick);
 
@@ -142,8 +147,6 @@ public class DictionaryListAdapter extends BaseAdapter {
             };
             View btnToggleFav = view.findViewById(R.id.dictionary_btn_toggle_fav);
             btnToggleFav.setOnClickListener(toggleFavListener);
-            View dictLabel = view.findViewById(R.id.dictionary_label);
-            dictLabel.setOnClickListener(toggleFavListener);
         }
 
         Resources r = parent.getResources();

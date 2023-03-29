@@ -40,8 +40,8 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
     private int oldPosition = -1;
 
     public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
         Utils.updateNightMode();
+        super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         setSupportActionBar(findViewById(R.id.toolbar));
 

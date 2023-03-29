@@ -74,8 +74,8 @@ public class ArticleCollectionActivity extends AppCompatActivity
     private boolean onDestroyCalled = false;
 
     public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
         Utils.updateNightMode();
+        super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_article_collection_loading);
         setSupportActionBar(findViewById(R.id.toolbar));
         final Application app = (Application) getApplication();

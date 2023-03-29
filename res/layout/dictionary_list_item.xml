@@ -2,11 +2,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:paddingVertical="8dp"
-    android:paddingHorizontal="16dp">
+    android:layout_height="wrap_content">
 
     <com.google.android.material.card.MaterialCardView
+        android:id="@+id/card_view"
         style="@style/Widget.AppTheme.CardView.ListItem"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -108,7 +107,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
-                        android:layout_alignParentLeft="true"
                         android:textAppearance="?attr/textAppearanceListItemSecondary"
                         tools:text="2014 Wikipedia editors and contributors" />
 
@@ -134,8 +132,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
-                        android:clickable="true"
-                        android:focusable="false"
                         android:textAppearance="?attr/textAppearanceListItemSecondary"
                         tools:text="Creative Commons with Attribution" />
                 </androidx.appcompat.widget.LinearLayoutCompat>
@@ -206,7 +202,6 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/dictionary_btn_toggle_detail"
                     android:layout_gravity="start"
-                    app:iconSize="25dp"
                     app:iconGravity="textStart"
                     app:icon="@drawable/ic_keyboard_arrow_down" />
 
@@ -222,7 +217,6 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/dictionary_btn_forget"
                     android:layout_gravity="end"
-                    app:iconSize="25dp"
                     app:iconGravity="textStart"
                     app:icon="@drawable/ic_delete_outline" />
 
@@ -232,7 +226,6 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/dictionary_btn_update"
                     android:layout_gravity="end"
-                    app:iconSize="25dp"
                     app:iconGravity="textStart"
                     app:icon="@drawable/ic_update" />
 
@@ -242,7 +235,6 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/dictionary_btn_toggle_fav"
                     android:layout_gravity="center_vertical"
-                    app:iconSize="25dp"
                     app:iconGravity="textStart"
                     tools:icon="@drawable/ic_favorite_border" />
 

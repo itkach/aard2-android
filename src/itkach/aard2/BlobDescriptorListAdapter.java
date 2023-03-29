@@ -10,6 +10,7 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.google.android.material.card.MaterialCardView;
+import com.google.android.material.elevation.SurfaceColors;
 
 import java.text.DateFormat;
 
@@ -19,13 +20,12 @@ public class BlobDescriptorListAdapter extends BaseAdapter {
 
     final BlobDescriptorList list;
     DateFormat dateFormat;
-    private final DataSetObserver observer;
     private boolean selectionMode;
 
     public BlobDescriptorListAdapter(BlobDescriptorList list) {
         this.list = list;
         this.dateFormat = DateFormat.getDateTimeInstance();
-        this.observer = new DataSetObserver() {
+        this.list.registerDataSetObserver(new DataSetObserver() {
             @Override
             public void onChanged() {
                 notifyDataSetChanged();
@@ -35,8 +35,7 @@ public class BlobDescriptorListAdapter extends BaseAdapter {
             public void onInvalidated() {
                 notifyDataSetInvalidated();
             }
-        };
-        this.list.registerDataSetObserver(observer);
+        });
     }
 
     @Override
@@ -72,12 +71,16 @@ public class BlobDescriptorListAdapter extends BaseAdapter {
         BlobDescriptor item = list.get(position);
         CharSequence timestamp = DateUtils.getRelativeTimeSpanString(item.createdAt);
         View view;
+        MaterialCardView cardView;
         if (convertView != null) {
             view = convertView;
+            cardView = view.findViewById(R.id.card_view);
         } else {
             LayoutInflater inflater = (LayoutInflater) parent.getContext()
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             view = inflater.inflate(R.layout.blob_descriptor_list_item, parent, false);
+            cardView = view.findViewById(R.id.card_view);
+            cardView.setCardBackgroundColor(SurfaceColors.SURFACE_1.getColor(view.getContext()));
         }
         TextView titleView = view.findViewById(R.id.blob_descriptor_key);
         titleView.setText(item.key);
@@ -86,8 +89,7 @@ public class BlobDescriptorListAdapter extends BaseAdapter {
         sourceView.setText(slob == null ? "???" : slob.getTags().get("label"));
         TextView timestampView = view.findViewById(R.id.blob_descriptor_timestamp);
         timestampView.setText(timestamp);
-        MaterialCardView cb = view.findViewById(R.id.card_view);
-        cb.setCheckable(isSelectionMode());
+        cardView.setCheckable(isSelectionMode());
         return view;
     }
 

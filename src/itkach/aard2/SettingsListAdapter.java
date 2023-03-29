@@ -27,7 +27,9 @@ import androidx.fragment.app.Fragment;
 import androidx.webkit.WebViewFeature;
 
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.elevation.SurfaceColors;
 import com.google.android.material.materialswitch.MaterialSwitch;
 import com.google.android.material.textview.MaterialTextView;
 
@@ -129,6 +131,8 @@ public class SettingsListAdapter extends BaseAdapter implements SharedPreference
             LayoutInflater inflater = (LayoutInflater) parent.getContext()
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             view = inflater.inflate(R.layout.settings_ui_theme_item, parent, false);
+            MaterialCardView cardView = view.findViewById(R.id.card_view);
+            cardView.setCardBackgroundColor(SurfaceColors.SURFACE_1.getColor(view.getContext()));
 
             String currentValue = AppPrefs.getPreferredTheme();
 
@@ -170,6 +174,9 @@ public class SettingsListAdapter extends BaseAdapter implements SharedPreference
             LayoutInflater inflater = (LayoutInflater) parent.getContext()
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             view = inflater.inflate(R.layout.settings_switch, parent, false);
+            MaterialCardView cardView = view.findViewById(R.id.card_view);
+            cardView.setCardBackgroundColor(SurfaceColors.SURFACE_1.getColor(view.getContext()));
+
             toggle = view.findViewById(R.id.setting_switch);
             toggle.setText(R.string.setting_enable_force_dark_web_view);
             toggle.setEnabled(WebViewFeature.isFeatureSupported(WebViewFeature.ALGORITHMIC_DARKENING));
@@ -195,6 +202,9 @@ public class SettingsListAdapter extends BaseAdapter implements SharedPreference
             LayoutInflater inflater = (LayoutInflater) parent.getContext()
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             view = inflater.inflate(R.layout.settings_switch, parent, false);
+            MaterialCardView cardView = view.findViewById(R.id.card_view);
+            cardView.setCardBackgroundColor(SurfaceColors.SURFACE_1.getColor(view.getContext()));
+
             toggle = view.findViewById(R.id.setting_switch);
             toggle.setText(R.string.setting_fav_random_search);
             toggle.setOnClickListener(v -> {
@@ -219,6 +229,9 @@ public class SettingsListAdapter extends BaseAdapter implements SharedPreference
             LayoutInflater inflater = (LayoutInflater) parent.getContext()
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             view = inflater.inflate(R.layout.settings_switch, parent, false);
+            MaterialCardView cardView = view.findViewById(R.id.card_view);
+            cardView.setCardBackgroundColor(SurfaceColors.SURFACE_1.getColor(view.getContext()));
+
             toggle = view.findViewById(R.id.setting_switch);
             toggle.setText(R.string.setting_use_volume_for_nav);
             toggle.setOnClickListener(v -> {
@@ -244,6 +257,9 @@ public class SettingsListAdapter extends BaseAdapter implements SharedPreference
             LayoutInflater inflater = (LayoutInflater) parent.getContext()
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             view = inflater.inflate(R.layout.settings_switch, parent, false);
+            MaterialCardView cardView = view.findViewById(R.id.card_view);
+            cardView.setCardBackgroundColor(SurfaceColors.SURFACE_1.getColor(view.getContext()));
+
             toggle = view.findViewById(R.id.setting_switch);
             toggle.setText(R.string.setting_auto_paste);
             toggle.setOnClickListener(v -> {
@@ -268,6 +284,9 @@ public class SettingsListAdapter extends BaseAdapter implements SharedPreference
             LayoutInflater inflater = (LayoutInflater) parent.getContext()
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             view = inflater.inflate(R.layout.settings_switch, parent, false);
+            MaterialCardView cardView = view.findViewById(R.id.card_view);
+            cardView.setCardBackgroundColor(SurfaceColors.SURFACE_1.getColor(view.getContext()));
+
             toggle = view.findViewById(R.id.setting_switch);
             toggle.setText(R.string.setting_disable_javascript_title);
             toggle.setOnClickListener(v -> {
@@ -293,6 +312,8 @@ public class SettingsListAdapter extends BaseAdapter implements SharedPreference
             view = convertView;
         } else {
             view = inflater.inflate(R.layout.settings_user_styles_item, parent, false);
+            MaterialCardView cardView = view.findViewById(R.id.card_view);
+            cardView.setCardBackgroundColor(SurfaceColors.SURFACE_1.getColor(view.getContext()));
             MaterialButton btnAdd = view.findViewById(R.id.setting_btn_add_user_style);
             btnAdd.setOnClickListener(view1 -> {
                 try {
@@ -356,6 +377,8 @@ public class SettingsListAdapter extends BaseAdapter implements SharedPreference
             LayoutInflater inflater = (LayoutInflater) parent.getContext()
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             view = inflater.inflate(R.layout.settings_remote_content_item, parent, false);
+            MaterialCardView cardView = view.findViewById(R.id.card_view);
+            cardView.setCardBackgroundColor(SurfaceColors.SURFACE_1.getColor(view.getContext()));
 
             String currentValue = ArticleViewPrefs.getRemoteContentPreference();
             View.OnClickListener clickListener = view1 -> {
@@ -394,15 +417,16 @@ public class SettingsListAdapter extends BaseAdapter implements SharedPreference
             LayoutInflater inflater = (LayoutInflater) context
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             view = inflater.inflate(R.layout.settings_clear_cache_item, parent, false);
-            view.findViewById(R.id.settings_item).setOnClickListener(v ->
-                    new MaterialAlertDialogBuilder(fragment.requireActivity())
-                            .setMessage(R.string.confirm_clear_cached_content)
-                            .setPositiveButton(R.string.action_yes, (dialog, id1) -> {
-                                WebView webView = new WebView(fragment.requireActivity());
-                                webView.clearCache(true);
-                            })
-                            .setNegativeButton(R.string.action_no, null)
-                            .show());
+            MaterialCardView cardView = view.findViewById(R.id.card_view);
+            cardView.setCardBackgroundColor(SurfaceColors.SURFACE_1.getColor(view.getContext()));
+            cardView.setOnClickListener(v -> new MaterialAlertDialogBuilder(fragment.requireActivity())
+                    .setMessage(R.string.confirm_clear_cached_content)
+                    .setPositiveButton(R.string.action_yes, (dialog, id1) -> {
+                        WebView webView = new WebView(fragment.requireActivity());
+                        webView.clearCache(true);
+                    })
+                    .setNegativeButton(R.string.action_no, null)
+                    .show());
         }
         return view;
     }
@@ -416,6 +440,8 @@ public class SettingsListAdapter extends BaseAdapter implements SharedPreference
             LayoutInflater inflater = (LayoutInflater) context
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             view = inflater.inflate(R.layout.settings_about_item, parent, false);
+            MaterialCardView cardView = view.findViewById(R.id.card_view);
+            cardView.setCardBackgroundColor(SurfaceColors.SURFACE_1.getColor(view.getContext()));
 
             String appName = context.getString(R.string.app_name);
             String title = context.getString(R.string.setting_about, appName);
