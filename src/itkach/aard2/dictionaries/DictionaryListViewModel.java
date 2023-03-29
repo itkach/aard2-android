@@ -69,14 +69,22 @@ public class DictionaryListViewModel extends AndroidViewModel {
             if (dictionaryToBeReplaced != null) {
                 application.getContentResolver().takePersistableUriPermission(newUri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
                 SlobDescriptorList dictionaries = application.dictionaries;
-                String oldId = dictionaryToBeReplaced.id;
-                dictionaries.beginUpdate();
-                dictionaryToBeReplaced.path = newUri.toString();
-                dictionaryToBeReplaced.load(application);
-                dictionaries.endUpdate(true);
-                String newId = dictionaryToBeReplaced.id;
-                String newSlobUri = application.getSlobURI(newId);
+                SlobDescriptor newSd = SlobDescriptor.fromUri(application, newUri);
+                if (!dictionaries.hasId(dictionaryToBeReplaced.id)) {
+                    // Dictionary to be replaced does not exist for some reason
+                    if (!dictionaries.hasId(newSd.id)) {
+                        // The added dictionary is new, so add it before we're finished
+                        dictionaries.add(newSd);
+                    }
+                    return;
+                }
+                // Replace dictionary
+                dictionaries.remove(dictionaryToBeReplaced);
+                dictionaries.add(newSd);
                 // Update history and bookmarks
+                String oldId = dictionaryToBeReplaced.id;
+                String newId = newSd.id;
+                String newSlobUri = application.getSlobURI(newId);
                 BlobDescriptorList history = application.history;
                 for (BlobDescriptor d : history.getList()) {
                     if (Objects.equals(d.slobId, oldId)) {
