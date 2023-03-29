@@ -19,8 +19,8 @@ import androidx.fragment.app.Fragment;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.progressindicator.LinearProgressIndicator;
 
-import itkach.aard2.Application;
 import itkach.aard2.R;
+import itkach.aard2.SlobHelper;
 import itkach.aard2.prefs.ArticleViewPrefs;
 import itkach.aard2.widget.ArticleWebView;
 
@@ -69,13 +69,12 @@ public class ArticleFragment extends Fragment {
             return true;
         }
         if (itemId == R.id.action_bookmark_article) {
-            Application app = (Application) requireActivity().getApplication();
             if (url != null) {
                 if (item.isChecked()) {
-                    app.removeBookmark(url);
+                    SlobHelper.getInstance().bookmarks.remove(url);
                     displayBookmarked(false);
                 } else {
-                    app.addBookmark(url);
+                    SlobHelper.getInstance().bookmarks.add(url);
                     displayBookmarked(true);
                 }
             }
@@ -169,9 +168,8 @@ public class ArticleFragment extends Fragment {
         if (url == null) {
             bookmarkMenu.setVisible(false);
         } else {
-            Application app = (Application) requireActivity().getApplication();
             try {
-                boolean bookmarked = app.isBookmarked(url);
+                boolean bookmarked = SlobHelper.getInstance().bookmarks.contains(url);
                 displayBookmarked(bookmarked);
             } catch (Exception ex) {
                 bookmarkMenu.setVisible(false);

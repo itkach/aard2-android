@@ -24,10 +24,10 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.material.button.MaterialButton;
 
-import itkach.aard2.Application;
 import itkach.aard2.BaseListFragment;
 import itkach.aard2.R;
 import itkach.aard2.SlobDescriptor;
+import itkach.aard2.SlobHelper;
 
 public class DictionaryListFragment extends BaseListFragment {
     private final static String TAG = DictionaryListFragment.class.getSimpleName();
@@ -78,8 +78,7 @@ public class DictionaryListFragment extends BaseListFragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         viewModel = new ViewModelProvider(this).get(DictionaryListViewModel.class);
-        final Application app = (Application) requireActivity().getApplication();
-        DictionaryListAdapter listAdapter = new DictionaryListAdapter(app.dictionaries, this);
+        DictionaryListAdapter listAdapter = new DictionaryListAdapter(SlobHelper.getInstance().dictionaries, this);
         setListAdapter(listAdapter);
     }
 

@@ -1,6 +1,5 @@
 package itkach.aard2.widget;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -39,17 +38,18 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.TreeSet;
 
-import itkach.aard2.Application;
 import itkach.aard2.BlobDescriptor;
 import itkach.aard2.R;
+import itkach.aard2.SlobHelper;
 import itkach.aard2.article.ArticleCollectionActivity;
 import itkach.aard2.prefs.ArticleViewPrefs;
 import itkach.aard2.prefs.UserStylesPrefs;
+import itkach.aard2.utils.StyleJsUtils;
 
 public class ArticleWebView extends SearchableWebView {
     public static final String TAG = ArticleWebView.class.getSimpleName();
 
-    public static final String LOCALHOST = Application.LOCALHOST;
+    public static final String LOCALHOST = SlobHelper.LOCALHOST;
 
     private static final Set<String> EXTERNAL_SCHEMES = new HashSet<String>() {{
         add("https");
@@ -59,7 +59,6 @@ public class ArticleWebView extends SearchableWebView {
         add("geo");
     }};
 
-    private final String styleSwitcherJs;
     private final String defaultStyleTitle;
     private final String autoStyleTitle;
 
@@ -108,8 +107,6 @@ public class ArticleWebView extends SearchableWebView {
         super(context, attrs);
 
         connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-
-        styleSwitcherJs = Application.jsStyleSwitcher;
 
         WebSettings settings = getSettings();
         settings.setJavaScriptEnabled(!ArticleViewPrefs.disableJavaScript());
@@ -224,10 +221,10 @@ public class ArticleWebView extends SearchableWebView {
         if (UserStylesPrefs.hasStyle(styleTitle)) {
             String css = UserStylesPrefs.getStylesheet(styleTitle);
             String elementId = getCurrentSlobId();
-            js = String.format("javascript:" + Application.jsUserStyle, elementId, css);
+            js = String.format("javascript:" + StyleJsUtils.getUserStyleJs(), elementId, css);
         } else {
             js = String.format(
-                    "javascript:" + Application.jsClearUserStyle + Application.jsSetCannedStyle,
+                    "javascript:" + StyleJsUtils.getClearUserStyleJs() + StyleJsUtils.getSetCannedStyleJs(),
                     getCurrentSlobId(), styleTitle);
         }
         if (Log.isLoggable(TAG, Log.DEBUG)) {
@@ -366,17 +363,13 @@ public class ArticleWebView extends SearchableWebView {
         setBackgroundColor(color);
     }
 
-    private Application getApplication() {
-        return (Application) ((Activity) getContext()).getApplication();
-    }
-
     private void setCurrentSlobIdFromUrl(String url) {
         if (!url.startsWith("javascript:")) {
             Uri uri = Uri.parse(url);
             BlobDescriptor bd = BlobDescriptor.fromUri(uri);
             if (bd != null) {
                 currentSlobId = bd.slobId;
-                currentSlobUri = getApplication().getSlobURI(currentSlobId);
+                currentSlobUri = SlobHelper.getInstance().getSlobUri(currentSlobId);
                 loadAvailableStylesPref();
             } else {
                 currentSlobId = null;
@@ -414,7 +407,7 @@ public class ArticleWebView extends SearchableWebView {
                 tsList = new ArrayList<>();
                 times.put(url, tsList);
                 tsList.add(System.currentTimeMillis());
-                view.loadUrl("javascript:" + styleSwitcherJs);
+                view.loadUrl("javascript:" + StyleJsUtils.getStyleSwitcherJs());
                 try {
                     timer.schedule(applyStylePref, 250, 200);
                 } catch (IllegalStateException ex) {
@@ -441,7 +434,7 @@ public class ArticleWebView extends SearchableWebView {
             } else {
                 Log.w(TAG, "onPageFinished: Unexpected page finished event for " + url);
             }
-            view.loadUrl("javascript:" + styleSwitcherJs + ";$SLOB.setStyleTitles($styleSwitcher.getTitles())");
+            view.loadUrl("javascript:" + StyleJsUtils.getStyleSwitcherJs() + ";$SLOB.setStyleTitles($styleSwitcher.getTitles())");
             applyStylePref();
         }
 

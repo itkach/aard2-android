@@ -7,11 +7,9 @@ import itkach.aard2.utils.Utils;
 import itkach.slob.Slob;
 
 public class SlobDescriptorList extends BaseDescriptorList<SlobDescriptor> {
-    private final Application app;
 
-    SlobDescriptorList(@NonNull Application app, @NonNull DescriptorStore<SlobDescriptor> store) {
+    SlobDescriptorList(@NonNull DescriptorStore<SlobDescriptor> store) {
         super(SlobDescriptor.class, store);
-        this.app = app;
     }
 
     public boolean hasId(@Nullable String id) {
@@ -27,7 +25,7 @@ public class SlobDescriptorList extends BaseDescriptorList<SlobDescriptor> {
     }
 
     public Slob resolve(SlobDescriptor sd) {
-        return this.app.getSlob(sd.id);
+        return SlobHelper.getInstance().getSlob(sd.id);
     }
 
     public void sort() {

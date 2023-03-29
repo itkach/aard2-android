@@ -40,6 +40,7 @@ import itkach.aard2.BlobDescriptorListAdapter;
 import itkach.aard2.BlobListAdapter;
 import itkach.aard2.MainActivity;
 import itkach.aard2.R;
+import itkach.aard2.SlobHelper;
 import itkach.aard2.prefs.AppPrefs;
 import itkach.aard2.prefs.ArticleCollectionPrefs;
 import itkach.aard2.utils.Utils;
@@ -105,9 +106,9 @@ public class ArticleCollectionActivity extends AppCompatActivity
                         if (action == null) {
                             result = createFromLastResult(app);
                         } else if (action.equals("showBookmarks")) {
-                            result = createFromBookmarks(app);
+                            result = createFromBookmarks();
                         } else if (action.equals("showHistory")) {
-                            result = createFromHistory(app);
+                            result = createFromHistory();
                         } else {
                             result = createFromIntent(app, intent);
                         }
@@ -221,36 +222,37 @@ public class ArticleCollectionActivity extends AppCompatActivity
         if (bd == null) {
             return null;
         }
-        Iterator<Slob.Blob> result = app.find(bd.key, bd.slobId);
-        BlobListAdapter data = new BlobListAdapter(this, 20, 1);
+        Iterator<Slob.Blob> result = SlobHelper.getInstance().find(bd.key, bd.slobId);
+        BlobListAdapter data = new BlobListAdapter(20, 1);
         data.setData(result);
         boolean hasFragment = !TextUtils.isEmpty(bd.fragment);
-        return new ArticleCollectionPagerAdapter(app, data,
+        return new ArticleCollectionPagerAdapter(data,
                 hasFragment ? new ToBlobWithFragment(bd.fragment) : blobToBlob, getSupportFragmentManager());
     }
 
     private ArticleCollectionPagerAdapter createFromLastResult(Application app) {
         return new ArticleCollectionPagerAdapter(
-                app, app.lastResult, blobToBlob, getSupportFragmentManager());
+                app.lastResult, blobToBlob, getSupportFragmentManager());
     }
 
-    private ArticleCollectionPagerAdapter createFromBookmarks(final Application app) {
+    private ArticleCollectionPagerAdapter createFromBookmarks() {
+        SlobHelper slobHelper = SlobHelper.getInstance();
         return new ArticleCollectionPagerAdapter(
-                app, new BlobDescriptorListAdapter(app.bookmarks), item ->
-                app.bookmarks.resolve((BlobDescriptor) item), getSupportFragmentManager());
+                new BlobDescriptorListAdapter(slobHelper.bookmarks), item ->
+                slobHelper.bookmarks.resolve((BlobDescriptor) item), getSupportFragmentManager());
     }
 
-    private ArticleCollectionPagerAdapter createFromHistory(final Application app) {
+    private ArticleCollectionPagerAdapter createFromHistory() {
+        SlobHelper slobHelper = SlobHelper.getInstance();
         return new ArticleCollectionPagerAdapter(
-                app, new BlobDescriptorListAdapter(app.history), item ->
-                app.history.resolve((BlobDescriptor) item), getSupportFragmentManager());
+                new BlobDescriptorListAdapter(slobHelper.history), item ->
+                slobHelper.history.resolve((BlobDescriptor) item), getSupportFragmentManager());
     }
 
     private ArticleCollectionPagerAdapter createFromIntent(Application app, Intent intent) {
         String lookupKey = intent.getStringExtra(Intent.EXTRA_TEXT);
         if (intent.getAction().equals(Intent.ACTION_PROCESS_TEXT)) {
-            lookupKey = getIntent()
-                    .getCharSequenceExtra(Intent.EXTRA_PROCESS_TEXT).toString();
+            lookupKey = getIntent().getCharSequenceExtra(Intent.EXTRA_PROCESS_TEXT).toString();
         }
         if (lookupKey == null) {
             lookupKey = intent.getStringExtra(SearchManager.QUERY);
@@ -269,36 +271,35 @@ public class ArticleCollectionActivity extends AppCompatActivity
             String slobUri = Utils.wikipediaToSlobUri(uri);
             Log.d(TAG, String.format("Converted URI %s to slob URI %s", uri, slobUri));
             if (slobUri != null) {
-                Slob slob = app.findSlob(slobUri);
+                Slob slob = SlobHelper.getInstance().findSlob(slobUri);
                 if (slob != null) {
                     preferredSlobId = slob.getId().toString();
                     Log.d(TAG, String.format("Found slob %s for slob URI %s", preferredSlobId, slobUri));
                 }
             }
         }
-        BlobListAdapter data = new BlobListAdapter(this, 20, 1);
+        BlobListAdapter data = new BlobListAdapter(20, 1);
         if (lookupKey == null || lookupKey.length() == 0) {
             String msg = getString(R.string.article_collection_nothing_to_lookup);
             throw new RuntimeException(msg);
         } else {
-            Iterator<Blob> result = stemLookup(app, lookupKey, preferredSlobId);
+            Iterator<Blob> result = stemLookup(lookupKey, preferredSlobId);
             data.setData(result);
         }
-        return new ArticleCollectionPagerAdapter(
-                app, data, blobToBlob, getSupportFragmentManager());
+        return new ArticleCollectionPagerAdapter(data, blobToBlob, getSupportFragmentManager());
     }
 
-    private Iterator<Blob> stemLookup(Application app, String lookupKey) {
-        return this.stemLookup(app, lookupKey, null);
+    private Iterator<Blob> stemLookup(String lookupKey) {
+        return this.stemLookup(lookupKey, null);
     }
 
-    private Iterator<Blob> stemLookup(Application app, String lookupKey, String preferredSlobId) {
+    private Iterator<Blob> stemLookup(String lookupKey, String preferredSlobId) {
         Slob.PeekableIterator<Blob> result;
         final int length = lookupKey.length();
         String currentLookupKey = lookupKey;
         int currentLength = currentLookupKey.length();
         do {
-            result = app.find(currentLookupKey, preferredSlobId, true);
+            result = SlobHelper.getInstance().find(currentLookupKey, preferredSlobId, true);
             if (result.hasNext()) {
                 Blob b = result.peek();
                 if (b.key.length() - length > 3) {
@@ -322,8 +323,8 @@ public class ArticleCollectionActivity extends AppCompatActivity
         if (blob != null) {
             String dictLabel = blob.owner.getTags().get("label");
             actionBar.setTitle(dictLabel);
-            Application app = (Application) getApplication();
-            app.history.add(app.getUrl(blob));
+            SlobHelper slobHelper = SlobHelper.getInstance();
+            slobHelper.history.add(slobHelper.getUrl(blob));
         } else {
             actionBar.setTitle("???");
         }
@@ -501,16 +502,14 @@ public class ArticleCollectionActivity extends AppCompatActivity
     }
 
     public static class ArticleCollectionPagerAdapter extends FragmentStatePagerAdapter {
-        private Application app;
         private final DataSetObserver observer;
         private BaseAdapter data;
         private final ToBlob toBlob;
         private int count;
         private ArticleFragment primaryItem;
 
-        public ArticleCollectionPagerAdapter(Application app, BaseAdapter data, ToBlob toBlob, FragmentManager fm) {
+        public ArticleCollectionPagerAdapter(BaseAdapter data, ToBlob toBlob, FragmentManager fm) {
             super(fm);
-            this.app = app;
             this.data = data;
             this.count = data.getCount();
             this.observer = new DataSetObserver() {
@@ -527,7 +526,6 @@ public class ArticleCollectionActivity extends AppCompatActivity
         void destroy() {
             data.unregisterDataSetObserver(observer);
             data = null;
-            app = null;
         }
 
         @Override
@@ -546,7 +544,7 @@ public class ArticleCollectionActivity extends AppCompatActivity
 
             Slob.Blob blob = get(i);
             if (blob != null) {
-                String articleUrl = app.getUrl(blob);
+                String articleUrl = SlobHelper.getInstance().getUrl(blob);
                 Bundle args = new Bundle();
                 args.putString(ArticleFragment.ARG_URL, articleUrl);
                 fragment.setArguments(args);

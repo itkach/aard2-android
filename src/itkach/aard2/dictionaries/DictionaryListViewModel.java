@@ -17,6 +17,7 @@ import itkach.aard2.BlobDescriptor;
 import itkach.aard2.BlobDescriptorList;
 import itkach.aard2.SlobDescriptor;
 import itkach.aard2.SlobDescriptorList;
+import itkach.aard2.SlobHelper;
 import itkach.aard2.utils.ThreadUtils;
 
 public class DictionaryListViewModel extends AndroidViewModel {
@@ -52,7 +53,7 @@ public class DictionaryListViewModel extends AndroidViewModel {
             for (Uri uri : selection) {
                 application.getContentResolver().takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
                 SlobDescriptor sd = SlobDescriptor.fromUri(application, uri);
-                SlobDescriptorList dictionaries = application.dictionaries;
+                SlobDescriptorList dictionaries = SlobHelper.getInstance().dictionaries;
                 if (!dictionaries.hasId(sd.id)) {
                     dictionaries.add(sd);
                 }
@@ -68,7 +69,8 @@ public class DictionaryListViewModel extends AndroidViewModel {
         ThreadUtils.postOnBackgroundThread(() -> {
             if (dictionaryToBeReplaced != null) {
                 application.getContentResolver().takePersistableUriPermission(newUri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                SlobDescriptorList dictionaries = application.dictionaries;
+                SlobHelper slobHelper = SlobHelper.getInstance();
+                SlobDescriptorList dictionaries = slobHelper.dictionaries;
                 SlobDescriptor newSd = SlobDescriptor.fromUri(application, newUri);
                 if (!dictionaries.hasId(dictionaryToBeReplaced.id)) {
                     // Dictionary to be replaced does not exist for some reason
@@ -84,15 +86,15 @@ public class DictionaryListViewModel extends AndroidViewModel {
                 // Update history and bookmarks
                 String oldId = dictionaryToBeReplaced.id;
                 String newId = newSd.id;
-                String newSlobUri = application.getSlobURI(newId);
-                BlobDescriptorList history = application.history;
+                String newSlobUri = slobHelper.getSlobUri(newId);
+                BlobDescriptorList history = slobHelper.history;
                 for (BlobDescriptor d : history.getList()) {
                     if (Objects.equals(d.slobId, oldId)) {
                         d.slobId = newId;
                         d.slobUri = newSlobUri;
                     }
                 }
-                BlobDescriptorList bookmarks = application.bookmarks;
+                BlobDescriptorList bookmarks = slobHelper.bookmarks;
                 for (BlobDescriptor d : bookmarks.getList()) {
                     if (Objects.equals(d.slobId, oldId)) {
                         d.slobId = newId;

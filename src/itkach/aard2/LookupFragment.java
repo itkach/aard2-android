@@ -88,7 +88,7 @@ public class LookupFragment extends BaseListFragment implements LookupListener {
                     @Override
                     public void run() {
                         final String query = searchView.getQuery().toString();
-                        if (app.getLookupQuery().equals(query)) {
+                        if (AppPrefs.getLastQuery().equals(query)) {
                             return;
                         }
                         requireActivity().runOnUiThread(() -> app.lookup(query));
@@ -96,7 +96,7 @@ public class LookupFragment extends BaseListFragment implements LookupListener {
                     }
                 };
                 final String query = searchView.getQuery().toString();
-                if (!app.getLookupQuery().equals(query)) {
+                if (!AppPrefs.getLastQuery().equals(query)) {
                     if (scheduledLookup != null) {
                         scheduledLookup.cancel();
                     }
@@ -133,7 +133,7 @@ public class LookupFragment extends BaseListFragment implements LookupListener {
                 app.lookup(clipboard.toString(), false);
             }
         }
-        CharSequence query = app.getLookupQuery();
+        CharSequence query = AppPrefs.getLastQuery();
         searchView.setQuery(query, true);
         if (app.lastResult.getCount() > 0) {
             searchView.clearFocus();
@@ -154,8 +154,8 @@ public class LookupFragment extends BaseListFragment implements LookupListener {
         if (!busy) {
             TextView emptyText = emptyView.findViewById(R.id.empty_text);
             String msg = "";
-            String query = app.getLookupQuery();
-            if (query != null && !query.equals("")) {
+            String query = AppPrefs.getLastQuery();
+            if (!query.equals("")) {
                 msg = getString(R.string.lookup_nothing_found);
             }
             emptyText.setText(msg);

@@ -3,8 +3,6 @@ package itkach.aard2;
 import android.database.DataSetObservable;
 import android.database.DataSetObserver;
 import android.net.Uri;
-import android.os.Handler;
-import android.os.Looper;
 import android.util.Log;
 
 import androidx.annotation.MainThread;
@@ -22,41 +20,40 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
+import itkach.aard2.utils.ThreadUtils;
 import itkach.aard2.utils.Utils;
 import itkach.slob.Slob;
 
 public final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
-    private final String TAG = getClass().getSimpleName();
+    private static final String TAG = BlobDescriptorList.class.getSimpleName();
 
     enum SortOrder {
         TIME, NAME
     }
 
-    private Application app;
-    private DescriptorStore<BlobDescriptor> store;
-    private List<BlobDescriptor> list;
-    private List<BlobDescriptor> filteredList;
+    private final DescriptorStore<BlobDescriptor> store;
+    private final List<BlobDescriptor> list;
+    private final List<BlobDescriptor> filteredList;
+    private final DataSetObservable dataSetObservable;
+    private final Comparator<BlobDescriptor> nameComparatorAsc;
+    private final Comparator<BlobDescriptor> nameComparatorDesc;
+    private final Comparator<BlobDescriptor> timeComparatorAsc;
+    private final Comparator<BlobDescriptor> timeComparatorDesc;
+    private final Comparator<BlobDescriptor> lastAccessComparator;
+    private final Slob.KeyComparator keyComparator;
+    private final int maxSize;
+    private final RuleBasedCollator filterCollator;
+
     private String filter;
     private SortOrder order;
     private boolean ascending;
-    private final DataSetObservable dataSetObservable;
-    private Comparator<BlobDescriptor> nameComparatorAsc;
-    private Comparator<BlobDescriptor> nameComparatorDesc;
-    private Comparator<BlobDescriptor> timeComparatorAsc;
-    private Comparator<BlobDescriptor> timeComparatorDesc;
     private Comparator<BlobDescriptor> comparator;
-    private Comparator<BlobDescriptor> lastAccessComparator;
-    private Slob.KeyComparator keyComparator;
-    private int maxSize;
-    private RuleBasedCollator filterCollator;
-    private Handler handler;
 
-    BlobDescriptorList(Application app, DescriptorStore<BlobDescriptor> store) {
-        this(app, store, 100);
+    BlobDescriptorList(DescriptorStore<BlobDescriptor> store) {
+        this(store, 100);
     }
 
-    BlobDescriptorList(Application app, DescriptorStore<BlobDescriptor> store, int maxSize) {
-        this.app = app;
+    BlobDescriptorList(DescriptorStore<BlobDescriptor> store, int maxSize) {
         this.store = store;
         this.maxSize = maxSize;
         this.list = new ArrayList<>();
@@ -86,7 +83,6 @@ public final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
         }
         filterCollator.setStrength(Collator.PRIMARY);
         filterCollator.setAlternateHandlingShifted(false);
-        handler = new Handler(Looper.getMainLooper());
     }
 
     public void registerDataSetObserver(DataSetObserver observer) {
@@ -150,18 +146,14 @@ public final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
     }
 
     void updateLastAccess(final BlobDescriptor bd) {
-        if (Looper.myLooper() == Looper.getMainLooper()) {
-            doUpdateLastAccess(bd);
-        } else {
-            handler.post(() -> doUpdateLastAccess(bd));
-        }
+        ThreadUtils.postOnMainThread(() -> doUpdateLastAccess(bd));
     }
 
     Slob resolveOwner(BlobDescriptor bd) {
-        Slob slob = app.getSlob(bd.slobId);
+        Slob slob = SlobHelper.getInstance().getSlob(bd.slobId);
 //        if (slob == null || !slob.file.exists()) {
         if (slob == null) {
-            slob = app.findSlob(bd.slobUri);
+            slob = SlobHelper.getInstance().findSlob(bd.slobUri);
         }
         return slob;
     }
@@ -177,18 +169,15 @@ public final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
             blob = new Slob.Blob(slob, bd.blobId, bd.key, bd.fragment);
         } else {
             try {
-                Iterator<Slob.Blob> result = slob.find(bd.key,
-                        Slob.Strength.QUATERNARY);
+                Iterator<Slob.Blob> result = slob.find(bd.key, Slob.Strength.QUATERNARY);
                 if (result.hasNext()) {
                     blob = result.next();
                     bd.slobId = slobId;
                     bd.blobId = blob.id;
                 }
             } catch (Exception ex) {
-                Log.w(TAG,
-                        String.format("Failed to resolve descriptor %s (%s) in %s (%s)",
+                Log.w(TAG, String.format("Failed to resolve descriptor %s (%s) in %s (%s)",
                                 bd.blobId, bd.key, slob.getId(), slob.fileURI), ex);
-                blob = null;
             }
         }
         if (blob != null) {
@@ -202,7 +191,7 @@ public final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
         Uri uri = Uri.parse(contentUrl);
         BlobDescriptor bd = BlobDescriptor.fromUri(uri);
         if (bd != null) {
-            String slobUri = app.getSlobURI(bd.slobId);
+            String slobUri = SlobHelper.getInstance().getSlobUri(bd.slobId);
             Log.d(TAG, "Found slob uri for: " + bd.slobId + " " + slobUri);
             bd.slobUri = slobUri;
         }

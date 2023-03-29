@@ -1,7 +1,6 @@
 package itkach.aard2;
 
 import android.content.Context;
-import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,44 +15,36 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
+import itkach.aard2.utils.ThreadUtils;
 import itkach.slob.Slob;
 
 public class BlobListAdapter extends BaseAdapter {
 
     private static final String TAG = BlobListAdapter.class.getSimpleName();
 
-    Handler             mainHandler;
-    List<Slob.Blob>     list;
-    Iterator<Slob.Blob> iter;
-    ExecutorService     executor;
+    private final List<Slob.Blob> list;
+    private Iterator<Slob.Blob> iter;
 
-    private final int   chunkSize;
-    private final int   loadMoreThreashold;
-    int                 MAX_SIZE   = 10000;
+    private final int chunkSize;
+    private final int loadMoreThreashold;
+    int MAX_SIZE = 10000;
 
 
-    public BlobListAdapter(Context context) {
-        this(context, 20, 10);
+    public BlobListAdapter() {
+        this(20, 10);
     }
 
-    public BlobListAdapter(Context context, int chunkSize, int loadMoreThreashold) {
-        this.mainHandler = new Handler(context.getMainLooper());
-        this.executor = Executors.newSingleThreadExecutor();
+    public BlobListAdapter(int chunkSize, int loadMoreThreashold) {
         this.list = new ArrayList<>(chunkSize);
         this.chunkSize = chunkSize;
         this.loadMoreThreashold = loadMoreThreashold;
     }
 
     public void setData(Iterator<Slob.Blob> lookupResultsIter) {
-        mainHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                list.clear();
-                notifyDataSetChanged();
-            }
+        ThreadUtils.postOnMainThread(() -> {
+            list.clear();
+            notifyDataSetChanged();
         });
         this.iter = lookupResultsIter;
         loadChunkSync();
@@ -64,36 +55,26 @@ public class BlobListAdapter extends BaseAdapter {
         int count = 0;
         final List<Slob.Blob> chunkList = new LinkedList<>();
 
-        while (iter.hasNext() && count < chunkSize
-                && list.size() <= MAX_SIZE) {
+        while (iter.hasNext() && count < chunkSize && list.size() <= MAX_SIZE) {
             count++;
             Slob.Blob b = iter.next();
             chunkList.add(b);
         }
 
-        mainHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                list.addAll(chunkList);
-                notifyDataSetChanged();
-            }
+        ThreadUtils.postOnMainThread(() -> {
+            list.addAll(chunkList);
+            notifyDataSetChanged();
         });
 
-        Log.d(TAG,
-                String.format("Loaded chunk of %d (adapter size %d) in %d ms",
-                        count, list.size(), (System.currentTimeMillis() - t0)));
+        Log.d(TAG, String.format("Loaded chunk of %d (adapter size %d) in %d ms",
+                count, list.size(), (System.currentTimeMillis() - t0)));
     }
 
     private void loadChunk() {
         if (!iter.hasNext()) {
             return;
         }
-        executor.execute(new Runnable() {
-            @Override
-            public void run() {
-                loadChunkSync();
-            }
-        });
+        ThreadUtils.postOnBackgroundThread(this::loadChunkSync);
     }
 
     @Override

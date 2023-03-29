@@ -58,10 +58,9 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
         bottomNavigationView = findViewById(R.id.bottom_navigation);
         bottomNavigationView.setOnItemSelectedListener(this);
 
-        final Application app = (Application) getApplication();
         if (savedInstanceState != null) {
             onRestoreInstanceState(savedInstanceState);
-        } else if (app.dictionaries.size() == 0) {
+        } else if (SlobHelper.getInstance().dictionaries.size() == 0) {
             viewPager.setCurrentItem(3);
         }
     }
@@ -134,15 +133,13 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
-            Application app = (Application) getApplication();
-            Slob.Blob blob = app.random();
+            Slob.Blob blob = SlobHelper.getInstance().findRandom();
             if (blob == null) {
                 Toast.makeText(this, R.string.article_collection_nothing_found, Toast.LENGTH_SHORT).show();
                 return true;
             }
-            Intent intent = new Intent(this,
-                    ArticleCollectionActivity.class);
-            intent.setData(Uri.parse(app.getUrl(blob)));
+            Intent intent = new Intent(this, ArticleCollectionActivity.class);
+            intent.setData(Uri.parse(SlobHelper.getInstance().getUrl(blob)));
             startActivity(intent);
             return true;
         }
@@ -186,8 +183,7 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
 
         @Override
         BlobDescriptorList getDescriptorList() {
-            Application app = (Application) requireActivity().getApplication();
-            return app.bookmarks;
+            return SlobHelper.getInstance().bookmarks;
         }
 
         @Override
@@ -219,8 +215,7 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
 
         @Override
         BlobDescriptorList getDescriptorList() {
-            Application app = (Application) requireActivity().getApplication();
-            return app.history;
+            return SlobHelper.getInstance().history;
         }
 
         @Override
