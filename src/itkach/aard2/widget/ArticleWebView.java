@@ -38,7 +38,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.TreeSet;
 
-import itkach.aard2.BlobDescriptor;
+import itkach.aard2.descriptor.BlobDescriptor;
 import itkach.aard2.R;
 import itkach.aard2.SlobHelper;
 import itkach.aard2.article.ArticleCollectionActivity;

@@ -16,7 +16,6 @@ import androidx.lifecycle.ViewModelProvider;
 
 import itkach.aard2.Application;
 import itkach.aard2.BaseListFragment;
-import itkach.aard2.BlobListAdapter;
 import itkach.aard2.R;
 import itkach.aard2.SlobHelper;
 import itkach.aard2.article.ArticleCollectionActivity;
@@ -27,7 +26,7 @@ public class LookupFragment extends BaseListFragment implements LookupListener, 
     private final static String TAG = LookupFragment.class.getSimpleName();
 
     private SearchView searchView;
-    private BlobListAdapter listAdapter;
+    private LookupResultAdapter listAdapter;
     private LookupViewModel viewModel;
 
     @Override
@@ -65,7 +64,7 @@ public class LookupFragment extends BaseListFragment implements LookupListener, 
             intent.putExtra("position", position);
             startActivity(intent);
         });
-        listAdapter = new BlobListAdapter(SlobHelper.getInstance().lastLookupResult);
+        listAdapter = new LookupResultAdapter(SlobHelper.getInstance().lastLookupResult);
         getListView().setAdapter(listAdapter);
     }
 

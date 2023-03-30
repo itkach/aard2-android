@@ -18,6 +18,9 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
+import itkach.aard2.descriptor.BlobDescriptor;
+import itkach.aard2.descriptor.DescriptorStore;
+import itkach.aard2.descriptor.SlobDescriptor;
 import itkach.aard2.lookup.LookupResult;
 import itkach.aard2.prefs.AppPrefs;
 import itkach.slob.Slob;

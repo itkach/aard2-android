@@ -1,4 +1,4 @@
-package itkach.aard2;
+package itkach.aard2.descriptor;
 
 import android.content.Context;
 import android.net.Uri;
@@ -7,6 +7,7 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import java.io.FileInputStream;
 import java.util.HashMap;
@@ -25,12 +26,13 @@ public class SlobDescriptor extends BaseDescriptor {
     public long blobCount;
     public String error;
     public boolean expandDetail = false;
+    @SuppressWarnings("FieldCanBeLocal")
     private transient ParcelFileDescriptor fileDescriptor;
 
     private SlobDescriptor() {
     }
 
-    private void update(Slob s) {
+    private void update(@NonNull Slob s) {
         this.id = s.getId().toString();
         this.path = s.fileURI;
         this.tags = s.getTags();
@@ -38,12 +40,11 @@ public class SlobDescriptor extends BaseDescriptor {
         this.error = null;
     }
 
-    public Slob load(final Context context) {
+    @Nullable
+    public Slob load(@NonNull Context context) {
         Slob slob = null;
         try {
             final Uri uri = Uri.parse(path);
-            // Must hold on to ParcelFileDescriptor,
-            // Otherwise it gets garbage collected and trashes underlying file descriptor
             fileDescriptor = context.getContentResolver().openFileDescriptor(uri, "r");
             FileInputStream fileInputStream = new FileInputStream(fileDescriptor.getFileDescriptor());
             slob = new Slob(fileInputStream.getChannel(), path);
@@ -60,6 +61,7 @@ public class SlobDescriptor extends BaseDescriptor {
         return slob;
     }
 
+    @NonNull
     public String getLabel() {
         String label = tags.get("label");
         if (TextUtils.isEmpty(label)) {

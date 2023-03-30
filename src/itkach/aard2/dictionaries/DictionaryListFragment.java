@@ -26,7 +26,7 @@ import com.google.android.material.button.MaterialButton;
 
 import itkach.aard2.BaseListFragment;
 import itkach.aard2.R;
-import itkach.aard2.SlobDescriptor;
+import itkach.aard2.descriptor.SlobDescriptor;
 import itkach.aard2.SlobHelper;
 
 public class DictionaryListFragment extends BaseListFragment {

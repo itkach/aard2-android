@@ -4,13 +4,17 @@ import android.database.DataSetObservable;
 import android.database.DataSetObserver;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
 import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-abstract class BaseDescriptorList<T extends BaseDescriptor> extends AbstractList<T> {
+import itkach.aard2.descriptor.BaseDescriptor;
+import itkach.aard2.descriptor.DescriptorStore;
 
+public abstract class BaseDescriptorList<T extends BaseDescriptor> extends AbstractList<T> {
     private final DataSetObservable dataSetObservable;
     private final DescriptorStore<T> store;
     private final List<T> list;
@@ -30,7 +34,7 @@ abstract class BaseDescriptorList<T extends BaseDescriptor> extends AbstractList
         this.dataSetObservable.registerObserver(observer);
     }
 
-    void unregisterDataSetObserver(DataSetObserver observer) {
+    public void unregisterDataSetObserver(DataSetObserver observer) {
         this.dataSetObservable.unregisterObserver(observer);
     }
 
@@ -53,18 +57,18 @@ abstract class BaseDescriptorList<T extends BaseDescriptor> extends AbstractList
         }
     }
 
-    void load() {
-        this.addAll(this.store.load(typeParameterClass));
+    public void load() {
+        addAll(this.store.load(typeParameterClass));
     }
 
     @Override
     public T get(int i) {
-        return this.list.get(i);
+        return list.get(i);
     }
 
     @Override
     public T set(int location, T object) {
-        T result = this.list.set(location, object);
+        T result = list.set(location, object);
         this.store.save(object);
         notifyChanged();
         return result;
@@ -72,18 +76,18 @@ abstract class BaseDescriptorList<T extends BaseDescriptor> extends AbstractList
 
     @Override
     public int size() {
-        return this.list.size();
+        return list.size();
     }
 
     @Override
     public void add(int location, T object) {
-        this.list.add(location, object);
-        this.store.save(object);
+        list.add(location, object);
+        store.save(object);
         notifyChanged();
     }
 
     @Override
-    public boolean addAll(int location, Collection<? extends T> collection) {
+    public boolean addAll(int location, @NonNull Collection<? extends T> collection) {
         beginUpdate();
         boolean result = super.addAll(location, collection);
         endUpdate(result);
@@ -91,7 +95,7 @@ abstract class BaseDescriptorList<T extends BaseDescriptor> extends AbstractList
     }
 
     @Override
-    public boolean addAll(Collection<? extends T> collection) {
+    public boolean addAll(@NonNull Collection<? extends T> collection) {
         beginUpdate();
         boolean result = super.addAll(collection);
         endUpdate(result);
@@ -100,7 +104,7 @@ abstract class BaseDescriptorList<T extends BaseDescriptor> extends AbstractList
 
     @Override
     public T remove(int location) {
-        T result = this.list.remove(location);
+        T result = list.remove(location);
         this.store.delete(result.id);
         notifyChanged();
         return result;

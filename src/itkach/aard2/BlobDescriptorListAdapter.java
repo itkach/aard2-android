@@ -12,6 +12,7 @@ import android.widget.TextView;
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.elevation.SurfaceColors;
 
+import itkach.aard2.descriptor.BlobDescriptor;
 import itkach.slob.Slob;
 
 public class BlobDescriptorListAdapter extends BaseAdapter {

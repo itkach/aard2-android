@@ -16,7 +16,7 @@ import androidx.lifecycle.MutableLiveData;
 import java.util.Iterator;
 import java.util.List;
 
-import itkach.aard2.BlobDescriptor;
+import itkach.aard2.descriptor.BlobDescriptor;
 import itkach.aard2.R;
 import itkach.aard2.SlobHelper;
 import itkach.aard2.lookup.LookupResult;

@@ -1,6 +1,9 @@
-package itkach.aard2;
+package itkach.aard2.descriptor;
 
 import android.util.Log;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -8,19 +11,18 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-class DescriptorStore<T extends BaseDescriptor> {
-
+public class DescriptorStore<T extends BaseDescriptor> {
     static final String TAG = DescriptorStore.class.getSimpleName();
 
-    private File         dir;
-    private ObjectMapper mapper;
+    private final File dir;
+    private final ObjectMapper mapper;
 
-    DescriptorStore(ObjectMapper mapper, File dir) {
+    public DescriptorStore(@NonNull ObjectMapper mapper, @NonNull File dir) {
         this.dir = dir;
         this.mapper = mapper;
     }
 
-    List<T> load(Class<T> type) {
+    public List<T> load(@NonNull Class<T> type) {
         List<T> result = new ArrayList<>();
         File[] files = dir.listFiles();
         if (files != null) {
@@ -40,13 +42,13 @@ class DescriptorStore<T extends BaseDescriptor> {
         return result;
     }
 
-    void save(List<T> lst) {
+    public void save(@NonNull List<T> lst) {
         for (T item : lst) {
             save(item);
         }
     }
 
-    void save(T item) {
+    public void save(@NonNull T item) {
         if (item.id == null) {
             Log.d(getClass().getName(), "Can't save item without id");
             return;
@@ -58,7 +60,7 @@ class DescriptorStore<T extends BaseDescriptor> {
         }
     }
 
-    boolean delete(String itemId) {
+    public boolean delete(@Nullable String itemId) {
         if (itemId == null) {
             return false;
         }

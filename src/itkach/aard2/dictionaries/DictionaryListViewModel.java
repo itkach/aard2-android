@@ -13,9 +13,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import itkach.aard2.BlobDescriptor;
+import itkach.aard2.descriptor.BlobDescriptor;
 import itkach.aard2.BlobDescriptorList;
-import itkach.aard2.SlobDescriptor;
+import itkach.aard2.descriptor.SlobDescriptor;
 import itkach.aard2.SlobDescriptorList;
 import itkach.aard2.SlobHelper;
 import itkach.aard2.utils.ThreadUtils;

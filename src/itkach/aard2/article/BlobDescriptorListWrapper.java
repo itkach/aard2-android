@@ -5,7 +5,7 @@ import android.database.DataSetObserver;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import itkach.aard2.BlobDescriptor;
+import itkach.aard2.descriptor.BlobDescriptor;
 import itkach.aard2.BlobDescriptorList;
 import itkach.slob.Slob;
 

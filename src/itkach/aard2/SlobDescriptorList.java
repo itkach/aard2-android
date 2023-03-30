@@ -3,11 +3,12 @@ package itkach.aard2;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import itkach.aard2.descriptor.DescriptorStore;
+import itkach.aard2.descriptor.SlobDescriptor;
 import itkach.aard2.utils.Utils;
 import itkach.slob.Slob;
 
 public class SlobDescriptorList extends BaseDescriptorList<SlobDescriptor> {
-
     SlobDescriptorList(@NonNull DescriptorStore<SlobDescriptor> store) {
         super(SlobDescriptor.class, store);
     }
@@ -24,7 +25,8 @@ public class SlobDescriptorList extends BaseDescriptorList<SlobDescriptor> {
         return false;
     }
 
-    public Slob resolve(SlobDescriptor sd) {
+    @Nullable
+    public Slob resolve(@NonNull SlobDescriptor sd) {
         return SlobHelper.getInstance().getSlob(sd.id);
     }
 
@@ -48,7 +50,7 @@ public class SlobDescriptorList extends BaseDescriptorList<SlobDescriptor> {
     }
 
     @Override
-    void load() {
+    public void load() {
         beginUpdate();
         super.load();
         sort();

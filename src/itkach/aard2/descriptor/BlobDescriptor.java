@@ -1,6 +1,9 @@
-package itkach.aard2;
+package itkach.aard2.descriptor;
 
 import android.net.Uri;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import java.util.List;
 import java.util.UUID;
@@ -16,14 +19,18 @@ public class BlobDescriptor extends BaseDescriptor {
         result = prime * result + ((slobId == null) ? 0 : slobId.hashCode());
         return result;
     }
+
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
+    public boolean equals(@Nullable Object obj) {
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         BlobDescriptor other = (BlobDescriptor) obj;
         if (blobId == null) {
             if (other.blobId != null)
@@ -36,19 +43,18 @@ public class BlobDescriptor extends BaseDescriptor {
         } else if (!fragment.equals(other.fragment))
             return false;
         if (slobId == null) {
-            if (other.slobId != null)
-                return false;
-        } else if (!slobId.equals(other.slobId))
-            return false;
-        return true;
+            return other.slobId == null;
+        } else return slobId.equals(other.slobId);
     }
+
     public String slobId;
     public String slobUri;
     public String blobId;
     public String key;
     public String fragment;
 
-    public static BlobDescriptor fromUri(Uri uri) {
+    @Nullable
+    public static BlobDescriptor fromUri(@NonNull Uri uri) {
         BlobDescriptor bd = new BlobDescriptor();
         bd.id = UUID.randomUUID().toString();
         bd.createdAt = System.currentTimeMillis();

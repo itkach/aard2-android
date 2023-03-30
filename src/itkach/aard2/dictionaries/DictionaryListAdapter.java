@@ -29,7 +29,7 @@ import com.google.android.material.materialswitch.MaterialSwitch;
 import java.util.Locale;
 
 import itkach.aard2.R;
-import itkach.aard2.SlobDescriptor;
+import itkach.aard2.descriptor.SlobDescriptor;
 import itkach.aard2.SlobDescriptorList;
 import itkach.aard2.utils.ThreadUtils;
 

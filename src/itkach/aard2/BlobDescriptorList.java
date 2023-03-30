@@ -20,6 +20,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
+import itkach.aard2.descriptor.BlobDescriptor;
+import itkach.aard2.descriptor.DescriptorStore;
 import itkach.aard2.utils.ThreadUtils;
 import itkach.aard2.utils.Utils;
 import itkach.slob.Slob;

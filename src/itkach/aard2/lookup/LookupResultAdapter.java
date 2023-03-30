@@ -1,4 +1,4 @@
-package itkach.aard2;
+package itkach.aard2.lookup;
 
 import android.content.Context;
 import android.database.DataSetObserver;
@@ -15,11 +15,11 @@ import com.google.android.material.elevation.SurfaceColors;
 
 import java.util.List;
 
-import itkach.aard2.lookup.LookupResult;
+import itkach.aard2.R;
 import itkach.aard2.utils.ThreadUtils;
 import itkach.slob.Slob;
 
-public class BlobListAdapter extends BaseAdapter {
+public class LookupResultAdapter extends BaseAdapter {
     private List<Slob.Blob> list;
 
     private final LookupResult lookupResult;
@@ -41,7 +41,7 @@ public class BlobListAdapter extends BaseAdapter {
         }
     };
 
-    public BlobListAdapter(@NonNull LookupResult lookupResult) {
+    public LookupResultAdapter(@NonNull LookupResult lookupResult) {
         this.lookupResult = lookupResult;
         this.lookupResult.registerDataSetObserver(observer);
     }
