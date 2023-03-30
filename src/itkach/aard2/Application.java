@@ -62,18 +62,16 @@ public class Application extends android.app.Application {
                 slobHelper.lastLookupResult.setResult(Collections.emptyIterator());
                 slobHelper.updateSlobs();
                 ThreadUtils.postOnMainThread(() -> {
-                    new EnableLinkHandling(Application.this).execute(slobHelper.getActiveSlobs());
-                    lookup(AppPrefs.getLastQuery());
+                    new EnableLinkHandling(Application.this)
+                            .execute(slobHelper.getActiveSlobs());
                     slobHelper.bookmarks.notifyDataSetChanged();
                     slobHelper.history.notifyDataSetChanged();
+                    lookupAsync(AppPrefs.getLastQuery());
                 });
             }
         });
 
-        ThreadUtils.postOnBackgroundThread(() -> {
-            slobHelper.init();
-            ThreadUtils.postOnMainThread(() -> lookup(AppPrefs.getLastQuery(), false));
-        });
+        ThreadUtils.postOnBackgroundThread(() -> slobHelper.init());
     }
 
     public void push(Activity activity) {
@@ -94,48 +92,23 @@ public class Application extends android.app.Application {
         AppPrefs.setLastQuery(query);
     }
 
-    private AsyncTask<Void, Void, Iterator<Blob>> currentLookupTask;
+    private LookupTask currentLookupTask;
 
-    public void lookup(String query) {
-        lookup(query, true);
-    }
-
-    public void lookup(final String query, boolean async) {
+    public void lookupAsync(@NonNull String query) {
         if (currentLookupTask != null) {
             currentLookupTask.cancel(false);
             notifyLookupCanceled(query);
             currentLookupTask = null;
         }
         notifyLookupStarted(query);
-        if (query == null || query.equals("")) {
+        if (query.isEmpty()) {
             setLookupResult("", Collections.emptyIterator());
             notifyLookupFinished(query);
             return;
         }
 
-        if (async) {
-            currentLookupTask = new AsyncTask<Void, Void, Iterator<Blob>>() {
-
-                @Override
-                protected Iterator<Blob> doInBackground(Void... params) {
-                    return slobHelper.find(query);
-                }
-
-                @Override
-                protected void onPostExecute(Iterator<Blob> result) {
-                    if (!isCancelled()) {
-                        setLookupResult(query, result);
-                        notifyLookupFinished(query);
-                        currentLookupTask = null;
-                    }
-                }
-
-            };
-            currentLookupTask.execute();
-        } else {
-            setLookupResult(query, slobHelper.find(query));
-            notifyLookupFinished(query);
-        }
+        currentLookupTask = new LookupTask(this, query);
+        currentLookupTask.execute();
     }
 
     private void notifyLookupStarted(String query) {
@@ -166,6 +139,29 @@ public class Application extends android.app.Application {
         lookupListeners.remove(listener);
     }
 
+    private static class LookupTask extends AsyncTask<Void, Void, Iterator<Blob>> {
+        private final Application application;
+        private final String query;
+        public LookupTask(@NonNull Application application, @NonNull String query) {
+            this.application = application;
+            this.query = query;
+        }
+
+        @Override
+        @NonNull
+        protected Iterator<Blob> doInBackground(Void... params) {
+            return SlobHelper.getInstance().find(query);
+        }
+
+        @Override
+        protected void onPostExecute(Iterator<Blob> result) {
+            if (!isCancelled()) {
+                application.setLookupResult(query, result);
+                application.notifyLookupFinished(query);
+            }
+        }
+
+    }
 
     private static class EnableLinkHandling extends AsyncTask<Slob, Void, Void> {
         private final Application application;
