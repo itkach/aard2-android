@@ -1,4 +1,4 @@
-package itkach.aard2;
+package itkach.aard2.lookup;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -16,19 +16,23 @@ import androidx.appcompat.widget.SearchView;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import itkach.aard2.Application;
+import itkach.aard2.BaseListFragment;
+import itkach.aard2.BlobListAdapter;
+import itkach.aard2.R;
+import itkach.aard2.SlobHelper;
 import itkach.aard2.article.ArticleCollectionActivity;
 import itkach.aard2.prefs.AppPrefs;
 import itkach.aard2.utils.ClipboardUtils;
 
-public class LookupFragment extends BaseListFragment implements LookupListener {
+public class LookupFragment extends BaseListFragment implements LookupListener, SearchView.OnQueryTextListener {
+    private final static String TAG = LookupFragment.class.getSimpleName();
 
     private Timer timer;
     private SearchView searchView;
     private Application app;
-    private SearchView.OnQueryTextListener queryTextListener;
-    private SearchView.OnCloseListener closeListener;
-
-    private final static String TAG = LookupFragment.class.getSimpleName();
+    private TimerTask scheduledLookup = null;
+    private BlobListAdapter listAdapter;
 
     @Override
     protected int getEmptyIcon() {
@@ -60,53 +64,12 @@ public class LookupFragment extends BaseListFragment implements LookupListener {
         ListView listView = getListView();
         listView.setOnItemClickListener((parent, view1, position, id) -> {
             Log.i("--", "Item clicked: " + position);
-            Intent intent = new Intent(getActivity(),
-                    ArticleCollectionActivity.class);
+            Intent intent = new Intent(getActivity(), ArticleCollectionActivity.class);
             intent.putExtra("position", position);
             startActivity(intent);
         });
-        final Application app = (Application) requireActivity().getApplication();
-        getListView().setAdapter(app.lastResult);
-
-        closeListener = () -> true;
-
-        queryTextListener = new SearchView.OnQueryTextListener() {
-
-            TimerTask scheduledLookup = null;
-
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                Log.d(TAG, "query text submit: " + query);
-                onQueryTextChange(query);
-                return true;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                Log.d(TAG, "new query text: " + newText);
-                TimerTask doLookup = new TimerTask() {
-                    @Override
-                    public void run() {
-                        final String query = searchView.getQuery().toString();
-                        if (AppPrefs.getLastQuery().equals(query)) {
-                            return;
-                        }
-                        requireActivity().runOnUiThread(() -> app.lookup(query));
-                        scheduledLookup = null;
-                    }
-                };
-                final String query = searchView.getQuery().toString();
-                if (!AppPrefs.getLastQuery().equals(query)) {
-                    if (scheduledLookup != null) {
-                        scheduledLookup.cancel();
-                    }
-                    scheduledLookup = doLookup;
-                    timer.schedule(doLookup, 600);
-                }
-                return true;
-            }
-        };
-
+        listAdapter = new BlobListAdapter(SlobHelper.getInstance().lastLookupResult);
+        getListView().setAdapter(listAdapter);
     }
 
 
@@ -119,8 +82,8 @@ public class LookupFragment extends BaseListFragment implements LookupListener {
         searchView = filterActionView.findViewById(R.id.search);
         searchView.setQueryHint(lookupMenu.getTitle());
         searchView.setIconified(false);
-        searchView.setOnQueryTextListener(queryTextListener);
-        searchView.setOnCloseListener(closeListener);
+        searchView.setOnQueryTextListener(this);
+        searchView.setOnCloseListener(() -> true);
         searchView.setSubmitButtonEnabled(false);
     }
 
@@ -135,7 +98,7 @@ public class LookupFragment extends BaseListFragment implements LookupListener {
         }
         CharSequence query = AppPrefs.getLastQuery();
         searchView.setQuery(query, true);
-        if (app.lastResult.getCount() > 0) {
+        if (listAdapter != null && listAdapter.getCount() > 0) {
             searchView.clearFocus();
         }
     }
@@ -155,7 +118,7 @@ public class LookupFragment extends BaseListFragment implements LookupListener {
             TextView emptyText = emptyView.findViewById(R.id.empty_text);
             String msg = "";
             String query = AppPrefs.getLastQuery();
-            if (!query.equals("")) {
+            if (!query.isEmpty()) {
                 msg = getString(R.string.lookup_nothing_found);
             }
             emptyText.setText(msg);
@@ -167,6 +130,7 @@ public class LookupFragment extends BaseListFragment implements LookupListener {
         if (timer != null) {
             timer.cancel();
         }
+        listAdapter = null;
         Application app = (Application) requireActivity().getApplication();
         app.removeLookupListener(this);
         super.onDestroy();
@@ -187,4 +151,43 @@ public class LookupFragment extends BaseListFragment implements LookupListener {
         setBusy(false);
     }
 
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        Log.d(TAG, "new query submit: " + query);
+        TimerTask doLookup = new TimerTask() {
+            @Override
+            public void run() {
+                requireActivity().runOnUiThread(() -> app.lookup(query));
+                scheduledLookup = null;
+            }
+        };
+        scheduledLookup = doLookup;
+        timer.schedule(doLookup, 600);
+        return true;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String newText) {
+        Log.d(TAG, "new query text: " + newText);
+        TimerTask doLookup = new TimerTask() {
+            @Override
+            public void run() {
+                final String query = searchView.getQuery().toString();
+                if (AppPrefs.getLastQuery().equals(query)) {
+                    return;
+                }
+                requireActivity().runOnUiThread(() -> app.lookup(query));
+                scheduledLookup = null;
+            }
+        };
+        final String query = searchView.getQuery().toString();
+        if (!AppPrefs.getLastQuery().equals(query)) {
+            if (scheduledLookup != null) {
+                scheduledLookup.cancel();
+            }
+            scheduledLookup = doLookup;
+            timer.schedule(doLookup, 600);
+        }
+        return true;
+    }
 }

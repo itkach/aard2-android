@@ -40,7 +40,7 @@
     <string name="setting_remote_content_never">Never</string>
     <string name="setting_remote_content">Load Remote Content</string>
     <string name="setting_about">About %1$s</string>
-    <string name="application_home_url" translatable="false">http://aarddict.org</string>
+    <string name="application_home_url" translatable="false">https://aarddict.org</string>
     <string name="application_copyright" translatable="false">Igor Tkach</string>
     <string name="application_license_name" translatable="false">GNU General Public License v3</string>
     <string name="application_license_url" translatable="false">https://gnu.org/licenses/gpl.html</string>

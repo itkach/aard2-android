@@ -1,80 +1,49 @@
 package itkach.aard2;
 
 import android.content.Context;
-import android.util.Log;
+import android.database.DataSetObserver;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.elevation.SurfaceColors;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 
+import itkach.aard2.lookup.LookupResult;
 import itkach.aard2.utils.ThreadUtils;
 import itkach.slob.Slob;
 
 public class BlobListAdapter extends BaseAdapter {
+    private List<Slob.Blob> list;
 
-    private static final String TAG = BlobListAdapter.class.getSimpleName();
-
-    private final List<Slob.Blob> list;
-    private Iterator<Slob.Blob> iter;
-
-    private final int chunkSize;
-    private final int loadMoreThreashold;
-    int MAX_SIZE = 10000;
-
-
-    public BlobListAdapter() {
-        this(20, 10);
-    }
-
-    public BlobListAdapter(int chunkSize, int loadMoreThreashold) {
-        this.list = new ArrayList<>(chunkSize);
-        this.chunkSize = chunkSize;
-        this.loadMoreThreashold = loadMoreThreashold;
-    }
-
-    public void setData(Iterator<Slob.Blob> lookupResultsIter) {
-        ThreadUtils.postOnMainThread(() -> {
-            list.clear();
-            notifyDataSetChanged();
-        });
-        this.iter = lookupResultsIter;
-        loadChunkSync();
-    }
-
-    private void loadChunkSync() {
-        long t0 = System.currentTimeMillis();
-        int count = 0;
-        final List<Slob.Blob> chunkList = new LinkedList<>();
-
-        while (iter.hasNext() && count < chunkSize && list.size() <= MAX_SIZE) {
-            count++;
-            Slob.Blob b = iter.next();
-            chunkList.add(b);
+    private final LookupResult lookupResult;
+    private final DataSetObserver observer = new DataSetObserver() {
+        @Override
+        public void onChanged() {
+            ThreadUtils.postOnMainThread(() -> {
+                list = lookupResult.getList();
+                notifyDataSetChanged();
+            });
         }
 
-        ThreadUtils.postOnMainThread(() -> {
-            list.addAll(chunkList);
-            notifyDataSetChanged();
-        });
-
-        Log.d(TAG, String.format("Loaded chunk of %d (adapter size %d) in %d ms",
-                count, list.size(), (System.currentTimeMillis() - t0)));
-    }
-
-    private void loadChunk() {
-        if (!iter.hasNext()) {
-            return;
+        @Override
+        public void onInvalidated() {
+            ThreadUtils.postOnMainThread(() -> {
+                list = lookupResult.getList();
+                notifyDataSetInvalidated();
+            });
         }
-        ThreadUtils.postOnBackgroundThread(this::loadChunkSync);
+    };
+
+    public BlobListAdapter(@NonNull LookupResult lookupResult) {
+        this.lookupResult = lookupResult;
+        this.lookupResult.registerDataSetObserver(observer);
     }
 
     @Override
@@ -83,9 +52,9 @@ public class BlobListAdapter extends BaseAdapter {
     }
 
     @Override
-    public Object getItem(int position) {
-        Object result = list.get(position);
-        maybeLoadMore(position);
+    public Slob.Blob getItem(int position) {
+        Slob.Blob result = list.get(position);
+        lookupResult.loadMoreItems(position);
         return result;
     }
 
@@ -94,17 +63,10 @@ public class BlobListAdapter extends BaseAdapter {
         return position;
     }
 
-    private void maybeLoadMore(int position) {
-        if (position >= list.size() - loadMoreThreashold) {
-            loadChunk();
-        }
-    }
-
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        Slob.Blob item = list.get(position);
+        Slob.Blob item = getItem(position);
         Slob slob = item.owner;
-        maybeLoadMore(position);
 
         View view;
         if (convertView != null) {
@@ -125,7 +87,10 @@ public class BlobListAdapter extends BaseAdapter {
         timestampView.setText("");
         timestampView.setVisibility(View.GONE);
         return view;
-
     }
 
+    @Override
+    protected void finalize() {
+        lookupResult.unregisterDataSetObserver(observer);
+    }
 }

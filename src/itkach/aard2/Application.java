@@ -22,6 +22,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import itkach.aard2.lookup.LookupListener;
 import itkach.aard2.prefs.AppPrefs;
 import itkach.aard2.utils.ThreadUtils;
 import itkach.slob.Slob;
@@ -36,7 +37,6 @@ public class Application extends android.app.Application {
     }
 
     private SlobHelper slobHelper;
-    public BlobListAdapter lastResult;
     private List<Activity> articleActivities;
 
     @Override
@@ -55,12 +55,11 @@ public class Application extends android.app.Application {
         }
         articleActivities = Collections.synchronizedList(new ArrayList<>());
         slobHelper = SlobHelper.getInstance();
-        lastResult = new BlobListAdapter();
 
         slobHelper.dictionaries.registerDataSetObserver(new DataSetObserver() {
             @Override
             synchronized public void onChanged() {
-                lastResult.setData(Collections.emptyIterator());
+                slobHelper.lastLookupResult.setResult(Collections.emptyIterator());
                 slobHelper.updateSlobs();
                 ThreadUtils.postOnMainThread(() -> {
                     new EnableLinkHandling(Application.this).execute(slobHelper.getActiveSlobs());
@@ -91,7 +90,7 @@ public class Application extends android.app.Application {
     }
 
     private void setLookupResult(@NonNull String query, Iterator<Slob.Blob> data) {
-        lastResult.setData(data);
+        slobHelper.lastLookupResult.setResult(data);
         AppPrefs.setLastQuery(query);
     }
 
@@ -159,11 +158,11 @@ public class Application extends android.app.Application {
 
     private final List<LookupListener> lookupListeners = new ArrayList<>();
 
-    void addLookupListener(LookupListener listener) {
+    public void addLookupListener(LookupListener listener) {
         lookupListeners.add(listener);
     }
 
-    void removeLookupListener(LookupListener listener) {
+    public void removeLookupListener(LookupListener listener) {
         lookupListeners.remove(listener);
     }
 

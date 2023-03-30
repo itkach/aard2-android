@@ -18,6 +18,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NavUtils;
@@ -31,18 +32,21 @@ import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.viewpager.widget.PagerTitleStrip;
 import androidx.viewpager.widget.ViewPager;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Iterator;
 import java.util.List;
 
 import itkach.aard2.Application;
 import itkach.aard2.BlobDescriptor;
 import itkach.aard2.BlobDescriptorListAdapter;
-import itkach.aard2.BlobListAdapter;
 import itkach.aard2.MainActivity;
 import itkach.aard2.R;
 import itkach.aard2.SlobHelper;
+import itkach.aard2.lookup.LookupResult;
 import itkach.aard2.prefs.AppPrefs;
 import itkach.aard2.prefs.ArticleCollectionPrefs;
+import itkach.aard2.utils.ThreadUtils;
 import itkach.aard2.utils.Utils;
 import itkach.aard2.widget.ArticleWebView;
 import itkach.slob.Slob;
@@ -52,7 +56,7 @@ public class ArticleCollectionActivity extends AppCompatActivity
         implements SharedPreferences.OnSharedPreferenceChangeListener {
     private static final String TAG = ArticleCollectionActivity.class.getSimpleName();
 
-    private ArticleCollectionPagerAdapter articleCollectionPagerAdapter;
+    private AbsArticleCollectionPagerAdapter articleCollectionPagerAdapter;
     private ViewPager viewPager;
 
     private static class ToBlobWithFragment implements ToBlob {
@@ -90,13 +94,13 @@ public class ArticleCollectionActivity extends AppCompatActivity
         final Intent intent = getIntent();
         final int position = intent.getIntExtra("position", 0);
 
-        AsyncTask<Void, Void, ArticleCollectionPagerAdapter> createAdapterTask = new AsyncTask<Void, Void, ArticleCollectionPagerAdapter>() {
+        AsyncTask<Void, Void, AbsArticleCollectionPagerAdapter> createAdapterTask = new AsyncTask<Void, Void, AbsArticleCollectionPagerAdapter>() {
 
             Exception exception;
 
             @Override
-            protected ArticleCollectionPagerAdapter doInBackground(Void... params) {
-                ArticleCollectionPagerAdapter result = null;
+            protected AbsArticleCollectionPagerAdapter doInBackground(Void... params) {
+                AbsArticleCollectionPagerAdapter result = null;
                 Uri articleUrl = intent.getData();
                 try {
                     if (articleUrl != null) {
@@ -120,7 +124,7 @@ public class ArticleCollectionActivity extends AppCompatActivity
             }
 
             @Override
-            protected void onPostExecute(ArticleCollectionPagerAdapter adapter) {
+            protected void onPostExecute(AbsArticleCollectionPagerAdapter adapter) {
                 if (isFinishing() || onDestroyCalled) {
                     return;
                 }
@@ -173,12 +177,9 @@ public class ArticleCollectionActivity extends AppCompatActivity
                     @Override
                     public void onPageSelected(final int position) {
                         updateTitle(position);
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                ArticleFragment fragment = (ArticleFragment) articleCollectionPagerAdapter.getItem(position);
-                                fragment.applyTextZoomPref();
-                            }
+                        runOnUiThread(() -> {
+                            ArticleFragment fragment = (ArticleFragment) articleCollectionPagerAdapter.getItem(position);
+                            fragment.applyTextZoomPref();
                         });
 
                     }
@@ -213,7 +214,7 @@ public class ArticleCollectionActivity extends AppCompatActivity
         super.onBackPressed();
     }
 
-    private ArticleCollectionPagerAdapter createFromUri(Application app, Uri articleUrl) {
+    private ArticleCollectionLookupPagerAdapter createFromUri(Application app, Uri articleUrl) {
         String host = articleUrl.getHost();
         if (!(host.equals("localhost") || host.matches("127.\\d{1,3}.\\d{1,3}.\\d{1,3}"))) {
             return createFromIntent(app, getIntent());
@@ -223,16 +224,16 @@ public class ArticleCollectionActivity extends AppCompatActivity
             return null;
         }
         Iterator<Slob.Blob> result = SlobHelper.getInstance().find(bd.key, bd.slobId);
-        BlobListAdapter data = new BlobListAdapter(20, 1);
-        data.setData(result);
+        LookupResult lookupResult = new LookupResult(20, 1);
+        lookupResult.setResult(result);
         boolean hasFragment = !TextUtils.isEmpty(bd.fragment);
-        return new ArticleCollectionPagerAdapter(data,
+        return new ArticleCollectionLookupPagerAdapter(lookupResult,
                 hasFragment ? new ToBlobWithFragment(bd.fragment) : blobToBlob, getSupportFragmentManager());
     }
 
-    private ArticleCollectionPagerAdapter createFromLastResult(Application app) {
-        return new ArticleCollectionPagerAdapter(
-                app.lastResult, blobToBlob, getSupportFragmentManager());
+    private ArticleCollectionLookupPagerAdapter createFromLastResult(Application app) {
+        return new ArticleCollectionLookupPagerAdapter(SlobHelper.getInstance().lastLookupResult, blobToBlob,
+                getSupportFragmentManager());
     }
 
     private ArticleCollectionPagerAdapter createFromBookmarks() {
@@ -249,7 +250,7 @@ public class ArticleCollectionActivity extends AppCompatActivity
                 slobHelper.history.resolve((BlobDescriptor) item), getSupportFragmentManager());
     }
 
-    private ArticleCollectionPagerAdapter createFromIntent(Application app, Intent intent) {
+    private ArticleCollectionLookupPagerAdapter createFromIntent(Application app, Intent intent) {
         String lookupKey = intent.getStringExtra(Intent.EXTRA_TEXT);
         if (intent.getAction().equals(Intent.ACTION_PROCESS_TEXT)) {
             lookupKey = getIntent().getCharSequenceExtra(Intent.EXTRA_PROCESS_TEXT).toString();
@@ -278,15 +279,15 @@ public class ArticleCollectionActivity extends AppCompatActivity
                 }
             }
         }
-        BlobListAdapter data = new BlobListAdapter(20, 1);
+        LookupResult lookupResult = new LookupResult(20, 1);
         if (lookupKey == null || lookupKey.length() == 0) {
             String msg = getString(R.string.article_collection_nothing_to_lookup);
             throw new RuntimeException(msg);
         } else {
             Iterator<Blob> result = stemLookup(lookupKey, preferredSlobId);
-            data.setData(result);
+            lookupResult.setResult(result);
         }
-        return new ArticleCollectionPagerAdapter(data, blobToBlob, getSupportFragmentManager());
+        return new ArticleCollectionLookupPagerAdapter(lookupResult, blobToBlob, getSupportFragmentManager());
     }
 
     private Iterator<Blob> stemLookup(String lookupKey) {
@@ -501,7 +502,24 @@ public class ArticleCollectionActivity extends AppCompatActivity
         Slob.Blob convert(Object item);
     }
 
-    public static class ArticleCollectionPagerAdapter extends FragmentStatePagerAdapter {
+
+    public abstract static class AbsArticleCollectionPagerAdapter extends FragmentStatePagerAdapter {
+        public AbsArticleCollectionPagerAdapter(@NonNull @NotNull FragmentManager fm) {
+            super(fm);
+        }
+
+        public AbsArticleCollectionPagerAdapter(@NonNull @NotNull FragmentManager fm, int behavior) {
+            super(fm, behavior);
+        }
+
+        public abstract void destroy();
+
+        public abstract Slob.Blob get(int position);
+
+        public abstract ArticleFragment getPrimaryItem();
+    }
+
+    public static class ArticleCollectionPagerAdapter extends AbsArticleCollectionPagerAdapter {
         private final DataSetObserver observer;
         private BaseAdapter data;
         private final ToBlob toBlob;
@@ -523,22 +541,25 @@ public class ArticleCollectionActivity extends AppCompatActivity
             this.toBlob = toBlob;
         }
 
-        void destroy() {
+        @Override
+        public void destroy() {
             data.unregisterDataSetObserver(observer);
             data = null;
         }
 
         @Override
-        public void setPrimaryItem(ViewGroup container, int position, Object object) {
+        public void setPrimaryItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
             super.setPrimaryItem(container, position, object);
             this.primaryItem = (ArticleFragment) object;
         }
 
-        ArticleFragment getPrimaryItem() {
+        @Override
+        public ArticleFragment getPrimaryItem() {
             return this.primaryItem;
         }
 
         @Override
+        @NonNull
         public Fragment getItem(int i) {
             Fragment fragment = new ArticleFragment();
 
@@ -557,7 +578,8 @@ public class ArticleCollectionActivity extends AppCompatActivity
             return count;
         }
 
-        Slob.Blob get(int position) {
+        @Override
+        public Slob.Blob get(int position) {
             return toBlob.convert(data.getItem(position));
         }
 
@@ -579,7 +601,94 @@ public class ArticleCollectionActivity extends AppCompatActivity
         //if underlying data changes (such as on unbookmark)
         //https://code.google.com/p/android/issues/detail?id=19001
         @Override
-        public int getItemPosition(Object object) {
+        public int getItemPosition(@NonNull Object object) {
+            return POSITION_NONE;
+        }
+    }
+
+    public static class ArticleCollectionLookupPagerAdapter extends AbsArticleCollectionPagerAdapter {
+        private List<Slob.Blob> list;
+
+        private final LookupResult lookupResult;
+        private final DataSetObserver observer = new DataSetObserver() {
+            @Override
+            public void onChanged() {
+                ThreadUtils.postOnMainThread(() -> {
+                    list = lookupResult.getList();
+                    notifyDataSetChanged();
+                });
+            }
+        };
+
+        private final ToBlob toBlob;
+        private ArticleFragment primaryItem;
+
+        public ArticleCollectionLookupPagerAdapter(@NonNull LookupResult lookupResult, @NonNull ToBlob toBlob,
+                                                   @NonNull FragmentManager fm) {
+            super(fm);
+            this.lookupResult = lookupResult;
+            this.list = lookupResult.getList();
+            this.toBlob = toBlob;
+            this.lookupResult.registerDataSetObserver(observer);
+        }
+
+        @Override
+        public void destroy() {
+            lookupResult.unregisterDataSetObserver(observer);
+        }
+
+        @Override
+        public void setPrimaryItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
+            super.setPrimaryItem(container, position, object);
+            this.primaryItem = (ArticleFragment) object;
+        }
+
+        @Override
+        public ArticleFragment getPrimaryItem() {
+            return this.primaryItem;
+        }
+
+        @Override
+        @NonNull
+        public Fragment getItem(int i) {
+            Fragment fragment = new ArticleFragment();
+
+            Slob.Blob blob = get(i);
+            if (blob != null) {
+                String articleUrl = SlobHelper.getInstance().getUrl(blob);
+                Bundle args = new Bundle();
+                args.putString(ArticleFragment.ARG_URL, articleUrl);
+                fragment.setArguments(args);
+            }
+            return fragment;
+        }
+
+        @Override
+        public int getCount() {
+            return list != null ? list.size() : 0;
+        }
+
+        @Override
+        public Slob.Blob get(int position) {
+            return toBlob.convert(list.get(position));
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            if (position < list.size()) {
+                Blob item = list.get(position);
+                if (item != null) {
+                    return item.key;
+                }
+            }
+            return "???";
+        }
+
+        //this is needed so that fragment is properly updated
+        //if underlying data changes (such as on unbookmark)
+        //https://code.google.com/p/android/issues/detail?id=19001
+        @Override
+        public int getItemPosition(@NonNull Object object) {
             return POSITION_NONE;
         }
     }

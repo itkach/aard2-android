@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
+import itkach.aard2.lookup.LookupResult;
 import itkach.aard2.prefs.AppPrefs;
 import itkach.slob.Slob;
 import itkach.slobber.Slobber;
@@ -54,6 +55,8 @@ public final class SlobHelper {
     public final BlobDescriptorList history;
     @NonNull
     public final SlobDescriptorList dictionaries;
+    @NonNull
+    public final LookupResult lastLookupResult;
 
     private Slobber slobber;
     private int port = -1;
@@ -69,6 +72,7 @@ public final class SlobHelper {
         dictionaries = new SlobDescriptorList(dictStore);
         bookmarks = new BlobDescriptorList(bookmarkStore);
         history = new BlobDescriptorList(historyStore);
+        lastLookupResult = new LookupResult();
     }
 
     @WorkerThread
