@@ -8,10 +8,12 @@ import android.content.pm.PackageManager;
 import android.database.DataSetObserver;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.util.Log;
 import android.webkit.WebView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -22,6 +24,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import itkach.aard2.article.ArticleCollectionActivity;
 import itkach.aard2.lookup.LookupListener;
 import itkach.aard2.prefs.AppPrefs;
 import itkach.aard2.utils.ThreadUtils;
@@ -37,12 +40,12 @@ public class Application extends android.app.Application {
     }
 
     private SlobHelper slobHelper;
-    private List<Activity> articleActivities;
 
     @Override
     public void onCreate() {
         instance = this;
         super.onCreate();
+        registerActivityLifecycleCallbacks(new ArticleCollectionActivityController());
         try {
             Method setWebContentsDebuggingEnabledMethod = WebView.class.getMethod(
                     "setWebContentsDebuggingEnabled", boolean.class);
@@ -53,7 +56,6 @@ public class Application extends android.app.Application {
         } catch (InvocationTargetException | IllegalAccessException e) {
             e.printStackTrace();
         }
-        articleActivities = Collections.synchronizedList(new ArrayList<>());
         slobHelper = SlobHelper.getInstance();
 
         slobHelper.dictionaries.registerDataSetObserver(new DataSetObserver() {
@@ -72,19 +74,6 @@ public class Application extends android.app.Application {
         });
 
         ThreadUtils.postOnBackgroundThread(() -> slobHelper.init());
-    }
-
-    public void push(Activity activity) {
-        articleActivities.add(activity);
-        Log.d(TAG, "Activity added, stack size " + articleActivities.size());
-        if (articleActivities.size() > 7) {
-            Log.d(TAG, "Max stack size exceeded, finishing oldest activity");
-            articleActivities.get(0).finish();
-        }
-    }
-
-    public void pop(Activity activity) {
-        articleActivities.remove(activity);
     }
 
     private void setLookupResult(@NonNull String query, Iterator<Slob.Blob> data) {
@@ -142,6 +131,7 @@ public class Application extends android.app.Application {
     private static class LookupTask extends AsyncTask<Void, Void, Iterator<Blob>> {
         private final Application application;
         private final String query;
+
         public LookupTask(@NonNull Application application, @NonNull String query) {
             this.application = application;
             this.query = query;
@@ -211,6 +201,49 @@ public class Application extends android.app.Application {
             }
             Log.d(TAG, "Done enabling activities in " + (System.currentTimeMillis() - t0));
             return null;
+        }
+    }
+
+    public static class ArticleCollectionActivityController implements ActivityLifecycleCallbacks {
+        List<ArticleCollectionActivity> activeActivities = new ArrayList<>();
+
+        @Override
+        public void onActivityCreated(@NonNull Activity activity, @Nullable Bundle savedInstanceState) {
+            if (activity instanceof ArticleCollectionActivity) {
+                activeActivities.add((ArticleCollectionActivity) activity);
+                Log.d(TAG, "Activity added, stack size " + activeActivities.size());
+                if (activeActivities.size() > 7) {
+                    Log.d(TAG, "Max stack size exceeded, finishing oldest activity");
+                    activeActivities.get(0).finish();
+                }
+            }
+        }
+
+        @Override
+        public void onActivityStarted(@NonNull Activity activity) {
+        }
+
+        @Override
+        public void onActivityResumed(@NonNull Activity activity) {
+        }
+
+        @Override
+        public void onActivityPaused(@NonNull Activity activity) {
+        }
+
+        @Override
+        public void onActivityStopped(@NonNull Activity activity) {
+        }
+
+        @Override
+        public void onActivitySaveInstanceState(@NonNull Activity activity, @NonNull Bundle outState) {
+        }
+
+        @Override
+        public void onActivityDestroyed(@NonNull Activity activity) {
+            if (activity instanceof ArticleCollectionActivity) {
+                activeActivities.remove(activity);
+            }
         }
     }
 }

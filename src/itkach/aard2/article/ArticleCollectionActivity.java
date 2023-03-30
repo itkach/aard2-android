@@ -37,7 +37,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Iterator;
 import java.util.List;
 
-import itkach.aard2.Application;
 import itkach.aard2.BlobDescriptor;
 import itkach.aard2.BlobDescriptorListAdapter;
 import itkach.aard2.MainActivity;
@@ -83,8 +82,6 @@ public class ArticleCollectionActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_article_collection_loading);
         setSupportActionBar(findViewById(R.id.toolbar));
-        final Application app = (Application) getApplication();
-        app.push(this);
         final ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.hide();
@@ -104,17 +101,17 @@ public class ArticleCollectionActivity extends AppCompatActivity
                 Uri articleUrl = intent.getData();
                 try {
                     if (articleUrl != null) {
-                        result = createFromUri(app, articleUrl);
+                        result = createFromUri(articleUrl);
                     } else {
                         String action = intent.getAction();
                         if (action == null) {
-                            result = createFromLastResult(app);
+                            result = createFromLastResult();
                         } else if (action.equals("showBookmarks")) {
                             result = createFromBookmarks();
                         } else if (action.equals("showHistory")) {
                             result = createFromHistory();
                         } else {
-                            result = createFromIntent(app, intent);
+                            result = createFromIntent(intent);
                         }
                     }
                 } catch (Exception e) {
@@ -214,10 +211,10 @@ public class ArticleCollectionActivity extends AppCompatActivity
         super.onBackPressed();
     }
 
-    private ArticleCollectionLookupPagerAdapter createFromUri(Application app, Uri articleUrl) {
+    private ArticleCollectionLookupPagerAdapter createFromUri(Uri articleUrl) {
         String host = articleUrl.getHost();
         if (!(host.equals("localhost") || host.matches("127.\\d{1,3}.\\d{1,3}.\\d{1,3}"))) {
-            return createFromIntent(app, getIntent());
+            return createFromIntent(getIntent());
         }
         BlobDescriptor bd = BlobDescriptor.fromUri(articleUrl);
         if (bd == null) {
@@ -231,7 +228,7 @@ public class ArticleCollectionActivity extends AppCompatActivity
                 hasFragment ? new ToBlobWithFragment(bd.fragment) : blobToBlob, getSupportFragmentManager());
     }
 
-    private ArticleCollectionLookupPagerAdapter createFromLastResult(Application app) {
+    private ArticleCollectionLookupPagerAdapter createFromLastResult() {
         return new ArticleCollectionLookupPagerAdapter(SlobHelper.getInstance().lastLookupResult, blobToBlob,
                 getSupportFragmentManager());
     }
@@ -250,7 +247,7 @@ public class ArticleCollectionActivity extends AppCompatActivity
                 slobHelper.history.resolve((BlobDescriptor) item), getSupportFragmentManager());
     }
 
-    private ArticleCollectionLookupPagerAdapter createFromIntent(Application app, Intent intent) {
+    private ArticleCollectionLookupPagerAdapter createFromIntent(Intent intent) {
         String lookupKey = intent.getStringExtra(Intent.EXTRA_TEXT);
         if (intent.getAction().equals(Intent.ACTION_PROCESS_TEXT)) {
             lookupKey = getIntent().getCharSequenceExtra(Intent.EXTRA_PROCESS_TEXT).toString();
@@ -387,8 +384,6 @@ public class ArticleCollectionActivity extends AppCompatActivity
         if (articleCollectionPagerAdapter != null) {
             articleCollectionPagerAdapter.destroy();
         }
-        Application app = (Application) getApplication();
-        app.pop(this);
         super.onDestroy();
     }
 
