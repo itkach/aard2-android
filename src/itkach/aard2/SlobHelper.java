@@ -172,18 +172,22 @@ public final class SlobHelper {
     }
 
     public Slob getSlob(String slobId) {
+        checkInitialized();
         return slobber.getSlob(slobId);
     }
 
     public Slob findSlob(String slobOrUri) {
+        checkInitialized();
         return slobber.findSlob(slobOrUri);
     }
 
     public String getSlobUri(String slobId) {
+        checkInitialized();
         return slobber.getSlobURI(slobId);
     }
 
     public Slob.Blob findRandom() {
+        checkInitialized();
         Slob[] slobs = AppPrefs.useOnlyFavoritesForRandomLookups() ? getFavoriteSlobs() : getActiveSlobs();
         return slobber.findRandom(slobs);
     }
