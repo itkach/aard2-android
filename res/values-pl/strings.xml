@@ -16,6 +16,7 @@
     <plurals name="dict_item_count">
         <item quantity="one">%,d element</item>
         <item quantity="few">%,d elementy</item>
+        <item quantity="many">%,d elementów</item>
         <item quantity="other">%,d elementów</item>
     </plurals>
 
@@ -51,11 +52,13 @@
     <plurals name="confirm_delete_bookmark_count">
         <item quantity="one">%,d zakładkę</item>
         <item quantity="few">%,d zakładki</item>
+        <item quantity="many">%,d zakładek</item>
         <item quantity="other">%,d zakładek</item>
     </plurals>
     <plurals name="confirm_delete_history_count">
         <item quantity="one">%,d wpis z historii</item>
         <item quantity="few">%,d wpisy z historii</item>
+        <item quantity="many">%,d wpisów z historii</item>
         <item quantity="other">%,d wpisów z historii</item>
     </plurals>
 
