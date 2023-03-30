@@ -35,6 +35,7 @@ import itkach.aard2.R;
 import itkach.aard2.SlobHelper;
 import itkach.aard2.prefs.AppPrefs;
 import itkach.aard2.prefs.ArticleCollectionPrefs;
+import itkach.aard2.slob.SlobTags;
 import itkach.aard2.utils.ThreadUtils;
 import itkach.aard2.utils.Utils;
 import itkach.aard2.widget.ArticleWebView;
@@ -142,7 +143,7 @@ public class ArticleCollectionActivity extends AppCompatActivity
         Log.d("updateTitle", String.valueOf(blob));
         ActionBar actionBar = requireActionBar();
         if (blob != null) {
-            String dictLabel = blob.owner.getTags().get("label");
+            String dictLabel = blob.owner.getTags().get(SlobTags.TAG_LABEL);
             actionBar.setTitle(dictLabel);
             SlobHelper slobHelper = SlobHelper.getInstance();
             slobHelper.history.add(slobHelper.getUrl(blob));

@@ -13,6 +13,7 @@ import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.elevation.SurfaceColors;
 
 import itkach.aard2.descriptor.BlobDescriptor;
+import itkach.aard2.slob.SlobTags;
 import itkach.slob.Slob;
 
 public class BlobDescriptorListAdapter extends BaseAdapter {
@@ -82,7 +83,7 @@ public class BlobDescriptorListAdapter extends BaseAdapter {
         titleView.setText(item.key);
         TextView sourceView = view.findViewById(R.id.blob_descriptor_source);
         Slob slob = list.resolveOwner(item);
-        sourceView.setText(slob == null ? "???" : slob.getTags().get("label"));
+        sourceView.setText(slob == null ? "???" : slob.getTags().get(SlobTags.TAG_LABEL));
         TextView timestampView = view.findViewById(R.id.blob_descriptor_timestamp);
         timestampView.setText(timestamp);
         cardView.setCheckable(isSelectionMode());

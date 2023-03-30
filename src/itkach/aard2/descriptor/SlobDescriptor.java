@@ -13,6 +13,7 @@ import java.io.FileInputStream;
 import java.util.HashMap;
 import java.util.Map;
 
+import itkach.aard2.slob.SlobTags;
 import itkach.slob.Slob;
 
 
@@ -63,7 +64,7 @@ public class SlobDescriptor extends BaseDescriptor {
 
     @NonNull
     public String getLabel() {
-        String label = tags.get("label");
+        String label = tags.get(SlobTags.TAG_LABEL);
         if (TextUtils.isEmpty(label)) {
             return "???";
         }

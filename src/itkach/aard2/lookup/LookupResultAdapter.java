@@ -16,6 +16,7 @@ import com.google.android.material.elevation.SurfaceColors;
 import java.util.List;
 
 import itkach.aard2.R;
+import itkach.aard2.slob.SlobTags;
 import itkach.aard2.utils.ThreadUtils;
 import itkach.slob.Slob;
 
@@ -82,7 +83,7 @@ public class LookupResultAdapter extends BaseAdapter {
         TextView titleView = view.findViewById(R.id.blob_descriptor_key);
         titleView.setText(item.key);
         TextView sourceView = view.findViewById(R.id.blob_descriptor_source);
-        sourceView.setText(slob == null ? "???" : slob.getTags().get("label"));
+        sourceView.setText(slob == null ? "???" : slob.getTags().get(SlobTags.TAG_LABEL));
         TextView timestampView = view.findViewById(R.id.blob_descriptor_timestamp);
         timestampView.setText("");
         timestampView.setVisibility(View.GONE);

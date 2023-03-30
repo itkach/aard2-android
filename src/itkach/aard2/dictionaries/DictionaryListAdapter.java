@@ -31,6 +31,7 @@ import java.util.Locale;
 import itkach.aard2.R;
 import itkach.aard2.descriptor.SlobDescriptor;
 import itkach.aard2.SlobDescriptorList;
+import itkach.aard2.slob.SlobTags;
 import itkach.aard2.utils.ThreadUtils;
 
 public class DictionaryListAdapter extends BaseAdapter {
@@ -219,7 +220,7 @@ public class DictionaryListAdapter extends BaseAdapter {
         View copyrightRow = view.findViewById(R.id.dictionary_copyright_row);
 
         TextView copyrightView = view.findViewById(R.id.dictionary_copyright);
-        String copyright = desc.tags.get("copyright");
+        String copyright = desc.tags.get(SlobTags.TAG_COPYRIGHT);
         copyrightView.setText(copyright);
 
         copyrightRow.setVisibility(TextUtils.isEmpty(copyright) ? View.GONE : View.VISIBLE);
@@ -230,7 +231,7 @@ public class DictionaryListAdapter extends BaseAdapter {
         View sourceRow = view.findViewById(R.id.dictionary_license_row);
         ImageView sourceIcon = view.findViewById(R.id.dictionary_source_icon);
         TextView sourceView = view.findViewById(R.id.dictionary_source);
-        String source = desc.tags.get("source");
+        String source = desc.tags.get(SlobTags.TAG_SOURCE);
         CharSequence sourceHtml = HtmlCompat.fromHtml(String.format(hrefTemplate, source, source),
                 HtmlCompat.FROM_HTML_MODE_LEGACY);
         sourceView.setText(sourceHtml);
@@ -249,8 +250,8 @@ public class DictionaryListAdapter extends BaseAdapter {
         View licenseRow = view.findViewById(R.id.dictionary_license_row);
         ImageView licenseIcon = view.findViewById(R.id.dictionary_license_icon);
         TextView licenseView = view.findViewById(R.id.dictionary_license);
-        String licenseName = desc.tags.get("license.name");
-        String licenseUrl = desc.tags.get("license.url");
+        String licenseName = desc.tags.get(SlobTags.TAG_LICENSE_NAME);
+        String licenseUrl = desc.tags.get(SlobTags.TAG_LICENSE_URL);
         CharSequence license;
         if (TextUtils.isEmpty(licenseUrl)) {
             license = licenseName;

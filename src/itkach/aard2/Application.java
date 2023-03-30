@@ -28,6 +28,7 @@ import java.util.Set;
 import itkach.aard2.article.ArticleCollectionActivity;
 import itkach.aard2.lookup.LookupListener;
 import itkach.aard2.prefs.AppPrefs;
+import itkach.aard2.slob.SlobTags;
 import itkach.aard2.utils.ThreadUtils;
 import itkach.slob.Slob;
 import itkach.slob.Slob.Blob;
@@ -166,7 +167,7 @@ public class Application extends android.app.Application {
             Set<String> hosts = new HashSet<>();
             for (Slob slob : slobs) {
                 try {
-                    String uriValue = slob.getTags().get("uri");
+                    String uriValue = slob.getTags().get(SlobTags.TAG_URI);
                     Uri uri = Uri.parse(uriValue);
                     String host = uri.getHost();
                     if (host != null) {
