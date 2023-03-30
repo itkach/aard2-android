@@ -12,19 +12,14 @@ import android.widget.TextView;
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.elevation.SurfaceColors;
 
-import java.text.DateFormat;
-
 import itkach.slob.Slob;
 
 public class BlobDescriptorListAdapter extends BaseAdapter {
-
-    final BlobDescriptorList list;
-    DateFormat dateFormat;
+    public final BlobDescriptorList list;
     private boolean selectionMode;
 
     public BlobDescriptorListAdapter(BlobDescriptorList list) {
         this.list = list;
-        this.dateFormat = DateFormat.getDateTimeInstance();
         this.list.registerDataSetObserver(new DataSetObserver() {
             @Override
             public void onChanged() {

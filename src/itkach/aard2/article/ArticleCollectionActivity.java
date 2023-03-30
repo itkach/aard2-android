@@ -15,10 +15,10 @@ import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NavUtils;
@@ -32,13 +32,11 @@ import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.viewpager.widget.PagerTitleStrip;
 import androidx.viewpager.widget.ViewPager;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.Iterator;
 import java.util.List;
 
 import itkach.aard2.BlobDescriptor;
-import itkach.aard2.BlobDescriptorListAdapter;
+import itkach.aard2.BlobDescriptorList;
 import itkach.aard2.MainActivity;
 import itkach.aard2.R;
 import itkach.aard2.SlobHelper;
@@ -58,22 +56,25 @@ public class ArticleCollectionActivity extends AppCompatActivity
     private AbsArticleCollectionPagerAdapter articleCollectionPagerAdapter;
     private ViewPager viewPager;
 
-    private static class ToBlobWithFragment implements ToBlob {
-
+    private static class ToBlobWithFragment implements ToBlob<Blob> {
+        @NonNull
         private final String fragment;
 
-        ToBlobWithFragment(String fragment) {
+        ToBlobWithFragment(@NonNull String fragment) {
             this.fragment = fragment;
         }
 
         @Override
-        public Blob convert(Object item) {
-            Blob b = (Blob) item;
-            return new Blob(b.owner, b.id, b.key, this.fragment);
+        @Nullable
+        public Blob convert(@Nullable Blob item) {
+            if (item == null) {
+                return null;
+            }
+            return new Blob(item.owner, item.id, item.key, this.fragment);
         }
     }
 
-    private final ToBlob blobToBlob = item -> (Blob) item;
+    private final ToBlob<Blob> blobToBlob = item -> item;
 
     private boolean onDestroyCalled = false;
 
@@ -235,16 +236,14 @@ public class ArticleCollectionActivity extends AppCompatActivity
 
     private ArticleCollectionPagerAdapter createFromBookmarks() {
         SlobHelper slobHelper = SlobHelper.getInstance();
-        return new ArticleCollectionPagerAdapter(
-                new BlobDescriptorListAdapter(slobHelper.bookmarks), item ->
-                slobHelper.bookmarks.resolve((BlobDescriptor) item), getSupportFragmentManager());
+        return new ArticleCollectionPagerAdapter(slobHelper.bookmarks, slobHelper.bookmarks::resolve,
+                getSupportFragmentManager());
     }
 
     private ArticleCollectionPagerAdapter createFromHistory() {
         SlobHelper slobHelper = SlobHelper.getInstance();
-        return new ArticleCollectionPagerAdapter(
-                new BlobDescriptorListAdapter(slobHelper.history), item ->
-                slobHelper.history.resolve((BlobDescriptor) item), getSupportFragmentManager());
+        return new ArticleCollectionPagerAdapter(slobHelper.history, slobHelper.history::resolve,
+                getSupportFragmentManager());
     }
 
     private ArticleCollectionLookupPagerAdapter createFromIntent(Intent intent) {
@@ -287,11 +286,7 @@ public class ArticleCollectionActivity extends AppCompatActivity
         return new ArticleCollectionLookupPagerAdapter(lookupResult, blobToBlob, getSupportFragmentManager());
     }
 
-    private Iterator<Blob> stemLookup(String lookupKey) {
-        return this.stemLookup(lookupKey, null);
-    }
-
-    private Iterator<Blob> stemLookup(String lookupKey, String preferredSlobId) {
+    private Iterator<Blob> stemLookup(@NonNull String lookupKey, @Nullable String preferredSlobId) {
         Slob.PeekableIterator<Blob> result;
         final int length = lookupKey.length();
         String currentLookupKey = lookupKey;
@@ -313,10 +308,10 @@ public class ArticleCollectionActivity extends AppCompatActivity
     }
 
     private void updateTitle(int position) {
-        Log.d("updateTitle", "" + position + " count: " + articleCollectionPagerAdapter.getCount());
+        Log.d("updateTitle", position + " count: " + articleCollectionPagerAdapter.getCount());
         Slob.Blob blob = articleCollectionPagerAdapter.get(position);
         CharSequence pageTitle = articleCollectionPagerAdapter.getPageTitle(position);
-        Log.d("updateTitle", "" + blob);
+        Log.d("updateTitle", String.valueOf(blob));
         ActionBar actionBar = getSupportActionBar();
         if (blob != null) {
             String dictLabel = blob.owner.getTags().get("label");
@@ -493,46 +488,44 @@ public class ArticleCollectionActivity extends AppCompatActivity
     }
 
 
-    interface ToBlob {
-        Slob.Blob convert(Object item);
+    interface ToBlob<T> {
+        @Nullable
+        Slob.Blob convert(T item);
     }
 
 
     public abstract static class AbsArticleCollectionPagerAdapter extends FragmentStatePagerAdapter {
-        public AbsArticleCollectionPagerAdapter(@NonNull @NotNull FragmentManager fm) {
-            super(fm);
-        }
-
-        public AbsArticleCollectionPagerAdapter(@NonNull @NotNull FragmentManager fm, int behavior) {
-            super(fm, behavior);
+        public AbsArticleCollectionPagerAdapter(@NonNull FragmentManager fm) {
+            super(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
         }
 
         public abstract void destroy();
 
+        @Nullable
         public abstract Slob.Blob get(int position);
 
         public abstract ArticleFragment getPrimaryItem();
     }
 
     public static class ArticleCollectionPagerAdapter extends AbsArticleCollectionPagerAdapter {
-        private final DataSetObserver observer;
-        private BaseAdapter data;
-        private final ToBlob toBlob;
+        private final DataSetObserver observer = new DataSetObserver() {
+            @Override
+            public void onChanged() {
+                count = data.size();
+                notifyDataSetChanged();
+            }
+        };
+        private BlobDescriptorList data;
+        private final ToBlob<BlobDescriptor> toBlob;
         private int count;
         private ArticleFragment primaryItem;
 
-        public ArticleCollectionPagerAdapter(BaseAdapter data, ToBlob toBlob, FragmentManager fm) {
+        public ArticleCollectionPagerAdapter(@NonNull BlobDescriptorList data, @NonNull ToBlob<BlobDescriptor> toBlob,
+                                             @NonNull FragmentManager fm) {
             super(fm);
             this.data = data;
-            this.count = data.getCount();
-            this.observer = new DataSetObserver() {
-                @Override
-                public void onChanged() {
-                    count = ArticleCollectionPagerAdapter.this.data.getCount();
-                    notifyDataSetChanged();
-                }
-            };
-            data.registerDataSetObserver(observer);
+            this.count = data.size();
+            this.data.registerDataSetObserver(observer);
             this.toBlob = toBlob;
         }
 
@@ -575,18 +568,15 @@ public class ArticleCollectionActivity extends AppCompatActivity
 
         @Override
         public Slob.Blob get(int position) {
-            return toBlob.convert(data.getItem(position));
+            return toBlob.convert(data.get(position));
         }
 
         @Override
         public CharSequence getPageTitle(int position) {
-            if (position < data.getCount()) {
-                Object item = data.getItem(position);
-                if (item instanceof BlobDescriptor) {
-                    return ((BlobDescriptor) item).key;
-                }
-                if (item instanceof Slob.Blob) {
-                    return ((Blob) item).key;
+            if (position < data.size()) {
+                BlobDescriptor item = data.get(position);
+                if (item != null) {
+                    return item.key;
                 }
             }
             return "???";
@@ -615,10 +605,10 @@ public class ArticleCollectionActivity extends AppCompatActivity
             }
         };
 
-        private final ToBlob toBlob;
+        private final ToBlob<Blob> toBlob;
         private ArticleFragment primaryItem;
 
-        public ArticleCollectionLookupPagerAdapter(@NonNull LookupResult lookupResult, @NonNull ToBlob toBlob,
+        public ArticleCollectionLookupPagerAdapter(@NonNull LookupResult lookupResult, @NonNull ToBlob<Blob> toBlob,
                                                    @NonNull FragmentManager fm) {
             super(fm);
             this.lookupResult = lookupResult;
