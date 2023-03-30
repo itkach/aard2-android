@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Aard 2</string>
     <string name="action_add_dictionaries">Додати</string>
     <string name="action_bookmark_article">Закладинки</string>
     <string name="action_filter">Фільтр</string>
@@ -9,7 +8,7 @@
     <string name="action_goto_parent_dir">Вверх</string>
     <string name="action_lookup">Пошук</string>
     <string name="action_reload_directory">Перезавантажити</string>
-    <string name="action_select_style">Стиль...</string>
+    <string name="action_select_style">Стиль…</string>
     <string name="action_sort_by_time">За часом</string>
     <string name="action_sort_by_title">За назвою</string>
     <string name="action_zoom_in">Збільшити</string>
@@ -59,27 +58,21 @@
     <string name="action_zoom_reset">Початковий розмір</string>
 
     <plurals name="dict_item_count">
-        <item quantity="zero">%,d записів</item>
         <item quantity="one">%,d запис</item>
-        <item quantity="two">%,d записа</item>
         <item quantity="few">%,d записа</item>
         <item quantity="many">%,d записів</item>
         <item quantity="other">%,d записів</item>
     </plurals>
 
     <plurals name="confirm_delete_bookmark_count">
-        <item quantity="zero">%,d закладинок</item>
         <item quantity="one">%,d закладинку</item>
-        <item quantity="two">%,d закладинки</item>
         <item quantity="few">%,d закладинки</item>
         <item quantity="many">%,d закладинок</item>
         <item quantity="other">%,d закладинок</item>
     </plurals>
 
     <plurals name="confirm_delete_history_count">
-        <item quantity="zero">%,d записів</item>
         <item quantity="one">%,d запис</item>
-        <item quantity="two">%,d записи</item>
         <item quantity="few">%,d записи</item>
         <item quantity="many">%,d записів</item>
         <item quantity="other">%,d записів</item>

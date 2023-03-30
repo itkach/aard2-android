@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 import itkach.aard2.article.ArticleCollectionActivity;
@@ -169,7 +170,7 @@ public class Application extends android.app.Application {
                     Uri uri = Uri.parse(uriValue);
                     String host = uri.getHost();
                     if (host != null) {
-                        hosts.add(host.toLowerCase());
+                        hosts.add(host.toLowerCase(Locale.ROOT));
                     }
                 } catch (Exception ex) {
                     Log.w(TAG, String.format("Dictionary %s (%s) has no uri tag", slob.getId(), slob.getTags()), ex);

@@ -1,21 +1,18 @@
-<activity-alias
-    android:enabled="false"
-    android:name="{lang}.{project}.org"
-    android:targetActivity=".ArticleCollectionActivity"
-    android:exported="true"
-    >
+        <activity-alias
+            android:enabled="false"
+            android:name="{lang}.{project}.org"
+            android:targetActivity=".article.ArticleCollectionActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
 
-  <intent-filter>
-    <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
 
-    <category android:name="android.intent.category.DEFAULT" />
-    <category android:name="android.intent.category.BROWSABLE" />
-
-    <data android:scheme="http" android:host="{lang}.m.{project}.org" android:pathPrefix="/wiki" />
-    <data android:scheme="https" android:host="{lang}.m.{project}.org" android:pathPrefix="/wiki" />
-    <data android:scheme="http" android:host="{lang}.{project}.org" android:pathPrefix="/wiki" />
-    <data android:scheme="https" android:host="{lang}.{project}.org" android:pathPrefix="/wiki" />
-
-  </intent-filter>
-
-</activity-alias>
+                <data android:scheme="http" />
+                <data android:scheme="https" />
+                <data android:host="{lang}.m.{project}.org" />
+                <data android:host="{lang}.{project}.org" />
+                <data android:pathPrefix="/wiki" />
+            </intent-filter>
+        </activity-alias>

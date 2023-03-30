@@ -4,6 +4,7 @@ import android.app.Application;
 import android.app.SearchManager;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -118,7 +119,9 @@ public class ArticleCollectionViewModel extends AndroidViewModel {
     private BlobListWrapper createFromIntent(@NonNull Intent intent) {
         String lookupKey = intent.getStringExtra(Intent.EXTRA_TEXT);
         if (intent.getAction().equals(Intent.ACTION_PROCESS_TEXT)) {
-            lookupKey = intent.getCharSequenceExtra(Intent.EXTRA_PROCESS_TEXT).toString();
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                lookupKey = intent.getCharSequenceExtra(Intent.EXTRA_PROCESS_TEXT).toString();
+            }
         }
         if (lookupKey == null) {
             lookupKey = intent.getStringExtra(SearchManager.QUERY);

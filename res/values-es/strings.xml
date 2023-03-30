@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
-    <string name="app_name">Aard 2</string>
     <string name="subtitle_lookup">Búsqueda</string>
     <string name="subtitle_bookmark">Marcadores</string>
     <string name="subtitle_history">Historial</string>
@@ -15,17 +13,8 @@
     <string name="action_sort_by_title">Por título</string>
     <string name="action_sort_by_time">Por tiempo</string>
     <string name="action_lookup">Buscar</string>
-    <!--
-    English only uses "one" and "other" for plurals.
-    Other quantities are included as a fallback if some translation
-    is missing a quantity used in that language, otherwise the app will crash
-    -->
     <plurals name="dict_item_count">
-        <item quantity="zero">%,d elementos</item>
         <item quantity="one">%,d elemento</item>
-        <item quantity="two">%,d elementos</item>
-        <item quantity="few">%,d elementos</item>
-        <item quantity="many">%,d elementos</item>
         <item quantity="other">%,d elementos</item>
     </plurals>
 
@@ -41,8 +30,6 @@
     <string name="setting_remote_content_never">Nunca</string>
     <string name="setting_remote_content">Cargar contenido de la web</string>
     <string name="setting_about">Acerca de %1$s</string>
-    <string name="application_license_name">GNU General Public License v3</string>
-    <string name="application_license_url">https://gnu.org/licenses/gpl.html</string>
     <string name="application_version">Versión %1$s</string>
     <string name="setting_clear_cache">Limpiar caché</string>
     <string name="setting_clear_cache_subtitle">Eliminar contenido de la caché incuído imágenes descargadas de la web</string>
@@ -61,19 +48,11 @@
     <string name="delete">Borrar</string>
 
     <plurals name="confirm_delete_bookmark_count">
-        <item quantity="zero">%,d marcadores</item>
         <item quantity="one">%,d marcador</item>
-        <item quantity="two">%,d marcadores</item>
-        <item quantity="few">%,d marcadores</item>
-        <item quantity="many">%,d marcadores</item>
         <item quantity="other">%,d marcadores</item>
     </plurals>
     <plurals name="confirm_delete_history_count">
-        <item quantity="zero">%,d registros de historial</item>
         <item quantity="one">%,d registro de historial</item>
-        <item quantity="two">%,d registros de historial</item>
-        <item quantity="few">%,d registros de historial</item>
-        <item quantity="many">%,d registros de historial</item>
         <item quantity="other">%,d registros de historial</item>
     </plurals>
 

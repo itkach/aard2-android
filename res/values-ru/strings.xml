@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Aard 2</string>
     <string name="subtitle_lookup">Поиск</string>
     <string name="subtitle_bookmark">Закладки</string>
     <string name="subtitle_history">История</string>
@@ -18,7 +17,6 @@
     <string name="action_lookup">Поиск</string>
 
     <plurals name="dict_item_count">
-        <item quantity="zero">%,d статей</item>
         <item quantity="one">%,d статья</item>
         <item quantity="few">%,d статьи</item>
         <item quantity="many">%,d статей</item>
@@ -27,7 +25,7 @@
     <string name="action_zoom_out">Уменьшить</string>
     <string name="action_zoom_in">Увеличить</string>
     <string name="action_zoom_reset">Сброс масштаба</string>
-    <string name="action_select_style">Стиль...</string>
+    <string name="action_select_style">Стиль…</string>
     <string name="select_style">Выбрать стиль</string>
     <string name="default_style_title">По умолчанию</string>
     <string name="subtitle_settings">Настройки</string>
@@ -45,7 +43,7 @@
     <string name="article_collection_nothing_to_lookup">Не указано что искать</string>
     <string name="article_view_msg_not_found">Ресурс не найден</string>
     <string name="dictionaries_please_wait">Подождите</string>
-    <string name="dictionaries_scanning_device">Идёт поиск словарей на устройстве...</string>
+    <string name="dictionaries_scanning_device">Идёт поиск словарей на устройстве…</string>
     <string name="dictionaries_confirm_forget">Исключить %1$s?</string>
     <string name="lookup_nothing_found">Ничего не найдено</string>
     <string name="main_empty_bookmarks">Нет закладок</string>
@@ -53,13 +51,11 @@
     <string name="main_empty_dictionaries">Нет словарей</string>
     <string name="delete">Удалить</string>
     <plurals name="confirm_delete_bookmark_count">
-        <item quantity="zero">%,d закладок</item>
         <item quantity="one">%,d закладку</item>
         <item quantity="few">%,d закладки</item>
         <item quantity="many">%,d закладок</item>
     </plurals>
     <plurals name="confirm_delete_history_count">
-        <item quantity="zero">%,d записей</item>
         <item quantity="one">%,d запись</item>
         <item quantity="few">%,d записи</item>
         <item quantity="many">%,d записей</item>

@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
-    <string name="app_name">Aard 2</string>
     <string name="subtitle_lookup">Wyszukiwanie</string>
     <string name="subtitle_bookmark">Zakładki</string>
     <string name="subtitle_history">Historia</string>
@@ -15,11 +13,6 @@
     <string name="action_sort_by_title">Wg tytułu</string>
     <string name="action_sort_by_time">Wg czasu</string>
     <string name="action_lookup">Wyszukaj</string>
-    <!--
-    English only uses "one" and "other" for plurals.
-    Other quantities are included as a fallback if some translation
-    is missing a quantity used in that language, otherwise the app will crash
-    -->
     <plurals name="dict_item_count">
         <item quantity="one">%,d element</item>
         <item quantity="few">%,d elementy</item>
@@ -29,7 +22,7 @@
     <string name="action_zoom_out">Oddal</string>
     <string name="action_zoom_in">Przybliż</string>
     <string name="action_zoom_reset">Domyślne powiększenie </string>
-    <string name="action_select_style">Styl...</string>
+    <string name="action_select_style">Styl…</string>
     <string name="select_style">Wybierz styl</string>
     <string name="default_style_title">Domyślny</string>
     <string name="subtitle_settings">Ustawienia</string>
@@ -38,8 +31,6 @@
     <string name="setting_remote_content_never">Nigdy</string>
     <string name="setting_remote_content">Załaduj zdalną zawartość</string>
     <string name="setting_about">O aplikacji %1$s</string>
-    <string name="application_license_name">GNU General Public License v3</string>
-    <string name="application_license_url">https://gnu.org/licenses/gpl.html</string>
     <string name="application_version">Wersja %1$s</string>
     <string name="setting_clear_cache">Wyczyść pamięć podręczną</string>
     <string name="setting_clear_cache_subtitle">Usuń zawartość pamięci podręcznej z uwzględnieniem zdalnych zdjęć</string>
@@ -49,7 +40,7 @@
     <string name="article_collection_nothing_to_lookup">Nie ma nic do wyszukania</string>
     <string name="article_view_msg_not_found">Nie znaleziono</string>
     <string name="dictionaries_please_wait">Proszę czekać</string>
-    <string name="dictionaries_scanning_device">Skanowanie urządzenia w poszukiwaniu słowników...</string>
+    <string name="dictionaries_scanning_device">Skanowanie urządzenia w poszukiwaniu słowników…</string>
     <string name="dictionaries_confirm_forget">Zapomnieć o "%1$s"?</string>
     <string name="lookup_nothing_found">Nic nie znaleziono</string>
     <string name="main_empty_bookmarks">Brak zakładek</string>

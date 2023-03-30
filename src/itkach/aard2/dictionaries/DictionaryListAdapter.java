@@ -39,10 +39,10 @@ public class DictionaryListAdapter extends BaseAdapter {
 
     private final SlobDescriptorList data;
     private final DictionaryListFragment fragment;
-    private View.OnClickListener openUrlOnClick;
+    private final View.OnClickListener openUrlOnClick;
     private AlertDialog deleteConfirmationDialog;
 
-    private final static String hrefTemplate = "<a href=\'%1$s\'>%2$s</a>";
+    private final static String hrefTemplate = "<a href='%1$s'>%2$s</a>";
 
     DictionaryListAdapter(SlobDescriptorList data, DictionaryListFragment fragment) {
         this.data = data;
@@ -80,8 +80,9 @@ public class DictionaryListAdapter extends BaseAdapter {
         String label = desc.getLabel();
         String fileName;
         try {
-            DocumentFile documentFile = DocumentFile.fromSingleUri(parent.getContext(), Uri.parse(desc.path));
-            fileName = documentFile.getName();
+            Uri uri = Uri.parse(desc.path);
+            DocumentFile documentFile = DocumentFile.fromSingleUri(parent.getContext(), uri);
+            fileName = documentFile != null ? documentFile.getName() : uri.getLastPathSegment();
         } catch (Exception ex) {
             fileName = desc.path;
             Log.w(TAG, "Couldn't parse get document file name from uri" + desc.path, ex);
@@ -89,8 +90,12 @@ public class DictionaryListAdapter extends BaseAdapter {
         long blobCount = desc.blobCount;
         boolean available = this.data.resolve(desc) != null;
         View view;
+        MaterialSwitch activeSwitch;
+        MaterialButton btnToggleDetail;
         if (convertView != null) {
             view = convertView;
+            activeSwitch = view.findViewById(R.id.dictionary_active);
+            btnToggleDetail = view.findViewById(R.id.dictionary_btn_toggle_detail);
         } else {
             LayoutInflater inflater = (LayoutInflater) parent.getContext()
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -105,7 +110,7 @@ public class DictionaryListAdapter extends BaseAdapter {
             View sourceView = view.findViewById(R.id.dictionary_source);
             sourceView.setOnClickListener(openUrlOnClick);
 
-            MaterialSwitch activeSwitch = view.findViewById(R.id.dictionary_active);
+            activeSwitch = view.findViewById(R.id.dictionary_active);
             activeSwitch.setOnClickListener(view14 -> {
                 MaterialSwitch activeSwitch1 = (MaterialSwitch) view14;
                 Integer position14 = (Integer) view14.getTag();
@@ -127,8 +132,8 @@ public class DictionaryListAdapter extends BaseAdapter {
                 data.set(position12, desc1);
             };
 
-            View viewDetailToggle = view.findViewById(R.id.dictionary_btn_toggle_detail);
-            viewDetailToggle.setOnClickListener(detailToggle);
+            btnToggleDetail = view.findViewById(R.id.dictionary_btn_toggle_detail);
+            btnToggleDetail.setOnClickListener(detailToggle);
 
             View.OnClickListener toggleFavListener = view13 -> {
                 Integer position13 = (Integer) view13.getTag();
@@ -151,9 +156,8 @@ public class DictionaryListAdapter extends BaseAdapter {
 
         Resources r = parent.getResources();
 
-        MaterialSwitch switchView = view.findViewById(R.id.dictionary_active);
-        switchView.setChecked(desc.active);
-        switchView.setTag(position);
+        activeSwitch.setChecked(desc.active);
+        activeSwitch.setTag(position);
 
         TextView titleView = view.findViewById(R.id.dictionary_label);
         titleView.setEnabled(available);
@@ -170,7 +174,6 @@ public class DictionaryListAdapter extends BaseAdapter {
         setupPathView(fileName, available, view);
         setupErrorView(desc, view);
 
-        MaterialButton btnToggleDetail = view.findViewById(R.id.dictionary_btn_toggle_detail);
         int toggleIcon = desc.expandDetail ? R.drawable.ic_keyboard_arrow_up : R.drawable.ic_keyboard_arrow_down;
         btnToggleDetail.setIconResource(toggleIcon);
         btnToggleDetail.setTag(position);

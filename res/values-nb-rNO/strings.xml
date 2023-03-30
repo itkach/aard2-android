@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
-    <string name="app_name">Aard 2</string>
     <string name="subtitle_lookup">Oppslag</string>
     <string name="subtitle_bookmark">Bokmerker</string>
     <string name="subtitle_history">Historikk</string>
@@ -15,17 +13,8 @@
     <string name="action_sort_by_title">Etter tittel</string>
     <string name="action_sort_by_time">Etter tid</string>
     <string name="action_lookup">Slå opp</string>
-    <!--
-    English only uses "one" and "other" for plurals.
-    Other quantities are included as a fallback if some translation
-    is missing a quantity used in that language, otherwise the app will crash
-    -->
     <plurals name="dict_item_count">
-        <item quantity="zero">%,d elementer</item>
         <item quantity="one">%,d element</item>
-        <item quantity="two">%,d elementer</item>
-        <item quantity="few">%,d elementer</item>
-        <item quantity="many">%,d elementer</item>
         <item quantity="other">%,d elementer</item>
     </plurals>
 
@@ -41,9 +30,6 @@
     <string name="setting_remote_content_never">Aldri</string>
     <string name="setting_remote_content">Last inn innhold fra annensteds hen</string>
     <string name="setting_about">Om %1$s</string>
-    <string name="application_license_name">GNU General Public Lisens v3</string>
-    <string name="application_license_url">https://gnu.org/licenses/gpl.html</string>
-
     <string name="application_version">Versjon %1$s</string>
     <string name="setting_clear_cache">Tøm hurtiglager</string>
     <string name="setting_clear_cache_subtitle">Tøm hurtiglagerinnhold, inkludert bilder fra annensteds hen</string>
@@ -62,19 +48,11 @@
     <string name="delete">Slett</string>
 
     <plurals name="confirm_delete_bookmark_count">
-        <item quantity="zero">%,d bokmerker</item>
         <item quantity="one">%,d bokmerke</item>
-        <item quantity="two">%,d bokmerker</item>
-        <item quantity="few">%,d bokmerker</item>
-        <item quantity="many">%,d bokmerker</item>
         <item quantity="other">%,d bokmerker</item>
     </plurals>
     <plurals name="confirm_delete_history_count">
-        <item quantity="zero">%,d historikkoppføringer</item>
         <item quantity="one">%,d historikkoppføring</item>
-        <item quantity="two">%,d historikkoppføringer</item>
-        <item quantity="few">%,d histtorikkoppføringer</item>
-        <item quantity="many">%,d historikkoppføringer</item>
         <item quantity="other">%,d historikkoppføringer</item>
     </plurals>
 

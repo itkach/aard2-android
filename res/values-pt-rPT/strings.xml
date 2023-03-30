@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
-    <string name="app_name">Aard 2</string>
     <string name="subtitle_lookup">Pesquisar</string>
     <string name="subtitle_bookmark">Marcadores</string>
     <string name="subtitle_history">Histórico</string>
@@ -15,24 +13,15 @@
     <string name="action_sort_by_title">Por título</string>
     <string name="action_sort_by_time">Por tempo</string>
     <string name="action_lookup">Pesquisar</string>
-    <!--
-    English only uses "one" and "other" for plurals.
-    Other quantities are included as a fallback if some translation
-    is missing a quantity used in that language, otherwise the app will crash
-    -->
     <plurals name="dict_item_count">
-        <item quantity="zero">%,d itens</item>
         <item quantity="one">%,d iten</item>
-        <item quantity="two">%,d itens</item>
-        <item quantity="few">%,d itens</item>
-        <item quantity="many">%,d itens</item>
         <item quantity="other">%,d itens</item>
     </plurals>
 
     <string name="action_zoom_out">Reduzir</string>
     <string name="action_zoom_in">Ampliar</string>
     <string name="action_zoom_reset">Repor ampliação</string>
-    <string name="action_select_style">Tema...</string>
+    <string name="action_select_style">Tema…</string>
     <string name="select_style">Selecione tema</string>
     <string name="default_style_title">Predefinido</string>
     <string name="subtitle_settings">Definições</string>
@@ -41,8 +30,6 @@
     <string name="setting_remote_content_never">Nunca</string>
     <string name="setting_remote_content">Carregar conteúdo da web</string>
     <string name="setting_about">Sobre %1$s</string>
-    <string name="application_license_name">GNU General Public License v3</string>
-    <string name="application_license_url">https://gnu.org/licenses/gpl.html</string>
     <string name="application_version">Versão %1$s</string>
     <string name="setting_clear_cache">Limpar cache</string>
     <string name="setting_clear_cache_subtitle">Elimina o conteúdo da cache incluindo imagens transferidas da web</string>
@@ -52,7 +39,7 @@
     <string name="article_collection_nothing_to_lookup">Nada para pesquisar</string>
     <string name="article_view_msg_not_found">Não encontrado</string>
     <string name="dictionaries_please_wait">Por favor aguarde</string>
-    <string name="dictionaries_scanning_device">A procurar dicionários no dispositivo...</string>
+    <string name="dictionaries_scanning_device">A procurar dicionários no dispositivo…</string>
     <string name="dictionaries_confirm_forget">Esquecer "%1$s"?</string>
     <string name="lookup_nothing_found">Sem resultados</string>
     <string name="main_empty_bookmarks">Sem marcadores</string>
@@ -61,19 +48,11 @@
     <string name="delete">Eliminar</string>
 
     <plurals name="confirm_delete_bookmark_count">
-        <item quantity="zero">%,d marcadores</item>
         <item quantity="one">%,d marcador</item>
-        <item quantity="two">%,d marcadores</item>
-        <item quantity="few">%,d marcadores</item>
-        <item quantity="many">%,d marcadores</item>
         <item quantity="other">%,d marcadores</item>
     </plurals>
     <plurals name="confirm_delete_history_count">
-        <item quantity="zero">%,d registos do histórico</item>
         <item quantity="one">%,d registo do histórico</item>
-        <item quantity="two">%,d registo do histórico</item>
-        <item quantity="few">%,d registos do histórico</item>
-        <item quantity="many">%,d registos do histórico</item>
         <item quantity="other">%,d registos do histórico</item>
     </plurals>
 

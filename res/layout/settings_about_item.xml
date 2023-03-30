@@ -77,8 +77,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:clickable="true"
-                    android:focusable="false"
                     android:textAppearance="?attr/textAppearanceListItemSecondary"
                     android:text="@string/application_license_name" />
             </androidx.appcompat.widget.LinearLayoutCompat>

@@ -206,7 +206,7 @@ public class ArticleWebView extends SearchableWebView {
     private String getAutoStyle() {
         if (isUIDark()) {
             for (String title : styleTitles) {
-                String titleLower = title.toLowerCase();
+                String titleLower = title.toLowerCase(Locale.ROOT);
                 if (titleLower.contains("night") || titleLower.contains("dark")) {
                     return title;
                 }
@@ -348,7 +348,7 @@ public class ArticleWebView extends SearchableWebView {
 
     private void updateBackgrounColor() {
         int color = Color.WHITE;
-        String preferredStyle = getPreferredStyle().toLowerCase();
+        String preferredStyle = getPreferredStyle().toLowerCase(Locale.ROOT);
         // webview's default background may "show through" before page
         // load started and/or before page's style applies (and even after that if
         // style doesn't explicitly set background).

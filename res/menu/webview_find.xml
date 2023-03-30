@@ -5,7 +5,7 @@
         android:id="@+id/find_prev"
         android:icon="@drawable/ic_keyboard_arrow_up"
         android:title="@string/find_previous"
-        app:showAsAction="always" />
+        app:showAsAction="ifRoom" />
     <item
         android:id="@+id/find_next"
         android:icon="@drawable/ic_keyboard_arrow_down"

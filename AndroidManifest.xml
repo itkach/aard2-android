@@ -5,19 +5,19 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
-        android:usesCleartextTraffic="true"
         android:name=".Application"
         android:allowBackup="true"
         android:icon="@drawable/aard2"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/AppTheme"
+        android:supportsRtl="true"
+        android:usesCleartextTraffic="true">
 
         <activity
             android:name=".MainActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
             android:windowSoftInputMode="stateHidden"
-            android:exported="true"
-        >
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -30,8 +30,7 @@
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
             android:excludeFromRecents="true"
             android:taskAffinity=""
-            android:exported="true"
-        >
+            android:exported="true">
             <intent-filter>
                 <action android:name="aard2.lookup" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -56,629 +55,557 @@
         </activity>
 
         <activity-alias
-    android:enabled="false"
-    android:name="ar.wikipedia.org"
-    android:targetActivity=".article.ArticleCollectionActivity"
-    android:exported="true"
-    >
-
-  <intent-filter>
-    <action android:name="android.intent.action.VIEW" />
-
-    <category android:name="android.intent.category.DEFAULT" />
-    <category android:name="android.intent.category.BROWSABLE" />
-
-    <data android:scheme="http" android:host="ar.m.wikipedia.org" android:pathPrefix="/wiki" />
-    <data android:scheme="https" android:host="ar.m.wikipedia.org" android:pathPrefix="/wiki" />
-    <data android:scheme="http" android:host="ar.wikipedia.org" android:pathPrefix="/wiki" />
-    <data android:scheme="https" android:host="ar.wikipedia.org" android:pathPrefix="/wiki" />
-
-  </intent-filter>
-
-</activity-alias>
-
-<activity-alias
-    android:enabled="false"
-    android:name="ar.wiktionary.org"
-    android:targetActivity=".article.ArticleCollectionActivity"
-    android:exported="true"
-    >
-
-  <intent-filter>
-    <action android:name="android.intent.action.VIEW" />
-
-    <category android:name="android.intent.category.DEFAULT" />
-    <category android:name="android.intent.category.BROWSABLE" />
-
-    <data android:scheme="http" android:host="ar.m.wiktionary.org" android:pathPrefix="/wiki" />
-    <data android:scheme="https" android:host="ar.m.wiktionary.org" android:pathPrefix="/wiki" />
-    <data android:scheme="http" android:host="ar.wiktionary.org" android:pathPrefix="/wiki" />
-    <data android:scheme="https" android:host="ar.wiktionary.org" android:pathPrefix="/wiki" />
-
-  </intent-filter>
-
-</activity-alias>
-
-<activity-alias
-    android:enabled="false"
-    android:name="de.wikipedia.org"
-    android:targetActivity=".article.ArticleCollectionActivity"
-    android:exported="true"
-    >
-
-  <intent-filter>
-    <action android:name="android.intent.action.VIEW" />
-
-    <category android:name="android.intent.category.DEFAULT" />
-    <category android:name="android.intent.category.BROWSABLE" />
-
-    <data android:scheme="http" android:host="de.m.wikipedia.org" android:pathPrefix="/wiki" />
-    <data android:scheme="https" android:host="de.m.wikipedia.org" android:pathPrefix="/wiki" />
-    <data android:scheme="http" android:host="de.wikipedia.org" android:pathPrefix="/wiki" />
-    <data android:scheme="https" android:host="de.wikipedia.org" android:pathPrefix="/wiki" />
-
-  </intent-filter>
-
-</activity-alias>
-
-<activity-alias
-    android:enabled="false"
-    android:name="de.wiktionary.org"
-    android:targetActivity=".article.ArticleCollectionActivity"
-    android:exported="true"
-    >
-
-  <intent-filter>
-    <action android:name="android.intent.action.VIEW" />
-
-    <category android:name="android.intent.category.DEFAULT" />
-    <category android:name="android.intent.category.BROWSABLE" />
-
-    <data android:scheme="http" android:host="de.m.wiktionary.org" android:pathPrefix="/wiki" />
-    <data android:scheme="https" android:host="de.m.wiktionary.org" android:pathPrefix="/wiki" />
-    <data android:scheme="http" android:host="de.wiktionary.org" android:pathPrefix="/wiki" />
-    <data android:scheme="https" android:host="de.wiktionary.org" android:pathPrefix="/wiki" />
-
-  </intent-filter>
-
-</activity-alias>
-
-<activity-alias
-    android:enabled="false"
-    android:name="en.wikipedia.org"
-    android:targetActivity=".article.ArticleCollectionActivity"
-    android:exported="true"
-    >
-
-  <intent-filter>
-    <action android:name="android.intent.action.VIEW" />
-
-    <category android:name="android.intent.category.DEFAULT" />
-    <category android:name="android.intent.category.BROWSABLE" />
-
-    <data android:scheme="http" android:host="en.m.wikipedia.org" android:pathPrefix="/wiki" />
-    <data android:scheme="https" android:host="en.m.wikipedia.org" android:pathPrefix="/wiki" />
-    <data android:scheme="http" android:host="en.wikipedia.org" android:pathPrefix="/wiki" />
-    <data android:scheme="https" android:host="en.wikipedia.org" android:pathPrefix="/wiki" />
-
-  </intent-filter>
-
-</activity-alias>
-
-<activity-alias
-    android:enabled="false"
-    android:name="en.wiktionary.org"
-    android:targetActivity=".article.ArticleCollectionActivity"
-    android:exported="true"
-    >
-
-  <intent-filter>
-    <action android:name="android.intent.action.VIEW" />
-
-    <category android:name="android.intent.category.DEFAULT" />
-    <category android:name="android.intent.category.BROWSABLE" />
-
-    <data android:scheme="http" android:host="en.m.wiktionary.org" android:pathPrefix="/wiki" />
-    <data android:scheme="https" android:host="en.m.wiktionary.org" android:pathPrefix="/wiki" />
-    <data android:scheme="http" android:host="en.wiktionary.org" android:pathPrefix="/wiki" />
-    <data android:scheme="https" android:host="en.wiktionary.org" android:pathPrefix="/wiki" />
-
-  </intent-filter>
-
-</activity-alias>
-
-<activity-alias
-    android:enabled="false"
-    android:name="es.wikipedia.org"
-    android:targetActivity=".article.ArticleCollectionActivity"
-    android:exported="true"
-    >
-
-  <intent-filter>
-    <action android:name="android.intent.action.VIEW" />
-
-    <category android:name="android.intent.category.DEFAULT" />
-    <category android:name="android.intent.category.BROWSABLE" />
-
-    <data android:scheme="http" android:host="es.m.wikipedia.org" android:pathPrefix="/wiki" />
-    <data android:scheme="https" android:host="es.m.wikipedia.org" android:pathPrefix="/wiki" />
-    <data android:scheme="http" android:host="es.wikipedia.org" android:pathPrefix="/wiki" />
-    <data android:scheme="https" android:host="es.wikipedia.org" android:pathPrefix="/wiki" />
-
-  </intent-filter>
-
-</activity-alias>
-
-<activity-alias
-    android:enabled="false"
-    android:name="es.wiktionary.org"
-    android:targetActivity=".article.ArticleCollectionActivity"
-    android:exported="true"
-    >
-
-  <intent-filter>
-    <action android:name="android.intent.action.VIEW" />
-
-    <category android:name="android.intent.category.DEFAULT" />
-    <category android:name="android.intent.category.BROWSABLE" />
-
-    <data android:scheme="http" android:host="es.m.wiktionary.org" android:pathPrefix="/wiki" />
-    <data android:scheme="https" android:host="es.m.wiktionary.org" android:pathPrefix="/wiki" />
-    <data android:scheme="http" android:host="es.wiktionary.org" android:pathPrefix="/wiki" />
-    <data android:scheme="https" android:host="es.wiktionary.org" android:pathPrefix="/wiki" />
-
-  </intent-filter>
-
-</activity-alias>
-
-<activity-alias
-    android:enabled="false"
-    android:name="fa.wikipedia.org"
-    android:targetActivity=".article.ArticleCollectionActivity"
-    android:exported="true"
-    >
-
-  <intent-filter>
-    <action android:name="android.intent.action.VIEW" />
-
-    <category android:name="android.intent.category.DEFAULT" />
-    <category android:name="android.intent.category.BROWSABLE" />
-
-    <data android:scheme="http" android:host="fa.m.wikipedia.org" android:pathPrefix="/wiki" />
-    <data android:scheme="https" android:host="fa.m.wikipedia.org" android:pathPrefix="/wiki" />
-    <data android:scheme="http" android:host="fa.wikipedia.org" android:pathPrefix="/wiki" />
-    <data android:scheme="https" android:host="fa.wikipedia.org" android:pathPrefix="/wiki" />
-
-  </intent-filter>
-
-</activity-alias>
-
-<activity-alias
-    android:enabled="false"
-    android:name="fa.wiktionary.org"
-    android:targetActivity=".article.ArticleCollectionActivity"
-    android:exported="true"
-    >
-
-  <intent-filter>
-    <action android:name="android.intent.action.VIEW" />
-
-    <category android:name="android.intent.category.DEFAULT" />
-    <category android:name="android.intent.category.BROWSABLE" />
-
-    <data android:scheme="http" android:host="fa.m.wiktionary.org" android:pathPrefix="/wiki" />
-    <data android:scheme="https" android:host="fa.m.wiktionary.org" android:pathPrefix="/wiki" />
-    <data android:scheme="http" android:host="fa.wiktionary.org" android:pathPrefix="/wiki" />
-    <data android:scheme="https" android:host="fa.wiktionary.org" android:pathPrefix="/wiki" />
-
-  </intent-filter>
-
-</activity-alias>
-
-<activity-alias
-    android:enabled="false"
-    android:name="fr.wikipedia.org"
-    android:targetActivity=".article.ArticleCollectionActivity"
-    android:exported="true"
-    >
-
-  <intent-filter>
-    <action android:name="android.intent.action.VIEW" />
-
-    <category android:name="android.intent.category.DEFAULT" />
-    <category android:name="android.intent.category.BROWSABLE" />
-
-    <data android:scheme="http" android:host="fr.m.wikipedia.org" android:pathPrefix="/wiki" />
-    <data android:scheme="https" android:host="fr.m.wikipedia.org" android:pathPrefix="/wiki" />
-    <data android:scheme="http" android:host="fr.wikipedia.org" android:pathPrefix="/wiki" />
-    <data android:scheme="https" android:host="fr.wikipedia.org" android:pathPrefix="/wiki" />
-
-  </intent-filter>
-
-</activity-alias>
-
-<activity-alias
-    android:enabled="false"
-    android:name="fr.wiktionary.org"
-    android:targetActivity=".article.ArticleCollectionActivity"
-    android:exported="true"
-    >
-
-  <intent-filter>
-    <action android:name="android.intent.action.VIEW" />
-
-    <category android:name="android.intent.category.DEFAULT" />
-    <category android:name="android.intent.category.BROWSABLE" />
-
-    <data android:scheme="http" android:host="fr.m.wiktionary.org" android:pathPrefix="/wiki" />
-    <data android:scheme="https" android:host="fr.m.wiktionary.org" android:pathPrefix="/wiki" />
-    <data android:scheme="http" android:host="fr.wiktionary.org" android:pathPrefix="/wiki" />
-    <data android:scheme="https" android:host="fr.wiktionary.org" android:pathPrefix="/wiki" />
-
-  </intent-filter>
-
-</activity-alias>
-
-<activity-alias
-    android:enabled="false"
-    android:name="it.wikipedia.org"
-    android:targetActivity=".article.ArticleCollectionActivity"
-    android:exported="true"
-    >
-
-  <intent-filter>
-    <action android:name="android.intent.action.VIEW" />
-
-    <category android:name="android.intent.category.DEFAULT" />
-    <category android:name="android.intent.category.BROWSABLE" />
-
-    <data android:scheme="http" android:host="it.m.wikipedia.org" android:pathPrefix="/wiki" />
-    <data android:scheme="https" android:host="it.m.wikipedia.org" android:pathPrefix="/wiki" />
-    <data android:scheme="http" android:host="it.wikipedia.org" android:pathPrefix="/wiki" />
-    <data android:scheme="https" android:host="it.wikipedia.org" android:pathPrefix="/wiki" />
-
-  </intent-filter>
-
-</activity-alias>
-
-<activity-alias
-    android:enabled="false"
-    android:name="it.wiktionary.org"
-    android:targetActivity=".article.ArticleCollectionActivity"
-    android:exported="true"
-    >
-
-  <intent-filter>
-    <action android:name="android.intent.action.VIEW" />
-
-    <category android:name="android.intent.category.DEFAULT" />
-    <category android:name="android.intent.category.BROWSABLE" />
-
-    <data android:scheme="http" android:host="it.m.wiktionary.org" android:pathPrefix="/wiki" />
-    <data android:scheme="https" android:host="it.m.wiktionary.org" android:pathPrefix="/wiki" />
-    <data android:scheme="http" android:host="it.wiktionary.org" android:pathPrefix="/wiki" />
-    <data android:scheme="https" android:host="it.wiktionary.org" android:pathPrefix="/wiki" />
-
-  </intent-filter>
-
-</activity-alias>
-
-<activity-alias
-    android:enabled="false"
-    android:name="ja.wikipedia.org"
-    android:targetActivity=".article.ArticleCollectionActivity"
-    android:exported="true"
-    >
-
-  <intent-filter>
-    <action android:name="android.intent.action.VIEW" />
-
-    <category android:name="android.intent.category.DEFAULT" />
-    <category android:name="android.intent.category.BROWSABLE" />
-
-    <data android:scheme="http" android:host="ja.m.wikipedia.org" android:pathPrefix="/wiki" />
-    <data android:scheme="https" android:host="ja.m.wikipedia.org" android:pathPrefix="/wiki" />
-    <data android:scheme="http" android:host="ja.wikipedia.org" android:pathPrefix="/wiki" />
-    <data android:scheme="https" android:host="ja.wikipedia.org" android:pathPrefix="/wiki" />
-
-  </intent-filter>
-
-</activity-alias>
-
-<activity-alias
-    android:enabled="false"
-    android:name="ja.wiktionary.org"
-    android:targetActivity=".article.ArticleCollectionActivity"
-    android:exported="true"
-    >
-
-  <intent-filter>
-    <action android:name="android.intent.action.VIEW" />
-
-    <category android:name="android.intent.category.DEFAULT" />
-    <category android:name="android.intent.category.BROWSABLE" />
-
-    <data android:scheme="http" android:host="ja.m.wiktionary.org" android:pathPrefix="/wiki" />
-    <data android:scheme="https" android:host="ja.m.wiktionary.org" android:pathPrefix="/wiki" />
-    <data android:scheme="http" android:host="ja.wiktionary.org" android:pathPrefix="/wiki" />
-    <data android:scheme="https" android:host="ja.wiktionary.org" android:pathPrefix="/wiki" />
-
-  </intent-filter>
-
-</activity-alias>
-
-<activity-alias
-    android:enabled="false"
-    android:name="nl.wikipedia.org"
-    android:targetActivity=".article.ArticleCollectionActivity"
-    android:exported="true"
-    >
-
-  <intent-filter>
-    <action android:name="android.intent.action.VIEW" />
-
-    <category android:name="android.intent.category.DEFAULT" />
-    <category android:name="android.intent.category.BROWSABLE" />
-
-    <data android:scheme="http" android:host="nl.m.wikipedia.org" android:pathPrefix="/wiki" />
-    <data android:scheme="https" android:host="nl.m.wikipedia.org" android:pathPrefix="/wiki" />
-    <data android:scheme="http" android:host="nl.wikipedia.org" android:pathPrefix="/wiki" />
-    <data android:scheme="https" android:host="nl.wikipedia.org" android:pathPrefix="/wiki" />
-
-  </intent-filter>
-
-</activity-alias>
-
-<activity-alias
-    android:enabled="false"
-    android:name="nl.wiktionary.org"
-    android:targetActivity=".article.ArticleCollectionActivity"
-    android:exported="true"
-    >
-
-  <intent-filter>
-    <action android:name="android.intent.action.VIEW" />
-
-    <category android:name="android.intent.category.DEFAULT" />
-    <category android:name="android.intent.category.BROWSABLE" />
-
-    <data android:scheme="http" android:host="nl.m.wiktionary.org" android:pathPrefix="/wiki" />
-    <data android:scheme="https" android:host="nl.m.wiktionary.org" android:pathPrefix="/wiki" />
-    <data android:scheme="http" android:host="nl.wiktionary.org" android:pathPrefix="/wiki" />
-    <data android:scheme="https" android:host="nl.wiktionary.org" android:pathPrefix="/wiki" />
-
-  </intent-filter>
-
-</activity-alias>
-
-<activity-alias
-    android:enabled="false"
-    android:name="pl.wikipedia.org"
-    android:targetActivity=".article.ArticleCollectionActivity"
-    android:exported="true"
-    >
-
-  <intent-filter>
-    <action android:name="android.intent.action.VIEW" />
-
-    <category android:name="android.intent.category.DEFAULT" />
-    <category android:name="android.intent.category.BROWSABLE" />
-
-    <data android:scheme="http" android:host="pl.m.wikipedia.org" android:pathPrefix="/wiki" />
-    <data android:scheme="https" android:host="pl.m.wikipedia.org" android:pathPrefix="/wiki" />
-    <data android:scheme="http" android:host="pl.wikipedia.org" android:pathPrefix="/wiki" />
-    <data android:scheme="https" android:host="pl.wikipedia.org" android:pathPrefix="/wiki" />
-
-  </intent-filter>
-
-</activity-alias>
-
-<activity-alias
-    android:enabled="false"
-    android:name="pl.wiktionary.org"
-    android:targetActivity=".article.ArticleCollectionActivity"
-    android:exported="true"
-    >
-
-  <intent-filter>
-    <action android:name="android.intent.action.VIEW" />
-
-    <category android:name="android.intent.category.DEFAULT" />
-    <category android:name="android.intent.category.BROWSABLE" />
-
-    <data android:scheme="http" android:host="pl.m.wiktionary.org" android:pathPrefix="/wiki" />
-    <data android:scheme="https" android:host="pl.m.wiktionary.org" android:pathPrefix="/wiki" />
-    <data android:scheme="http" android:host="pl.wiktionary.org" android:pathPrefix="/wiki" />
-    <data android:scheme="https" android:host="pl.wiktionary.org" android:pathPrefix="/wiki" />
-
-  </intent-filter>
-
-</activity-alias>
-
-<activity-alias
-    android:enabled="false"
-    android:name="pt.wikipedia.org"
-    android:targetActivity=".article.ArticleCollectionActivity"
-    android:exported="true"
-    >
-
-  <intent-filter>
-    <action android:name="android.intent.action.VIEW" />
-
-    <category android:name="android.intent.category.DEFAULT" />
-    <category android:name="android.intent.category.BROWSABLE" />
-
-    <data android:scheme="http" android:host="pt.m.wikipedia.org" android:pathPrefix="/wiki" />
-    <data android:scheme="https" android:host="pt.m.wikipedia.org" android:pathPrefix="/wiki" />
-    <data android:scheme="http" android:host="pt.wikipedia.org" android:pathPrefix="/wiki" />
-    <data android:scheme="https" android:host="pt.wikipedia.org" android:pathPrefix="/wiki" />
-
-  </intent-filter>
-
-</activity-alias>
-
-<activity-alias
-    android:enabled="false"
-    android:name="pt.wiktionary.org"
-    android:targetActivity=".article.ArticleCollectionActivity"
-    android:exported="true"
-    >
-
-  <intent-filter>
-    <action android:name="android.intent.action.VIEW" />
-
-    <category android:name="android.intent.category.DEFAULT" />
-    <category android:name="android.intent.category.BROWSABLE" />
-
-    <data android:scheme="http" android:host="pt.m.wiktionary.org" android:pathPrefix="/wiki" />
-    <data android:scheme="https" android:host="pt.m.wiktionary.org" android:pathPrefix="/wiki" />
-    <data android:scheme="http" android:host="pt.wiktionary.org" android:pathPrefix="/wiki" />
-    <data android:scheme="https" android:host="pt.wiktionary.org" android:pathPrefix="/wiki" />
-
-  </intent-filter>
-
-</activity-alias>
-
-<activity-alias
-    android:enabled="false"
-    android:name="ru.wikipedia.org"
-    android:targetActivity=".article.ArticleCollectionActivity"
-    android:exported="true"
-    >
-
-  <intent-filter>
-    <action android:name="android.intent.action.VIEW" />
-
-    <category android:name="android.intent.category.DEFAULT" />
-    <category android:name="android.intent.category.BROWSABLE" />
-
-    <data android:scheme="http" android:host="ru.m.wikipedia.org" android:pathPrefix="/wiki" />
-    <data android:scheme="https" android:host="ru.m.wikipedia.org" android:pathPrefix="/wiki" />
-    <data android:scheme="http" android:host="ru.wikipedia.org" android:pathPrefix="/wiki" />
-    <data android:scheme="https" android:host="ru.wikipedia.org" android:pathPrefix="/wiki" />
-
-  </intent-filter>
-
-</activity-alias>
-
-<activity-alias
-    android:enabled="false"
-    android:name="ru.wiktionary.org"
-    android:targetActivity=".article.ArticleCollectionActivity"
-    android:exported="true"
-    >
-
-  <intent-filter>
-    <action android:name="android.intent.action.VIEW" />
-
-    <category android:name="android.intent.category.DEFAULT" />
-    <category android:name="android.intent.category.BROWSABLE" />
-
-    <data android:scheme="http" android:host="ru.m.wiktionary.org" android:pathPrefix="/wiki" />
-    <data android:scheme="https" android:host="ru.m.wiktionary.org" android:pathPrefix="/wiki" />
-    <data android:scheme="http" android:host="ru.wiktionary.org" android:pathPrefix="/wiki" />
-    <data android:scheme="https" android:host="ru.wiktionary.org" android:pathPrefix="/wiki" />
-
-  </intent-filter>
-
-</activity-alias>
-
-<activity-alias
-    android:enabled="false"
-    android:name="uk.wikipedia.org"
-    android:targetActivity=".article.ArticleCollectionActivity"
-    android:exported="true"
-    >
-
-  <intent-filter>
-    <action android:name="android.intent.action.VIEW" />
-
-    <category android:name="android.intent.category.DEFAULT" />
-    <category android:name="android.intent.category.BROWSABLE" />
-
-    <data android:scheme="http" android:host="uk.m.wikipedia.org" android:pathPrefix="/wiki" />
-    <data android:scheme="https" android:host="uk.m.wikipedia.org" android:pathPrefix="/wiki" />
-    <data android:scheme="http" android:host="uk.wikipedia.org" android:pathPrefix="/wiki" />
-    <data android:scheme="https" android:host="uk.wikipedia.org" android:pathPrefix="/wiki" />
-
-  </intent-filter>
-
-</activity-alias>
-
-<activity-alias
-    android:enabled="false"
-    android:name="uk.wiktionary.org"
-    android:targetActivity=".article.ArticleCollectionActivity"
-    android:exported="true"
-    >
-
-  <intent-filter>
-    <action android:name="android.intent.action.VIEW" />
-
-    <category android:name="android.intent.category.DEFAULT" />
-    <category android:name="android.intent.category.BROWSABLE" />
-
-    <data android:scheme="http" android:host="uk.m.wiktionary.org" android:pathPrefix="/wiki" />
-    <data android:scheme="https" android:host="uk.m.wiktionary.org" android:pathPrefix="/wiki" />
-    <data android:scheme="http" android:host="uk.wiktionary.org" android:pathPrefix="/wiki" />
-    <data android:scheme="https" android:host="uk.wiktionary.org" android:pathPrefix="/wiki" />
-
-  </intent-filter>
-
-</activity-alias>
-
-<activity-alias
-    android:enabled="false"
-    android:name="zh.wikipedia.org"
-    android:targetActivity=".article.ArticleCollectionActivity"
-    android:exported="true"
-    >
-
-  <intent-filter>
-    <action android:name="android.intent.action.VIEW" />
-
-    <category android:name="android.intent.category.DEFAULT" />
-    <category android:name="android.intent.category.BROWSABLE" />
-
-    <data android:scheme="http" android:host="zh.m.wikipedia.org" android:pathPrefix="/wiki" />
-    <data android:scheme="https" android:host="zh.m.wikipedia.org" android:pathPrefix="/wiki" />
-    <data android:scheme="http" android:host="zh.wikipedia.org" android:pathPrefix="/wiki" />
-    <data android:scheme="https" android:host="zh.wikipedia.org" android:pathPrefix="/wiki" />
-
-  </intent-filter>
-
-</activity-alias>
-
-<activity-alias
-    android:enabled="false"
-    android:name="zh.wiktionary.org"
-    android:targetActivity=".article.ArticleCollectionActivity"
-    android:exported="true"
-    >
-
-  <intent-filter>
-    <action android:name="android.intent.action.VIEW" />
-
-    <category android:name="android.intent.category.DEFAULT" />
-    <category android:name="android.intent.category.BROWSABLE" />
-
-    <data android:scheme="http" android:host="zh.m.wiktionary.org" android:pathPrefix="/wiki" />
-    <data android:scheme="https" android:host="zh.m.wiktionary.org" android:pathPrefix="/wiki" />
-    <data android:scheme="http" android:host="zh.wiktionary.org" android:pathPrefix="/wiki" />
-    <data android:scheme="https" android:host="zh.wiktionary.org" android:pathPrefix="/wiki" />
-
-  </intent-filter>
-
-</activity-alias>
-
-
-        <uses-library android:required="false" android:name="com.sec.android.app.multiwindow" />
-
-        <meta-data android:name="com.sec.android.support.multiwindow" android:value="true" />
-        <meta-data android:name="com.sec.android.multiwindow.DEFAULT_SIZE_W" android:resource="@dimen/app_defaultsize_w" />
-        <meta-data android:name="com.sec.android.multiwindow.DEFAULT_SIZE_H" android:resource="@dimen/app_defaultsize_h" />
-        <meta-data android:name="com.sec.android.multiwindow.MINIMUM_SIZE_W" android:resource="@dimen/app_minimumsize_w" />
-        <meta-data android:name="com.sec.android.multiwindow.MINIMUM_SIZE_H" android:resource="@dimen/app_minimumsize_h" />
+            android:enabled="false"
+            android:name="ar.wikipedia.org"
+            android:targetActivity=".article.ArticleCollectionActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="http" />
+                <data android:scheme="https" />
+                <data android:host="ar.m.wikipedia.org" />
+                <data android:host="ar.wikipedia.org" />
+                <data android:pathPrefix="/wiki" />
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias
+            android:enabled="false"
+            android:name="ar.wiktionary.org"
+            android:targetActivity=".article.ArticleCollectionActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="http" />
+                <data android:scheme="https" />
+                <data android:host="ar.m.wiktionary.org" />
+                <data android:host="ar.wiktionary.org" />
+                <data android:pathPrefix="/wiki" />
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias
+            android:enabled="false"
+            android:name="de.wikipedia.org"
+            android:targetActivity=".article.ArticleCollectionActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="http" />
+                <data android:scheme="https" />
+                <data android:host="de.m.wikipedia.org" />
+                <data android:host="de.wikipedia.org" />
+                <data android:pathPrefix="/wiki" />
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias
+            android:enabled="false"
+            android:name="de.wiktionary.org"
+            android:targetActivity=".article.ArticleCollectionActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="http" />
+                <data android:scheme="https" />
+                <data android:host="de.m.wiktionary.org" />
+                <data android:host="de.wiktionary.org" />
+                <data android:pathPrefix="/wiki" />
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias
+            android:enabled="false"
+            android:name="en.wikipedia.org"
+            android:targetActivity=".article.ArticleCollectionActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="http" />
+                <data android:scheme="https" />
+                <data android:host="en.m.wikipedia.org" />
+                <data android:host="en.wikipedia.org" />
+                <data android:pathPrefix="/wiki" />
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias
+            android:enabled="false"
+            android:name="en.wiktionary.org"
+            android:targetActivity=".article.ArticleCollectionActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="http" />
+                <data android:scheme="https" />
+                <data android:host="en.m.wiktionary.org" />
+                <data android:host="en.wiktionary.org" />
+                <data android:pathPrefix="/wiki" />
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias
+            android:enabled="false"
+            android:name="es.wikipedia.org"
+            android:targetActivity=".article.ArticleCollectionActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="http" />
+                <data android:scheme="https" />
+                <data android:host="es.m.wikipedia.org" />
+                <data android:host="es.wikipedia.org" />
+                <data android:pathPrefix="/wiki" />
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias
+            android:enabled="false"
+            android:name="es.wiktionary.org"
+            android:targetActivity=".article.ArticleCollectionActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="http" />
+                <data android:scheme="https" />
+                <data android:host="es.m.wiktionary.org" />
+                <data android:host="es.wiktionary.org" />
+                <data android:pathPrefix="/wiki" />
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias
+            android:enabled="false"
+            android:name="fa.wikipedia.org"
+            android:targetActivity=".article.ArticleCollectionActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="http" />
+                <data android:scheme="https" />
+                <data android:host="fa.m.wikipedia.org" />
+                <data android:host="fa.wikipedia.org" />
+                <data android:pathPrefix="/wiki" />
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias
+            android:enabled="false"
+            android:name="fa.wiktionary.org"
+            android:targetActivity=".article.ArticleCollectionActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="http" />
+                <data android:scheme="https" />
+                <data android:host="fa.m.wiktionary.org" />
+                <data android:host="fa.wiktionary.org" />
+                <data android:pathPrefix="/wiki" />
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias
+            android:enabled="false"
+            android:name="fr.wikipedia.org"
+            android:targetActivity=".article.ArticleCollectionActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="http" />
+                <data android:scheme="https" />
+                <data android:host="fr.m.wikipedia.org" />
+                <data android:host="fr.wikipedia.org" />
+                <data android:pathPrefix="/wiki" />
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias
+            android:enabled="false"
+            android:name="fr.wiktionary.org"
+            android:targetActivity=".article.ArticleCollectionActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="http" />
+                <data android:scheme="https" />
+                <data android:host="fr.m.wiktionary.org" />
+                <data android:host="fr.wiktionary.org" />
+                <data android:pathPrefix="/wiki" />
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias
+            android:enabled="false"
+            android:name="it.wikipedia.org"
+            android:targetActivity=".article.ArticleCollectionActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="http" />
+                <data android:scheme="https" />
+                <data android:host="it.m.wikipedia.org" />
+                <data android:host="it.wikipedia.org" />
+                <data android:pathPrefix="/wiki" />
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias
+            android:enabled="false"
+            android:name="it.wiktionary.org"
+            android:targetActivity=".article.ArticleCollectionActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="http" />
+                <data android:scheme="https" />
+                <data android:host="it.m.wiktionary.org" />
+                <data android:host="it.wiktionary.org" />
+                <data android:pathPrefix="/wiki" />
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias
+            android:enabled="false"
+            android:name="ja.wikipedia.org"
+            android:targetActivity=".article.ArticleCollectionActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="http" />
+                <data android:scheme="https" />
+                <data android:host="ja.m.wikipedia.org" />
+                <data android:host="ja.wikipedia.org" />
+                <data android:pathPrefix="/wiki" />
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias
+            android:enabled="false"
+            android:name="ja.wiktionary.org"
+            android:targetActivity=".article.ArticleCollectionActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="http" />
+                <data android:scheme="https" />
+                <data android:host="ja.m.wiktionary.org" />
+                <data android:host="ja.wiktionary.org" />
+                <data android:pathPrefix="/wiki" />
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias
+            android:enabled="false"
+            android:name="nl.wikipedia.org"
+            android:targetActivity=".article.ArticleCollectionActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="http" />
+                <data android:scheme="https" />
+                <data android:host="nl.m.wikipedia.org" />
+                <data android:host="nl.wikipedia.org" />
+                <data android:pathPrefix="/wiki" />
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias
+            android:enabled="false"
+            android:name="nl.wiktionary.org"
+            android:targetActivity=".article.ArticleCollectionActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="http" />
+                <data android:scheme="https" />
+                <data android:host="nl.m.wiktionary.org" />
+                <data android:host="nl.wiktionary.org" />
+                <data android:pathPrefix="/wiki" />
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias
+            android:enabled="false"
+            android:name="pl.wikipedia.org"
+            android:targetActivity=".article.ArticleCollectionActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="http" />
+                <data android:scheme="https" />
+                <data android:host="pl.m.wikipedia.org" />
+                <data android:host="pl.wikipedia.org" />
+                <data android:pathPrefix="/wiki" />
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias
+            android:enabled="false"
+            android:name="pl.wiktionary.org"
+            android:targetActivity=".article.ArticleCollectionActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="http" />
+                <data android:scheme="https" />
+                <data android:host="pl.m.wiktionary.org" />
+                <data android:host="pl.wiktionary.org" />
+                <data android:pathPrefix="/wiki" />
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias
+            android:enabled="false"
+            android:name="pt.wikipedia.org"
+            android:targetActivity=".article.ArticleCollectionActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="http" />
+                <data android:scheme="https" />
+                <data android:host="pt.m.wikipedia.org" />
+                <data android:host="pt.wikipedia.org" />
+                <data android:pathPrefix="/wiki" />
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias
+            android:enabled="false"
+            android:name="pt.wiktionary.org"
+            android:targetActivity=".article.ArticleCollectionActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="http" />
+                <data android:scheme="https" />
+                <data android:host="pt.m.wiktionary.org" />
+                <data android:host="pt.wiktionary.org" />
+                <data android:pathPrefix="/wiki" />
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias
+            android:enabled="false"
+            android:name="ru.wikipedia.org"
+            android:targetActivity=".article.ArticleCollectionActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="http" />
+                <data android:scheme="https" />
+                <data android:host="ru.m.wikipedia.org" />
+                <data android:host="ru.wikipedia.org" />
+                <data android:pathPrefix="/wiki" />
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias
+            android:enabled="false"
+            android:name="ru.wiktionary.org"
+            android:targetActivity=".article.ArticleCollectionActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="http" />
+                <data android:scheme="https" />
+                <data android:host="ru.m.wiktionary.org" />
+                <data android:host="ru.wiktionary.org" />
+                <data android:pathPrefix="/wiki" />
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias
+            android:enabled="false"
+            android:name="uk.wikipedia.org"
+            android:targetActivity=".article.ArticleCollectionActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="http" />
+                <data android:scheme="https" />
+                <data android:host="uk.m.wikipedia.org" />
+                <data android:host="uk.wikipedia.org" />
+                <data android:pathPrefix="/wiki" />
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias
+            android:enabled="false"
+            android:name="uk.wiktionary.org"
+            android:targetActivity=".article.ArticleCollectionActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="http" />
+                <data android:scheme="https" />
+                <data android:host="uk.m.wiktionary.org" />
+                <data android:host="uk.wiktionary.org" />
+                <data android:pathPrefix="/wiki" />
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias
+            android:enabled="false"
+            android:name="zh.wikipedia.org"
+            android:targetActivity=".article.ArticleCollectionActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="http" />
+                <data android:scheme="https" />
+                <data android:host="zh.m.wikipedia.org" />
+                <data android:host="zh.wikipedia.org" />
+                <data android:pathPrefix="/wiki" />
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias
+            android:enabled="false"
+            android:name="zh.wiktionary.org"
+            android:targetActivity=".article.ArticleCollectionActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="http" />
+                <data android:scheme="https" />
+                <data android:host="zh.m.wiktionary.org" />
+                <data android:host="zh.wiktionary.org" />
+                <data android:pathPrefix="/wiki" />
+            </intent-filter>
+        </activity-alias>
+
+
+        <uses-library
+            android:required="false"
+            android:name="com.sec.android.app.multiwindow" />
+
+        <meta-data
+            android:name="com.sec.android.support.multiwindow"
+            android:value="true" />
+        <meta-data
+            android:name="com.sec.android.multiwindow.DEFAULT_SIZE_W"
+            android:resource="@dimen/app_defaultsize_w" />
+        <meta-data
+            android:name="com.sec.android.multiwindow.DEFAULT_SIZE_H"
+            android:resource="@dimen/app_defaultsize_h" />
+        <meta-data
+            android:name="com.sec.android.multiwindow.MINIMUM_SIZE_W"
+            android:resource="@dimen/app_minimumsize_w" />
+        <meta-data
+            android:name="com.sec.android.multiwindow.MINIMUM_SIZE_H"
+            android:resource="@dimen/app_minimumsize_h" />
 
     </application>
 
