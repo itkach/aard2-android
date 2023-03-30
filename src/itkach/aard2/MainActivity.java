@@ -28,6 +28,7 @@ import itkach.aard2.article.ArticleCollectionActivity;
 import itkach.aard2.dictionaries.DictionaryListFragment;
 import itkach.aard2.lookup.LookupFragment;
 import itkach.aard2.prefs.AppPrefs;
+import itkach.aard2.prefs.SettingsFragment;
 import itkach.aard2.utils.ClipboardUtils;
 import itkach.aard2.utils.Utils;
 import itkach.slob.Slob;

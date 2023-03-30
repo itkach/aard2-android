@@ -1,4 +1,4 @@
-package itkach.aard2;
+package itkach.aard2.prefs;
 
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
@@ -36,9 +36,7 @@ import com.google.android.material.textview.MaterialTextView;
 import java.util.Collections;
 import java.util.List;
 
-import itkach.aard2.prefs.AppPrefs;
-import itkach.aard2.prefs.ArticleViewPrefs;
-import itkach.aard2.prefs.UserStylesPrefs;
+import itkach.aard2.R;
 
 public class SettingsListAdapter extends BaseAdapter implements SharedPreferences.OnSharedPreferenceChangeListener {
     private final static String TAG = SettingsListAdapter.class.getSimpleName();

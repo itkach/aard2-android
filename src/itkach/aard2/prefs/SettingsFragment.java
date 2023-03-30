@@ -1,4 +1,4 @@
-package itkach.aard2;
+package itkach.aard2.prefs;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -15,7 +15,7 @@ import androidx.fragment.app.ListFragment;
 import java.io.IOException;
 import java.io.InputStream;
 
-import itkach.aard2.prefs.UserStylesPrefs;
+import itkach.aard2.R;
 import itkach.aard2.utils.Utils;
 
 public class SettingsFragment extends ListFragment {
