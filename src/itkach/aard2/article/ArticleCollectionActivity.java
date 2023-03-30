@@ -1,15 +1,11 @@
 package itkach.aard2.article;
 
 import android.app.Activity;
-import android.app.SearchManager;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.DataSetObserver;
-import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.KeyEvent;
@@ -26,180 +22,102 @@ import androidx.core.app.TaskStackBuilder;
 import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.core.view.WindowInsetsControllerCompat;
-import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager.widget.PagerTitleStrip;
 import androidx.viewpager.widget.ViewPager;
 
-import java.util.Iterator;
-import java.util.List;
+import java.util.Objects;
 
-import itkach.aard2.BlobDescriptor;
-import itkach.aard2.BlobDescriptorList;
 import itkach.aard2.MainActivity;
 import itkach.aard2.R;
 import itkach.aard2.SlobHelper;
-import itkach.aard2.lookup.LookupResult;
 import itkach.aard2.prefs.AppPrefs;
 import itkach.aard2.prefs.ArticleCollectionPrefs;
 import itkach.aard2.utils.ThreadUtils;
 import itkach.aard2.utils.Utils;
 import itkach.aard2.widget.ArticleWebView;
 import itkach.slob.Slob;
-import itkach.slob.Slob.Blob;
 
 public class ArticleCollectionActivity extends AppCompatActivity
         implements SharedPreferences.OnSharedPreferenceChangeListener {
     private static final String TAG = ArticleCollectionActivity.class.getSimpleName();
 
-    private AbsArticleCollectionPagerAdapter articleCollectionPagerAdapter;
+    private ArticleCollectionPagerAdapter pagerAdapter;
     private ViewPager viewPager;
+    private ArticleCollectionViewModel viewModel;
 
-    private static class ToBlobWithFragment implements ToBlob<Blob> {
-        @NonNull
-        private final String fragment;
-
-        ToBlobWithFragment(@NonNull String fragment) {
-            this.fragment = fragment;
-        }
-
-        @Override
-        @Nullable
-        public Blob convert(@Nullable Blob item) {
-            if (item == null) {
-                return null;
-            }
-            return new Blob(item.owner, item.id, item.key, this.fragment);
-        }
-    }
-
-    private final ToBlob<Blob> blobToBlob = item -> item;
-
-    private boolean onDestroyCalled = false;
-
-    public void onCreate(Bundle savedInstanceState) {
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
         Utils.updateNightMode();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_article_collection_loading);
         setSupportActionBar(findViewById(R.id.toolbar));
-        final ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.hide();
-            actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setSubtitle("...");
-        }
+        viewModel = new ViewModelProvider(this).get(ArticleCollectionViewModel.class);
+
+        final ActionBar actionBar = requireActionBar();
+        actionBar.hide();
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setSubtitle("...");
+
         final Intent intent = getIntent();
         final int position = intent.getIntExtra("position", 0);
 
-        AsyncTask<Void, Void, AbsArticleCollectionPagerAdapter> createAdapterTask = new AsyncTask<Void, Void, AbsArticleCollectionPagerAdapter>() {
-
-            Exception exception;
-
-            @Override
-            protected AbsArticleCollectionPagerAdapter doInBackground(Void... params) {
-                AbsArticleCollectionPagerAdapter result = null;
-                Uri articleUrl = intent.getData();
-                try {
-                    if (articleUrl != null) {
-                        result = createFromUri(articleUrl);
-                    } else {
-                        String action = intent.getAction();
-                        if (action == null) {
-                            result = createFromLastResult();
-                        } else if (action.equals("showBookmarks")) {
-                            result = createFromBookmarks();
-                        } else if (action.equals("showHistory")) {
-                            result = createFromHistory();
-                        } else {
-                            result = createFromIntent(intent);
-                        }
-                    }
-                } catch (Exception e) {
-                    this.exception = e;
-                }
-                return result;
+        viewModel.getBlobListLiveData().observe(this, blobListWrapper -> {
+            if (blobListWrapper == null) {
+                // Adapter is never null, empty or less than |position|
+                return;
             }
 
-            @Override
-            protected void onPostExecute(AbsArticleCollectionPagerAdapter adapter) {
-                if (isFinishing() || onDestroyCalled) {
-                    return;
-                }
-                if (this.exception != null) {
-                    Toast.makeText(ArticleCollectionActivity.this,
-                            this.exception.getLocalizedMessage(),
-                            Toast.LENGTH_SHORT).show();
-                    finish();
-                    return;
-                }
-                articleCollectionPagerAdapter = adapter;
-                if (articleCollectionPagerAdapter == null || articleCollectionPagerAdapter.getCount() == 0) {
-                    int messageId;
-                    if (articleCollectionPagerAdapter == null) {
-                        messageId = R.string.article_collection_invalid_link;
-                    } else {
-                        messageId = R.string.article_collection_nothing_found;
-                    }
-                    Toast.makeText(ArticleCollectionActivity.this, messageId,
-                            Toast.LENGTH_SHORT).show();
-                    finish();
-                    return;
+            setContentView(R.layout.activity_article_collection);
+            setSupportActionBar(findViewById(R.id.toolbar));
+
+            PagerTitleStrip titleStrip = findViewById(R.id.pager_title_strip);
+            titleStrip.setVisibility(blobListWrapper.size() == 1 ? ViewGroup.GONE : ViewGroup.VISIBLE);
+            titleStrip.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 10);
+
+            viewPager = findViewById(R.id.pager);
+            pagerAdapter = new ArticleCollectionPagerAdapter(blobListWrapper, getSupportFragmentManager());
+            viewPager.setAdapter(pagerAdapter);
+            viewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+                @Override
+                public void onPageScrollStateChanged(int arg0) {
                 }
 
-                if (position > articleCollectionPagerAdapter.getCount() - 1) {
-                    Toast.makeText(ArticleCollectionActivity.this, R.string.article_collection_selected_not_available,
-                            Toast.LENGTH_SHORT).show();
-                    finish();
-                    return;
+                @Override
+                public void onPageScrolled(int arg0, float arg1, int arg2) {
                 }
 
-                setContentView(R.layout.activity_article_collection);
-                setSupportActionBar(findViewById(R.id.toolbar));
+                @Override
+                public void onPageSelected(final int position) {
+                    updateTitle(position);
+                    runOnUiThread(() -> {
+                        ArticleFragment fragment = pagerAdapter.getItem(position);
+                        fragment.applyTextZoomPref();
+                    });
 
-                findViewById(R.id.pager_title_strip).setVisibility(
-                        articleCollectionPagerAdapter.getCount() == 1 ? ViewGroup.GONE : ViewGroup.VISIBLE);
-
-                viewPager = findViewById(R.id.pager);
-                viewPager.setAdapter(articleCollectionPagerAdapter);
-                viewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-
-                    @Override
-                    public void onPageScrollStateChanged(int arg0) {
+                }
+            });
+            viewPager.setCurrentItem(position);
+            updateTitle(position);
+            pagerAdapter.registerDataSetObserver(new DataSetObserver() {
+                @Override
+                public void onChanged() {
+                    if (pagerAdapter.getCount() == 0) {
+                        finish();
                     }
-
-                    @Override
-                    public void onPageScrolled(int arg0, float arg1, int arg2) {
-                    }
-
-                    @Override
-                    public void onPageSelected(final int position) {
-                        updateTitle(position);
-                        runOnUiThread(() -> {
-                            ArticleFragment fragment = (ArticleFragment) articleCollectionPagerAdapter.getItem(position);
-                            fragment.applyTextZoomPref();
-                        });
-
-                    }
-                });
-                viewPager.setCurrentItem(position);
-
-                PagerTitleStrip titleStrip = findViewById(R.id.pager_title_strip);
-                titleStrip.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 10);
-                updateTitle(position);
-                articleCollectionPagerAdapter.registerDataSetObserver(new DataSetObserver() {
-                    @Override
-                    public void onChanged() {
-                        if (articleCollectionPagerAdapter.getCount() == 0) {
-                            finish();
-                        }
-                    }
-                });
+                }
+            });
+        });
+        viewModel.getFailureMessageLiveData().observe(this, message -> {
+            if (message != null) {
+                Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+                finish();
             }
-        };
-
-        createAdapterTask.execute();
-
+        });
+        // Load adapter
+        viewModel.loadBlobList(intent);
     }
 
     @Override
@@ -212,107 +130,17 @@ public class ArticleCollectionActivity extends AppCompatActivity
         super.onBackPressed();
     }
 
-    private ArticleCollectionLookupPagerAdapter createFromUri(Uri articleUrl) {
-        String host = articleUrl.getHost();
-        if (!(host.equals("localhost") || host.matches("127.\\d{1,3}.\\d{1,3}.\\d{1,3}"))) {
-            return createFromIntent(getIntent());
-        }
-        BlobDescriptor bd = BlobDescriptor.fromUri(articleUrl);
-        if (bd == null) {
-            return null;
-        }
-        Iterator<Slob.Blob> result = SlobHelper.getInstance().find(bd.key, bd.slobId);
-        LookupResult lookupResult = new LookupResult(20, 1);
-        lookupResult.setResult(result);
-        boolean hasFragment = !TextUtils.isEmpty(bd.fragment);
-        return new ArticleCollectionLookupPagerAdapter(lookupResult,
-                hasFragment ? new ToBlobWithFragment(bd.fragment) : blobToBlob, getSupportFragmentManager());
-    }
-
-    private ArticleCollectionLookupPagerAdapter createFromLastResult() {
-        return new ArticleCollectionLookupPagerAdapter(SlobHelper.getInstance().lastLookupResult, blobToBlob,
-                getSupportFragmentManager());
-    }
-
-    private ArticleCollectionPagerAdapter createFromBookmarks() {
-        SlobHelper slobHelper = SlobHelper.getInstance();
-        return new ArticleCollectionPagerAdapter(slobHelper.bookmarks, slobHelper.bookmarks::resolve,
-                getSupportFragmentManager());
-    }
-
-    private ArticleCollectionPagerAdapter createFromHistory() {
-        SlobHelper slobHelper = SlobHelper.getInstance();
-        return new ArticleCollectionPagerAdapter(slobHelper.history, slobHelper.history::resolve,
-                getSupportFragmentManager());
-    }
-
-    private ArticleCollectionLookupPagerAdapter createFromIntent(Intent intent) {
-        String lookupKey = intent.getStringExtra(Intent.EXTRA_TEXT);
-        if (intent.getAction().equals(Intent.ACTION_PROCESS_TEXT)) {
-            lookupKey = getIntent().getCharSequenceExtra(Intent.EXTRA_PROCESS_TEXT).toString();
-        }
-        if (lookupKey == null) {
-            lookupKey = intent.getStringExtra(SearchManager.QUERY);
-        }
-        if (lookupKey == null) {
-            lookupKey = intent.getStringExtra("EXTRA_QUERY");
-        }
-        String preferredSlobId = null;
-        if (lookupKey == null) {
-            Uri uri = intent.getData();
-            List<String> segments = uri.getPathSegments();
-            int length = segments.size();
-            if (length > 0) {
-                lookupKey = segments.get(length - 1);
-            }
-            String slobUri = Utils.wikipediaToSlobUri(uri);
-            Log.d(TAG, String.format("Converted URI %s to slob URI %s", uri, slobUri));
-            if (slobUri != null) {
-                Slob slob = SlobHelper.getInstance().findSlob(slobUri);
-                if (slob != null) {
-                    preferredSlobId = slob.getId().toString();
-                    Log.d(TAG, String.format("Found slob %s for slob URI %s", preferredSlobId, slobUri));
-                }
-            }
-        }
-        LookupResult lookupResult = new LookupResult(20, 1);
-        if (lookupKey == null || lookupKey.length() == 0) {
-            String msg = getString(R.string.article_collection_nothing_to_lookup);
-            throw new RuntimeException(msg);
-        } else {
-            Iterator<Blob> result = stemLookup(lookupKey, preferredSlobId);
-            lookupResult.setResult(result);
-        }
-        return new ArticleCollectionLookupPagerAdapter(lookupResult, blobToBlob, getSupportFragmentManager());
-    }
-
-    private Iterator<Blob> stemLookup(@NonNull String lookupKey, @Nullable String preferredSlobId) {
-        Slob.PeekableIterator<Blob> result;
-        final int length = lookupKey.length();
-        String currentLookupKey = lookupKey;
-        int currentLength = currentLookupKey.length();
-        do {
-            result = SlobHelper.getInstance().find(currentLookupKey, preferredSlobId, true);
-            if (result.hasNext()) {
-                Blob b = result.peek();
-                if (b.key.length() - length > 3) {
-                    //we don't like this result
-                } else {
-                    break;
-                }
-            }
-            currentLookupKey = currentLookupKey.substring(0, currentLength - 1);
-            currentLength = currentLookupKey.length();
-        } while (length - currentLength < 5 && currentLength > 0);
-        return result;
+    @NonNull
+    public ActionBar requireActionBar() {
+        return Objects.requireNonNull(getSupportActionBar());
     }
 
     private void updateTitle(int position) {
-        Log.d("updateTitle", position + " count: " + articleCollectionPagerAdapter.getCount());
-        Slob.Blob blob = articleCollectionPagerAdapter.get(position);
-        CharSequence pageTitle = articleCollectionPagerAdapter.getPageTitle(position);
+        Log.d("updateTitle", position + " count: " + pagerAdapter.getCount());
+        Slob.Blob blob = pagerAdapter.get(position);
+        CharSequence pageTitle = pagerAdapter.getPageTitle(position);
         Log.d("updateTitle", String.valueOf(blob));
-        ActionBar actionBar = getSupportActionBar();
+        ActionBar actionBar = requireActionBar();
         if (blob != null) {
             String dictLabel = blob.owner.getTags().get("label");
             actionBar.setTitle(dictLabel);
@@ -338,12 +166,12 @@ public class ArticleCollectionActivity extends AppCompatActivity
                     getWindow().getDecorView());
             windowInsetsController.hide(WindowInsetsCompat.Type.systemBars());
             windowInsetsController.setSystemBarsBehavior(WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE);
-            getSupportActionBar().hide();
+            requireActionBar().hide();
         } else {
             WindowInsetsControllerCompat windowInsetsController = WindowCompat.getInsetsController(getWindow(),
                     getWindow().getDecorView());
             windowInsetsController.show(WindowInsetsCompat.Type.systemBars());
-            getSupportActionBar().show();
+            requireActionBar().show();
         }
     }
 
@@ -372,18 +200,17 @@ public class ArticleCollectionActivity extends AppCompatActivity
 
     @Override
     protected void onDestroy() {
-        onDestroyCalled = true;
         if (viewPager != null) {
             viewPager.setAdapter(null);
         }
-        if (articleCollectionPagerAdapter != null) {
-            articleCollectionPagerAdapter.destroy();
+        if (pagerAdapter != null) {
+            pagerAdapter.destroy();
         }
         super.onDestroy();
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
             Intent upIntent = Intent.makeMainActivity(new ComponentName(this, MainActivity.class));
             if (NavUtils.shouldUpRecreateTask(this, upIntent)) {
@@ -403,14 +230,14 @@ public class ArticleCollectionActivity extends AppCompatActivity
     }
 
     @Override
-    public boolean onKeyUp(int keyCode, KeyEvent event) {
+    public boolean onKeyUp(int keyCode, @NonNull KeyEvent event) {
         if (event.isCanceled()) {
             return true;
         }
-        if (articleCollectionPagerAdapter == null) {
+        if (pagerAdapter == null) {
             return false;
         }
-        ArticleFragment af = articleCollectionPagerAdapter.getPrimaryItem();
+        ArticleFragment af = pagerAdapter.getPrimaryItem();
         if (af != null) {
             ArticleWebView webView = af.getWebView();
             if (webView != null) {
@@ -443,7 +270,7 @@ public class ArticleCollectionActivity extends AppCompatActivity
                     boolean scrolled = webView.pageDown(false);
                     if (!scrolled) {
                         int current = viewPager.getCurrentItem();
-                        if (current < articleCollectionPagerAdapter.getCount() - 1) {
+                        if (current < pagerAdapter.getCount() - 1) {
                             viewPager.setCurrentItem(current + 1);
                         }
                     }
@@ -455,7 +282,7 @@ public class ArticleCollectionActivity extends AppCompatActivity
     }
 
     @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
+    public boolean onKeyDown(int keyCode, @NonNull KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_VOLUME_UP || keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
             if (!AppPrefs.useVolumeKeysForNavigation()) {
                 return false;
@@ -471,7 +298,7 @@ public class ArticleCollectionActivity extends AppCompatActivity
         if (!AppPrefs.useVolumeKeysForNavigation()) {
             return false;
         }
-        ArticleFragment af = articleCollectionPagerAdapter.getPrimaryItem();
+        ArticleFragment af = pagerAdapter.getPrimaryItem();
         if (af != null) {
             ArticleWebView webView = af.getWebView();
 
@@ -487,52 +314,25 @@ public class ArticleCollectionActivity extends AppCompatActivity
         return super.onKeyLongPress(keyCode, event);
     }
 
+    public static class ArticleCollectionPagerAdapter extends FragmentStatePagerAdapter {
+        private final BlobListWrapper blobListWrapper;
+        private final DataSetObserver observer = new DataSetObserver() {
+            @Override
+            public void onChanged() {
+                ThreadUtils.postOnMainThread(() -> notifyDataSetChanged());
+            }
+        };
 
-    interface ToBlob<T> {
-        @Nullable
-        Slob.Blob convert(T item);
-    }
+        private ArticleFragment primaryItem;
 
-
-    public abstract static class AbsArticleCollectionPagerAdapter extends FragmentStatePagerAdapter {
-        public AbsArticleCollectionPagerAdapter(@NonNull FragmentManager fm) {
+        public ArticleCollectionPagerAdapter(@NonNull BlobListWrapper blobListWrapper, @NonNull FragmentManager fm) {
             super(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
+            this.blobListWrapper = blobListWrapper;
+            this.blobListWrapper.registerDataSetObserver(observer);
         }
 
-        public abstract void destroy();
-
-        @Nullable
-        public abstract Slob.Blob get(int position);
-
-        public abstract ArticleFragment getPrimaryItem();
-    }
-
-    public static class ArticleCollectionPagerAdapter extends AbsArticleCollectionPagerAdapter {
-        private final DataSetObserver observer = new DataSetObserver() {
-            @Override
-            public void onChanged() {
-                count = data.size();
-                notifyDataSetChanged();
-            }
-        };
-        private BlobDescriptorList data;
-        private final ToBlob<BlobDescriptor> toBlob;
-        private int count;
-        private ArticleFragment primaryItem;
-
-        public ArticleCollectionPagerAdapter(@NonNull BlobDescriptorList data, @NonNull ToBlob<BlobDescriptor> toBlob,
-                                             @NonNull FragmentManager fm) {
-            super(fm);
-            this.data = data;
-            this.count = data.size();
-            this.data.registerDataSetObserver(observer);
-            this.toBlob = toBlob;
-        }
-
-        @Override
         public void destroy() {
-            data.unregisterDataSetObserver(observer);
-            data = null;
+            blobListWrapper.unregisterDataSetObserver(observer);
         }
 
         @Override
@@ -541,15 +341,14 @@ public class ArticleCollectionActivity extends AppCompatActivity
             this.primaryItem = (ArticleFragment) object;
         }
 
-        @Override
         public ArticleFragment getPrimaryItem() {
             return this.primaryItem;
         }
 
         @Override
         @NonNull
-        public Fragment getItem(int i) {
-            Fragment fragment = new ArticleFragment();
+        public ArticleFragment getItem(int i) {
+            ArticleFragment fragment = new ArticleFragment();
 
             Slob.Blob blob = get(i);
             if (blob != null) {
@@ -563,110 +362,17 @@ public class ArticleCollectionActivity extends AppCompatActivity
 
         @Override
         public int getCount() {
-            return count;
+            return blobListWrapper.size();
         }
 
-        @Override
         public Slob.Blob get(int position) {
-            return toBlob.convert(data.get(position));
+            return blobListWrapper.get(position);
         }
 
         @Override
         public CharSequence getPageTitle(int position) {
-            if (position < data.size()) {
-                BlobDescriptor item = data.get(position);
-                if (item != null) {
-                    return item.key;
-                }
-            }
-            return "???";
-        }
-
-        //this is needed so that fragment is properly updated
-        //if underlying data changes (such as on unbookmark)
-        //https://code.google.com/p/android/issues/detail?id=19001
-        @Override
-        public int getItemPosition(@NonNull Object object) {
-            return POSITION_NONE;
-        }
-    }
-
-    public static class ArticleCollectionLookupPagerAdapter extends AbsArticleCollectionPagerAdapter {
-        private List<Slob.Blob> list;
-
-        private final LookupResult lookupResult;
-        private final DataSetObserver observer = new DataSetObserver() {
-            @Override
-            public void onChanged() {
-                ThreadUtils.postOnMainThread(() -> {
-                    list = lookupResult.getList();
-                    notifyDataSetChanged();
-                });
-            }
-        };
-
-        private final ToBlob<Blob> toBlob;
-        private ArticleFragment primaryItem;
-
-        public ArticleCollectionLookupPagerAdapter(@NonNull LookupResult lookupResult, @NonNull ToBlob<Blob> toBlob,
-                                                   @NonNull FragmentManager fm) {
-            super(fm);
-            this.lookupResult = lookupResult;
-            this.list = lookupResult.getList();
-            this.toBlob = toBlob;
-            this.lookupResult.registerDataSetObserver(observer);
-        }
-
-        @Override
-        public void destroy() {
-            lookupResult.unregisterDataSetObserver(observer);
-        }
-
-        @Override
-        public void setPrimaryItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
-            super.setPrimaryItem(container, position, object);
-            this.primaryItem = (ArticleFragment) object;
-        }
-
-        @Override
-        public ArticleFragment getPrimaryItem() {
-            return this.primaryItem;
-        }
-
-        @Override
-        @NonNull
-        public Fragment getItem(int i) {
-            Fragment fragment = new ArticleFragment();
-
-            Slob.Blob blob = get(i);
-            if (blob != null) {
-                String articleUrl = SlobHelper.getInstance().getUrl(blob);
-                Bundle args = new Bundle();
-                args.putString(ArticleFragment.ARG_URL, articleUrl);
-                fragment.setArguments(args);
-            }
-            return fragment;
-        }
-
-        @Override
-        public int getCount() {
-            return list != null ? list.size() : 0;
-        }
-
-        @Override
-        public Slob.Blob get(int position) {
-            return toBlob.convert(list.get(position));
-        }
-
-        @Override
-        public CharSequence getPageTitle(int position) {
-            if (position < list.size()) {
-                Blob item = list.get(position);
-                if (item != null) {
-                    return item.key;
-                }
-            }
-            return "???";
+            CharSequence label = blobListWrapper.getLabel(position);
+            return label != null ? label : "???";
         }
 
         //this is needed so that fragment is properly updated
