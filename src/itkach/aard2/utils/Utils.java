@@ -1,5 +1,7 @@
 package itkach.aard2.utils;
 
+import android.content.Context;
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Log;
@@ -87,6 +89,11 @@ public class Utils {
                 nightMode = AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM;
         }
         AppCompatDelegate.setDefaultNightMode(nightMode);
+    }
+
+    public static boolean isNightMode(@NonNull Context context) {
+        int nightModeFlags = context.getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
+        return nightModeFlags == Configuration.UI_MODE_NIGHT_YES;
     }
 
     @NonNull

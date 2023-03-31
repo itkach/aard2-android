@@ -2,7 +2,6 @@ package itkach.aard2.widget;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -23,6 +22,8 @@ import androidx.annotation.Nullable;
 import androidx.webkit.WebSettingsCompat;
 import androidx.webkit.WebViewClientCompat;
 
+import com.google.android.material.color.MaterialColors;
+
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -38,13 +39,14 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.TreeSet;
 
-import itkach.aard2.descriptor.BlobDescriptor;
 import itkach.aard2.R;
 import itkach.aard2.SlobHelper;
 import itkach.aard2.article.ArticleCollectionActivity;
+import itkach.aard2.descriptor.BlobDescriptor;
 import itkach.aard2.prefs.ArticleViewPrefs;
 import itkach.aard2.prefs.UserStylesPrefs;
 import itkach.aard2.utils.StyleJsUtils;
+import itkach.aard2.utils.Utils;
 
 public class ArticleWebView extends SearchableWebView {
     public static final String TAG = ArticleWebView.class.getSimpleName();
@@ -198,13 +200,8 @@ public class ArticleWebView extends SearchableWebView {
         return names.toArray(new String[0]);
     }
 
-    private boolean isUIDark() {
-        int nightModeFlags = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
-        return nightModeFlags == Configuration.UI_MODE_NIGHT_YES;
-    }
-
     private String getAutoStyle() {
-        if (isUIDark()) {
+        if (Utils.isNightMode(getContext())) {
             for (String title : styleTitles) {
                 String titleLower = title.toLowerCase(Locale.ROOT);
                 if (titleLower.contains("night") || titleLower.contains("dark")) {
@@ -419,6 +416,9 @@ public class ArticleWebView extends SearchableWebView {
         @Override
         public void onPageFinished(WebView view, String url) {
             Log.d(TAG, "onPageFinished: " + url);
+            if (!Utils.isNightMode(view.getContext())) {
+                view.setBackgroundColor(MaterialColors.getColor(view, R.attr.colorSurface));
+            }
             if (url.startsWith("about:")) {
                 return;
             }

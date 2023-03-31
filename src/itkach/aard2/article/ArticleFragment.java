@@ -16,12 +16,14 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.google.android.material.color.MaterialColors;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.progressindicator.LinearProgressIndicator;
 
 import itkach.aard2.R;
 import itkach.aard2.SlobHelper;
 import itkach.aard2.prefs.ArticleViewPrefs;
+import itkach.aard2.utils.Utils;
 import itkach.aard2.widget.ArticleWebView;
 
 
@@ -132,6 +134,10 @@ public class ArticleFragment extends Fragment {
         View layout = inflater.inflate(R.layout.article_view, container, false);
         LinearProgressIndicator progressBar = layout.findViewById(R.id.progress_horizontal);
         webView = layout.findViewById(R.id.webView);
+        if (!Utils.isNightMode(webView.getContext())) {
+            webView.setBackgroundColor(MaterialColors.getColor(webView, R.attr.colorSurface));
+        }
+        webView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
         webView.restoreState(savedInstanceState);
         webView.loadUrl(url);
         webView.setWebChromeClient(new WebChromeClient() {
