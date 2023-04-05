@@ -1,56 +1,50 @@
-<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/card_view"
+    style="@style/Widget.AppTheme.CardView.ListItem"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal">
+    android:minHeight="?android:attr/listPreferredItemHeightSmall"
+    android:focusable="true">
 
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/card_view"
-        style="@style/Widget.AppTheme.CardView.ListItem"
+    <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:minHeight="?android:attr/listPreferredItemHeightSmall"
-        android:focusable="true">
+        android:paddingVertical="16dp"
+        android:paddingHorizontal="16dp"
+        android:orientation="vertical">
 
-        <androidx.appcompat.widget.LinearLayoutCompat
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/setting_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingVertical="16dp"
-            android:paddingHorizontal="16dp"
-            android:orientation="vertical">
+            android:textAppearance="?attr/textAppearanceListItem"
+            android:text="@string/setting_remote_content" />
 
-            <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/setting_name"
+        <RadioGroup
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/setting_name">
+
+            <com.google.android.material.radiobutton.MaterialRadioButton
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textAppearance="?attr/textAppearanceListItem"
-                android:text="@string/setting_remote_content" />
+                android:id="@+id/setting_remote_content_always"
+                android:textAppearance="?attr/textAppearanceListItemSecondary"
+                android:text="@string/setting_remote_content_always" />
 
-            <RadioGroup
+            <com.google.android.material.radiobutton.MaterialRadioButton
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/setting_name">
+                android:id="@+id/setting_remote_content_wifi"
+                android:textAppearance="?attr/textAppearanceListItemSecondary"
+                android:text="@string/setting_remote_content_wifi" />
 
-                <com.google.android.material.radiobutton.MaterialRadioButton
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/setting_remote_content_always"
-                    android:textAppearance="?attr/textAppearanceListItemSecondary"
-                    android:text="@string/setting_remote_content_always" />
-
-                <com.google.android.material.radiobutton.MaterialRadioButton
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/setting_remote_content_wifi"
-                    android:textAppearance="?attr/textAppearanceListItemSecondary"
-                    android:text="@string/setting_remote_content_wifi" />
-
-                <com.google.android.material.radiobutton.MaterialRadioButton
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/setting_remote_content_never"
-                    android:textAppearance="?attr/textAppearanceListItemSecondary"
-                    android:text="@string/setting_remote_content_never" />
-            </RadioGroup>
-        </androidx.appcompat.widget.LinearLayoutCompat>
-    </com.google.android.material.card.MaterialCardView>
-</androidx.appcompat.widget.LinearLayoutCompat>
+            <com.google.android.material.radiobutton.MaterialRadioButton
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/setting_remote_content_never"
+                android:textAppearance="?attr/textAppearanceListItemSecondary"
+                android:text="@string/setting_remote_content_never" />
+        </RadioGroup>
+    </androidx.appcompat.widget.LinearLayoutCompat>
+</com.google.android.material.card.MaterialCardView>

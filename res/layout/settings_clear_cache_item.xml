@@ -1,36 +1,30 @@
-<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/card_view"
+    style="@style/Widget.AppTheme.CardView.ListItem"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal">
+    android:minHeight="?android:attr/listPreferredItemHeightSmall">
 
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/card_view"
-        style="@style/Widget.AppTheme.CardView.ListItem"
+    <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:minHeight="?android:attr/listPreferredItemHeightSmall">
+        android:orientation="vertical"
+        android:paddingVertical="16dp"
+        android:paddingHorizontal="16dp"
+        android:background="?android:attr/selectableItemBackground">
 
-        <androidx.appcompat.widget.LinearLayoutCompat
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/setting_clear_cache"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingVertical="16dp"
-            android:paddingHorizontal="16dp"
-            android:background="?android:attr/selectableItemBackground">
+            android:textAppearance="?attr/textAppearanceListItem"
+            android:text="@string/setting_clear_cache" />
 
-            <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/setting_clear_cache"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textAppearance="?attr/textAppearanceListItem"
-                android:text="@string/setting_clear_cache" />
-
-            <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/setting_clear_cache_subtitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?attr/textAppearanceListItemSecondary"
-                android:text="@string/setting_clear_cache_subtitle" />
-        </androidx.appcompat.widget.LinearLayoutCompat>
-    </com.google.android.material.card.MaterialCardView>
-</androidx.appcompat.widget.LinearLayoutCompat>
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/setting_clear_cache_subtitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?attr/textAppearanceListItemSecondary"
+            android:text="@string/setting_clear_cache_subtitle" />
+    </androidx.appcompat.widget.LinearLayoutCompat>
+</com.google.android.material.card.MaterialCardView>

@@ -1,42 +1,35 @@
-<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/card_view"
+    style="@style/Widget.AppTheme.CardView.ListItem"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal">
+    android:minHeight="?android:attr/listPreferredItemHeightSmall"
+    android:focusable="true">
 
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/card_view"
-        style="@style/Widget.AppTheme.CardView.ListItem"
+    <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:minHeight="?android:attr/listPreferredItemHeightSmall"
-        android:focusable="true">
+        android:paddingVertical="16dp"
+        android:paddingHorizontal="16dp"
+        android:orientation="vertical">
 
-        <androidx.appcompat.widget.LinearLayoutCompat
+        <com.google.android.material.materialswitch.MaterialSwitch
+            android:id="@+id/setting_switch"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingVertical="16dp"
-            android:paddingHorizontal="16dp"
-            android:orientation="vertical">
+            android:gravity="center_vertical"
+            android:textAppearance="?attr/textAppearanceListItem"
+            tools:text="@string/setting_disable_javascript_subtitle"
+            tools:checked="true" />
 
-            <com.google.android.material.materialswitch.MaterialSwitch
-                android:id="@+id/setting_switch"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:textAppearance="?attr/textAppearanceListItem"
-                tools:text="@string/setting_disable_javascript_subtitle"
-                tools:checked="true" />
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/setting_subtitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="?attr/textAppearanceListItemSecondary"
+            tools:text="@string/setting_disable_javascript_subtitle" />
 
-            <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/setting_subtitle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textAppearance="?attr/textAppearanceListItemSecondary"
-                tools:text="@string/setting_disable_javascript_subtitle" />
+    </androidx.appcompat.widget.LinearLayoutCompat>
 
-        </androidx.appcompat.widget.LinearLayoutCompat>
-
-    </com.google.android.material.card.MaterialCardView>
-
-</androidx.appcompat.widget.LinearLayoutCompat>
+</com.google.android.material.card.MaterialCardView>

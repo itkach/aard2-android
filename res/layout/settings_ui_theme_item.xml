@@ -1,57 +1,51 @@
-<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/card_view"
+    style="@style/Widget.AppTheme.CardView.ListItem"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal">
+    android:minHeight="?android:attr/listPreferredItemHeightSmall"
+    android:focusable="true">
 
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/card_view"
-        style="@style/Widget.AppTheme.CardView.ListItem"
+    <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:minHeight="?android:attr/listPreferredItemHeightSmall"
-        android:focusable="true">
+        android:orientation="vertical"
+        android:paddingVertical="16dp"
+        android:paddingHorizontal="16dp">
 
-        <androidx.appcompat.widget.LinearLayoutCompat
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/setting_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingVertical="16dp"
-            android:paddingHorizontal="16dp">
+            android:textAppearance="?attr/textAppearanceListItem"
+            android:text="@string/setting_ui_theme" />
 
-            <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/setting_name"
+        <RadioGroup
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/setting_name">
+
+            <com.google.android.material.radiobutton.MaterialRadioButton
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textAppearance="?attr/textAppearanceListItem"
-                android:text="@string/setting_ui_theme" />
+                android:id="@+id/setting_ui_theme_auto"
+                android:textAppearance="?attr/textAppearanceListItemSecondary"
+                android:text="@string/setting_ui_theme_auto" />
 
-            <RadioGroup
+            <com.google.android.material.radiobutton.MaterialRadioButton
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/setting_name">
+                android:id="@+id/setting_ui_theme_light"
+                android:textAppearance="?attr/textAppearanceListItemSecondary"
+                android:text="@string/setting_ui_theme_light" />
 
-                <com.google.android.material.radiobutton.MaterialRadioButton
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/setting_ui_theme_auto"
-                    android:textAppearance="?attr/textAppearanceListItemSecondary"
-                    android:text="@string/setting_ui_theme_auto" />
+            <com.google.android.material.radiobutton.MaterialRadioButton
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/setting_ui_theme_dark"
+                android:textAppearance="?attr/textAppearanceListItemSecondary"
+                android:text="@string/setting_ui_theme_dark" />
+        </RadioGroup>
+    </androidx.appcompat.widget.LinearLayoutCompat>
 
-                <com.google.android.material.radiobutton.MaterialRadioButton
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/setting_ui_theme_light"
-                    android:textAppearance="?attr/textAppearanceListItemSecondary"
-                    android:text="@string/setting_ui_theme_light" />
-
-                <com.google.android.material.radiobutton.MaterialRadioButton
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/setting_ui_theme_dark"
-                    android:textAppearance="?attr/textAppearanceListItemSecondary"
-                    android:text="@string/setting_ui_theme_dark" />
-            </RadioGroup>
-        </androidx.appcompat.widget.LinearLayoutCompat>
-
-    </com.google.android.material.card.MaterialCardView>
-</androidx.appcompat.widget.LinearLayoutCompat>
+</com.google.android.material.card.MaterialCardView>
