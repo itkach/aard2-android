@@ -6,6 +6,7 @@
     </style>
 
     <style name="AppTheme" parent="AppThemeOverlay">
+        <item name="windowActionModeOverlay">true</item>
         <item name="android:windowActivityTransitions">true</item>
         <item name="android:windowContentTransitions">true</item>
         <item name="android:windowAllowEnterTransitionOverlap">true</item>
