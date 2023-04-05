@@ -1,30 +1,28 @@
 package itkach.aard2;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.SparseBooleanArray;
-import android.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ListView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.view.ActionMode;
 import androidx.appcompat.widget.SearchView;
 import androidx.core.content.ContextCompat;
-import androidx.fragment.app.FragmentActivity;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
-import itkach.aard2.article.ArticleCollectionActivity;
 
-
-abstract class BlobDescriptorListFragment extends BaseListFragment {
+abstract class BlobDescriptorListFragment extends BaseListFragment implements ActionMode.Callback {
+    protected ActionMode actionMode;
 
     private Drawable icClock;
     private Drawable icList;
@@ -53,57 +51,19 @@ abstract class BlobDescriptorListFragment extends BaseListFragment {
 
     abstract String getItemClickAction();
 
-    protected void setSelectionMode(boolean selectionMode) {
-        listAdapter.setSelectionMode(selectionMode);
-    }
-
-    protected int getSelectionMenuId() {
-        return R.menu.blob_descriptor_selection;
-    }
-
     abstract int getDeleteConfirmationItemCountResId();
 
     abstract String getPreferencesNS();
 
+    @NonNull
     private SharedPreferences prefs() {
         return requireActivity().getSharedPreferences(getPreferencesNS(), Activity.MODE_PRIVATE);
     }
 
-
-    protected boolean onSelectionActionItemClicked(final ActionMode mode, MenuItem item) {
-        ListView listView = getListView();
-        int itemId = item.getItemId();
-        if (itemId == R.id.blob_descriptor_delete) {
-            int count = listView.getCheckedItemCount();
-            String countStr = getResources().getQuantityString(getDeleteConfirmationItemCountResId(), count, count);
-            String message = getString(R.string.blob_descriptor_confirm_delete, countStr);
-            deleteConfirmationDialog = new MaterialAlertDialogBuilder(requireActivity())
-                    .setIcon(android.R.drawable.ic_dialog_alert)
-                    .setTitle("")
-                    .setMessage(message)
-                    .setPositiveButton(android.R.string.yes, (dialog, which) -> {
-                        deleteSelectedItems();
-                        mode.finish();
-                        deleteConfirmationDialog = null;
-                    })
-                    .setNegativeButton(android.R.string.no, null)
-                    .create();
-            deleteConfirmationDialog.setOnDismissListener(dialogInterface -> deleteConfirmationDialog = null);
-            deleteConfirmationDialog.show();
-            return true;
-        } else if (itemId == R.id.blob_descriptor_select_all) {
-            int itemCount = listView.getCount();
-            for (int i = itemCount - 1; i > -1; --i) {
-                listView.setItemChecked(i, true);
-            }
-            return true;
-        }
-        return false;
-    }
-
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        final AppCompatActivity activity = (AppCompatActivity) requireActivity();
 
         BlobDescriptorList descriptorList = getDescriptorList();
 
@@ -117,33 +77,48 @@ abstract class BlobDescriptorListFragment extends BaseListFragment {
 
         descriptorList.setSort(sortOrder, sortDir);
 
-        listAdapter = new BlobDescriptorListAdapter(descriptorList);
+        listAdapter = new BlobDescriptorListAdapter(descriptorList, getItemClickAction());
+        listAdapter.setOnSelectionStartedListener(new BlobDescriptorListAdapter.OnSelectionChangeListener() {
+            @Override
+            public void selectionStarted() {
+                activity.startSupportActionMode(BlobDescriptorListFragment.this);
+            }
 
-        final FragmentActivity activity = requireActivity();
+            @Override
+            public void selectionChanged(int selectionCount) {
+                if (actionMode != null) {
+                    actionMode.setTitle(getString(R.string.specified_number_of_items_selected, selectionCount));
+                }
+            }
+
+            @Override
+            public void selectionCanceled() {
+                finishActionMode();
+            }
+        });
+
         icClock = ContextCompat.getDrawable(activity, R.drawable.ic_clock_time_nine);
         icList = ContextCompat.getDrawable(activity, R.drawable.ic_format_list_bulleted);
         icArrowUp = ContextCompat.getDrawable(activity, R.drawable.ic_sort_ascending);
         icArrowDown = ContextCompat.getDrawable(activity, R.drawable.sort_descending);
 
-        final ListView listView = getListView();
-        listView.setOnItemClickListener((parent, view1, position, id) -> {
-            Intent intent = new Intent(activity, ArticleCollectionActivity.class);
-            intent.setAction(getItemClickAction());
-            intent.putExtra("position", position);
-            startActivity(intent);
-        });
-
-        setListAdapter(listAdapter);
+        recyclerView.setAdapter(listAdapter);
     }
 
     protected void deleteSelectedItems() {
-        SparseBooleanArray checkedItems = getListView().getCheckedItemPositions();
+        SparseBooleanArray checkedItems = listAdapter.getCheckedItemPositions();
         for (int i = checkedItems.size() - 1; i > -1; --i) {
             int position = checkedItems.keyAt(i);
-            boolean checked = checkedItems.get(position);
+            boolean checked = checkedItems.valueAt(i);
             if (checked) {
                 getDescriptorList().remove(position);
             }
+        }
+    }
+
+    public void finishActionMode() {
+        if (actionMode != null) {
+            actionMode.finish();
         }
     }
 
@@ -153,8 +128,7 @@ abstract class BlobDescriptorListFragment extends BaseListFragment {
     }
 
     @Override
-    public void onPrepareOptionsMenu(final Menu menu) {
-
+    public void onPrepareOptionsMenu(@NonNull Menu menu) {
         BlobDescriptorList list = getDescriptorList();
 
         miFilter = menu.findItem(R.id.action_filter);
@@ -222,7 +196,7 @@ abstract class BlobDescriptorListFragment extends BaseListFragment {
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem mi) {
+    public boolean onOptionsItemSelected(@NonNull MenuItem mi) {
         BlobDescriptorList list = getDescriptorList();
         int itemId = mi.getItemId();
         if (itemId == R.id.action_sort_asc) {
@@ -249,5 +223,54 @@ abstract class BlobDescriptorListFragment extends BaseListFragment {
         if (deleteConfirmationDialog != null) {
             deleteConfirmationDialog.dismiss();
         }
+    }
+
+    @Override
+    public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+        actionMode = mode;
+        if (mode != null) {
+            mode.getMenuInflater().inflate(R.menu.blob_descriptor_selection, menu);
+        }
+        listAdapter.setSelectionMode(true);
+        return true;
+    }
+
+    @Override
+    public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+        return false;
+    }
+
+    @Override
+    public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+        int itemId = item.getItemId();
+        if (itemId == R.id.blob_descriptor_delete) {
+            int count = listAdapter.getCheckedItemCount();
+            String countStr = getResources().getQuantityString(getDeleteConfirmationItemCountResId(), count, count);
+            String message = getString(R.string.blob_descriptor_confirm_delete, countStr);
+            deleteConfirmationDialog = new MaterialAlertDialogBuilder(requireActivity())
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .setTitle("")
+                    .setMessage(message)
+                    .setPositiveButton(R.string.action_yes, (dialog, which) -> {
+                        deleteSelectedItems();
+                        mode.finish();
+                        deleteConfirmationDialog = null;
+                    })
+                    .setNegativeButton(R.string.action_no, null)
+                    .create();
+            deleteConfirmationDialog.setOnDismissListener(dialogInterface -> deleteConfirmationDialog = null);
+            deleteConfirmationDialog.show();
+            return true;
+        } else if (itemId == R.id.blob_descriptor_select_all) {
+            listAdapter.selectAll();
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public void onDestroyActionMode(ActionMode mode) {
+        actionMode = null;
+        listAdapter.setSelectionMode(false);
     }
 }

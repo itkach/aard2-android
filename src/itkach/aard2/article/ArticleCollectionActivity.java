@@ -30,6 +30,7 @@ import androidx.viewpager.widget.ViewPager;
 
 import java.util.Objects;
 
+import itkach.aard2.BuildConfig;
 import itkach.aard2.MainActivity;
 import itkach.aard2.R;
 import itkach.aard2.SlobHelper;
@@ -43,6 +44,9 @@ import itkach.slob.Slob;
 
 public class ArticleCollectionActivity extends AppCompatActivity
         implements SharedPreferences.OnSharedPreferenceChangeListener {
+    public static final String ACTION_BOOKMARKS = BuildConfig.APPLICATION_ID + ".action.BOOKMARKS";
+    public static final String ACTION_HISTORY = BuildConfig.APPLICATION_ID + ".action.HISTORY";
+
     private static final String TAG = ArticleCollectionActivity.class.getSimpleName();
 
     private ArticleCollectionPagerAdapter pagerAdapter;

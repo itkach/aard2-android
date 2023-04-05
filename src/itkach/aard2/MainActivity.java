@@ -115,8 +115,8 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
         // Hide Ime
         if (oldPosition >= 0) {
             Fragment frag = appSectionsPagerAdapter.getItem(oldPosition);
-            if (frag instanceof BaseListFragment) {
-                ((BaseListFragment) frag).finishActionMode();
+            if (frag instanceof BlobDescriptorListFragment) {
+                ((BlobDescriptorListFragment) frag).finishActionMode();
             }
         }
         if (oldPosition == 0) {
@@ -180,7 +180,7 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
     public static final class BookmarksFragment extends BlobDescriptorListFragment {
         @Override
         String getItemClickAction() {
-            return "showBookmarks";
+            return ArticleCollectionActivity.ACTION_BOOKMARKS;
         }
 
         @Override
@@ -212,7 +212,7 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
     public static class HistoryFragment extends BlobDescriptorListFragment {
         @Override
         String getItemClickAction() {
-            return "showHistory";
+            return ArticleCollectionActivity.ACTION_HISTORY;
         }
 
         @Override
@@ -251,7 +251,7 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
         SettingsFragment tabSettings;
 
         public AppSectionsPagerAdapter(FragmentManager fm) {
-            super(fm);
+            super(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
             tabLookup = new LookupFragment();
             tabBookmarks = new BookmarksFragment();
             tabHistory = new HistoryFragment();

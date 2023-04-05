@@ -2,115 +2,59 @@ package itkach.aard2;
 
 import android.os.Bundle;
 import android.text.method.LinkMovementMethod;
-import android.view.ActionMode;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 
+import androidx.annotation.CallSuper;
 import androidx.annotation.DrawableRes;
-import androidx.fragment.app.ListFragment;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+
+import itkach.aard2.widget.RecyclerView;
 
 
-public abstract class BaseListFragment extends ListFragment {
-
+public abstract class BaseListFragment extends Fragment {
+    protected RecyclerView recyclerView;
     protected View emptyView;
-    ActionMode actionMode;
 
     @DrawableRes
     protected abstract int getEmptyIcon();
 
     protected abstract CharSequence getEmptyText();
 
+    @CallSuper
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
         setRetainInstance(true);
     }
 
+    @CallSuper
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        emptyView = inflater.inflate(R.layout.empty_view, container, false);
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
+        ViewGroup view = (ViewGroup) inflater.inflate(R.layout.fragment_list, container, false);
+        recyclerView = view.findViewById(R.id.recycler_view);
+        emptyView = view.findViewById(R.id.empty_view);
         TextView emptyText = emptyView.findViewById(R.id.empty_text);
         emptyText.setMovementMethod(LinkMovementMethod.getInstance());
         emptyText.setText(getEmptyText());
         ImageView emptyIcon = emptyView.findViewById(R.id.empty_icon);
         emptyIcon.setImageResource(getEmptyIcon());
-        return super.onCreateView(inflater, container, savedInstanceState);
+        return view;
     }
 
-    protected void setSelectionMode(boolean selectionMode){}
-
-    protected int getSelectionMenuId(){return 0;}
-
-    protected boolean onSelectionActionItemClicked(final ActionMode mode, MenuItem item){
-        return false;
-    }
-
-    protected boolean supportsSelection() {
-        return true;
-    }
-
-    boolean finishActionMode() {
-        if (actionMode != null) {
-            actionMode.finish();
-            return true;
-        }
-        return false;
-    }
-
+    @CallSuper
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        final ListView listView = getListView();
-        listView.setDivider(null);
-        listView.setEmptyView(emptyView);
-        ((ViewGroup) listView.getParent()).addView(emptyView, 0);
-
-        if (supportsSelection()) {
-            listView.setItemsCanFocus(false);
-            listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
-            listView.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
-
-                @Override
-                public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-                    actionMode = mode;
-                    MenuInflater inflater = mode.getMenuInflater();
-                    inflater.inflate(getSelectionMenuId(), menu);
-                    setSelectionMode(true);
-                    return true;
-                }
-
-                @Override
-                public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-                    return false;
-                }
-
-                @Override
-                public boolean onActionItemClicked(final ActionMode mode, MenuItem item) {
-                    return onSelectionActionItemClicked(mode, item);
-                }
-
-                @Override
-                public void onDestroyActionMode(ActionMode mode) {
-                    setSelectionMode(false);
-                    actionMode = null;
-                }
-
-                @Override
-                public void onItemCheckedStateChanged(ActionMode mode,
-                                                      int position, long id, boolean checked) {
-                }
-            });
-
-        }
+        recyclerView.setEmptyView(emptyView);
+        recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext(), LinearLayoutManager.VERTICAL, false));
     }
-
 }

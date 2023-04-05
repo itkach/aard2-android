@@ -1,16 +1,15 @@
 package itkach.aard2.lookup;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SearchView;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -18,7 +17,6 @@ import itkach.aard2.Application;
 import itkach.aard2.BaseListFragment;
 import itkach.aard2.R;
 import itkach.aard2.SlobHelper;
-import itkach.aard2.article.ArticleCollectionActivity;
 import itkach.aard2.prefs.AppPrefs;
 import itkach.aard2.utils.ClipboardUtils;
 
@@ -40,7 +38,7 @@ public class LookupFragment extends BaseListFragment implements LookupListener, 
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
         viewModel = new ViewModelProvider(this).get(LookupViewModel.class);
@@ -49,28 +47,16 @@ public class LookupFragment extends BaseListFragment implements LookupListener, 
     }
 
     @Override
-    protected boolean supportsSelection() {
-        return false;
-    }
-
-    @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         setBusy(false);
-        ListView listView = getListView();
-        listView.setOnItemClickListener((parent, view1, position, id) -> {
-            Log.i("--", "Item clicked: " + position);
-            Intent intent = new Intent(getActivity(), ArticleCollectionActivity.class);
-            intent.putExtra("position", position);
-            startActivity(intent);
-        });
         listAdapter = new LookupResultAdapter(SlobHelper.getInstance().lastLookupResult);
-        getListView().setAdapter(listAdapter);
+        recyclerView.setAdapter(listAdapter);
     }
 
 
     @Override
-    public void onCreateOptionsMenu(@NonNull Menu menu, MenuInflater inflater) {
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         inflater.inflate(R.menu.lookup, menu);
         MenuItem lookupMenu = menu.findItem(R.id.action_lookup);
         View filterActionView = lookupMenu.getActionView();
@@ -110,7 +96,6 @@ public class LookupFragment extends BaseListFragment implements LookupListener, 
     }
 
     private void setBusy(boolean busy) {
-        setListShown(!busy);
         if (!busy) {
             TextView emptyText = emptyView.findViewById(R.id.empty_text);
             String msg = "";

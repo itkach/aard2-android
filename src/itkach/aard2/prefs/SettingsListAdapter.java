@@ -2,7 +2,6 @@ package itkach.aard2.prefs;
 
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
@@ -13,17 +12,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
-import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.widget.LinearLayoutCompat;
 import androidx.core.text.HtmlCompat;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.webkit.WebViewFeature;
 
 import com.google.android.material.button.MaterialButton;
@@ -38,7 +36,7 @@ import java.util.List;
 
 import itkach.aard2.R;
 
-public class SettingsListAdapter extends BaseAdapter implements SharedPreferences.OnSharedPreferenceChangeListener {
+public class SettingsListAdapter extends RecyclerView.Adapter<SettingsListAdapter.ViewHolder> implements SharedPreferences.OnSharedPreferenceChangeListener {
     private final static String TAG = SettingsListAdapter.class.getSimpleName();
     private final Activity context;
     @SuppressWarnings("FieldCanBeLocal")
@@ -70,13 +68,8 @@ public class SettingsListAdapter extends BaseAdapter implements SharedPreference
     }
 
     @Override
-    public int getCount() {
+    public int getItemCount() {
         return 10;
-    }
-
-    @Override
-    public Object getItem(int i) {
-        return i;
     }
 
     @Override
@@ -85,244 +78,196 @@ public class SettingsListAdapter extends BaseAdapter implements SharedPreference
     }
 
     @Override
-    public int getViewTypeCount() {
-        return getCount();
-    }
-
-    @Override
     public int getItemViewType(int position) {
         return position;
     }
 
-    @Override
-    public View getView(int i, View convertView, ViewGroup parent) {
-        switch (i) {
-            case POS_UI_THEME:
-                return getUIThemeSettingsView(convertView, parent);
-            case POS_FORCE_DARK:
-                return getForceDarkView(convertView, parent);
-            case POS_REMOTE_CONTENT:
-                return getRemoteContentSettingsView(convertView, parent);
-            case POS_FAV_RANDOM:
-                return getFavRandomSwitchView(convertView, parent);
-            case POS_USE_VOLUME_FOR_NAV:
-                return getUseVolumeForNavView(convertView, parent);
-            case POS_AUTO_PASTE:
-                return getAutoPasteView(convertView, parent);
-            case POS_DISABLE_JS:
-                return getDisableJavaScriptView(convertView, parent);
-            case POS_USER_STYLES:
-                return getUserStylesView(convertView, parent);
-            case POS_CLEAR_CACHE:
-                return getClearCacheView(convertView, parent);
-            case POS_ABOUT:
-                return getAboutView(convertView, parent);
-        }
-        return null;
-    }
-
-    private View getUIThemeSettingsView(View convertView, ViewGroup parent) {
-        View view;
-        if (convertView != null) {
-            view = convertView;
-        } else {
-            LayoutInflater inflater = (LayoutInflater) parent.getContext()
-                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            view = inflater.inflate(R.layout.settings_ui_theme_item, parent, false);
-            MaterialCardView cardView = view.findViewById(R.id.card_view);
-            cardView.setCardBackgroundColor(SurfaceColors.SURFACE_1.getColor(view.getContext()));
-
-            String currentValue = AppPrefs.getPreferredTheme();
-
-            View.OnClickListener clickListener = view1 -> {
-                String value = null;
-                int id = view1.getId();
-                if (id == R.id.setting_ui_theme_auto) {
-                    value = AppPrefs.PREF_UI_THEME_AUTO;
-                } else if (id == R.id.setting_ui_theme_light) {
-                    value = AppPrefs.PREF_UI_THEME_LIGHT;
-                } else if (id == R.id.setting_ui_theme_dark) {
-                    value = AppPrefs.PREF_UI_THEME_DARK;
-                }
-                if (value != null) {
-                    AppPrefs.setPreferredTheme(value);
-                }
-                context.recreate();
-            };
-            RadioButton btnAuto = view.findViewById(R.id.setting_ui_theme_auto);
-            RadioButton btnLight = view.findViewById(R.id.setting_ui_theme_light);
-            RadioButton btnDark = view.findViewById(R.id.setting_ui_theme_dark);
-            btnAuto.setOnClickListener(clickListener);
-            btnLight.setOnClickListener(clickListener);
-            btnDark.setOnClickListener(clickListener);
-            btnAuto.setChecked(currentValue.equals(AppPrefs.PREF_UI_THEME_AUTO));
-            btnLight.setChecked(currentValue.equals(AppPrefs.PREF_UI_THEME_LIGHT));
-            btnDark.setChecked(currentValue.equals(AppPrefs.PREF_UI_THEME_DARK));
-        }
-        return view;
-    }
-
-    private View getForceDarkView(View convertView, ViewGroup parent) {
-        View view;
-        MaterialSwitch toggle;
-        if (convertView != null) {
-            view = convertView;
-            toggle = view.findViewById(R.id.setting_switch);
-        } else {
-            LayoutInflater inflater = (LayoutInflater) parent.getContext()
-                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            view = inflater.inflate(R.layout.settings_switch, parent, false);
-            MaterialCardView cardView = view.findViewById(R.id.card_view);
-            cardView.setCardBackgroundColor(SurfaceColors.SURFACE_1.getColor(view.getContext()));
-
-            toggle = view.findViewById(R.id.setting_switch);
-            toggle.setText(R.string.setting_enable_force_dark_web_view);
-            toggle.setEnabled(WebViewFeature.isFeatureSupported(WebViewFeature.ALGORITHMIC_DARKENING));
-            toggle.setOnClickListener(v -> {
-                boolean currentValue = ArticleViewPrefs.enableForceDark();
-                boolean newValue = !currentValue;
-                ArticleViewPrefs.setEnableForceDark(newValue);
-                toggle.setChecked(newValue);
-            });
-            view.findViewById(R.id.setting_subtitle).setVisibility(View.GONE);
-        }
-        toggle.setChecked(ArticleViewPrefs.enableForceDark());
-        return view;
-    }
-
-    private View getFavRandomSwitchView(View convertView, ViewGroup parent) {
-        View view;
-        MaterialSwitch toggle;
-        if (convertView != null) {
-            view = convertView;
-            toggle = view.findViewById(R.id.setting_switch);
-        } else {
-            LayoutInflater inflater = (LayoutInflater) parent.getContext()
-                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            view = inflater.inflate(R.layout.settings_switch, parent, false);
-            MaterialCardView cardView = view.findViewById(R.id.card_view);
-            cardView.setCardBackgroundColor(SurfaceColors.SURFACE_1.getColor(view.getContext()));
-
-            toggle = view.findViewById(R.id.setting_switch);
-            toggle.setText(R.string.setting_fav_random_search);
-            toggle.setOnClickListener(v -> {
-                boolean currentValue = AppPrefs.useOnlyFavoritesForRandomLookups();
-                boolean newValue = !currentValue;
-                AppPrefs.setUseOnlyFavoritesForRandomLookups(newValue);
-                toggle.setChecked(newValue);
-            });
-            view.findViewById(R.id.setting_subtitle).setVisibility(View.GONE);
-        }
-        toggle.setChecked(AppPrefs.useOnlyFavoritesForRandomLookups());
-        return view;
-    }
-
-    private View getUseVolumeForNavView(View convertView, ViewGroup parent) {
-        View view;
-        MaterialSwitch toggle;
-        if (convertView != null) {
-            view = convertView;
-            toggle = view.findViewById(R.id.setting_switch);
-        } else {
-            LayoutInflater inflater = (LayoutInflater) parent.getContext()
-                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            view = inflater.inflate(R.layout.settings_switch, parent, false);
-            MaterialCardView cardView = view.findViewById(R.id.card_view);
-            cardView.setCardBackgroundColor(SurfaceColors.SURFACE_1.getColor(view.getContext()));
-
-            toggle = view.findViewById(R.id.setting_switch);
-            toggle.setText(R.string.setting_use_volume_for_nav);
-            toggle.setOnClickListener(v -> {
-                boolean currentValue = AppPrefs.useVolumeKeysForNavigation();
-                boolean newValue = !currentValue;
-                AppPrefs.setUseVolumeKeysForNavigation(newValue);
-                toggle.setChecked(newValue);
-            });
-            view.findViewById(R.id.setting_subtitle).setVisibility(View.GONE);
-        }
-        toggle.setChecked(AppPrefs.useVolumeKeysForNavigation());
-        return view;
-    }
-
     @NonNull
-    private View getAutoPasteView(@Nullable View convertView, @NonNull ViewGroup parent) {
+    @Override
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view;
-        MaterialSwitch toggle;
-        if (convertView != null) {
-            view = convertView;
-            toggle = view.findViewById(R.id.setting_switch);
-        } else {
-            LayoutInflater inflater = (LayoutInflater) parent.getContext()
-                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            view = inflater.inflate(R.layout.settings_switch, parent, false);
-            MaterialCardView cardView = view.findViewById(R.id.card_view);
-            cardView.setCardBackgroundColor(SurfaceColors.SURFACE_1.getColor(view.getContext()));
-
-            toggle = view.findViewById(R.id.setting_switch);
-            toggle.setText(R.string.setting_auto_paste);
-            toggle.setOnClickListener(v -> {
-                boolean currentValue = AppPrefs.autoPasteInLookup();
-                boolean newValue = !currentValue;
-                AppPrefs.setAutoPasteInLookup(newValue);
-                toggle.setChecked(newValue);
-            });
-            view.findViewById(R.id.setting_subtitle).setVisibility(View.GONE);
+        switch (viewType) {
+            case POS_UI_THEME:
+                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.settings_ui_theme_item, parent, false);
+                break;
+            case POS_REMOTE_CONTENT:
+                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.settings_remote_content_item, parent, false);
+                break;
+            default:
+            case POS_FORCE_DARK:
+            case POS_FAV_RANDOM:
+            case POS_USE_VOLUME_FOR_NAV:
+            case POS_AUTO_PASTE:
+            case POS_DISABLE_JS:
+                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.settings_switch, parent, false);
+                break;
+            case POS_USER_STYLES:
+                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.settings_user_styles_item, parent, false);
+                break;
+            case POS_CLEAR_CACHE:
+                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.settings_clear_cache_item, parent, false);
+                break;
+            case POS_ABOUT:
+                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.settings_about_item, parent, false);
+                break;
         }
+        return new ViewHolder(view);
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        switch (position) {
+            case POS_UI_THEME:
+                getUIThemeSettingsView(holder);
+                break;
+            case POS_FORCE_DARK:
+                getForceDarkView(holder);
+                break;
+            case POS_REMOTE_CONTENT:
+                getRemoteContentSettingsView(holder);
+                break;
+            case POS_FAV_RANDOM:
+                getFavRandomSwitchView(holder);
+                break;
+            case POS_USE_VOLUME_FOR_NAV:
+                getUseVolumeForNavView(holder);
+                break;
+            case POS_AUTO_PASTE:
+                getAutoPasteView(holder);
+                break;
+            case POS_DISABLE_JS:
+                getDisableJavaScriptView(holder);
+                break;
+            case POS_USER_STYLES:
+                getUserStylesView(holder);
+                break;
+            case POS_CLEAR_CACHE:
+                getClearCacheView(holder);
+                break;
+            case POS_ABOUT:
+                getAboutView(holder);
+                break;
+        }
+    }
+
+    private void getUIThemeSettingsView(@NonNull ViewHolder holder) {
+        View view = holder.itemView;
+        String currentValue = AppPrefs.getPreferredTheme();
+
+        View.OnClickListener clickListener = view1 -> {
+            String value = null;
+            int id = view1.getId();
+            if (id == R.id.setting_ui_theme_auto) {
+                value = AppPrefs.PREF_UI_THEME_AUTO;
+            } else if (id == R.id.setting_ui_theme_light) {
+                value = AppPrefs.PREF_UI_THEME_LIGHT;
+            } else if (id == R.id.setting_ui_theme_dark) {
+                value = AppPrefs.PREF_UI_THEME_DARK;
+            }
+            if (value != null) {
+                AppPrefs.setPreferredTheme(value);
+            }
+            context.recreate();
+        };
+        RadioButton btnAuto = view.findViewById(R.id.setting_ui_theme_auto);
+        RadioButton btnLight = view.findViewById(R.id.setting_ui_theme_light);
+        RadioButton btnDark = view.findViewById(R.id.setting_ui_theme_dark);
+        btnAuto.setOnClickListener(clickListener);
+        btnLight.setOnClickListener(clickListener);
+        btnDark.setOnClickListener(clickListener);
+        btnAuto.setChecked(currentValue.equals(AppPrefs.PREF_UI_THEME_AUTO));
+        btnLight.setChecked(currentValue.equals(AppPrefs.PREF_UI_THEME_LIGHT));
+        btnDark.setChecked(currentValue.equals(AppPrefs.PREF_UI_THEME_DARK));
+    }
+
+    private void getForceDarkView(@NonNull ViewHolder holder) {
+        View view = holder.itemView;
+        MaterialSwitch toggle = view.findViewById(R.id.setting_switch);
+        toggle.setText(R.string.setting_enable_force_dark_web_view);
+        toggle.setEnabled(WebViewFeature.isFeatureSupported(WebViewFeature.ALGORITHMIC_DARKENING));
+        toggle.setOnClickListener(v -> {
+            boolean currentValue = ArticleViewPrefs.enableForceDark();
+            boolean newValue = !currentValue;
+            ArticleViewPrefs.setEnableForceDark(newValue);
+            toggle.setChecked(newValue);
+        });
+        view.findViewById(R.id.setting_subtitle).setVisibility(View.GONE);
+        toggle.setChecked(ArticleViewPrefs.enableForceDark());
+    }
+
+    private void getFavRandomSwitchView(@NonNull ViewHolder holder) {
+        View view = holder.itemView;
+        MaterialSwitch toggle = view.findViewById(R.id.setting_switch);
+        toggle.setText(R.string.setting_fav_random_search);
+        toggle.setOnClickListener(v -> {
+            boolean currentValue = AppPrefs.useOnlyFavoritesForRandomLookups();
+            boolean newValue = !currentValue;
+            AppPrefs.setUseOnlyFavoritesForRandomLookups(newValue);
+            toggle.setChecked(newValue);
+        });
+        view.findViewById(R.id.setting_subtitle).setVisibility(View.GONE);
+        toggle.setChecked(AppPrefs.useOnlyFavoritesForRandomLookups());
+    }
+
+    private void getUseVolumeForNavView(@NonNull ViewHolder holder) {
+        View view = holder.itemView;
+        MaterialSwitch toggle = view.findViewById(R.id.setting_switch);
+        toggle.setText(R.string.setting_use_volume_for_nav);
+        toggle.setOnClickListener(v -> {
+            boolean currentValue = AppPrefs.useVolumeKeysForNavigation();
+            boolean newValue = !currentValue;
+            AppPrefs.setUseVolumeKeysForNavigation(newValue);
+            toggle.setChecked(newValue);
+        });
+        view.findViewById(R.id.setting_subtitle).setVisibility(View.GONE);
+        toggle.setChecked(AppPrefs.useVolumeKeysForNavigation());
+    }
+
+    private void getAutoPasteView(@NonNull ViewHolder holder) {
+        View view = holder.itemView;
+        MaterialSwitch toggle;
+        toggle = view.findViewById(R.id.setting_switch);
+        toggle.setText(R.string.setting_auto_paste);
+        toggle.setOnClickListener(v -> {
+            boolean currentValue = AppPrefs.autoPasteInLookup();
+            boolean newValue = !currentValue;
+            AppPrefs.setAutoPasteInLookup(newValue);
+            toggle.setChecked(newValue);
+        });
+        view.findViewById(R.id.setting_subtitle).setVisibility(View.GONE);
         toggle.setChecked(AppPrefs.autoPasteInLookup());
-        return view;
     }
 
-    private View getDisableJavaScriptView(View convertView, ViewGroup parent) {
-        View view;
+    private void getDisableJavaScriptView(@NonNull ViewHolder holder) {
+        View view = holder.itemView;
         MaterialSwitch toggle;
-        if (convertView != null) {
-            view = convertView;
-            toggle = view.findViewById(R.id.setting_switch);
-        } else {
-            LayoutInflater inflater = (LayoutInflater) parent.getContext()
-                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            view = inflater.inflate(R.layout.settings_switch, parent, false);
-            MaterialCardView cardView = view.findViewById(R.id.card_view);
-            cardView.setCardBackgroundColor(SurfaceColors.SURFACE_1.getColor(view.getContext()));
-
-            toggle = view.findViewById(R.id.setting_switch);
-            toggle.setText(R.string.setting_disable_javascript_title);
-            toggle.setOnClickListener(v -> {
-                boolean currentValue = ArticleViewPrefs.disableJavaScript();
-                boolean newValue = !currentValue;
-                ArticleViewPrefs.setDisableJavaScript(newValue);
-                toggle.setChecked(newValue);
-            });
-            MaterialTextView subtitleView = view.findViewById(R.id.setting_subtitle);
-            subtitleView.setVisibility(View.VISIBLE);
-            subtitleView.setText(R.string.setting_disable_javascript_subtitle);
-        }
+        toggle = view.findViewById(R.id.setting_switch);
+        toggle.setText(R.string.setting_disable_javascript_title);
+        toggle.setOnClickListener(v -> {
+            boolean currentValue = ArticleViewPrefs.disableJavaScript();
+            boolean newValue = !currentValue;
+            ArticleViewPrefs.setDisableJavaScript(newValue);
+            toggle.setChecked(newValue);
+        });
+        MaterialTextView subtitleView = view.findViewById(R.id.setting_subtitle);
+        subtitleView.setVisibility(View.VISIBLE);
+        subtitleView.setText(R.string.setting_disable_javascript_subtitle);
         toggle.setChecked(ArticleViewPrefs.disableJavaScript());
-        return view;
     }
 
 
-    private View getUserStylesView(View convertView, final ViewGroup parent) {
-        View view;
-        LayoutInflater inflater = (LayoutInflater) parent.getContext()
-                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        if (convertView != null) {
-            view = convertView;
-        } else {
-            view = inflater.inflate(R.layout.settings_user_styles_item, parent, false);
-            MaterialCardView cardView = view.findViewById(R.id.card_view);
-            cardView.setCardBackgroundColor(SurfaceColors.SURFACE_1.getColor(view.getContext()));
-            MaterialButton btnAdd = view.findViewById(R.id.setting_btn_add_user_style);
-            btnAdd.setOnClickListener(view1 -> {
-                try {
-                    ((SettingsFragment) fragment).userStylesChooser.launch("text/*");
-                } catch (ActivityNotFoundException e) {
-                    Log.d(TAG, "Not activity to get content", e);
-                    Toast.makeText(context, R.string.msg_no_activity_to_get_content,
-                            Toast.LENGTH_LONG).show();
-                }
-            });
-        }
+    private void getUserStylesView(@NonNull ViewHolder holder) {
+        View view = holder.itemView;
+        MaterialButton btnAdd = view.findViewById(R.id.setting_btn_add_user_style);
+        btnAdd.setOnClickListener(view1 -> {
+            try {
+                ((SettingsFragment) fragment).userStylesChooser.launch("text/*");
+            } catch (ActivityNotFoundException e) {
+                Log.d(TAG, "Not activity to get content", e);
+                Toast.makeText(context, R.string.msg_no_activity_to_get_content,
+                        Toast.LENGTH_LONG).show();
+            }
+        });
 
         List<String> userStyleNames = UserStylesPrefs.listStyleNames();
         Collections.sort(userStyleNames);
@@ -333,8 +278,7 @@ public class SettingsListAdapter extends BaseAdapter implements SharedPreference
         LinearLayoutCompat userStyleListLayout = view.findViewById(R.id.setting_user_styles_list);
         userStyleListLayout.removeAllViews();
         for (String userStyleName : userStyleNames) {
-            View styleItemView = inflater.inflate(R.layout.user_styles_list_item, parent,
-                    false);
+            View styleItemView = View.inflate(view.getContext(), R.layout.user_styles_list_item, null);
             ImageView btnDelete = styleItemView.findViewById(R.id.user_styles_list_btn_delete);
             btnDelete.setOnClickListener(onDeleteUserStyle);
             btnDelete.setTag(userStyleName);
@@ -345,7 +289,6 @@ public class SettingsListAdapter extends BaseAdapter implements SharedPreference
             userStyleListLayout.addView(styleItemView);
         }
 
-        return view;
     }
 
     private void deleteUserStyle(final String name) {
@@ -367,111 +310,86 @@ public class SettingsListAdapter extends BaseAdapter implements SharedPreference
         notifyDataSetChanged();
     }
 
-    private View getRemoteContentSettingsView(View convertView, ViewGroup parent) {
-        View view;
-        if (convertView != null) {
-            view = convertView;
-        } else {
-            LayoutInflater inflater = (LayoutInflater) parent.getContext()
-                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            view = inflater.inflate(R.layout.settings_remote_content_item, parent, false);
-            MaterialCardView cardView = view.findViewById(R.id.card_view);
-            cardView.setCardBackgroundColor(SurfaceColors.SURFACE_1.getColor(view.getContext()));
-
-            String currentValue = ArticleViewPrefs.getRemoteContentPreference();
-            View.OnClickListener clickListener = view1 -> {
-                String value = null;
-                int id = view1.getId();
-                if (id == R.id.setting_remote_content_always) {
-                    value = ArticleViewPrefs.PREF_REMOTE_CONTENT_ALWAYS;
-                } else if (id == R.id.setting_remote_content_wifi) {
-                    value = ArticleViewPrefs.PREF_REMOTE_CONTENT_WIFI;
-                } else if (id == R.id.setting_remote_content_never) {
-                    value = ArticleViewPrefs.PREF_REMOTE_CONTENT_NEVER;
-                }
-                if (value != null) {
-                    ArticleViewPrefs.setRemoteContentPreference(value);
-                }
-            };
-            RadioButton btnAlways = view.findViewById(R.id.setting_remote_content_always);
-            RadioButton btnWiFi = view.findViewById(R.id.setting_remote_content_wifi);
-            RadioButton btnNever = view.findViewById(R.id.setting_remote_content_never);
-            btnAlways.setOnClickListener(clickListener);
-            btnWiFi.setOnClickListener(clickListener);
-            btnNever.setOnClickListener(clickListener);
-            btnAlways.setChecked(currentValue.equals(ArticleViewPrefs.PREF_REMOTE_CONTENT_ALWAYS));
-            btnWiFi.setChecked(currentValue.equals(ArticleViewPrefs.PREF_REMOTE_CONTENT_WIFI));
-            btnNever.setChecked(currentValue.equals(ArticleViewPrefs.PREF_REMOTE_CONTENT_NEVER));
-        }
-        return view;
-    }
-
-    private View getClearCacheView(View convertView, ViewGroup parent) {
-        View view;
-        if (convertView != null) {
-            view = convertView;
-        } else {
-            final Context context = parent.getContext();
-            LayoutInflater inflater = (LayoutInflater) context
-                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            view = inflater.inflate(R.layout.settings_clear_cache_item, parent, false);
-            MaterialCardView cardView = view.findViewById(R.id.card_view);
-            cardView.setCardBackgroundColor(SurfaceColors.SURFACE_1.getColor(view.getContext()));
-            cardView.setOnClickListener(v -> new MaterialAlertDialogBuilder(fragment.requireActivity())
-                    .setMessage(R.string.confirm_clear_cached_content)
-                    .setPositiveButton(R.string.action_yes, (dialog, id1) -> {
-                        WebView webView = new WebView(fragment.requireActivity());
-                        webView.clearCache(true);
-                    })
-                    .setNegativeButton(R.string.action_no, null)
-                    .show());
-        }
-        return view;
-    }
-
-    private View getAboutView(View convertView, ViewGroup parent) {
-        View view;
-        if (convertView != null) {
-            view = convertView;
-        } else {
-            final Context context = parent.getContext();
-            LayoutInflater inflater = (LayoutInflater) context
-                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            view = inflater.inflate(R.layout.settings_about_item, parent, false);
-            MaterialCardView cardView = view.findViewById(R.id.card_view);
-            cardView.setCardBackgroundColor(SurfaceColors.SURFACE_1.getColor(view.getContext()));
-
-            String appName = context.getString(R.string.app_name);
-            String title = context.getString(R.string.setting_about, appName);
-
-            TextView titleView = view.findViewById(R.id.setting_about);
-            titleView.setText(title);
-
-            String licenseName = context.getString(R.string.application_license_name);
-            final String licenseUrl = context.getString(R.string.application_license_url);
-            String license = context.getString(R.string.application_license, licenseUrl, licenseName);
-            TextView licenseView = view.findViewById(R.id.application_license);
-            licenseView.setOnClickListener(view1 -> {
-                Uri uri = Uri.parse(licenseUrl);
-                Intent browserIntent = new Intent(Intent.ACTION_VIEW, uri);
-                context.startActivity(browserIntent);
-            });
-            licenseView.setText(HtmlCompat.fromHtml(license.trim(), HtmlCompat.FROM_HTML_MODE_LEGACY));
-
-            PackageManager manager = context.getPackageManager();
-            String versionName;
-            try {
-                PackageInfo info = manager.getPackageInfo(context.getPackageName(), 0);
-                versionName = info.versionName;
-            } catch (PackageManager.NameNotFoundException e) {
-                versionName = "?";
+    private void getRemoteContentSettingsView(@NonNull ViewHolder holder) {
+        View view = holder.itemView;
+        String currentValue = ArticleViewPrefs.getRemoteContentPreference();
+        View.OnClickListener clickListener = view1 -> {
+            String value = null;
+            int id = view1.getId();
+            if (id == R.id.setting_remote_content_always) {
+                value = ArticleViewPrefs.PREF_REMOTE_CONTENT_ALWAYS;
+            } else if (id == R.id.setting_remote_content_wifi) {
+                value = ArticleViewPrefs.PREF_REMOTE_CONTENT_WIFI;
+            } else if (id == R.id.setting_remote_content_never) {
+                value = ArticleViewPrefs.PREF_REMOTE_CONTENT_NEVER;
             }
-
-            TextView versionView = view.findViewById(R.id.application_version);
-            versionView.setText(context.getString(R.string.application_version, versionName));
-
-        }
-        return view;
+            if (value != null) {
+                ArticleViewPrefs.setRemoteContentPreference(value);
+            }
+        };
+        RadioButton btnAlways = view.findViewById(R.id.setting_remote_content_always);
+        RadioButton btnWiFi = view.findViewById(R.id.setting_remote_content_wifi);
+        RadioButton btnNever = view.findViewById(R.id.setting_remote_content_never);
+        btnAlways.setOnClickListener(clickListener);
+        btnWiFi.setOnClickListener(clickListener);
+        btnNever.setOnClickListener(clickListener);
+        btnAlways.setChecked(currentValue.equals(ArticleViewPrefs.PREF_REMOTE_CONTENT_ALWAYS));
+        btnWiFi.setChecked(currentValue.equals(ArticleViewPrefs.PREF_REMOTE_CONTENT_WIFI));
+        btnNever.setChecked(currentValue.equals(ArticleViewPrefs.PREF_REMOTE_CONTENT_NEVER));
     }
 
+    private void getClearCacheView(@NonNull ViewHolder holder) {
+        holder.cardView.setOnClickListener(v -> new MaterialAlertDialogBuilder(fragment.requireActivity())
+                .setMessage(R.string.confirm_clear_cached_content)
+                .setPositiveButton(R.string.action_yes, (dialog, id1) -> {
+                    WebView webView = new WebView(fragment.requireActivity());
+                    webView.clearCache(true);
+                })
+                .setNegativeButton(R.string.action_no, null)
+                .show());
+    }
+
+    private void getAboutView(@NonNull ViewHolder holder) {
+        View view = holder.itemView;
+
+        String appName = context.getString(R.string.app_name);
+        String title = context.getString(R.string.setting_about, appName);
+
+        TextView titleView = view.findViewById(R.id.setting_about);
+        titleView.setText(title);
+
+        String licenseName = context.getString(R.string.application_license_name);
+        final String licenseUrl = context.getString(R.string.application_license_url);
+        String license = context.getString(R.string.application_license, licenseUrl, licenseName);
+        TextView licenseView = view.findViewById(R.id.application_license);
+        licenseView.setOnClickListener(view1 -> {
+            Uri uri = Uri.parse(licenseUrl);
+            Intent browserIntent = new Intent(Intent.ACTION_VIEW, uri);
+            context.startActivity(browserIntent);
+        });
+        licenseView.setText(HtmlCompat.fromHtml(license.trim(), HtmlCompat.FROM_HTML_MODE_LEGACY));
+
+        PackageManager manager = context.getPackageManager();
+        String versionName;
+        try {
+            PackageInfo info = manager.getPackageInfo(context.getPackageName(), 0);
+            versionName = info.versionName;
+        } catch (PackageManager.NameNotFoundException e) {
+            versionName = "?";
+        }
+
+        TextView versionView = view.findViewById(R.id.application_version);
+        versionView.setText(context.getString(R.string.application_version, versionName));
+
+    }
+
+    public static class ViewHolder extends RecyclerView.ViewHolder {
+        public final MaterialCardView cardView;
+
+        public ViewHolder(@NonNull View itemView) {
+            super(itemView);
+            cardView = itemView.findViewById(R.id.card_view);
+            cardView.setCardBackgroundColor(SurfaceColors.SURFACE_1.getColor(itemView.getContext()));
+        }
+    }
 }

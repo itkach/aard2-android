@@ -1,246 +1,236 @@
-<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/card_view"
+    style="@style/Widget.AppTheme.CardView.ListItem"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:minHeight="?android:attr/listPreferredItemHeightSmall"
+    android:focusable="true">
 
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/card_view"
-        style="@style/Widget.AppTheme.CardView.ListItem"
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:minHeight="?android:attr/listPreferredItemHeightSmall"
-        android:focusable="true">
+        android:paddingVertical="16dp"
+        android:paddingHorizontal="16dp">
 
         <androidx.appcompat.widget.LinearLayoutCompat
-            android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingVertical="16dp"
-            android:paddingHorizontal="16dp">
+            android:orientation="horizontal"
+            android:layout_marginBottom="4dp">
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/dictionary_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start|center_vertical"
+                android:layout_weight="1"
+                android:textAppearance="?attr/textAppearanceListItem"
+                tools:text="WordNet" />
+
+            <com.google.android.material.materialswitch.MaterialSwitch
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/dictionary_active"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="0"
+                tools:checked="true"
+                tools:enabled="true" />
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/dictionary_error_row"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="4dp"
+            android:layout_marginStart="16dp">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="4dp"
+                app:tint="?attr/colorError"
+                app:srcCompat="@drawable/ic_warning" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/dictionary_error"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:textColor="?attr/colorError"
+                android:visibility="visible"
+                android:textAppearance="?attr/textAppearanceListItemSecondary"
+                tools:text="File does not exist" />
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/dictionary_details"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginBottom="6dp"
+            android:layout_marginStart="16dp">
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/dictionary_blob_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="6dp"
+                android:textAppearance="?attr/textAppearanceListItemSecondary"
+                tools:text="100,000 items" />
 
             <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/dictionary_copyright_row"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_marginBottom="4dp">
-
-                <com.google.android.material.textview.MaterialTextView
-                    android:id="@+id/dictionary_label"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start|center_vertical"
-                    android:layout_weight="1"
-                    android:textAppearance="?attr/textAppearanceListItem"
-                    tools:text="WordNet" />
-
-                <com.google.android.material.materialswitch.MaterialSwitch
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/dictionary_active"
-                    android:layout_gravity="center_vertical"
-                    android:layout_weight="0"
-                    tools:checked="true"
-                    tools:enabled="true" />
-            </androidx.appcompat.widget.LinearLayoutCompat>
-
-            <androidx.appcompat.widget.LinearLayoutCompat
-                android:id="@+id/dictionary_error_row"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="4dp"
-                android:layout_marginStart="16dp">
+                android:layout_marginBottom="2dp">
 
                 <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/dictionary_error_icon"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="4dp"
-                    app:tint="?attr/colorError"
-                    app:srcCompat="@drawable/ic_warning" />
+                    app:srcCompat="@drawable/ic_copyright" />
 
                 <com.google.android.material.textview.MaterialTextView
-                    android:id="@+id/dictionary_error"
+                    android:id="@+id/dictionary_copyright"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:textColor="?attr/colorError"
-                    android:visibility="visible"
                     android:textAppearance="?attr/textAppearanceListItemSecondary"
-                    tools:text="File does not exist" />
+                    tools:text="2014 Wikipedia editors and contributors" />
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/dictionary_license_row"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="2dp">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="4dp"
+                    app:srcCompat="@drawable/ic_license" />
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/dictionary_license"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:textAppearance="?attr/textAppearanceListItemSecondary"
+                    tools:text="Creative Commons with Attribution" />
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/dictionary_source_row"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="2dp">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="4dp"
+                    app:srcCompat="@drawable/ic_open_in_new" />
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/dictionary_source"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:textAppearance="?attr/textAppearanceListItemSecondary"
+                    tools:text="https://en.wikipedia.org" />
 
             </androidx.appcompat.widget.LinearLayoutCompat>
 
             <androidx.appcompat.widget.LinearLayoutCompat
-                android:id="@+id/dictionary_details"
+                android:id="@+id/dictionary_path_row"
+                android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_marginBottom="6dp"
-                android:layout_marginStart="16dp">
+                android:layout_marginBottom="2dp">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="4dp"
+                    app:srcCompat="@drawable/ic_archive" />
 
                 <com.google.android.material.textview.MaterialTextView
-                    android:id="@+id/dictionary_blob_count"
+                    android:id="@+id/dictionary_path"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="6dp"
-                    android:textAppearance="?attr/textAppearanceListItemSecondary"
-                    tools:text="100,000 items" />
-
-                <androidx.appcompat.widget.LinearLayoutCompat
-                    android:id="@+id/dictionary_copyright_row"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginBottom="2dp">
-
-                    <androidx.appcompat.widget.AppCompatImageView
-                        android:id="@+id/dictionary_copyright_icon"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="4dp"
-                        app:srcCompat="@drawable/ic_copyright" />
-
-                    <com.google.android.material.textview.MaterialTextView
-                        android:id="@+id/dictionary_copyright"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:textAppearance="?attr/textAppearanceListItemSecondary"
-                        tools:text="2014 Wikipedia editors and contributors" />
-
-                </androidx.appcompat.widget.LinearLayoutCompat>
-
-
-                <androidx.appcompat.widget.LinearLayoutCompat
-                    android:id="@+id/dictionary_license_row"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginBottom="2dp">
-
-                    <androidx.appcompat.widget.AppCompatImageView
-                        android:id="@+id/dictionary_license_icon"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="4dp"
-                        app:srcCompat="@drawable/ic_license" />
-
-                    <com.google.android.material.textview.MaterialTextView
-                        android:id="@+id/dictionary_license"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:textAppearance="?attr/textAppearanceListItemSecondary"
-                        tools:text="Creative Commons with Attribution" />
-                </androidx.appcompat.widget.LinearLayoutCompat>
-
-                <androidx.appcompat.widget.LinearLayoutCompat
-                    android:id="@+id/dictionary_source_row"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginBottom="2dp">
-
-                    <androidx.appcompat.widget.AppCompatImageView
-                        android:id="@+id/dictionary_source_icon"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="4dp"
-                        app:srcCompat="@drawable/ic_open_in_new" />
-
-                    <com.google.android.material.textview.MaterialTextView
-                        android:id="@+id/dictionary_source"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:textAppearance="?attr/textAppearanceListItemSecondary"
-                        tools:text="https://en.wikipedia.org" />
-
-                </androidx.appcompat.widget.LinearLayoutCompat>
-
-                <androidx.appcompat.widget.LinearLayoutCompat
-                    android:id="@+id/dictionary_path_row"
-                    android:orientation="horizontal"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="2dp">
-
-                    <androidx.appcompat.widget.AppCompatImageView
-                        android:id="@+id/dictionary_path_icon"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="4dp"
-                        app:srcCompat="@drawable/ic_archive" />
-
-                    <com.google.android.material.textview.MaterialTextView
-                        android:id="@+id/dictionary_path"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:textAppearance="?attr/textAppearanceListItemSecondary"
-                        android:textStyle="italic"
-                        tools:text="/mnt/sdcard/wordnet.slob" />
-                </androidx.appcompat.widget.LinearLayoutCompat>
-
-            </androidx.appcompat.widget.LinearLayoutCompat>
-
-            <com.google.android.material.divider.MaterialDivider
-                android:layout_width="match_parent"
-                android:layout_height="1dp" />
-
-            <androidx.appcompat.widget.LinearLayoutCompat
-                android:id="@+id/dictionary_btn_row"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <com.google.android.material.button.MaterialButton
-                    style="@style/Widget.Material3.Button.IconButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/dictionary_btn_toggle_detail"
-                    android:layout_gravity="start"
-                    app:iconGravity="textStart"
-                    app:icon="@drawable/ic_keyboard_arrow_down" />
-
-                <Space
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:id="@+id/dictionary_btn_toggle_detail_space" />
-
-                <com.google.android.material.button.MaterialButton
-                    style="@style/Widget.Material3.Button.IconButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/dictionary_btn_forget"
-                    android:layout_gravity="end"
-                    app:iconGravity="textStart"
-                    app:icon="@drawable/ic_delete_outline" />
-
-                <com.google.android.material.button.MaterialButton
-                    style="@style/Widget.Material3.Button.IconButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/dictionary_btn_update"
-                    android:layout_gravity="end"
-                    app:iconGravity="textStart"
-                    app:icon="@drawable/ic_update" />
-
-                <com.google.android.material.button.MaterialButton
-                    style="@style/Widget.Material3.Button.IconButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/dictionary_btn_toggle_fav"
                     android:layout_gravity="center_vertical"
-                    app:iconGravity="textStart"
-                    tools:icon="@drawable/ic_favorite_border" />
-
+                    android:textAppearance="?attr/textAppearanceListItemSecondary"
+                    android:textStyle="italic"
+                    tools:text="/mnt/sdcard/wordnet.slob" />
             </androidx.appcompat.widget.LinearLayoutCompat>
 
         </androidx.appcompat.widget.LinearLayoutCompat>
 
-    </com.google.android.material.card.MaterialCardView>
-</androidx.appcompat.widget.LinearLayoutCompat>
+        <com.google.android.material.divider.MaterialDivider
+            android:layout_width="match_parent"
+            android:layout_height="1dp" />
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/dictionary_btn_row"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <com.google.android.material.button.MaterialButton
+                style="@style/Widget.Material3.Button.IconButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/dictionary_btn_toggle_detail"
+                android:layout_gravity="start"
+                app:iconGravity="textStart"
+                app:icon="@drawable/ic_keyboard_arrow_down" />
+
+            <Space
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:id="@+id/dictionary_btn_toggle_detail_space" />
+
+            <com.google.android.material.button.MaterialButton
+                style="@style/Widget.Material3.Button.IconButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/dictionary_btn_forget"
+                android:layout_gravity="end"
+                app:iconGravity="textStart"
+                app:icon="@drawable/ic_delete_outline" />
+
+            <com.google.android.material.button.MaterialButton
+                style="@style/Widget.Material3.Button.IconButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/dictionary_btn_update"
+                android:layout_gravity="end"
+                app:iconGravity="textStart"
+                app:icon="@drawable/ic_update" />
+
+            <com.google.android.material.button.MaterialButton
+                style="@style/Widget.Material3.Button.IconButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/dictionary_btn_toggle_fav"
+                android:layout_gravity="center_vertical"
+                app:iconGravity="textStart"
+                tools:icon="@drawable/ic_favorite_border" />
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+</com.google.android.material.card.MaterialCardView>

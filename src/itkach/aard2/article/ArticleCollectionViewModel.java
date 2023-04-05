@@ -56,9 +56,9 @@ public class ArticleCollectionViewModel extends AndroidViewModel {
                     String action = intent.getAction();
                     if (action == null) {
                         result = createFromLastResult();
-                    } else if (action.equals("showBookmarks")) {
+                    } else if (action.equals(ArticleCollectionActivity.ACTION_BOOKMARKS)) {
                         result = createFromBookmarks();
-                    } else if (action.equals("showHistory")) {
+                    } else if (action.equals(ArticleCollectionActivity.ACTION_HISTORY)) {
                         result = createFromHistory();
                     } else {
                         result = createFromIntent(intent);
