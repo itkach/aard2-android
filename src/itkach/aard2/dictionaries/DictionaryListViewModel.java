@@ -82,7 +82,10 @@ public class DictionaryListViewModel extends AndroidViewModel {
                 }
                 // Replace dictionary
                 dictionaries.remove(dictionaryToBeReplaced);
-                dictionaries.add(newSd);
+                // Only add the dictionary if it's new
+                if (!dictionaries.hasId(newSd.id)) {
+                    dictionaries.add(newSd);
+                }
                 // Update history and bookmarks
                 String oldId = dictionaryToBeReplaced.id;
                 String newId = newSd.id;
