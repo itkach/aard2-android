@@ -100,7 +100,7 @@ abstract class BlobDescriptorListFragment extends BaseListFragment implements Ac
         icClock = ContextCompat.getDrawable(activity, R.drawable.ic_clock_time_nine);
         icList = ContextCompat.getDrawable(activity, R.drawable.ic_format_list_bulleted);
         icArrowUp = ContextCompat.getDrawable(activity, R.drawable.ic_sort_ascending);
-        icArrowDown = ContextCompat.getDrawable(activity, R.drawable.sort_descending);
+        icArrowDown = ContextCompat.getDrawable(activity, R.drawable.ic_sort_descending);
 
         recyclerView.setAdapter(listAdapter);
     }

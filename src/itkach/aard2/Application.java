@@ -179,10 +179,9 @@ public class Application extends android.app.Application {
             }
 
             long t0 = System.currentTimeMillis();
-            String packageName = application.getPackageName();
             try {
                 PackageManager pm = application.getPackageManager();
-                PackageInfo p = pm.getPackageInfo(packageName,
+                PackageInfo p = pm.getPackageInfo(BuildConfig.APPLICATION_ID,
                         PackageManager.GET_ACTIVITIES | PackageManager.GET_DISABLED_COMPONENTS);
                 Log.d(TAG, "Done getting available activities in " + (System.currentTimeMillis() - t0));
                 t0 = System.currentTimeMillis();
