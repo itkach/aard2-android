@@ -50,7 +50,9 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
         appSectionsPagerAdapter = new AppSectionsPagerAdapter(getSupportFragmentManager());
 
         final ActionBar actionBar = Objects.requireNonNull(getSupportActionBar());
-        actionBar.setHomeButtonEnabled(true);
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setHomeAsUpIndicator(R.drawable.aard2);
+        actionBar.setHomeActionContentDescription(R.string.action_open_random_article);
 
         viewPager = findViewById(R.id.pager);
         viewPager.setOffscreenPageLimit(appSectionsPagerAdapter.getCount());

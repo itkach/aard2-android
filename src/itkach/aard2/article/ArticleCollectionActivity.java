@@ -77,6 +77,7 @@ public class ArticleCollectionActivity extends AppCompatActivity
 
             setContentView(R.layout.activity_article_collection);
             setSupportActionBar(findViewById(R.id.toolbar));
+            requireActionBar().setDisplayHomeAsUpEnabled(true);
 
             PagerTitleStrip titleStrip = findViewById(R.id.pager_title_strip);
             titleStrip.setVisibility(blobListWrapper.size() == 1 ? ViewGroup.GONE : ViewGroup.VISIBLE);

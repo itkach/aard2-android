@@ -118,4 +118,5 @@
     <string name="setting_disable_javascript_title">Disable JavaScript</string>
     <string name="setting_disable_javascript_subtitle">Disabling JavaScript has unintended side effects such as applying custom styles and loading remote contents.</string>
     <string name="specified_number_of_items_selected">%d selected</string>
+    <string name="action_open_random_article">Random article</string>
 </resources>
