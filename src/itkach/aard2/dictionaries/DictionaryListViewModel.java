@@ -35,30 +35,26 @@ public class DictionaryListViewModel extends AndroidViewModel {
 
     public void addDictionaries(@NonNull Intent intent) {
         ThreadUtils.postOnBackgroundThread(() -> {
-            try {
-                List<Uri> selection = new ArrayList<>();
-                Uri dataUri = intent.getData();
-                if (dataUri != null) {
-                    selection.add(dataUri);
+            List<Uri> selection = new ArrayList<>();
+            Uri dataUri = intent.getData();
+            if (dataUri != null) {
+                selection.add(dataUri);
+            }
+            ClipData clipData = intent.getClipData();
+            if (clipData != null) {
+                int itemCount = clipData.getItemCount();
+                for (int i = 0; i < itemCount; i++) {
+                    Uri uri = clipData.getItemAt(i).getUri();
+                    selection.add(uri);
                 }
-                ClipData clipData = intent.getClipData();
-                if (clipData != null) {
-                    int itemCount = clipData.getItemCount();
-                    for (int i = 0; i < itemCount; i++) {
-                        Uri uri = clipData.getItemAt(i).getUri();
-                        selection.add(uri);
-                    }
+            }
+            for (Uri uri : selection) {
+                getApplication().getContentResolver().takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                SlobDescriptor sd = SlobDescriptor.fromUri(getApplication(), uri);
+                SlobDescriptorList dictionaries = SlobHelper.getInstance().dictionaries;
+                if (!dictionaries.hasId(sd.id)) {
+                    dictionaries.add(sd);
                 }
-                for (Uri uri : selection) {
-                    getApplication().getContentResolver().takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                    SlobDescriptor sd = SlobDescriptor.fromUri(getApplication(), uri);
-                    SlobDescriptorList dictionaries = SlobHelper.getInstance().dictionaries;
-                    if (!dictionaries.hasId(sd.id)) {
-                        dictionaries.add(sd);
-                    }
-                }
-            } catch (Throwable th) {
-                th.printStackTrace();
             }
         });
     }

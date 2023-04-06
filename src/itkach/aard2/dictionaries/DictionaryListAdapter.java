@@ -94,7 +94,7 @@ public class DictionaryListAdapter extends RecyclerView.Adapter<DictionaryListAd
         holder.itemView.setVisibility(View.VISIBLE);
         holder.licenseView.setOnClickListener(openUrlOnClick);
         holder.sourceView.setOnClickListener(openUrlOnClick);
-        holder.forgetBtn.setOnClickListener(v -> forget(position));
+        holder.forgetBtn.setOnClickListener(v -> forget(context, position));
         holder.updateBtn.setOnClickListener(v -> fragment.updateDictionary(desc));
 
         // Enable/disable dictionary
@@ -191,11 +191,11 @@ public class DictionaryListAdapter extends RecyclerView.Adapter<DictionaryListAd
         licenseRow.setEnabled(available);
     }
 
-    private void forget(final int position) {
+    private void forget(Context context, int position) {
         SlobDescriptor desc = data.get(position);
         final String label = desc.getLabel();
-        String message = fragment.getString(R.string.dictionaries_confirm_forget, label);
-        deleteConfirmationDialog = new MaterialAlertDialogBuilder(fragment.requireContext())
+        String message = context.getString(R.string.dictionaries_confirm_forget, label);
+        deleteConfirmationDialog = new MaterialAlertDialogBuilder(context)
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setTitle("")
                 .setMessage(message)
