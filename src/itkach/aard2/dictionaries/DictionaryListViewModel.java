@@ -21,13 +21,11 @@ import itkach.aard2.SlobHelper;
 import itkach.aard2.utils.ThreadUtils;
 
 public class DictionaryListViewModel extends AndroidViewModel {
-    private final itkach.aard2.Application application;
     @Nullable
     private SlobDescriptor dictionaryToBeReplaced;
 
     public DictionaryListViewModel(@NonNull Application application) {
         super(application);
-        this.application = (itkach.aard2.Application) application;
     }
 
     @Override
@@ -37,26 +35,30 @@ public class DictionaryListViewModel extends AndroidViewModel {
 
     public void addDictionaries(@NonNull Intent intent) {
         ThreadUtils.postOnBackgroundThread(() -> {
-            List<Uri> selection = new ArrayList<>();
-            Uri dataUri = intent.getData();
-            if (dataUri != null) {
-                selection.add(dataUri);
-            }
-            ClipData clipData = intent.getClipData();
-            if (clipData != null) {
-                int itemCount = clipData.getItemCount();
-                for (int i = 0; i < itemCount; i++) {
-                    Uri uri = clipData.getItemAt(i).getUri();
-                    selection.add(uri);
+            try {
+                List<Uri> selection = new ArrayList<>();
+                Uri dataUri = intent.getData();
+                if (dataUri != null) {
+                    selection.add(dataUri);
                 }
-            }
-            for (Uri uri : selection) {
-                application.getContentResolver().takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                SlobDescriptor sd = SlobDescriptor.fromUri(application, uri);
-                SlobDescriptorList dictionaries = SlobHelper.getInstance().dictionaries;
-                if (!dictionaries.hasId(sd.id)) {
-                    dictionaries.add(sd);
+                ClipData clipData = intent.getClipData();
+                if (clipData != null) {
+                    int itemCount = clipData.getItemCount();
+                    for (int i = 0; i < itemCount; i++) {
+                        Uri uri = clipData.getItemAt(i).getUri();
+                        selection.add(uri);
+                    }
                 }
+                for (Uri uri : selection) {
+                    getApplication().getContentResolver().takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                    SlobDescriptor sd = SlobDescriptor.fromUri(getApplication(), uri);
+                    SlobDescriptorList dictionaries = SlobHelper.getInstance().dictionaries;
+                    if (!dictionaries.hasId(sd.id)) {
+                        dictionaries.add(sd);
+                    }
+                }
+            } catch (Throwable th) {
+                th.printStackTrace();
             }
         });
     }
@@ -68,10 +70,10 @@ public class DictionaryListViewModel extends AndroidViewModel {
     public void updateDictionary(@NonNull Uri newUri) {
         ThreadUtils.postOnBackgroundThread(() -> {
             if (dictionaryToBeReplaced != null) {
-                application.getContentResolver().takePersistableUriPermission(newUri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                getApplication().getContentResolver().takePersistableUriPermission(newUri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
                 SlobHelper slobHelper = SlobHelper.getInstance();
                 SlobDescriptorList dictionaries = slobHelper.dictionaries;
-                SlobDescriptor newSd = SlobDescriptor.fromUri(application, newUri);
+                SlobDescriptor newSd = SlobDescriptor.fromUri(getApplication(), newUri);
                 if (!dictionaries.hasId(dictionaryToBeReplaced.id)) {
                     // Dictionary to be replaced does not exist for some reason
                     if (!dictionaries.hasId(newSd.id)) {

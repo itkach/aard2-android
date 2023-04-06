@@ -36,6 +36,7 @@ import java.util.Collections;
 import java.util.List;
 
 import itkach.aard2.R;
+import itkach.aard2.utils.Utils;
 
 public class SettingsListAdapter extends RecyclerView.Adapter<SettingsListAdapter.ViewHolder> implements SharedPreferences.OnSharedPreferenceChangeListener {
     private final static String TAG = SettingsListAdapter.class.getSimpleName();
@@ -168,7 +169,7 @@ public class SettingsListAdapter extends RecyclerView.Adapter<SettingsListAdapte
             if (value != null) {
                 AppPrefs.setPreferredTheme(value);
             }
-            ActivityCompat.recreate(context);
+            Utils.updateNightMode();
         };
         RadioButton btnAuto = view.findViewById(R.id.setting_ui_theme_auto);
         RadioButton btnLight = view.findViewById(R.id.setting_ui_theme_light);
