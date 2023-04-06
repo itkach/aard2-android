@@ -55,8 +55,8 @@ public class ArticleCollectionActivity extends AppCompatActivity
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
-        Utils.updateNightMode();
         super.onCreate(savedInstanceState);
+        Utils.updateNightMode();
         setContentView(R.layout.activity_article_collection_loading);
         setSupportActionBar(findViewById(R.id.toolbar));
         viewModel = new ViewModelProvider(this).get(ArticleCollectionViewModel.class);

@@ -19,6 +19,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.LinearLayoutCompat;
+import androidx.core.app.ActivityCompat;
 import androidx.core.text.HtmlCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
@@ -167,7 +168,7 @@ public class SettingsListAdapter extends RecyclerView.Adapter<SettingsListAdapte
             if (value != null) {
                 AppPrefs.setPreferredTheme(value);
             }
-            context.recreate();
+            ActivityCompat.recreate(context);
         };
         RadioButton btnAuto = view.findViewById(R.id.setting_ui_theme_auto);
         RadioButton btnLight = view.findViewById(R.id.setting_ui_theme_light);
