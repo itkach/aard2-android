@@ -15,6 +15,8 @@ import android.webkit.WebView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.google.android.material.color.DynamicColors;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -47,6 +49,7 @@ public class Application extends android.app.Application {
     public void onCreate() {
         instance = this;
         super.onCreate();
+        DynamicColors.applyToActivitiesIfAvailable(this);
         registerActivityLifecycleCallbacks(new ArticleCollectionActivityController());
         try {
             Method setWebContentsDebuggingEnabledMethod = WebView.class.getMethod(
