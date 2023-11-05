@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
+    <background>
+        <inset
+            android:drawable="@drawable/aard2"
+            android:inset="15%" />
+    </background>
+    <monochrome android:drawable="@drawable/aard2_monochrome" />
+</adaptive-icon>
