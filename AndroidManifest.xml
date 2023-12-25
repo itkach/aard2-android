@@ -11,7 +11,7 @@
         android:usesCleartextTraffic="true"
         android:name=".Application"
         android:allowBackup="true"
-        android:icon="@drawable/aard2"
+        android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@android:style/Theme.Holo.Light.DarkActionBar" >
 
