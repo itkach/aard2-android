@@ -321,7 +321,9 @@ public class ArticleCollectionActivity extends FragmentActivity
             String dictLabel = blob.owner.getTags().get("label");
             actionBar.setTitle(dictLabel);
             Application app = (Application)getApplication();
-            app.history.add(app.getUrl(blob));
+            if (app.createHistoryEntries()) {
+                app.history.add(app.getUrl(blob));
+            }
         }
         else {
             actionBar.setTitle("???");
