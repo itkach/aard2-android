@@ -81,6 +81,7 @@
     <string name="action_add_dictionaries">Добавить</string>
     <string name="setting_fav_random_search">Использовать только избранные словари для случайного поиска</string>
     <string name="setting_ui_theme">Интерфейс</string>
+    <string name="setting_ui_theme_system">Следовать системе</string>
     <string name="setting_ui_theme_dark">Тёмный</string>
     <string name="setting_ui_theme_light">Светлый</string>
     <string name="article_collection_invalid_link">Некорректная ссылка</string>
