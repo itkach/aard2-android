@@ -8,6 +8,7 @@
 
     <string name="action_find_dictionaries">Искать словари</string>
     <string name="action_find_in_page">Поиск на странице</string>
+    <string name="action_send_article">Вернуть</string>
     <string name="action_bookmark_article">Закладка</string>
     <string name="action_filter">Фильтр</string>
     <string name="action_ascending">По возрастанию</string>

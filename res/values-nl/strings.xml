@@ -8,6 +8,7 @@
     <string name="subtitle_dictionaries">Woordenboeken</string>
     <string name="action_find_dictionaries">Woordenboeken zoeken</string>
     <string name="action_find_in_page">Zoeken in pagina</string>
+    <string name="action_send_article">Opbrengst</string>
     <string name="action_bookmark_article">Toevoegen aan bladwijzers</string>
     <string name="action_filter">Filteren</string>
     <string name="action_ascending">Oplopend</string>

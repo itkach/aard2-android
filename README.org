@@ -153,7 +153,7 @@
    implemented an action to start Aard 2 with lookup intent.
 
    Applications can launch Aard 2 lookup by starting activity with intent
-   ~aard2.lookup~ with text to look up passed as an extra string
+   ~aard2.lookup~ (show lookup card) or ~aard2.search~ (show articles list) with text to look up passed as an extra string
     parameter [[http://developer.android.com/reference/android/app/SearchManager.html#QUERY][SearchManager.QUERY]]. For example:
 
    #+BEGIN_SRC java
@@ -168,3 +168,13 @@
    #+BEGIN_SRC sh
    adb shell am start -a aard2.lookup -f 335544320 -e query "Foo Bar"
    #+END_SRC
+
+   Application can pass extra string SENDER_ACTION to receive back translated text if the user click "return" action (in the article card).
+   The "callback" intent will be as follows:
+
+   #+BEGIN_SRC java
+   Intent intentSender = new Intent(SENDER_ACTION);
+   intentSender.putExtra("extraTitle", "[article key]");
+   intentSender.putExtra("extraText", "[translated text]");
+   Where translated text will be the innerText of artile's webview.
+   #+END_SRC#+END_SRC

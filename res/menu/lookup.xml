@@ -4,4 +4,8 @@
           android:showAsAction="always"
           android:actionLayout="@layout/action_lookup"
           />
+    <item android:id="@+id/action_backspace"
+        android:title="@string/action_backspace"
+        android:showAsAction="always"
+        />
 </menu>

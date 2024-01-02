@@ -7,6 +7,7 @@
 
     <string name="action_find_dictionaries">Af-d imawalen</string>
     <string name="action_find_in_page">Af-d deg usebter</string>
+    <string name="action_send_article">Return</string>
     <string name="action_bookmark_article">Asɣal</string>
     <string name="action_filter">Imsizdeg</string>
     <string name="action_ascending">Igemment</string>

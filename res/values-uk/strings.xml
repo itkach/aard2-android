@@ -6,6 +6,7 @@
     <string name="action_filter">Фільтр</string>
     <string name="action_find_dictionaries">Шукати словники</string>
     <string name="action_find_in_page">Пошук на сторінці</string>
+    <string name="action_send_article">Повернення</string>
     <string name="action_goto_parent_dir">Вверх</string>
     <string name="action_lookup">Пошук</string>
     <string name="action_reload_directory">Перезавантажити</string>

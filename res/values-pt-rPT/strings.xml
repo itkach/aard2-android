@@ -8,6 +8,7 @@
     <string name="subtitle_dictionaries">Dicionários</string>
     <string name="action_find_dictionaries">Procurar dicionários</string>
     <string name="action_find_in_page">Localizar na página</string>
+    <string name="action_send_article">Retornar</string>
     <string name="action_bookmark_article">Adicionar aos marcadores</string>
     <string name="action_filter">Filtro</string>
     <string name="action_ascending">Ascendente</string>
