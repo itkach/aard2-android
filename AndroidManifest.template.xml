@@ -4,6 +4,14 @@
     android:versionCode="56"
     android:versionName="0.56" >
 
+    <queries>
+        <intent>
+            <action
+                android:name="android.intent.action.PROCESS_TEXT" />
+            <data android:mimeType="text/plain" />
+        </intent>
+    </queries>
+
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
