@@ -10,6 +10,7 @@ import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
@@ -466,7 +467,10 @@ public class ArticleWebView extends SearchableWebView {
     @JavascriptInterface
     public void onWordTapped(String tappedWord) {
         Log.d(TAG, "Word tapped! " + tappedWord);
-        Application.get().lookupAsync(tappedWord);
+        
+        if(!TextUtils.isEmpty()) {
+            Application.get().lookupAsync(tappedWord);
+        }
     }
 
     void applyStylePref() {
