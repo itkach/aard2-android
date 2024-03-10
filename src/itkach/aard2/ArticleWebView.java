@@ -193,7 +193,8 @@ public class ArticleWebView extends SearchableWebView {
                     Log.w(TAG, "onPageFinished: Unexpected page finished event for " + url);
                 }
                 view.loadUrl("javascript:" + styleSwitcherJs +
-                        ";$SLOB.setStyleTitles($styleSwitcher.getTitles())");
+                        ";$SLOB.setStyleTitles($styleSwitcher.getTitles())"+
+                    "document.onclick=function(o){var e=window.getSelection();e.modify('extend','left','word');var t=e.toString();e.modify('extend','right','word');var d=t+e.toString();e.removeAllRanges(),$SLOB.onWordTapped(d)};");
                 applyStylePref();
             }
 
@@ -460,6 +461,12 @@ public class ArticleWebView extends SearchableWebView {
     public void onStyleSet(String title) {
         Log.d(TAG, "Style set! " + title);
         applyStylePref.cancel();
+    }
+
+    @JavascriptInterface
+    public void onWordTapped(String tappedWord) {
+        Log.d(TAG, "Word tapped! " + tappedWord);
+        Application.get().lookupAsync(tappedWord);
     }
 
     void applyStylePref() {
