@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.database.DataSetObserver;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -71,6 +72,7 @@ public class Application extends android.app.Application {
     private static final String PREF                    = "app";
     static final String PREF_RANDOM_FAV_LOOKUP          = "onlyFavDictsForRandomLookup";
     static final String PREF_UI_THEME                   = "UITheme";
+    static final String PREF_UI_THEME_SYSTEM            = "system";
     static final String PREF_UI_THEME_LIGHT             = "light";
     static final String PREF_UI_THEME_DARK              = "dark";
     static final String PREF_USE_VOLUME_FOR_NAV         = "useVolumeForNav";
@@ -228,8 +230,16 @@ public class Application extends android.app.Application {
     }
 
     String getPreferredTheme() {
-        return prefs().getString(Application.PREF_UI_THEME,
-                Application.PREF_UI_THEME_LIGHT);
+        String theme = prefs().getString(Application.PREF_UI_THEME,
+                Application.PREF_UI_THEME_SYSTEM);
+
+        if (theme.equals(PREF_UI_THEME_SYSTEM)) {
+            int mode = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
+
+            return (mode == Configuration.UI_MODE_NIGHT_YES) ? "dark" : "light";
+        }
+
+        return theme;
     }
 
     void installTheme(Activity activity) {
