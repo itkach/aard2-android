@@ -142,8 +142,17 @@ public class Application extends android.app.Application {
                 slobber.setSlobs(null);
                 List<Slob> slobs = new ArrayList<Slob>();
                 for (SlobDescriptor sd : dictionaries) {
+                    String origSlobId = sd.id;
                     Slob s = sd.load(getApplicationContext());
                     if (s != null) {
+                        if (!origSlobId.equals(sd.id)) {
+                            Log.d(TAG, String.format("%s has been replaced, updating dict store %s -> %s", sd.path, origSlobId, sd.id));
+                            //dictionary file has been replaced
+                            //(same file name, different slob uuid)
+                            //need to update store accordingly
+                            dictStore.delete(origSlobId);
+                            dictStore.save(sd);
+                        }
                         slobs.add(s);
                     }
                 }
