@@ -109,6 +109,7 @@
     <string name="action_fullscreen">Full Screen</string>
     <string name="setting_use_volume_for_nav">Use volume buttons for navigation</string>
     <string name="setting_auto_paste">Auto-paste from clipboard</string>
+    <string name="setting_create_history_entries">Create new history entries</string>
     <string name="find_hint">Find in page</string>
     <string name="find_next">Next</string>
     <string name="find_previous">Previous</string>
