@@ -8,6 +8,7 @@
     <string name="subtitle_dictionaries">Słowniki</string>
     <string name="action_find_dictionaries">Znajdź słowniki</string>
     <string name="action_find_in_page">Znajdź na stronie</string>
+    <string name="action_send_article">Powrót</string>
     <string name="action_bookmark_article">Dodaj do zakładek</string>
     <string name="action_filter">Filtruj</string>
     <string name="action_ascending">Rosnąco</string>

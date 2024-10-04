@@ -8,6 +8,7 @@
     <string name="subtitle_dictionaries">Dictionaries</string>
     <string name="action_find_dictionaries">Find Dictionaries</string>
     <string name="action_find_in_page">Find in page</string>
+    <string name="action_send_article">Return</string>
     <string name="action_bookmark_article">Bookmark</string>
     <string name="action_filter">Filter</string>
     <string name="action_ascending">Ascending</string>
@@ -94,6 +95,7 @@
     <string name="msg_file_not_css">Doesn\'t appear to be a CSS file</string>
     <string name="msg_no_activity_to_get_content">No activity is available to open file</string>
     <string name="action_add_dictionaries">Add</string>
+    <string name="action_backspace">&lt;</string>
     <string name="title_activity_file_select">Select Dictionary File</string>
     <string name="action_goto_parent_dir">Up</string>
     <string name="action_reload_directory">Reload</string>

@@ -2,19 +2,28 @@ package itkach.aard2;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.TextView;
 
 import java.util.Timer;
 import java.util.TimerTask;
+
+import itkach.slob.Slob;
 
 public class LookupFragment extends BaseListFragment implements LookupListener {
 
@@ -23,6 +32,11 @@ public class LookupFragment extends BaseListFragment implements LookupListener {
     private Application app;
     private SearchView.OnQueryTextListener queryTextListener;
     private SearchView.OnCloseListener closeListener;
+    public String mInitialSearch = "";
+
+    public SearchView getSearchView() {
+        return searchView;
+    }
 
     private final static String TAG = LookupFragment.class.getSimpleName();
 
@@ -64,6 +78,22 @@ public class LookupFragment extends BaseListFragment implements LookupListener {
                 startActivity(intent);
             }
         });
+        // setting key to search box on long click
+        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view,
+                                    int position, long id) {
+                Log.i("--", "Item long clicked: " + position);
+                Object o = app.lastResult.getItem(position);
+                if (o instanceof Slob.Blob) {
+                    Slob.Blob b = (Slob.Blob) o;
+                    searchView.setQuery(b.key, true);
+                    return true;
+                }
+                return false;
+            }
+        });
+
         final Application app = (Application) getActivity().getApplication();
         getListView().setAdapter(app.lastResult);
 
@@ -137,6 +167,7 @@ public class LookupFragment extends BaseListFragment implements LookupListener {
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
+        FragmentActivity activity = getActivity();
         if (app.autoPaste()) {
             CharSequence clipboard  = Clipboard.take(this.getActivity());
             if (clipboard != null) {
@@ -144,10 +175,30 @@ public class LookupFragment extends BaseListFragment implements LookupListener {
             }
         }
         CharSequence query = app.getLookupQuery();
-        searchView.setQuery(query, true);
+        if (!(mInitialSearch == null || mInitialSearch.isEmpty())) {
+            searchView.setQuery(mInitialSearch, true);
+            mInitialSearch = "";
+        }
+        String wasQuery = searchView.getQuery().toString();
+        if (wasQuery == null || wasQuery.isEmpty())
+            searchView.setQuery(query, true);
         if (app.lastResult.getCount() > 0) {
             searchView.clearFocus();
         }
+        MenuItem miBackspace = menu.findItem(R.id.action_backspace);
+        miBackspace.setIcon(IconMaker.actionBar(activity, IconMaker.IC_ARROW_LEFT));
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.action_backspace) {
+            String searchText = searchView.getQuery().toString();
+            if (!(searchText == null || searchText.isEmpty()))
+                searchText = searchText.substring(0, searchText.length()-1);
+            searchView.setQuery(searchText, true);
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override

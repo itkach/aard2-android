@@ -3,6 +3,7 @@ package itkach.aard2;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.SearchManager;
+import android.content.ActivityNotFoundException;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -43,6 +44,8 @@ public class ArticleCollectionActivity extends FragmentActivity
 
     static final String PREF = "articleCollection";
     static final String PREF_FULLSCREEN = "fullscreen";
+    static String SENDER_ACTION = "";
+    public String mPageTitle = "";
 
     ArticleCollectionPagerAdapter articleCollectionPagerAdapter;
     ViewPager viewPager;
@@ -183,7 +186,25 @@ public class ArticleCollectionActivity extends FragmentActivity
                 viewPager.setCurrentItem(position);
 
                 PagerTitleStrip titleStrip = (PagerTitleStrip)findViewById(R.id.pager_title_strip);
-                titleStrip.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 10);
+                titleStrip.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
+                titleStrip.setOnClickListener(new View.OnClickListener(){
+                    @Override
+                    public void onClick(View v) {
+                        Intent upIntent = Intent.makeMainActivity(new ComponentName(ArticleCollectionActivity.this, MainActivity.class));
+                        if (NavUtils.shouldUpRecreateTask(ArticleCollectionActivity.this, upIntent)) {
+                            upIntent.putExtra(SearchManager.QUERY, mPageTitle);
+                            TaskStackBuilder.create(ArticleCollectionActivity.this)
+                                    .addNextIntent(upIntent).startActivities();
+                        } else {
+                            // This activity is part of the application's task, so simply
+                            // navigate up to the hierarchical parent activity.
+                            upIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                            upIntent.putExtra(SearchManager.QUERY, mPageTitle);
+                            startActivity(upIntent);
+                        }
+                        finish();
+                    }
+                });
                 updateTitle(position);
                 articleCollectionPagerAdapter.registerDataSetObserver(new DataSetObserver() {
                     @Override
@@ -254,6 +275,10 @@ public class ArticleCollectionActivity extends FragmentActivity
         if (lookupKey == null) {
             lookupKey = intent.getStringExtra("EXTRA_QUERY");
         }
+        SENDER_ACTION = intent.getStringExtra("SENDER_ACTION");
+        if (SENDER_ACTION == null) SENDER_ACTION = "";
+        Log.d(TAG, String.format("Sender action is %s", SENDER_ACTION));
+
         String preferredSlobId = null;
         if (lookupKey == null) {
             Uri uri = intent.getData();
@@ -327,6 +352,7 @@ public class ArticleCollectionActivity extends FragmentActivity
             actionBar.setTitle("???");
         }
         actionBar.setSubtitle(pageTitle);
+        mPageTitle = pageTitle.toString();
     }
 
 

@@ -8,6 +8,7 @@
     <string name="subtitle_dictionaries">Dictionnaires</string>
     <string name="action_find_dictionaries">Chercher dictionnaires</string>
     <string name="action_find_in_page">Chercher sur la page</string>
+    <string name="action_send_article">Retourner</string>
     <string name="action_bookmark_article">Signet</string>
     <string name="action_filter">Filtre</string>
     <string name="action_ascending">Croissant</string>

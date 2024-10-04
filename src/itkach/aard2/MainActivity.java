@@ -3,8 +3,8 @@ package itkach.aard2;
 import android.app.ActionBar;
 import android.app.ActionBar.Tab;
 import android.app.FragmentTransaction;
-import android.content.ClipData;
-import android.content.ClipboardManager;
+import android.app.SearchManager;
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -32,6 +32,7 @@ public class MainActivity extends FragmentActivity implements
     private static final String TAG = MainActivity.class.getSimpleName();
     private AppSectionsPagerAdapter appSectionsPagerAdapter;
     private ViewPager viewPager;
+    public String mSearchText;
 
     private Pattern[] NO_PASTE_PATTERNS = new Pattern[]{
             Patterns.WEB_URL,
@@ -39,15 +40,30 @@ public class MainActivity extends FragmentActivity implements
             Patterns.PHONE
     };
 
+    @Override
+    protected void onNewIntent(Intent intent) {
+        mSearchText = intent.getStringExtra(SearchManager.QUERY);
+        String senderAction = intent.getStringExtra("SENDER_ACTION");
+        if (!(senderAction == null || senderAction.isEmpty()))
+            ArticleCollectionActivity.SENDER_ACTION = senderAction;
+        if (!(mSearchText == null || mSearchText.isEmpty()))
+            if (appSectionsPagerAdapter != null)
+                if (appSectionsPagerAdapter.tabLookup.getSearchView() != null) {
+                    appSectionsPagerAdapter.tabLookup.getSearchView().setQuery(mSearchText, true);
+                    appSectionsPagerAdapter.tabLookup.mInitialSearch = mSearchText;
+                    viewPager.setCurrentItem(0);
+                }
+    }
+
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         final Application app = (Application)getApplication();
         app.installTheme(this);
         setContentView(R.layout.activity_main);
-
+        final Intent intent = getIntent();
+        mSearchText = intent.getStringExtra(SearchManager.QUERY);
         appSectionsPagerAdapter = new AppSectionsPagerAdapter(
-                getSupportFragmentManager());
-
+                getSupportFragmentManager(), mSearchText);
         final ActionBar actionBar = getActionBar();
         actionBar.setHomeButtonEnabled(true);
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
@@ -94,7 +110,7 @@ public class MainActivity extends FragmentActivity implements
                 viewPager.setCurrentItem(3);
             }
         }
-
+        if (intent != null) onNewIntent(intent);
     }
 
     @Override
@@ -187,6 +203,18 @@ public class MainActivity extends FragmentActivity implements
                 return;
             }
         }
+        // return to sender activity if we were called from it
+        if (!(ArticleCollectionActivity.SENDER_ACTION == null || ArticleCollectionActivity.SENDER_ACTION.isEmpty())) {
+            Intent intentSender = new Intent(ArticleCollectionActivity.SENDER_ACTION);
+            intentSender.putExtra("extraText", "");
+            intentSender.putExtra("extraTitle", "");
+            ArticleCollectionActivity.SENDER_ACTION = "";
+            try {
+                startActivity(intentSender);
+            } catch (ActivityNotFoundException e) {
+                Log.e("ERR", "Intent error: " + e.getMessage());
+            }
+        }
         super.onBackPressed();
     }
 
@@ -267,9 +295,10 @@ public class MainActivity extends FragmentActivity implements
         DictionariesFragment       tabDictionaries;
         SettingsFragment           tabSettings;
 
-        public AppSectionsPagerAdapter(FragmentManager fm) {
+        public AppSectionsPagerAdapter(FragmentManager fm, String searchText) {
             super(fm);
             tabLookup = new LookupFragment();
+            tabLookup.mInitialSearch = searchText;
             tabBookmarks = new BookmarksFragment();
             tabHistory = new HistoryFragment();
             tabDictionaries = new DictionariesFragment();

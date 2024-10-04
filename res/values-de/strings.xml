@@ -7,6 +7,7 @@
 
     <string name="action_find_dictionaries">Finde Wörterbücher</string>
     <string name="action_find_in_page">Suche in Seite</string>
+    <string name="action_send_article">Rückkehr</string>
     <string name="action_bookmark_article">Lesezeichen</string>
     <string name="action_filter">Filter</string>
     <string name="action_ascending">Aufsteigend</string>
