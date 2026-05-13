@@ -163,7 +163,7 @@ public class ArticleWebView extends SearchableWebView {
                     List<Long> tsList = new ArrayList<Long>();
                     tsList.add(System.currentTimeMillis());
                     times.put(url, tsList);
-                    view.loadUrl("javascript:" + styleSwitcherJs);
+                    view.evaluateJavascript(styleSwitcherJs, null);
                     try {
                         timer.schedule(applyStylePref, 250, 200);
                     } catch (IllegalStateException ex) {
@@ -192,8 +192,8 @@ public class ArticleWebView extends SearchableWebView {
                 else {
                     Log.w(TAG, "onPageFinished: Unexpected page finished event for " + url);
                 }
-                view.loadUrl("javascript:" + styleSwitcherJs +
-                        ";$SLOB.setStyleTitles($styleSwitcher.getTitles())");
+                view.evaluateJavascript(styleSwitcherJs +
+                        ";$SLOB.setStyleTitles($styleSwitcher.getTitles())", null);
                 applyStylePref();
             }
 
@@ -232,7 +232,11 @@ public class ArticleWebView extends SearchableWebView {
 
                 if (isExternal(uri)) {
                     Intent browserIntent = new Intent(Intent.ACTION_VIEW, uri);
-                    getContext().startActivity(browserIntent);
+                    try {
+                        getContext().startActivity(browserIntent);
+                    } catch (android.content.ActivityNotFoundException e) {
+                        Log.w(TAG, "No app to handle " + uri, e);
+                    }
                     return true;
                 }
 
@@ -252,7 +256,12 @@ public class ArticleWebView extends SearchableWebView {
                 if (scheme.equals("http") && host.equals(LOCALHOST) && uri.getQueryParameter("blob") == null) {
                     Intent intent = new Intent(getContext(), ArticleCollectionActivity.class);
                     intent.setData(uri);
-                    getContext().startActivity(intent);
+                    try {
+                        getContext().startActivity(intent);
+                    } catch (android.content.ActivityNotFoundException e) {
+                        Log.w(TAG, "Failed to open ArticleCollectionActivity for " + uri, e);
+                        return false;
+                    }
                     Log.d(TAG, "Overriding loading of " + url);
                     return true;
                 }
