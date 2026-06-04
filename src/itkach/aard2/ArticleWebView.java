@@ -1,6 +1,7 @@
 package itkach.aard2;
 
 import android.app.Activity;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -18,6 +19,7 @@ import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.Toast;
 
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
@@ -232,7 +234,12 @@ public class ArticleWebView extends SearchableWebView {
 
                 if (isExternal(uri)) {
                     Intent browserIntent = new Intent(Intent.ACTION_VIEW, uri);
-                    getContext().startActivity(browserIntent);
+                    try {
+                        getContext().startActivity(browserIntent);
+                    } catch (ActivityNotFoundException e) {
+                        Toast.makeText(getContext(), R.string.msg_no_activity_to_open_link,
+                                Toast.LENGTH_SHORT).show();
+                    }
                     return true;
                 }
 

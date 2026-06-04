@@ -93,6 +93,7 @@
     <string name="setting_user_style_confirm_forget">Forget %1$s?</string>
     <string name="msg_file_not_css">Doesn\'t appear to be a CSS file</string>
     <string name="msg_no_activity_to_get_content">No activity is available to open file</string>
+    <string name="msg_no_activity_to_open_link">No app is available to open this link</string>
     <string name="action_add_dictionaries">Add</string>
     <string name="title_activity_file_select">Select Dictionary File</string>
     <string name="action_goto_parent_dir">Up</string>
