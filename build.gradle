@@ -1,32 +1,31 @@
 plugins {
-    id 'com.android.application' version '7.4.2'
+    id 'com.android.application' version '9.3.2'
 }
 
 repositories {
     mavenCentral()
     google()
-    maven {
-        url "https://jitpack.io"
-    }
 }
 
 android {
-    compileSdkVersion 31
+    namespace 'itkach.aard2'
+    compileSdk 34
 
-    packagingOptions {
-        exclude 'META-INF/LICENSE'
-        exclude 'META-INF/NOTICE'
-        project("slobj").file("exclude.txt").eachLine {
-            line ->
-                println line
-                if (line && line.trim() && !line.startsWith("#")) {
-                    exclude line.trim()
-                }
+    packaging {
+        resources {
+            excludes += ['META-INF/LICENSE', 'META-INF/NOTICE']
+            project("slobj").file("exclude.txt").eachLine {
+                line ->
+                    println line
+                    if (line && line.trim() && !line.startsWith("#")) {
+                        excludes += line.trim()
+                    }
+            }
         }
     }
 
 
-    lintOptions {
+    lint {
         abortOnError false
     }
 
@@ -69,10 +68,10 @@ android {
 }
 
 dependencies {
+    api 'com.android.support:support-v4:25.3.1'
     api 'com.fasterxml.jackson.core:jackson-databind:2.4+'
     api 'com.fasterxml.jackson.core:jackson-core:2.4+'
     api 'com.fasterxml.jackson.core:jackson-annotations:2.4+'
-    api 'com.github.kazy1991:FontDrawable:0.9.5'
     api project(':slobj')
     api project(':slobber')
 }
