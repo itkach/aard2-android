@@ -16,4 +16,4 @@
 
 <bitmap xmlns:android="http://schemas.android.com/apk/res/android"
     android:src="@drawable/ic_find_previous_mtrl_alpha"
-    android:tint="?attr/colorControlNormal" />
+    android:tint="?android:attr/colorControlNormal" />
