@@ -119,15 +119,13 @@ class FindActionModeCallback implements ActionMode.Callback, TextWatcher,
     @Override
     public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
         imManager.hideSoftInputFromWindow(webview.getWindowToken(), 0);
-        switch(item.getItemId()) {
-            case R.id.find_prev:
-                findNext(false);
-                break;
-            case R.id.find_next:
-                findNext(true);
-                break;
-            default:
-                return false;
+        int itemId = item.getItemId();
+        if (itemId == R.id.find_prev) {
+            findNext(false);
+        } else if (itemId == R.id.find_next) {
+            findNext(true);
+        } else {
+            return false;
         }
         return true;
     }

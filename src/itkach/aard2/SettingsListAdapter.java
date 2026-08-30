@@ -131,13 +131,11 @@ public class SettingsListAdapter extends BaseAdapter implements SharedPreference
                 public void onClick(View view) {
                     SharedPreferences.Editor editor = prefs.edit();
                     String value = null;
-                    switch(view.getId()) {
-                        case R.id.setting_ui_theme_light:
-                            value = Application.PREF_UI_THEME_LIGHT;
-                            break;
-                        case R.id.setting_ui_theme_dark:
-                            value = Application.PREF_UI_THEME_DARK;
-                            break;
+                    int viewId = view.getId();
+                    if (viewId == R.id.setting_ui_theme_light) {
+                        value = Application.PREF_UI_THEME_LIGHT;
+                    } else if (viewId == R.id.setting_ui_theme_dark) {
+                        value = Application.PREF_UI_THEME_DARK;
                     }
                     Log.d("Settings", Application.PREF_UI_THEME + ": " + value);
                     if (value != null) {
@@ -354,16 +352,13 @@ public class SettingsListAdapter extends BaseAdapter implements SharedPreference
                 public void onClick(View view) {
                     SharedPreferences.Editor editor = prefs.edit();
                     String value = null;
-                    switch(view.getId()) {
-                        case R.id.setting_remote_content_always:
-                            value = ArticleWebView.PREF_REMOTE_CONTENT_ALWAYS;
-                            break;
-                        case R.id.setting_remote_content_wifi:
-                            value = ArticleWebView.PREF_REMOTE_CONTENT_WIFI;
-                            break;
-                        case R.id.setting_remote_content_never:
-                            value = ArticleWebView.PREF_REMOTE_CONTENT_NEVER;
-                            break;
+                    int viewId = view.getId();
+                    if (viewId == R.id.setting_remote_content_always) {
+                        value = ArticleWebView.PREF_REMOTE_CONTENT_ALWAYS;
+                    } else if (viewId == R.id.setting_remote_content_wifi) {
+                        value = ArticleWebView.PREF_REMOTE_CONTENT_WIFI;
+                    } else if (viewId == R.id.setting_remote_content_never) {
+                        value = ArticleWebView.PREF_REMOTE_CONTENT_NEVER;
                     }
                     Log.d("Settings", "Remote content: " + value);
                     if (value != null) {

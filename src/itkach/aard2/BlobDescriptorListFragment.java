@@ -69,40 +69,40 @@ abstract class BlobDescriptorListFragment extends BaseListFragment {
 
     protected boolean onSelectionActionItemClicked(final ActionMode mode, MenuItem item) {
         ListView listView = getListView();
-        switch (item.getItemId()) {
-            case R.id.blob_descriptor_delete:
-                int count = listView.getCheckedItemCount();
-                String countStr = getResources().getQuantityString(getDeleteConfirmationItemCountResId(), count, count);
-                String message = getString(R.string.blob_descriptor_confirm_delete, countStr);
-                deleteConfirmationDialog = new AlertDialog.Builder(getActivity())
-                        .setIcon(android.R.drawable.ic_dialog_alert)
-                        .setTitle("")
-                        .setMessage(message)
-                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                deleteSelectedItems();
-                                mode.finish();
-                                deleteConfirmationDialog = null;
-                            }
-                        })
-                        .setNegativeButton(android.R.string.no, null).create();
-                deleteConfirmationDialog.setOnDismissListener(new DialogInterface.OnDismissListener(){
-                    @Override
-                    public void onDismiss(DialogInterface dialogInterface) {
-                        deleteConfirmationDialog = null;
-                    }
-                });
-                deleteConfirmationDialog.show();
-                return true;
-            case R.id.blob_descriptor_select_all:
-                int itemCount = listView.getCount();
-                for (int i = itemCount - 1; i > -1; --i) {
-                    listView.setItemChecked(i, true);
+        int itemId = item.getItemId();
+        if (itemId == R.id.blob_descriptor_delete) {
+            int count = listView.getCheckedItemCount();
+            String countStr = getResources().getQuantityString(getDeleteConfirmationItemCountResId(), count, count);
+            String message = getString(R.string.blob_descriptor_confirm_delete, countStr);
+            deleteConfirmationDialog = new AlertDialog.Builder(getActivity())
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .setTitle("")
+                    .setMessage(message)
+                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            deleteSelectedItems();
+                            mode.finish();
+                            deleteConfirmationDialog = null;
+                        }
+                    })
+                    .setNegativeButton(android.R.string.no, null).create();
+            deleteConfirmationDialog.setOnDismissListener(new DialogInterface.OnDismissListener(){
+                @Override
+                public void onDismiss(DialogInterface dialogInterface) {
+                    deleteConfirmationDialog = null;
                 }
-                return true;
-            default:
-                return false;
+            });
+            deleteConfirmationDialog.show();
+            return true;
+        } else if (itemId == R.id.blob_descriptor_select_all) {
+            int itemCount = listView.getCount();
+            for (int i = itemCount - 1; i > -1; --i) {
+                listView.setItemChecked(i, true);
+            }
+            return true;
+        } else {
+            return false;
         }
     }
 
