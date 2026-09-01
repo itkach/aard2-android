@@ -42,10 +42,7 @@ public class ArticleWebView extends SearchableWebView {
 
     String TAG = getClass().getSimpleName();
 
-    static final String PREF = "articleView";
     private static final String PREF_TEXT_ZOOM = "textZoom";
-    private static final String PREF_STYLE = "style.";
-    private static final String PREF_STYLE_AVAILABLE = "style.available.";
     static final String PREF_REMOTE_CONTENT = "remoteContent";
     static final String PREF_REMOTE_CONTENT_ALWAYS = "always";
     static final String PREF_REMOTE_CONTENT_WIFI = "wifi";
@@ -328,25 +325,6 @@ public class ArticleWebView extends SearchableWebView {
         return names.toArray(new String[names.size()]);
     }
 
-    private boolean isUIDark() {
-        Application app = getApplication();
-        String uiTheme = app.getPreferredTheme();
-        return uiTheme.equals(Application.PREF_UI_THEME_DARK);
-    }
-
-    private String getAutoStyle() {
-        if (this.isUIDark()) {
-            for (String title : styleTitles) {
-                String titleLower = title.toLowerCase();
-                if (titleLower.contains("night") || titleLower.contains("dark")) {
-                    return title;
-                }
-            }
-        }
-        Log.d(TAG, "Auto style will return " + defaultStyleTitle);
-        return defaultStyleTitle;
-    }
-
     private void setStyle(String styleTitle) {
         String js;
         final SharedPreferences prefs = getContext().getSharedPreferences(
@@ -369,7 +347,7 @@ public class ArticleWebView extends SearchableWebView {
     }
 
     private SharedPreferences prefs() {
-        return getContext().getSharedPreferences(PREF, Activity.MODE_PRIVATE);
+        return getContext().getSharedPreferences(Application.ARTICLE_VIEW_PREF, Activity.MODE_PRIVATE);
     }
 
     void applyTextZoomPref() {
@@ -397,7 +375,7 @@ public class ArticleWebView extends SearchableWebView {
     private void saveAvailableStylesPref(Set<String> styleTitles) {
         SharedPreferences prefs = prefs();
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putStringSet(PREF_STYLE_AVAILABLE + currentSlobUri, styleTitles);
+        editor.putStringSet(Application.PREF_STYLE_AVAILABLE + currentSlobUri, styleTitles);
         boolean success = editor.commit();
         if (!success) {
             Log.w(TAG, "Failed to save article view available styles pref");
@@ -412,7 +390,7 @@ public class ArticleWebView extends SearchableWebView {
         SharedPreferences prefs = prefs();
         Log.d(TAG, "Available styles before pref load: " + styleTitles.size());
         styleTitles = new TreeSet(
-                prefs.getStringSet(PREF_STYLE_AVAILABLE + currentSlobUri,
+                prefs.getStringSet(Application.PREF_STYLE_AVAILABLE + currentSlobUri,
                         Collections.EMPTY_SET));
         Log.d(TAG, "Loaded available styles: " + styleTitles.size());
     }
@@ -423,7 +401,7 @@ public class ArticleWebView extends SearchableWebView {
             return;
         }
         SharedPreferences prefs = prefs();
-        String prefName = PREF_STYLE + currentSlobUri;
+        String prefName = Application.PREF_STYLE + currentSlobUri;
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString(prefName, styleTitle);
         boolean success = editor.commit();
@@ -432,21 +410,17 @@ public class ArticleWebView extends SearchableWebView {
         }
     }
 
-    private String getStylePreferenceValue() {
-        return prefs().getString(PREF_STYLE + currentSlobUri, autoStyleTitle);
-    }
-
-    private boolean isAutoStyle(String title) {
-        return title.equals(autoStyleTitle);
-    }
-
     @JavascriptInterface
     public String getPreferredStyle() {
         if (currentSlobUri == null) {
             return "";
         }
-        String styleTitle = getStylePreferenceValue();
-        String result = isAutoStyle(styleTitle) ? getAutoStyle() : styleTitle;
+        // Application.resolveStyleTitle() re-reads the same
+        // SharedPreferences data this instance's styleTitles/currentSlobUri
+        // are themselves sourced from (setStyleTitles() persists them
+        // synchronously - see saveAvailableStylesPref()) - so delegating
+        // here instead of resolving locally can't observe stale data.
+        String result = getApplication().resolveStyleTitle(currentSlobUri);
         Log.d(TAG, "getPreferredStyle() will return " + result);
         return result;
     }
@@ -520,7 +494,7 @@ public class ArticleWebView extends SearchableWebView {
 
     private void updateBackgrounColor() {
         int color = Color.WHITE;
-        String preferredStyle = getPreferredStyle().toLowerCase();
+        String preferredStyle = getPreferredStyle();
         // webview's default background may "show through" before page
         // load started and/or before page's style applies (and even after that if
         // style doesn't explicitly set background).
@@ -529,7 +503,7 @@ public class ArticleWebView extends SearchableWebView {
         //
         // TODO Hack it even more - allow style title to include background color spec
         // so that this can work with "strategically" named user css
-        if (preferredStyle.contains("night") || preferredStyle.contains("dark")) {
+        if (Application.isDarkStyleTitle(preferredStyle)) {
             color = Color.BLACK;
         }
         setBackgroundColor(color);

@@ -36,6 +36,7 @@ import java.util.Set;
 import itkach.slob.Slob;
 import itkach.slob.Slob.Blob;
 import itkach.slobber.Slobber;
+import itkach.slobber.StylePreference;
 
 public class Application extends android.app.Application {
 
@@ -69,6 +70,14 @@ public class Application extends android.app.Application {
     static String jsSetCannedStyle;
 
     private static final String PREF                    = "app";
+    // Shared by ArticleWebView (text zoom, remote-content policy, and
+    // per-dictionary style prefs) and SettingsListAdapter (remote-content
+    // UI) as well as this class - not specific to any one of them, so it
+    // lives here rather than on whichever of those happened to declare
+    // it first.
+    static final String ARTICLE_VIEW_PREF               = "articleView";
+    static final String PREF_STYLE                      = "style.";
+    static final String PREF_STYLE_AVAILABLE            = "style.available.";
     static final String PREF_RANDOM_FAV_LOOKUP          = "onlyFavDictsForRandomLookup";
     static final String PREF_UI_THEME                   = "UITheme";
     static final String PREF_UI_THEME_LIGHT             = "light";
@@ -241,6 +250,10 @@ public class Application extends android.app.Application {
                 Application.PREF_UI_THEME_LIGHT);
     }
 
+    boolean isUIDark() {
+        return getPreferredTheme().equals(PREF_UI_THEME_DARK);
+    }
+
     void installTheme(Activity activity) {
         String theme = getPreferredTheme();
         if (theme.equals(PREF_UI_THEME_DARK)) {
@@ -357,8 +370,85 @@ public class Application extends android.app.Application {
 
 
     String getUrl(Blob blob) {
-        return String.format(CONTENT_URL_TEMPLATE,
-                port, Slobber.mkContentURL(blob));
+        String path = Slobber.mkContentURL(blob);
+        String styleTitle = resolveStyleTitle(getSlobURI(blob.owner.getId().toString()));
+        // "Default" is never sent as a real param: the server's natural,
+        // unmodified rendering already *is* that (see Slobber's
+        // StylePreference, which does nothing when the param is absent),
+        // so sending it would only cost a wasted HTML parse on every
+        // single article load for an identical result.
+        if (!styleTitle.equals(getString(R.string.default_style_title))) {
+            path = StylePreference.withStyleParam(path, styleTitle);
+        }
+        return String.format(CONTENT_URL_TEMPLATE, port, path);
+    }
+
+    /**
+     * Resolves a dictionary's effective style title from its raw stored
+     * preference (storedStyleTitle - either a concrete title the user
+     * picked, or the "Auto" sentinel) and the set of style titles it's
+     * known to declare: "Auto" resolves to the first declared title that
+     * looks dark while the dark UI theme is active, else to
+     * defaultStyleTitle. A pure function of its arguments (no
+     * SharedPreferences/WebView access), shared by getPreferredStyle()
+     * (which already has this data cached as instance state) and
+     * resolveStyleTitle() below (which needs the same resolution before
+     * any WebView for the dictionary exists, so it reads the same
+     * underlying SharedPreferences data directly instead).
+     */
+    static String resolveStyle(String storedStyleTitle, String autoStyleTitle,
+                                String defaultStyleTitle, boolean isUIDark,
+                                Set<String> availableTitles) {
+        if (!storedStyleTitle.equals(autoStyleTitle)) {
+            return storedStyleTitle;
+        }
+        if (isUIDark) {
+            for (String title : availableTitles) {
+                if (isDarkStyleTitle(title)) {
+                    return title;
+                }
+            }
+        }
+        return defaultStyleTitle;
+    }
+
+    /**
+     * Whether title looks like it names a dark/night style, going purely
+     * by whether it contains "night" or "dark" (case-insensitively) -
+     * dictionaries don't declare this explicitly, so this loose
+     * convention is the only signal available.
+     */
+    static boolean isDarkStyleTitle(String title) {
+        String lower = title.toLowerCase();
+        return lower.contains("night") || lower.contains("dark");
+    }
+
+    /**
+     * The single entry point for "what style should apply to this
+     * dictionary" from a bare slob uri - i.e. usable both before any
+     * WebView for it exists (see getUrl(Blob) above, which needs the
+     * answer to bake into the very first request URL, instead of only
+     * correcting it after a default-styled page has already started
+     * rendering) and from a live one (ArticleWebView.getPreferredStyle()
+     * delegates here instead of keeping its own parallel resolution).
+     * Always returns a concrete title, never null - "Default" is a real
+     * answer, not an absence of one; callers that specifically need to
+     * know whether that's the *literal* answer (to decide whether it's
+     * worth adding as a URL param at all) compare against
+     * R.string.default_style_title themselves.
+     */
+    String resolveStyleTitle(String slobUri) {
+        SharedPreferences prefs = getSharedPreferences(ARTICLE_VIEW_PREF, Activity.MODE_PRIVATE);
+        String autoStyleTitle = getString(R.string.auto_style_title);
+        String defaultStyleTitle = getString(R.string.default_style_title);
+        if (slobUri == null) {
+            return defaultStyleTitle;
+        }
+        String storedStyleTitle = prefs.getString(PREF_STYLE + slobUri, autoStyleTitle);
+        Set<String> availableTitles = prefs.getStringSet(
+                PREF_STYLE_AVAILABLE + slobUri, Collections.<String>emptySet());
+        return resolveStyle(storedStyleTitle, autoStyleTitle,
+                defaultStyleTitle, isUIDark(), availableTitles);
     }
 
     Slob getSlob(String slobId) {

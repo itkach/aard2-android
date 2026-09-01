@@ -341,7 +341,7 @@ public class SettingsListAdapter extends BaseAdapter implements SharedPreference
                     false);
 
             final SharedPreferences prefs = view.getContext().getSharedPreferences(
-                    ArticleWebView.PREF, Activity.MODE_PRIVATE);
+                    Application.ARTICLE_VIEW_PREF, Activity.MODE_PRIVATE);
 
             String currentValue = prefs.getString(ArticleWebView.PREF_REMOTE_CONTENT,
                     ArticleWebView.PREF_REMOTE_CONTENT_WIFI);
