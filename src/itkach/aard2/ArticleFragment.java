@@ -17,7 +17,7 @@ import android.view.ViewGroup;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
+import android.support.v4.widget.ContentLoadingProgressBar;
 import android.widget.TextView;
 
 
@@ -150,7 +150,7 @@ public class ArticleFragment extends Fragment {
         }
 
         View layout = inflater.inflate(R.layout.article_view, container, false);
-        final ProgressBar progressBar = (ProgressBar) layout.findViewById(R.id.webViewPogress);
+        final ContentLoadingProgressBar progressBar = (ContentLoadingProgressBar) layout.findViewById(R.id.webViewPogress);
         view = (ArticleWebView) layout.findViewById(R.id.webView);
         view.restoreState(savedInstanceState);
         view.loadUrl(url);
@@ -162,8 +162,16 @@ public class ArticleFragment extends Fragment {
                         @Override
                         public void run() {
                             progressBar.setProgress(newProgress);
+                            // show()/hide() (not setVisibility()) are what
+                            // actually make this a "content loading"
+                            // progress bar rather than a plain one: they
+                            // debounce briefly, so a load that finishes
+                            // quickly never becomes visible at all instead
+                            // of flashing on and off.
                             if (newProgress >= progressBar.getMax()) {
-                                progressBar.setVisibility(ViewGroup.GONE);
+                                progressBar.hide();
+                            } else {
+                                progressBar.show();
                             }
                         }
                     });

@@ -20,6 +20,7 @@
         android:padding="0dp"
         android:progressDrawable="@drawable/progress"
         android:indeterminate="false"
+        android:visibility="gone"
         android:max="100"/>
 
 </FrameLayout>
