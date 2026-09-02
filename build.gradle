@@ -68,7 +68,11 @@ android {
 }
 
 dependencies {
-    api 'com.android.support:support-v4:25.3.1'
+    api 'androidx.fragment:fragment:1.7.1'
+    api 'androidx.viewpager:viewpager:1.0.0'
+    api 'androidx.core:core:1.13.1'
+    api 'androidx.documentfile:documentfile:1.0.1'
+    api 'androidx.annotation:annotation:1.8.0'
     api 'com.fasterxml.jackson.core:jackson-databind:2.4+'
     api 'com.fasterxml.jackson.core:jackson-core:2.4+'
     api 'com.fasterxml.jackson.core:jackson-annotations:2.4+'
