@@ -9,7 +9,7 @@ repositories {
 
 android {
     namespace = 'itkach.aard2'
-    compileSdk 34
+    compileSdk 37
 
     packaging {
         resources {
@@ -62,7 +62,7 @@ android {
 
     defaultConfig {
         minSdkVersion 19
-        targetSdkVersion 34
+        targetSdkVersion 36
     }
 
 }
