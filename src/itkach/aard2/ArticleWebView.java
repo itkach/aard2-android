@@ -29,8 +29,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.TreeSet;
 
 public class ArticleWebView extends SearchableWebView {
@@ -72,9 +70,6 @@ public class ArticleWebView extends SearchableWebView {
     private String              currentSlobId;
     private String              currentSlobUri;
     private ConnectivityManager connectivityManager;
-
-    private Timer               timer;
-    private TimerTask           applyStylePref;
 
     boolean forceLoadRemoteContent;
 
@@ -120,25 +115,6 @@ public class ArticleWebView extends SearchableWebView {
 
         this.addJavascriptInterface(this, "$SLOB");
 
-        timer = new Timer();
-
-        final Runnable applyStyleRunnable = new Runnable() {
-            @Override
-            public void run() {
-                applyStylePref();
-            }
-        };
-
-        applyStylePref = new TimerTask() {
-            @Override
-            public void run() {
-                android.os.Handler handler = getHandler();
-                if (handler != null) {
-                    handler.post(applyStyleRunnable);
-                }
-            }
-        };
-
         this.setWebViewClient(new WebViewClient() {
 
             byte[] noBytes = new byte[0];
@@ -160,12 +136,21 @@ public class ArticleWebView extends SearchableWebView {
                     List<Long> tsList = new ArrayList<Long>();
                     tsList.add(System.currentTimeMillis());
                     times.put(url, tsList);
+                    // Only injects $styleSwitcher itself (needed so
+                    // onPageFinished below can ask it what styles this
+                    // page declares) - does NOT re-apply a style. The
+                    // canned style is already correctly active from the
+                    // very first byte the server sent (see Slobber's
+                    // StylePreference/Application.getUrl(Blob)); calling
+                    // $styleSwitcher.setStyle() again here would toggle
+                    // stylesheets' disabled state pointlessly, forcing an
+                    // avoidable reflow shortly after the page already
+                    // rendered correctly - which is visible as a jump in
+                    // the surrounding native UI (the action bar, or - in
+                    // fullscreen mode - a brief flash of the system status
+                    // bar as the reflow momentarily interrupts immersive
+                    // mode), not just inside the WebView's own content.
                     view.loadUrl("javascript:" + styleSwitcherJs);
-                    try {
-                        timer.schedule(applyStylePref, 250, 200);
-                    } catch (IllegalStateException ex) {
-                        Log.w(TAG, "Failed to schedule applyStylePref in view " + view.getId(), ex);
-                    }
                 }
 
             }
@@ -183,15 +168,28 @@ public class ArticleWebView extends SearchableWebView {
                     if (tsList.isEmpty()) {
                         Log.d(TAG, "onPageFinished: really done with " + url);
                         times.remove(url);
-                        applyStylePref.cancel();
                     }
                 }
                 else {
                     Log.w(TAG, "onPageFinished: Unexpected page finished event for " + url);
                 }
+                // Discovers this page's declared styles (for the style
+                // picker dialog).
                 view.loadUrl("javascript:" + styleSwitcherJs +
                         ";$SLOB.setStyleTitles($styleSwitcher.getTitles())");
-                applyStylePref();
+                // A canned style is already correctly active from the very
+                // first byte the server sent (see Slobber's StylePreference
+                // / Application.getUrl(Blob)), so re-applying one here
+                // would just force an avoidable reflow - see onPageStarted
+                // above. A saved *user* style is different: it's plain
+                // client-side CSS injection the server has no way to
+                // apply (Slobber deliberately knows nothing about this
+                // Android-only feature), so it still needs to be
+                // (re-)injected on every fresh load, same as before.
+                String preferredStyle = getPreferredStyle();
+                if (isUserStyle(preferredStyle)) {
+                    setStyle(preferredStyle);
+                }
             }
 
             @Override
@@ -313,10 +311,19 @@ public class ArticleWebView extends SearchableWebView {
         return false;
     }
 
+    private SharedPreferences userStylesPrefs() {
+        return getContext().getSharedPreferences("userStyles", Activity.MODE_PRIVATE);
+    }
+
+    // Whether styleTitle names a user-authored custom style rather than one
+    // of a dictionary's own declared ("canned") styles or the Default/Auto
+    // sentinels.
+    private boolean isUserStyle(String styleTitle) {
+        return userStylesPrefs().contains(styleTitle);
+    }
+
     String[] getAvailableStyles() {
-        final SharedPreferences prefs = getContext().getSharedPreferences(
-                "userStyles", Activity.MODE_PRIVATE);
-        Map<String, ?> data = prefs.getAll();
+        Map<String, ?> data = userStylesPrefs().getAll();
         List<String> names = new ArrayList<String>(data.keySet());
         Util.sort(names);
         names.addAll(styleTitles);
@@ -327,10 +334,8 @@ public class ArticleWebView extends SearchableWebView {
 
     private void setStyle(String styleTitle) {
         String js;
-        final SharedPreferences prefs = getContext().getSharedPreferences(
-                "userStyles", Activity.MODE_PRIVATE);
-        if (prefs.contains(styleTitle)){
-            String css = prefs.getString(styleTitle, "");
+        if (isUserStyle(styleTitle)) {
+            String css = userStylesPrefs().getString(styleTitle, "");
             String elementId = getCurrentSlobId();
             js = String.format(
                     "javascript:" + Application.jsUserStyle, elementId, css);
@@ -433,7 +438,6 @@ public class ArticleWebView extends SearchableWebView {
     @JavascriptInterface
     public void onStyleSet(String title) {
         Log.d(TAG, "Style set! " + title);
-        applyStylePref.cancel();
     }
 
     void applyStylePref() {
@@ -533,9 +537,4 @@ public class ArticleWebView extends SearchableWebView {
         }
     }
 
-    @Override
-    public void destroy() {
-        super.destroy();
-        timer.cancel();
-    }
 }
