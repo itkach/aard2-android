@@ -80,7 +80,16 @@ public class ArticleCollectionActivity extends FragmentActivity
         requestWindowFeature(Window.FEATURE_PROGRESS);
         final Application app = (Application)getApplication();
         app.installTheme(this);
-        getActionBar().hide();
+        // Only hide here if we're actually staying hidden (fullscreen mode) -
+        // onResume() unconditionally decides show/hide based on this same
+        // preference anyway, so hiding here too when it's about to be shown
+        // again relies on hide()'s and show()'s animations racing each
+        // other to finish within a single frame to look instantaneous; if
+        // that race is ever lost, the action bar visibly slides up and
+        // back down again.
+        if (getFullScreenPref()) {
+            getActionBar().hide();
+        }
         setContentView(R.layout.activity_article_collection_loading);
         app.push(this);
         final ActionBar actionBar = getActionBar();
