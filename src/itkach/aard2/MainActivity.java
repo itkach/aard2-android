@@ -9,6 +9,9 @@ import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
@@ -55,6 +58,23 @@ public class MainActivity extends FragmentActivity implements
         viewPager = (ViewPager) findViewById(R.id.pager);
         viewPager.setOffscreenPageLimit(appSectionsPagerAdapter.getCount());
         viewPager.setAdapter(appSectionsPagerAdapter);
+
+        // With edge-to-edge enforced (mandatory as of API 36), the content
+        // view draws behind the system bars unless we pad it ourselves.
+        // statusBars()/navigationBars() top/bottom already accounts for the
+        // action bar's (and its tab strip's) reserved height on windows
+        // using Window.FEATURE_ACTION_BAR. Left/right are deliberately
+        // ignored: in landscape, navigationBars() reports a left inset for
+        // the back-gesture swipe zone (not a visible bar), and the display
+        // cutout reports a similar side inset - reserving visible padding
+        // for either would look wrong, since the action bar's own
+        // background already extends full-bleed regardless of both.
+        ViewCompat.setOnApplyWindowInsetsListener(viewPager, (v, windowInsets) -> {
+            Insets bars = windowInsets.getInsets(
+                    WindowInsetsCompat.Type.statusBars() | WindowInsetsCompat.Type.navigationBars());
+            v.setPadding(0, bars.top, 0, bars.bottom);
+            return windowInsets;
+        });
 
         final String[] subtitles = new String[] {
                 getString(R.string.subtitle_lookup),

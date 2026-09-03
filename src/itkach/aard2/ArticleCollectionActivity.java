@@ -10,6 +10,9 @@ import android.database.DataSetObserver;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
@@ -168,6 +171,7 @@ public class ArticleCollectionActivity extends FragmentActivity
                         articleCollectionPagerAdapter.getCount() == 1 ? ViewGroup.GONE : ViewGroup.VISIBLE);
 
                 viewPager = (ViewPager) findViewById(R.id.pager);
+                applyContentInsets();
                 viewPager.setAdapter(articleCollectionPagerAdapter);
                 viewPager.setOnPageChangeListener(new OnPageChangeListener(){
 
@@ -369,6 +373,29 @@ public class ArticleCollectionActivity extends FragmentActivity
         editor.commit();
     }
 
+    // With edge-to-edge enforced (mandatory as of API 36), the content view
+    // draws behind the system bars unless we pad it ourselves.
+    // statusBars()/navigationBars() top/bottom already accounts for the
+    // action bar's reserved height on windows using Window.FEATURE_ACTION_BAR.
+    // Left/right are deliberately ignored: in landscape, navigationBars()
+    // reports a left inset for the back-gesture swipe zone (not a visible
+    // bar), and the display cutout reports a similar side inset - reserving
+    // visible padding for either would look wrong, since the action bar's
+    // own background already extends full-bleed regardless of both. Insets
+    // are re-applied whenever fullscreen mode toggles the action bar's
+    // visibility, since that alone doesn't trigger a fresh dispatch.
+    private void applyContentInsets() {
+        if (viewPager == null) {
+            return;
+        }
+        ViewCompat.setOnApplyWindowInsetsListener(viewPager, (v, windowInsets) -> {
+            Insets bars = windowInsets.getInsets(
+                    WindowInsetsCompat.Type.statusBars() | WindowInsetsCompat.Type.navigationBars());
+            v.setPadding(0, bars.top, 0, bars.bottom);
+            return windowInsets;
+        });
+    }
+
     private void fullScreen() {
         Log.d(TAG, "[F] fullscreen");
         getWindow().getDecorView().setSystemUiVisibility(
@@ -377,12 +404,18 @@ public class ArticleCollectionActivity extends FragmentActivity
                         | View.SYSTEM_UI_FLAG_IMMERSIVE
         );
         getActionBar().hide();
+        if (viewPager != null) {
+            ViewCompat.requestApplyInsets(viewPager);
+        }
     }
 
     private void unFullScreen() {
         Log.d(TAG, "[F] unfullscreen");
         getWindow().getDecorView().setSystemUiVisibility(0);
         getActionBar().show();
+        if (viewPager != null) {
+            ViewCompat.requestApplyInsets(viewPager);
+        }
     }
 
     void toggleFullScreen() {
