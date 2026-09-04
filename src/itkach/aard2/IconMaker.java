@@ -53,12 +53,29 @@ class IconMaker {
         return make(context, c, sizeDp, context.getResources().getColor(colorRes));
     }
 
+    // Resolves a theme attribute (framework or library) to an actual color,
+    // so icon color follows the active theme (light/dark, or whatever brand
+    // color it's set to) instead of a color resource baked in ahead of time.
+    static int resolveThemeColor(Context context, int attrId, int fallbackColor) {
+        TypedValue typedValue = new TypedValue();
+        boolean wasResolved = context.getTheme().resolveAttribute(attrId, typedValue, true);
+        if (wasResolved) {
+            return ContextCompat.getColor(context, typedValue.resourceId);
+        }
+        return fallbackColor;
+    }
+
     static FontDrawable tab(Context context, char c) {
         return makeWithColorRes(context, c, 21, R.color.tab_icon);
     }
 
+    // Content-area accent icons (favorite star, expand/collapse chevron,
+    // trash, add) - tied to the theme's brand color (colorPrimary) so they
+    // stay consistent with the rest of the UI instead of a separate
+    // hardcoded accent.
     static FontDrawable list(Context context, char c) {
-        return makeWithColorRes(context, c, 26, R.color.list_icon);
+        int color = resolveThemeColor(context, com.google.android.material.R.attr.colorPrimary, 0xff0099cc);
+        return make(context, c, 26, color);
     }
 
     // These icons are drawn directly in a Toolbar (bookmark toggle, CAB
@@ -68,24 +85,13 @@ class IconMaker {
     // ignored the active theme entirely and read as a washed-out,
     // disabled-looking grey once that stopped coincidentally matching.
     static FontDrawable actionBar(Context context, char c) {
-        TypedValue typedValue = new TypedValue();
-        boolean wasResolved = context.getTheme().resolveAttribute(
-                com.google.android.material.R.attr.colorOnPrimary, typedValue, true);
-        if (wasResolved) {
-            int color = ContextCompat.getColor(context, typedValue.resourceId);
-            return make(context, c, 26, color);
-        }
-        return makeWithColorRes(context, c, 26, R.color.actionbar_icon);
+        int color = resolveThemeColor(context, com.google.android.material.R.attr.colorOnPrimary, 0xff000000);
+        return make(context, c, 26, color);
     }
 
     static FontDrawable text(Context context, char c) {
-        TypedValue typedValue = new TypedValue();
-        boolean wasResolved = context.getTheme().resolveAttribute(android.R.attr.textColorSecondary, typedValue, true);
-        if (wasResolved) {
-            int color = ContextCompat.getColor(context, typedValue.resourceId);
-            return make(context, c, 16, color);
-        }
-        return makeWithColorRes(context, c, 16, R.color.list_icon);
+        int color = resolveThemeColor(context, android.R.attr.textColorSecondary, 0xff888888);
+        return make(context, c, 16, color);
     }
 
     static FontDrawable errorText(Context context, char c) {

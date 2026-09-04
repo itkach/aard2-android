@@ -1,16 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="tab_icon">#ff888888</color>
-    <color name="actionbar_icon">@android:color/secondary_text_dark</color>
     <color name="empty_view_icon">#ffcccccc</color>
-    <!-- Brand blue, replacing the app's old Holo Blue Dark/Light accents
-         (#0099cc/#33b5e5) with the same hues now that we're off Holo -
-         keeps continuity with the app's existing icon language instead of
-         MaterialComponents' unbranded default purple/teal. -->
-    <color name="brand_blue">#ff0099cc</color>
-    <color name="brand_blue_variant">#ff33b5e5</color>
-    <color name="list_icon">@color/brand_blue</color>
-    <color name="pager_strip_background_light">#ffe0e0e0</color>
-    <color name="pager_strip_background_dark">#ff242424</color>
-</resources>
 
+    <!-- Full Material 3 tonal palette generated from a single seed color
+         (#0099cc, the app's old Holo Blue Dark accent) via Google's own
+         material-color-utilities algorithm (com.google.android.material.
+         color.utilities.Scheme.light()/.dark(), bundled in the material
+         library we already depend on) - not hand-picked. Every role here is
+         already a verified-accessible pair with its "on" counterpart, so
+         styles.xml just assigns these directly with no manual contrast
+         checking. Generated with: Scheme.light(0xFF0099CC) / .dark(...). -->
+    <color name="md_theme_light_primary">#ff006689</color>
+    <color name="md_theme_light_onPrimary">#ffffffff</color>
+    <color name="md_theme_light_primaryContainer">#ffc3e8ff</color>
+    <color name="md_theme_light_onPrimaryContainer">#ff001e2c</color>
+    <color name="md_theme_light_secondary">#ff4e616d</color>
+    <color name="md_theme_light_onSecondary">#ffffffff</color>
+    <color name="md_theme_light_secondaryContainer">#ffd1e5f3</color>
+    <color name="md_theme_light_onSecondaryContainer">#ff091e28</color>
+    <color name="md_theme_light_tertiary">#ff605a7d</color>
+    <color name="md_theme_light_onTertiary">#ffffffff</color>
+    <color name="md_theme_light_tertiaryContainer">#ffe6deff</color>
+    <color name="md_theme_light_onTertiaryContainer">#ff1c1736</color>
+    <color name="md_theme_light_error">#ffba1a1a</color>
+    <color name="md_theme_light_onError">#ffffffff</color>
+    <color name="md_theme_light_errorContainer">#ffffdad6</color>
+    <color name="md_theme_light_onErrorContainer">#ff410002</color>
+    <color name="md_theme_light_background">#fffbfcfe</color>
+    <color name="md_theme_light_onBackground">#ff191c1e</color>
+    <color name="md_theme_light_surface">#fffbfcfe</color>
+    <color name="md_theme_light_onSurface">#ff191c1e</color>
+    <color name="md_theme_light_surfaceVariant">#ffdce3e9</color>
+    <color name="md_theme_light_onSurfaceVariant">#ff41484d</color>
+    <color name="md_theme_light_outline">#ff71787d</color>
+    <color name="md_theme_light_outlineVariant">#ffc0c7cd</color>
+    <color name="md_theme_light_inverseSurface">#ff2e3133</color>
+    <color name="md_theme_light_inverseOnSurface">#fff0f1f3</color>
+    <color name="md_theme_light_inversePrimary">#ff78d1ff</color>
+
+    <color name="md_theme_dark_primary">#ff78d1ff</color>
+    <color name="md_theme_dark_onPrimary">#ff003549</color>
+    <color name="md_theme_dark_primaryContainer">#ff004c68</color>
+    <color name="md_theme_dark_onPrimaryContainer">#ffc3e8ff</color>
+    <color name="md_theme_dark_secondary">#ffb5c9d7</color>
+    <color name="md_theme_dark_onSecondary">#ff20333d</color>
+    <color name="md_theme_dark_secondaryContainer">#ff364955</color>
+    <color name="md_theme_dark_onSecondaryContainer">#ffd1e5f3</color>
+    <color name="md_theme_dark_tertiary">#ffc9c1ea</color>
+    <color name="md_theme_dark_onTertiary">#ff312c4c</color>
+    <color name="md_theme_dark_tertiaryContainer">#ff484264</color>
+    <color name="md_theme_dark_onTertiaryContainer">#ffe6deff</color>
+    <color name="md_theme_dark_error">#ffffb4ab</color>
+    <color name="md_theme_dark_onError">#ff690005</color>
+    <color name="md_theme_dark_errorContainer">#ff93000a</color>
+    <color name="md_theme_dark_onErrorContainer">#ffffb4ab</color>
+    <color name="md_theme_dark_background">#ff191c1e</color>
+    <color name="md_theme_dark_onBackground">#ffe1e2e5</color>
+    <color name="md_theme_dark_surface">#ff191c1e</color>
+    <color name="md_theme_dark_onSurface">#ffe1e2e5</color>
+    <color name="md_theme_dark_surfaceVariant">#ff41484d</color>
+    <color name="md_theme_dark_onSurfaceVariant">#ffc0c7cd</color>
+    <color name="md_theme_dark_outline">#ff8a9297</color>
+    <color name="md_theme_dark_outlineVariant">#ff41484d</color>
+    <color name="md_theme_dark_inverseSurface">#ffe1e2e5</color>
+    <color name="md_theme_dark_inverseOnSurface">#ff2e3133</color>
+    <color name="md_theme_dark_inversePrimary">#ff006689</color>
+</resources>

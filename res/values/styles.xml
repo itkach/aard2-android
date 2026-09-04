@@ -2,41 +2,82 @@
 <resources>
 
     <!-- App-wide themes, applied by Application.installTheme(). Parent must
-         be Theme.MaterialComponents, not a plain framework Material theme:
-         com.google.android.material.appbar.AppBarLayout enforces via
-         ThemeEnforcement that the active theme resolves AppCompat-defined
-         attributes (e.g. colorPrimary), throwing IllegalArgumentException
-         ("...requires your app theme to be Theme.AppCompat...") otherwise -
-         true regardless of windowActionBar, and regardless of the Activity's
-         Java class (this doesn't require AppCompatActivity, only the theme
-         resource matters). NoActionBar parents already set
-         windowActionBar=false/windowNoTitle=true, so no manual overrides are
-         needed - both activities host their own Toolbar directly. -->
-    <!-- colorSecondary matches colorPrimary (one accent, not two) - the app
-         never had a separate "secondary" accent under Holo, and
-         MaterialComponents' own unbranded defaults (purple primary, teal
-         secondary) read as two clashing, undifferentiated colors, which is
-         exactly what looked wrong before this. colorOnPrimary/OnSecondary
-         are black on both variants: measured contrast against both brand
-         blues is far better with black text than white (6.4:1 and 8.9:1
-         respectively vs. ~2.4-3.3:1 for white), regardless of the overall
-         theme being otherwise light or dark. -->
-    <style name="Theme.Aard2" parent="@style/Theme.MaterialComponents.Light.NoActionBar">
-        <item name="colorPrimary">@color/brand_blue</item>
-        <item name="colorOnPrimary">@android:color/black</item>
-        <item name="colorSecondary">@color/brand_blue</item>
-        <item name="colorOnSecondary">@android:color/black</item>
-        <item name="android:textColorLink">@color/brand_blue</item>
-        <item name="pagerStripBackground">@color/pager_strip_background_light</item>
+         be an AppCompat-descended theme (Material3 qualifies, same as
+         MaterialComponents before it): com.google.android.material.appbar.
+         AppBarLayout enforces via ThemeEnforcement that the active theme
+         resolves AppCompat-defined attributes (e.g. colorPrimary), throwing
+         IllegalArgumentException ("...requires your app theme to be
+         Theme.AppCompat...") otherwise - true regardless of windowActionBar,
+         and regardless of the Activity's Java class (this doesn't require
+         AppCompatActivity, only the theme resource matters). NoActionBar
+         parents already set windowActionBar=false/windowNoTitle=true, so no
+         manual overrides are needed - both activities host their own
+         Toolbar directly.
+
+         Every color item below comes from colors.xml's md_theme_* values -
+         Google's own material-color-utilities algorithm's output for a
+         single seed color (see colors.xml), not hand-picked. Each role is
+         already a verified-accessible pair with its "on" counterpart. -->
+    <style name="Theme.Aard2" parent="@style/Theme.Material3.Light.NoActionBar">
+        <item name="colorPrimary">@color/md_theme_light_primary</item>
+        <item name="colorOnPrimary">@color/md_theme_light_onPrimary</item>
+        <item name="colorPrimaryContainer">@color/md_theme_light_primaryContainer</item>
+        <item name="colorOnPrimaryContainer">@color/md_theme_light_onPrimaryContainer</item>
+        <item name="colorSecondary">@color/md_theme_light_secondary</item>
+        <item name="colorOnSecondary">@color/md_theme_light_onSecondary</item>
+        <item name="colorSecondaryContainer">@color/md_theme_light_secondaryContainer</item>
+        <item name="colorOnSecondaryContainer">@color/md_theme_light_onSecondaryContainer</item>
+        <item name="colorTertiary">@color/md_theme_light_tertiary</item>
+        <item name="colorOnTertiary">@color/md_theme_light_onTertiary</item>
+        <item name="colorTertiaryContainer">@color/md_theme_light_tertiaryContainer</item>
+        <item name="colorOnTertiaryContainer">@color/md_theme_light_onTertiaryContainer</item>
+        <item name="colorError">@color/md_theme_light_error</item>
+        <item name="colorOnError">@color/md_theme_light_onError</item>
+        <item name="colorErrorContainer">@color/md_theme_light_errorContainer</item>
+        <item name="colorOnErrorContainer">@color/md_theme_light_onErrorContainer</item>
+        <item name="android:colorBackground">@color/md_theme_light_background</item>
+        <item name="colorOnBackground">@color/md_theme_light_onBackground</item>
+        <item name="colorSurface">@color/md_theme_light_surface</item>
+        <item name="colorOnSurface">@color/md_theme_light_onSurface</item>
+        <item name="colorSurfaceVariant">@color/md_theme_light_surfaceVariant</item>
+        <item name="colorOnSurfaceVariant">@color/md_theme_light_onSurfaceVariant</item>
+        <item name="colorOutline">@color/md_theme_light_outline</item>
+        <item name="colorOutlineVariant">@color/md_theme_light_outlineVariant</item>
+        <item name="colorSurfaceInverse">@color/md_theme_light_inverseSurface</item>
+        <item name="colorOnSurfaceInverse">@color/md_theme_light_inverseOnSurface</item>
+        <item name="colorPrimaryInverse">@color/md_theme_light_inversePrimary</item>
+        <item name="android:textColorLink">@color/md_theme_light_primary</item>
     </style>
 
-    <style name="Theme.Aard2.Dark" parent="@style/Theme.MaterialComponents.NoActionBar">
-        <item name="colorPrimary">@color/brand_blue_variant</item>
-        <item name="colorOnPrimary">@android:color/black</item>
-        <item name="colorSecondary">@color/brand_blue_variant</item>
-        <item name="colorOnSecondary">@android:color/black</item>
-        <item name="android:textColorLink">@color/brand_blue_variant</item>
-        <item name="pagerStripBackground">@color/pager_strip_background_dark</item>
+    <style name="Theme.Aard2.Dark" parent="@style/Theme.Material3.Dark.NoActionBar">
+        <item name="colorPrimary">@color/md_theme_dark_primary</item>
+        <item name="colorOnPrimary">@color/md_theme_dark_onPrimary</item>
+        <item name="colorPrimaryContainer">@color/md_theme_dark_primaryContainer</item>
+        <item name="colorOnPrimaryContainer">@color/md_theme_dark_onPrimaryContainer</item>
+        <item name="colorSecondary">@color/md_theme_dark_secondary</item>
+        <item name="colorOnSecondary">@color/md_theme_dark_onSecondary</item>
+        <item name="colorSecondaryContainer">@color/md_theme_dark_secondaryContainer</item>
+        <item name="colorOnSecondaryContainer">@color/md_theme_dark_onSecondaryContainer</item>
+        <item name="colorTertiary">@color/md_theme_dark_tertiary</item>
+        <item name="colorOnTertiary">@color/md_theme_dark_onTertiary</item>
+        <item name="colorTertiaryContainer">@color/md_theme_dark_tertiaryContainer</item>
+        <item name="colorOnTertiaryContainer">@color/md_theme_dark_onTertiaryContainer</item>
+        <item name="colorError">@color/md_theme_dark_error</item>
+        <item name="colorOnError">@color/md_theme_dark_onError</item>
+        <item name="colorErrorContainer">@color/md_theme_dark_errorContainer</item>
+        <item name="colorOnErrorContainer">@color/md_theme_dark_onErrorContainer</item>
+        <item name="android:colorBackground">@color/md_theme_dark_background</item>
+        <item name="colorOnBackground">@color/md_theme_dark_onBackground</item>
+        <item name="colorSurface">@color/md_theme_dark_surface</item>
+        <item name="colorOnSurface">@color/md_theme_dark_onSurface</item>
+        <item name="colorSurfaceVariant">@color/md_theme_dark_surfaceVariant</item>
+        <item name="colorOnSurfaceVariant">@color/md_theme_dark_onSurfaceVariant</item>
+        <item name="colorOutline">@color/md_theme_dark_outline</item>
+        <item name="colorOutlineVariant">@color/md_theme_dark_outlineVariant</item>
+        <item name="colorSurfaceInverse">@color/md_theme_dark_inverseSurface</item>
+        <item name="colorOnSurfaceInverse">@color/md_theme_dark_inverseOnSurface</item>
+        <item name="colorPrimaryInverse">@color/md_theme_dark_inversePrimary</item>
+        <item name="android:textColorLink">@color/md_theme_dark_primary</item>
     </style>
 
 </resources>
