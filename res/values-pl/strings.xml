@@ -90,7 +90,6 @@
     <string name="setting_ui_theme_dark">Ciemny</string>
     <string name="action_load_remote_content">Załaduj zdalną zawartość</string>
     <string name="auto_style_title">Automatyczny</string>
-    <string name="action_fullscreen">Pełny ekran</string>
     <string name="setting_use_volume_for_nav">Używaj przyciski głośności do nawigacji</string>
     <string name="find_hint">Znajdź na stronie</string>
     <string name="find_next">Następne</string>

@@ -94,6 +94,5 @@
     <string name="setting_ui_theme_light">Aceɛlal</string>
     <string name="setting_ui_theme_dark">Ubrik</string>
     <string name="action_load_remote_content">Asali n ugbur azɣaay iteddu</string>
-    <string name="action_fullscreen">Agdil aččuran</string>
     <string name="setting_use_volume_for_nav">Seqded tiqeffalin n ubleɣ akken ad tinigeḍ</string>
 </resources>

@@ -38,6 +38,7 @@
 
         <activity
             android:name=".ArticleCollectionActivity"
+            android:theme="@style/Theme.ArticleCollection"
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
             android:excludeFromRecents="true"
             android:taskAffinity=""

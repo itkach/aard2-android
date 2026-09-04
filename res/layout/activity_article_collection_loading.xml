@@ -3,6 +3,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <android.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="?android:attr/actionBarSize"
+        android:background="?android:attr/colorPrimaryDark"
+        android:titleTextColor="?android:attr/textColorPrimary"
+        android:layout_gravity="top" />
+
     <ProgressBar
         android:id="@+id/webViewPogress"
         style="?android:attr/progressBarStyleLarge"

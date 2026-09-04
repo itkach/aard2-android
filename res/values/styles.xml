@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- ArticleCollectionActivity supplies its own action bar via a Toolbar
+         embedded in its layout (needed so ArticleWebView's WebView content
+         can participate in CoordinatorLayout/AppBarLayout's scroll-away
+         toolbar behavior) - the framework action bar this theme otherwise
+         provides has to be turned off to avoid getting both at once.
+         Parent must be Theme.MaterialComponents, not a plain framework
+         Material theme: com.google.android.material.appbar.AppBarLayout
+         enforces via ThemeEnforcement that the active theme resolves
+         AppCompat-defined attributes (e.g. colorPrimary), throwing
+         IllegalArgumentException("...requires your app theme to be
+         Theme.AppCompat...") otherwise - true regardless of windowActionBar,
+         and regardless of the Activity's Java class (this doesn't require
+         AppCompatActivity, only the theme resource matters). -->
+    <style name="Theme.ArticleCollection" parent="@style/Theme.MaterialComponents.Light.DarkActionBar">
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowNoTitle">true</item>
+    </style>
+
+    <!-- Dark-mode counterpart, applied instead of Theme.ArticleCollection by
+         Application.installArticleTheme() when the user's UI theme
+         preference is dark. -->
+    <style name="Theme.ArticleCollection.Dark" parent="@style/Theme.MaterialComponents">
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowNoTitle">true</item>
+    </style>
+
+</resources>

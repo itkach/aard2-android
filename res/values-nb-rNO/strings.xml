@@ -100,7 +100,6 @@
     <string name="setting_ui_theme_dark">Mørk</string>
     <string name="action_load_remote_content">Last inn innhold fra annensteds hen</string>
     <string name="auto_style_title">Auto</string>
-    <string name="action_fullscreen">Fullskjerm</string>
     <string name="setting_use_volume_for_nav">Bruk lydstyrkeknapper for navigasjon</string>
 
 </resources>

@@ -264,6 +264,21 @@ public class Application extends android.app.Application {
         }
     }
 
+    // ArticleCollectionActivity supplies its own action bar via a Toolbar
+    // (needed for CoordinatorLayout/AppBarLayout scroll behavior), so unlike
+    // installTheme() it can't apply Theme_Holo*: those have windowActionBar
+    // true, which would make the framework decor install its own action bar
+    // ahead of setActionBar(Toolbar), which then throws.
+    void installArticleTheme(Activity activity) {
+        String theme = getPreferredTheme();
+        if (theme.equals(PREF_UI_THEME_DARK)) {
+            activity.setTheme(R.style.Theme_ArticleCollection_Dark);
+        }
+        else {
+            activity.setTheme(R.style.Theme_ArticleCollection);
+        }
+    }
+
     void push(Activity activity) {
         this.articleActivities.add(activity);
         Log.d(TAG, "Activity added, stack size " + this.articleActivities.size());

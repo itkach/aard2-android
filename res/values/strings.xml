@@ -106,7 +106,6 @@
     <string name="setting_ui_theme_dark">Dark</string>
     <string name="action_load_remote_content">Load Remote Content</string>
     <string name="auto_style_title">Auto</string>
-    <string name="action_fullscreen">Full Screen</string>
     <string name="setting_use_volume_for_nav">Use volume buttons for navigation</string>
     <string name="setting_auto_paste">Auto-paste from clipboard</string>
     <string name="find_hint">Find in page</string>

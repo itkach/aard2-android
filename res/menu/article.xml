@@ -6,11 +6,6 @@
           android:showAsAction="always"
         />
 
-    <item android:id="@+id/action_fullscreen"
-        android:title="@string/action_fullscreen"
-        android:showAsAction="ifRoom"
-        />
-
     <item android:id="@+id/action_find_in_page"
           android:title="@string/action_find_in_page"
           android:showAsAction="never" 

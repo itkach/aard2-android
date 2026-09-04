@@ -5,7 +5,6 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
@@ -27,10 +26,8 @@ public class ArticleFragment extends Fragment {
 
     private ArticleWebView  view;
     private MenuItem        miBookmark;
-    private MenuItem        miFullscreen;
     private Drawable        icBookmark;
     private Drawable        icBookmarkO;
-    private Drawable        icFullscreen;
     private String          url;
 
 
@@ -41,7 +38,6 @@ public class ArticleFragment extends Fragment {
         Context context = activity.getActionBar().getThemedContext();
         icBookmark =  IconMaker.actionBar(context, IconMaker.IC_BOOKMARK);
         icBookmarkO = IconMaker.actionBar(context, IconMaker.IC_BOOKMARK_O);
-        icFullscreen = IconMaker.actionBar(context, IconMaker.IC_FULLSCREEN);
         setHasOptionsMenu(true);
     }
 
@@ -53,11 +49,6 @@ public class ArticleFragment extends Fragment {
         menu.clear();
         inflater.inflate(R.menu.article, menu);
         miBookmark = menu.findItem(R.id.action_bookmark_article);
-        miFullscreen = menu.findItem(R.id.action_fullscreen);
-        if (Build.VERSION.SDK_INT < 19) {
-            miFullscreen.setVisible(false);
-            miFullscreen.setEnabled(false);
-        }
     }
 
     private void displayBookmarked(boolean value) {
@@ -91,10 +82,6 @@ public class ArticleFragment extends Fragment {
                     displayBookmarked(true);
                 }
             }
-            return true;
-        }
-        if (itemId == R.id.action_fullscreen) {
-            ((ArticleCollectionActivity)getActivity()).toggleFullScreen();
             return true;
         }
         if (itemId == R.id.action_zoom_in) {
@@ -207,7 +194,6 @@ public class ArticleFragment extends Fragment {
         }
         applyTextZoomPref();
         applyStylePref();
-        miFullscreen.setIcon(icFullscreen);
     }
 
     void applyTextZoomPref() {
@@ -232,7 +218,6 @@ public class ArticleFragment extends Fragment {
             view.destroy();
             view = null;
         }
-        miFullscreen = null;
         miBookmark = null;
         super.onDestroy();
     }

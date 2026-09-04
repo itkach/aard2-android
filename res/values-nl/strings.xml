@@ -99,7 +99,6 @@
     <string name="setting_ui_theme_dark">Donker</string>
     <string name="action_load_remote_content">Externe inhoud laden</string>
     <string name="auto_style_title">Automatisch</string>
-    <string name="action_fullscreen">Volledig scherm</string>
     <string name="setting_use_volume_for_nav">Volumeknoppen gebruiken voor navigatie</string>
 
 </resources>

@@ -99,7 +99,6 @@
     <string name="setting_ui_theme_dark">Oscuro</string>
     <string name="action_load_remote_content">Load Remote Content</string>
     <string name="auto_style_title">Auto</string>
-    <string name="action_fullscreen">Pantalla completa</string>
     <string name="setting_use_volume_for_nav">Usar botones de volumen para navegación</string>
     <string name="find_hint">Buscar en la página</string>
     <string name="find_next">Siguiente</string>

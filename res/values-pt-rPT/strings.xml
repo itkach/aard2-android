@@ -99,7 +99,6 @@
     <string name="setting_ui_theme_dark">Escuro</string>
     <string name="action_load_remote_content">Carregar conteúdo da web</string>
     <string name="auto_style_title">Automático</string>
-    <string name="action_fullscreen">Ecrã inteiro</string>
     <string name="setting_use_volume_for_nav">Usar botões de volume para navegação</string>
 
 </resources>

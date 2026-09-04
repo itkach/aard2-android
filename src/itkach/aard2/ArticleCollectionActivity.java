@@ -1,15 +1,14 @@
 package itkach.aard2;
 
 import android.app.ActionBar;
-import android.app.Activity;
 import android.app.SearchManager;
 import android.content.ComponentName;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.database.DataSetObserver;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import androidx.activity.OnBackPressedCallback;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -31,6 +30,7 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.BaseAdapter;
 import android.widget.Toast;
+import android.widget.Toolbar;
 
 import java.util.Iterator;
 import java.util.List;
@@ -38,14 +38,29 @@ import java.util.List;
 import itkach.slob.Slob;
 import itkach.slob.Slob.Blob;
 
-public class ArticleCollectionActivity extends FragmentActivity
-        implements  View.OnSystemUiVisibilityChangeListener,
-                    SharedPreferences.OnSharedPreferenceChangeListener {
+public class ArticleCollectionActivity extends FragmentActivity {
 
     private static final String TAG = ArticleCollectionActivity.class.getSimpleName();
 
-    static final String PREF = "articleCollection";
-    static final String PREF_FULLSCREEN = "fullscreen";
+    // ToolbarActionBar (the wrapper Activity.setActionBar(Toolbar) installs)
+    // renders a primary ActionMode's contextual bar as a separate view
+    // instead of replacing our Toolbar's own content - because our Toolbar
+    // lives inside AppBarLayout rather than the standard decor slot
+    // ToolbarActionBar expects, the two end up stacked rather than one
+    // swapping for the other. Hiding the Toolbar for the duration achieves
+    // the intended "replace, not overlap" look with no fragile assumptions
+    // about ToolbarActionBar's internals.
+    @Override
+    public void onActionModeStarted(android.view.ActionMode mode) {
+        super.onActionModeStarted(mode);
+        getToolbar().setVisibility(View.GONE);
+    }
+
+    @Override
+    public void onActionModeFinished(android.view.ActionMode mode) {
+        super.onActionModeFinished(mode);
+        getToolbar().setVisibility(View.VISIBLE);
+    }
 
     ArticleCollectionPagerAdapter articleCollectionPagerAdapter;
     ViewPager viewPager;
@@ -80,24 +95,37 @@ public class ArticleCollectionActivity extends FragmentActivity
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // Registered via OnBackPressedDispatcher rather than intercepted in
+        // onKeyUp(KEYCODE_BACK): ComponentActivity's own back dispatch runs
+        // ahead of onKeyUp regardless of what that returns, so an onKeyUp
+        // override can't actually veto the default back/finish behavior -
+        // this is the only layer that can.
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                ArticleFragment af = articleCollectionPagerAdapter == null ? null
+                        : articleCollectionPagerAdapter.getPrimaryItem();
+                ArticleWebView webView = af == null ? null : af.getWebView();
+                if (webView != null && webView.canGoBack()) {
+                    webView.goBack();
+                    return;
+                }
+                setEnabled(false);
+                getOnBackPressedDispatcher().onBackPressed();
+                setEnabled(true);
+            }
+        });
         requestWindowFeature(Window.FEATURE_PROGRESS);
         final Application app = (Application)getApplication();
-        app.installTheme(this);
-        // Only hide here if we're actually staying hidden (fullscreen mode) -
-        // onResume() unconditionally decides show/hide based on this same
-        // preference anyway, so hiding here too when it's about to be shown
-        // again relies on hide()'s and show()'s animations racing each
-        // other to finish within a single frame to look instantaneous; if
-        // that race is ever lost, the action bar visibly slides up and
-        // back down again.
-        if (getFullScreenPref()) {
-            getActionBar().hide();
-        }
+        app.installArticleTheme(this);
         setContentView(R.layout.activity_article_collection_loading);
+        Toolbar loadingToolbar = (Toolbar) findViewById(R.id.toolbar);
+        setActionBar(loadingToolbar);
+        applyStatusBarInset(loadingToolbar);
         app.push(this);
         final ActionBar actionBar = getActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setSubtitle("...");
+        actionBar.setTitle("...");
         final Intent intent = getIntent();
         final int position = intent.getIntExtra("position", 0);
 
@@ -166,6 +194,7 @@ public class ArticleCollectionActivity extends FragmentActivity
                 }
 
                 setContentView(R.layout.activity_article_collection);
+                setActionBar((Toolbar) findViewById(R.id.toolbar));
 
                 findViewById(R.id.pager_title_strip).setVisibility(
                         articleCollectionPagerAdapter.getCount() == 1 ? ViewGroup.GONE : ViewGroup.VISIBLE);
@@ -327,7 +356,6 @@ public class ArticleCollectionActivity extends FragmentActivity
     private void updateTitle(int position) {
         Log.d("updateTitle", ""+position + " count: " + articleCollectionPagerAdapter.getCount());
         Slob.Blob blob = articleCollectionPagerAdapter.get(position);
-        CharSequence pageTitle = articleCollectionPagerAdapter.getPageTitle(position);
         Log.d("updateTitle", ""+blob);
         ActionBar actionBar = getActionBar();
         if (blob != null) {
@@ -339,106 +367,52 @@ public class ArticleCollectionActivity extends FragmentActivity
         else {
             actionBar.setTitle("???");
         }
-        actionBar.setSubtitle(pageTitle);
     }
 
 
-    @Override
-    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        if (key.equals(PREF_FULLSCREEN)) {
-            applyFullScreenPref();
-        }
+    // Lets ArticleFragment host its "Find in page" ActionMode in this
+    // Toolbar (Toolbar.startActionMode() swaps its own content for the CAB)
+    // instead of the WebView's default target, which - since we don't use
+    // the framework decor action bar - shows as a floating bar overlapping
+    // the Toolbar rather than replacing it.
+    Toolbar getToolbar() {
+        return (Toolbar) findViewById(R.id.toolbar);
     }
 
-    private void applyFullScreenPref() {
-        if (getFullScreenPref()) {
-            fullScreen();
-        }
-        else {
-            unFullScreen();
-        }
-    }
-
-    SharedPreferences prefs() {
-        return getSharedPreferences(PREF, Activity.MODE_PRIVATE);
-    }
-
-    boolean getFullScreenPref() {
-        return prefs().getBoolean(PREF_FULLSCREEN, false);
-    }
-
-    private void setFullScreenPref(boolean value) {
-        SharedPreferences.Editor editor = prefs().edit();
-        editor.putBoolean(PREF_FULLSCREEN, value);
-        editor.commit();
-    }
-
-    // With edge-to-edge enforced (mandatory as of API 36), the content view
-    // draws behind the system bars unless we pad it ourselves.
-    // statusBars()/navigationBars() top/bottom already accounts for the
-    // action bar's reserved height on windows using Window.FEATURE_ACTION_BAR.
-    // Left/right are deliberately ignored: in landscape, navigationBars()
-    // reports a left inset for the back-gesture swipe zone (not a visible
-    // bar), and the display cutout reports a similar side inset - reserving
-    // visible padding for either would look wrong, since the action bar's
-    // own background already extends full-bleed regardless of both. Insets
-    // are re-applied whenever fullscreen mode toggles the action bar's
-    // visibility, since that alone doesn't trigger a fresh dispatch.
-    private void applyContentInsets() {
-        if (viewPager == null) {
-            return;
-        }
-        ViewCompat.setOnApplyWindowInsetsListener(viewPager, (v, windowInsets) -> {
-            Insets bars = windowInsets.getInsets(
-                    WindowInsetsCompat.Type.statusBars() | WindowInsetsCompat.Type.navigationBars());
-            v.setPadding(0, bars.top, 0, bars.bottom);
+    // Padding for the loading screen's standalone Toolbar, which - unlike
+    // the real content's AppBarLayout - has no wrap_content container of its
+    // own to grow into, so it needs its own top-only status bar inset.
+    private void applyStatusBarInset(View toolbar) {
+        ViewCompat.setOnApplyWindowInsetsListener(toolbar, (v, windowInsets) -> {
+            Insets bars = windowInsets.getInsets(WindowInsetsCompat.Type.statusBars());
+            v.setPadding(0, bars.top, 0, 0);
             return windowInsets;
         });
     }
 
-    private void fullScreen() {
-        Log.d(TAG, "[F] fullscreen");
-        getWindow().getDecorView().setSystemUiVisibility(
-                View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                        | View.SYSTEM_UI_FLAG_FULLSCREEN
-                        | View.SYSTEM_UI_FLAG_IMMERSIVE
-        );
-        getActionBar().hide();
-        if (viewPager != null) {
-            ViewCompat.requestApplyInsets(viewPager);
+    // With edge-to-edge enforced (mandatory as of API 36), content draws
+    // behind the system bars unless we pad it ourselves. The status bar
+    // inset pads the AppBarLayout (which is wrap_content, so this grows it
+    // without squishing the Toolbar's own fixed height); the navigation bar
+    // inset pads the ViewPager's bottom. Left/right are deliberately
+    // ignored: in landscape, navigationBars() reports a left inset for the
+    // back-gesture swipe zone (not a visible bar), and the display cutout
+    // reports a similar side inset - reserving visible padding for either
+    // would look wrong, since the toolbar's own background already extends
+    // full-bleed regardless of both.
+    private void applyContentInsets() {
+        View root = findViewById(R.id.article_collection_root);
+        final View appBar = findViewById(R.id.appbar);
+        if (root == null || appBar == null || viewPager == null) {
+            return;
         }
-    }
-
-    private void unFullScreen() {
-        Log.d(TAG, "[F] unfullscreen");
-        getWindow().getDecorView().setSystemUiVisibility(0);
-        getActionBar().show();
-        if (viewPager != null) {
-            ViewCompat.requestApplyInsets(viewPager);
-        }
-    }
-
-    void toggleFullScreen() {
-        setFullScreenPref(!getFullScreenPref());
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        Log.d(TAG, "[F] Resume");
-        applyFullScreenPref();
-        View decorView = getWindow().getDecorView();
-        decorView.setOnSystemUiVisibilityChangeListener(this);
-        prefs().registerOnSharedPreferenceChangeListener(this);
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        Log.d(TAG, "[F] Pause");
-        View decorView = getWindow().getDecorView();
-        decorView.setOnSystemUiVisibilityChangeListener(null);
-        prefs().unregisterOnSharedPreferenceChangeListener(this);
+        ViewCompat.setOnApplyWindowInsetsListener(root, (v, windowInsets) -> {
+            Insets bars = windowInsets.getInsets(
+                    WindowInsetsCompat.Type.statusBars() | WindowInsetsCompat.Type.navigationBars());
+            appBar.setPadding(0, bars.top, 0, 0);
+            viewPager.setPadding(0, 0, 0, bars.bottom);
+            return windowInsets;
+        });
     }
 
     @Override
@@ -476,20 +450,6 @@ public class ArticleCollectionActivity extends FragmentActivity
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public void onSystemUiVisibilityChange(int visibility) {
-        if (isFinishing()) {
-            return;
-        }
-        final View decorView = getWindow().getDecorView();
-        int uiOptions = decorView.getSystemUiVisibility();
-        boolean isHideNavigation =
-                ((uiOptions | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION) == uiOptions);
-         if (!isHideNavigation) {
-            setFullScreenPref(false);
-        }
-    }
-
     private boolean useVolumeForNav() {
         Application app = (Application)getApplication();
         return app.useVolumeForNav();
@@ -508,13 +468,6 @@ public class ArticleCollectionActivity extends FragmentActivity
         if (af != null) {
             ArticleWebView webView = af.getWebView();
             if (webView != null) {
-                if (keyCode == KeyEvent.KEYCODE_BACK) {
-                    if (webView.canGoBack()) {
-                        webView.goBack();
-                        return true;
-                    }
-                }
-
                 if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
                     if (!useVolumeForNav()) {
                         return false;
