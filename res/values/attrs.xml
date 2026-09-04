@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Background for the article view's PagerTitleStrip - needs its own
+         theme attribute (rather than reusing a MaterialComponents surface
+         color) because it must read as a distinct "strip" against both a
+         white (light theme) and black (dark theme) content background,
+         which colorSurface's own light/dark defaults don't provide. -->
+    <attr name="pagerStripBackground" format="color" />
+</resources>

@@ -61,7 +61,20 @@ class IconMaker {
         return makeWithColorRes(context, c, 26, R.color.list_icon);
     }
 
+    // These icons are drawn directly in a Toolbar (bookmark toggle, CAB
+    // select-all/delete), so they need to contrast with colorPrimary the
+    // same way the Toolbar's own title text does - resolving
+    // @android:color/secondary_text_dark unconditionally (as this used to)
+    // ignored the active theme entirely and read as a washed-out,
+    // disabled-looking grey once that stopped coincidentally matching.
     static FontDrawable actionBar(Context context, char c) {
+        TypedValue typedValue = new TypedValue();
+        boolean wasResolved = context.getTheme().resolveAttribute(
+                com.google.android.material.R.attr.colorOnPrimary, typedValue, true);
+        if (wasResolved) {
+            int color = ContextCompat.getColor(context, typedValue.resourceId);
+            return make(context, c, 26, color);
+        }
         return makeWithColorRes(context, c, 26, R.color.actionbar_icon);
     }
 

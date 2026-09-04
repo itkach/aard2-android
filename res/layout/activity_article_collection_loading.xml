@@ -8,8 +8,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:minHeight="?android:attr/actionBarSize"
-        android:background="?android:attr/colorPrimaryDark"
-        android:titleTextColor="?android:attr/textColorPrimary"
+        android:background="?android:attr/colorPrimary"
+        android:titleTextColor="?attr/colorOnPrimary"
+        android:subtitleTextColor="?attr/colorOnPrimary"
         android:layout_gravity="top" />
 
     <ProgressBar

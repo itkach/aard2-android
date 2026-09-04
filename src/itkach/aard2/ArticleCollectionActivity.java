@@ -4,6 +4,7 @@ import android.app.ActionBar;
 import android.app.SearchManager;
 import android.content.ComponentName;
 import android.content.Intent;
+import android.content.res.TypedArray;
 import android.database.DataSetObserver;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -117,15 +118,15 @@ public class ArticleCollectionActivity extends FragmentActivity {
         });
         requestWindowFeature(Window.FEATURE_PROGRESS);
         final Application app = (Application)getApplication();
-        app.installArticleTheme(this);
+        app.installTheme(this);
         setContentView(R.layout.activity_article_collection_loading);
         Toolbar loadingToolbar = (Toolbar) findViewById(R.id.toolbar);
         setActionBar(loadingToolbar);
         applyStatusBarInset(loadingToolbar);
         app.push(this);
         final ActionBar actionBar = getActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setTitle("...");
+        setupUpNavigation(loadingToolbar);
         final Intent intent = getIntent();
         final int position = intent.getIntExtra("position", 0);
 
@@ -194,7 +195,9 @@ public class ArticleCollectionActivity extends FragmentActivity {
                 }
 
                 setContentView(R.layout.activity_article_collection);
-                setActionBar((Toolbar) findViewById(R.id.toolbar));
+                Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+                setActionBar(toolbar);
+                setupUpNavigation(toolbar);
 
                 findViewById(R.id.pager_title_strip).setVisibility(
                         articleCollectionPagerAdapter.getCount() == 1 ? ViewGroup.GONE : ViewGroup.VISIBLE);
@@ -429,22 +432,39 @@ public class ArticleCollectionActivity extends FragmentActivity {
         super.onDestroy();
     }
 
+    // ToolbarActionBar's setDisplayHomeAsUpEnabled() doesn't reliably draw a
+    // chevron on a Toolbar hosted in AppBarLayout instead of the standard
+    // decor slot it expects (same root cause as the ActionMode-hiding fix
+    // above), so the up affordance is wired directly on the Toolbar instead
+    // of through the ActionBar bridge. android:homeAsUpIndicator is still
+    // resolved from the theme rather than a hardcoded drawable.
+    private void setupUpNavigation(Toolbar toolbar) {
+        TypedArray a = obtainStyledAttributes(new int[]{android.R.attr.homeAsUpIndicator});
+        toolbar.setNavigationIcon(a.getDrawable(0));
+        a.recycle();
+        toolbar.setNavigationOnClickListener(v -> navigateUp());
+    }
+
+    private void navigateUp() {
+        Intent upIntent = Intent.makeMainActivity(new ComponentName(this, MainActivity.class));
+        if (NavUtils.shouldUpRecreateTask(this, upIntent)) {
+            TaskStackBuilder.create(this)
+                    .addNextIntent(upIntent).startActivities();
+            finish();
+        } else {
+            // This activity is part of the application's task, so simply
+            // navigate up to the hierarchical parent activity.
+            upIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            startActivity(upIntent);
+            finish();
+        }
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
         case android.R.id.home:
-            Intent upIntent = Intent.makeMainActivity(new ComponentName(this, MainActivity.class));
-            if (NavUtils.shouldUpRecreateTask(this, upIntent)) {
-                TaskStackBuilder.create(this)
-                        .addNextIntent(upIntent).startActivities();
-                finish();
-            } else {
-                // This activity is part of the application's task, so simply
-                // navigate up to the hierarchical parent activity.
-                upIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                startActivity(upIntent);
-                finish();
-            }
+            navigateUp();
             return true;
         }
         return super.onOptionsItemSelected(item);

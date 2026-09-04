@@ -1,30 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <!-- ArticleCollectionActivity supplies its own action bar via a Toolbar
-         embedded in its layout (needed so ArticleWebView's WebView content
-         can participate in CoordinatorLayout/AppBarLayout's scroll-away
-         toolbar behavior) - the framework action bar this theme otherwise
-         provides has to be turned off to avoid getting both at once.
-         Parent must be Theme.MaterialComponents, not a plain framework
-         Material theme: com.google.android.material.appbar.AppBarLayout
-         enforces via ThemeEnforcement that the active theme resolves
-         AppCompat-defined attributes (e.g. colorPrimary), throwing
-         IllegalArgumentException("...requires your app theme to be
-         Theme.AppCompat...") otherwise - true regardless of windowActionBar,
-         and regardless of the Activity's Java class (this doesn't require
-         AppCompatActivity, only the theme resource matters). -->
-    <style name="Theme.ArticleCollection" parent="@style/Theme.MaterialComponents.Light.DarkActionBar">
-        <item name="android:windowActionBar">false</item>
-        <item name="android:windowNoTitle">true</item>
+    <!-- App-wide themes, applied by Application.installTheme(). Parent must
+         be Theme.MaterialComponents, not a plain framework Material theme:
+         com.google.android.material.appbar.AppBarLayout enforces via
+         ThemeEnforcement that the active theme resolves AppCompat-defined
+         attributes (e.g. colorPrimary), throwing IllegalArgumentException
+         ("...requires your app theme to be Theme.AppCompat...") otherwise -
+         true regardless of windowActionBar, and regardless of the Activity's
+         Java class (this doesn't require AppCompatActivity, only the theme
+         resource matters). NoActionBar parents already set
+         windowActionBar=false/windowNoTitle=true, so no manual overrides are
+         needed - both activities host their own Toolbar directly. -->
+    <!-- colorSecondary matches colorPrimary (one accent, not two) - the app
+         never had a separate "secondary" accent under Holo, and
+         MaterialComponents' own unbranded defaults (purple primary, teal
+         secondary) read as two clashing, undifferentiated colors, which is
+         exactly what looked wrong before this. colorOnPrimary/OnSecondary
+         are black on both variants: measured contrast against both brand
+         blues is far better with black text than white (6.4:1 and 8.9:1
+         respectively vs. ~2.4-3.3:1 for white), regardless of the overall
+         theme being otherwise light or dark. -->
+    <style name="Theme.Aard2" parent="@style/Theme.MaterialComponents.Light.NoActionBar">
+        <item name="colorPrimary">@color/brand_blue</item>
+        <item name="colorOnPrimary">@android:color/black</item>
+        <item name="colorSecondary">@color/brand_blue</item>
+        <item name="colorOnSecondary">@android:color/black</item>
+        <item name="android:textColorLink">@color/brand_blue</item>
+        <item name="pagerStripBackground">@color/pager_strip_background_light</item>
     </style>
 
-    <!-- Dark-mode counterpart, applied instead of Theme.ArticleCollection by
-         Application.installArticleTheme() when the user's UI theme
-         preference is dark. -->
-    <style name="Theme.ArticleCollection.Dark" parent="@style/Theme.MaterialComponents">
-        <item name="android:windowActionBar">false</item>
-        <item name="android:windowNoTitle">true</item>
+    <style name="Theme.Aard2.Dark" parent="@style/Theme.MaterialComponents.NoActionBar">
+        <item name="colorPrimary">@color/brand_blue_variant</item>
+        <item name="colorOnPrimary">@android:color/black</item>
+        <item name="colorSecondary">@color/brand_blue_variant</item>
+        <item name="colorOnSecondary">@android:color/black</item>
+        <item name="android:textColorLink">@color/brand_blue_variant</item>
+        <item name="pagerStripBackground">@color/pager_strip_background_dark</item>
     </style>
 
 </resources>

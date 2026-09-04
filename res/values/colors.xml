@@ -3,6 +3,14 @@
     <color name="tab_icon">#ff888888</color>
     <color name="actionbar_icon">@android:color/secondary_text_dark</color>
     <color name="empty_view_icon">#ffcccccc</color>
-    <color name="list_icon">@android:color/holo_blue_dark</color>
+    <!-- Brand blue, replacing the app's old Holo Blue Dark/Light accents
+         (#0099cc/#33b5e5) with the same hues now that we're off Holo -
+         keeps continuity with the app's existing icon language instead of
+         MaterialComponents' unbranded default purple/teal. -->
+    <color name="brand_blue">#ff0099cc</color>
+    <color name="brand_blue_variant">#ff33b5e5</color>
+    <color name="list_icon">@color/brand_blue</color>
+    <color name="pager_strip_background_light">#ffe0e0e0</color>
+    <color name="pager_strip_background_dark">#ff242424</color>
 </resources>
 

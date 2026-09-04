@@ -14,8 +14,9 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?android:attr/actionBarSize"
-            android:background="?android:attr/colorPrimaryDark"
-            android:titleTextColor="?android:attr/textColorPrimary"
+            android:background="?android:attr/colorPrimary"
+            android:titleTextColor="?attr/colorOnPrimary"
+            android:subtitleTextColor="?attr/colorOnPrimary"
             app:layout_scrollFlags="scroll|enterAlways" />
 
     </com.google.android.material.appbar.AppBarLayout>
@@ -28,7 +29,7 @@
 
         <androidx.viewpager.widget.PagerTitleStrip
             android:id="@+id/pager_title_strip"
-            android:background="@android:drawable/divider_horizontal_dark"
+            android:background="?attr/pagerStripBackground"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="top"

@@ -1,8 +1,6 @@
 package itkach.aard2;
 
 import android.app.ActionBar;
-import android.app.ActionBar.Tab;
-import android.app.FragmentTransaction;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Intent;
@@ -19,18 +17,20 @@ import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 import android.util.Log;
 import android.util.Patterns;
+import android.view.ActionMode;
 import android.view.KeyEvent;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
+import android.widget.Toolbar;
+
+import com.google.android.material.tabs.TabLayout;
 
 import java.util.regex.Pattern;
 
 import itkach.slob.Slob;
 
-public class MainActivity extends FragmentActivity implements
-        ActionBar.TabListener {
+public class MainActivity extends FragmentActivity {
 
     private static final String TAG = MainActivity.class.getSimpleName();
     private AppSectionsPagerAdapter appSectionsPagerAdapter;
@@ -51,28 +51,50 @@ public class MainActivity extends FragmentActivity implements
         appSectionsPagerAdapter = new AppSectionsPagerAdapter(
                 getSupportFragmentManager());
 
+        Toolbar toolbar = getToolbar();
+        setActionBar(toolbar);
         final ActionBar actionBar = getActionBar();
-        actionBar.setHomeButtonEnabled(true);
-        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+        // R.drawable.ic_launcher is an adaptive icon meant for the launcher's
+        // own masking/inset conventions - drawn directly at Toolbar icon
+        // size it clips oddly. R.drawable.aard2 is the plain underlying
+        // image the adaptive icon itself wraps.
+        toolbar.setNavigationIcon(R.drawable.aard2);
+        toolbar.setNavigationOnClickListener(v -> {
+            Slob.Blob blob = app.random();
+            if (blob == null) {
+                Toast.makeText(this,
+                        R.string.article_collection_nothing_found,
+                        Toast.LENGTH_SHORT).show();
+                return;
+            }
+            Intent intent = new Intent(this, ArticleCollectionActivity.class);
+            intent.setData(Uri.parse(app.getUrl(blob)));
+            startActivity(intent);
+        });
 
+        final View appBar = findViewById(R.id.appbar);
         viewPager = (ViewPager) findViewById(R.id.pager);
         viewPager.setOffscreenPageLimit(appSectionsPagerAdapter.getCount());
         viewPager.setAdapter(appSectionsPagerAdapter);
 
-        // With edge-to-edge enforced (mandatory as of API 36), the content
-        // view draws behind the system bars unless we pad it ourselves.
-        // statusBars()/navigationBars() top/bottom already accounts for the
-        // action bar's (and its tab strip's) reserved height on windows
-        // using Window.FEATURE_ACTION_BAR. Left/right are deliberately
-        // ignored: in landscape, navigationBars() reports a left inset for
-        // the back-gesture swipe zone (not a visible bar), and the display
-        // cutout reports a similar side inset - reserving visible padding
-        // for either would look wrong, since the action bar's own
-        // background already extends full-bleed regardless of both.
+        // With edge-to-edge enforced (mandatory as of API 36), content draws
+        // behind the system bars unless we pad it ourselves: the status bar
+        // inset pads the AppBarLayout (wrap_content, so this grows it
+        // without squishing the Toolbar/TabLayout's own height), the
+        // navigation bar inset pads the ViewPager's bottom. Left/right are
+        // deliberately ignored: in landscape, navigationBars() reports a
+        // left inset for the back-gesture swipe zone (not a visible bar),
+        // and the display cutout reports a similar side inset - reserving
+        // visible padding for either would look wrong, since the app bar's
+        // own background already extends full-bleed regardless of both.
+        ViewCompat.setOnApplyWindowInsetsListener(appBar, (v, windowInsets) -> {
+            Insets bars = windowInsets.getInsets(WindowInsetsCompat.Type.statusBars());
+            v.setPadding(0, bars.top, 0, 0);
+            return windowInsets;
+        });
         ViewCompat.setOnApplyWindowInsetsListener(viewPager, (v, windowInsets) -> {
-            Insets bars = windowInsets.getInsets(
-                    WindowInsetsCompat.Type.statusBars() | WindowInsetsCompat.Type.navigationBars());
-            v.setPadding(0, bars.top, 0, bars.bottom);
+            Insets bars = windowInsets.getInsets(WindowInsetsCompat.Type.navigationBars());
+            v.setPadding(0, 0, 0, bars.bottom);
             return windowInsets;
         });
 
@@ -84,14 +106,8 @@ public class MainActivity extends FragmentActivity implements
                 getString(R.string.subtitle_settings),
         };
 
-        viewPager
-                .setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
-                    @Override
-                    public void onPageSelected(int position) {
-                        actionBar.setSelectedNavigationItem(position);
-                        actionBar.setSubtitle(subtitles[position]);
-                    }
-                });
+        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
+        tabLayout.setupWithViewPager(viewPager);
 
         Drawable[] tabIcons = new Drawable[5];
         tabIcons[0] = IconMaker.tab(this, IconMaker.IC_SEARCH);
@@ -99,13 +115,35 @@ public class MainActivity extends FragmentActivity implements
         tabIcons[2] = IconMaker.tab(this, IconMaker.IC_HISTORY);
         tabIcons[3] = IconMaker.tab(this, IconMaker.IC_DICTIONARY);
         tabIcons[4] = IconMaker.tab(this, IconMaker.IC_SETTINGS);
-        // For each of the sections in the app, add a tab to the action bar.
         for (int i = 0; i < appSectionsPagerAdapter.getCount(); i++) {
-            Tab tab = actionBar.newTab();
-            tab.setTabListener(this);
-            tab.setIcon(tabIcons[i]);
-            actionBar.addTab(tab);
+            tabLayout.getTabAt(i).setIcon(tabIcons[i]);
         }
+
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                actionBar.setSubtitle(subtitles[tab.getPosition()]);
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+                Fragment frag = appSectionsPagerAdapter.getItem(tab.getPosition());
+                if (frag instanceof BaseListFragment) {
+                    ((BaseListFragment)frag).finishActionMode();
+                }
+                if (tab.getPosition() == 0) {
+                    View v = getCurrentFocus();
+                    if (v != null){
+                        InputMethodManager mgr = (InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);
+                        mgr.hideSoftInputFromWindow(v.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+                    }
+                }
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+            }
+        });
 
         if (savedInstanceState != null) {
             onRestoreInstanceState(savedInstanceState);
@@ -115,6 +153,28 @@ public class MainActivity extends FragmentActivity implements
             }
         }
 
+    }
+
+    Toolbar getToolbar() {
+        return (Toolbar) findViewById(R.id.toolbar);
+    }
+
+    // See ArticleCollectionActivity's identical fix: the multi-select delete
+    // CAB (BaseListFragment's ListView.setMultiChoiceModeListener) renders as
+    // a separate floating bar instead of replacing the Toolbar's content,
+    // since our Toolbar isn't the standard decor action-bar slot
+    // ToolbarActionBar expects. Hiding the Toolbar for the duration achieves
+    // the intended "replace, not overlap" look.
+    @Override
+    public void onActionModeStarted(ActionMode mode) {
+        super.onActionModeStarted(mode);
+        getToolbar().setVisibility(View.GONE);
+    }
+
+    @Override
+    public void onActionModeFinished(ActionMode mode) {
+        super.onActionModeFinished(mode);
+        getToolbar().setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -130,54 +190,6 @@ public class MainActivity extends FragmentActivity implements
         outState.putInt("currentSection", viewPager.getCurrentItem());
     }
 
-    @Override
-    public void onTabUnselected(ActionBar.Tab tab,
-            FragmentTransaction fragmentTransaction) {
-        Fragment frag = appSectionsPagerAdapter.getItem(tab.getPosition());
-        if (frag instanceof BaseListFragment) {
-            ((BaseListFragment)frag).finishActionMode();
-        }
-        if (tab.getPosition() == 0) {
-            View v = this.getCurrentFocus();
-            if (v != null){
-                InputMethodManager mgr = (InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);
-                mgr.hideSoftInputFromWindow(v.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-            }
-        }
-    }
-
-    @Override
-    public void onTabSelected(ActionBar.Tab tab,
-            FragmentTransaction fragmentTransaction) {
-        viewPager.setCurrentItem(tab.getPosition());
-    }
-
-    @Override
-    public void onTabReselected(ActionBar.Tab tab,
-            FragmentTransaction fragmentTransaction) {
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                Application app = (Application)getApplication();
-                Slob.Blob blob = app.random();
-                if (blob == null) {
-                    Toast.makeText(this,
-                            R.string.article_collection_nothing_found,
-                            Toast.LENGTH_SHORT).show();
-                    return true;
-                }
-                Intent intent = new Intent(this,
-                        ArticleCollectionActivity.class);
-                intent.setData(Uri.parse(app.getUrl(blob)));
-                startActivity(intent);
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
 
     @Override
     protected void onPause() {
