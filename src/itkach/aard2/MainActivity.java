@@ -19,6 +19,7 @@ import android.util.Log;
 import android.util.Patterns;
 import android.view.ActionMode;
 import android.view.KeyEvent;
+import android.view.Menu;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageButton;
@@ -42,6 +43,7 @@ public class MainActivity extends FragmentActivity {
     private SearchView searchView;
     private View btnRandomArticle;
     private Timer lookupTimer;
+    private String[] titles;
 
     private Pattern[] NO_PASTE_PATTERNS = new Pattern[]{
             Patterns.WEB_URL,
@@ -153,7 +155,7 @@ public class MainActivity extends FragmentActivity {
         // much more room for the search box than app name + tab name both
         // did together, which is what caused both to get ellipsized on a
         // typical phone width.
-        final String[] titles = new String[] {
+        titles = new String[] {
                 "",
                 getString(R.string.subtitle_bookmark),
                 getString(R.string.subtitle_history),
@@ -163,21 +165,12 @@ public class MainActivity extends FragmentActivity {
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
 
-        // Registered before setupWithViewPager() so this listener also
-        // receives the initial tab-selected notification setup fires for
-        // the starting position - otherwise the title would stay unset
-        // (defaulting back to the app's manifest label) until the user
-        // first switches tabs.
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                actionBar.setTitle(titles[tab.getPosition()]);
-                boolean isLookup = tab.getPosition() == 0;
-                searchView.setVisibility(isLookup ? View.VISIBLE : View.GONE);
-                btnRandomArticle.setVisibility(isLookup ? View.VISIBLE : View.GONE);
-                if (isLookup) {
-                    revealLookupTab();
-                }
+                // Title, and showing/hiding the Lookup search box + dice
+                // button, both happen in onPrepareOptionsMenu instead of
+                // here - see that method for why.
             }
 
             @Override
@@ -226,12 +219,40 @@ public class MainActivity extends FragmentActivity {
         return (Toolbar) findViewById(R.id.toolbar);
     }
 
+    // The title AND showing/hiding the Lookup search box + dice button are
+    // both driven from here rather than TabLayout's onTabSelected.
+    // onTabSelected fires synchronously the instant a tab crosses the
+    // selection threshold, but the OTHER tabs' toolbar icons are
+    // options-menu items, which the framework rebuilds asynchronously
+    // (posted, not synchronous) whenever the ViewPager's primary fragment
+    // changes. Splitting these two - title from onTabSelected, icons from
+    // here - was tried and made things worse: the title would flip
+    // immediately while the icons lagged behind it, visibly out of sync with
+    // each other on top of the original mismatch with the other tabs' menu
+    // icons. Driving both from this single synchronous callback (the same
+    // one the framework itself uses to rebuild those other icons) keeps
+    // everything changing together, even though that means all of it now
+    // lags slightly behind the swipe gesture rather than the title tracking
+    // it instantly.
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        boolean result = super.onPrepareOptionsMenu(menu);
+        int position = viewPager.getCurrentItem();
+        boolean isLookup = position == 0;
+        getActionBar().setTitle(titles[position]);
+        searchView.setVisibility(isLookup ? View.VISIBLE : View.GONE);
+        btnRandomArticle.setVisibility(isLookup ? View.VISIBLE : View.GONE);
+        if (isLookup) {
+            revealLookupTab();
+        }
+        return result;
+    }
+
     // Runs whenever the Lookup tab becomes the visible one - either via
-    // direct tab selection, or (see onWindowFocusChanged) when the window
-    // regains focus with clipboard text waiting to auto-paste. Mirrors what
-    // used to run in LookupFragment.onPrepareOptionsMenu, back when the
-    // search box was a menu-hosted action view refreshed by the options-menu
-    // lifecycle; now it's called directly since there's no menu involved.
+    // onPrepareOptionsMenu above, or (see onWindowFocusChanged) when the
+    // window regains focus with clipboard text waiting to auto-paste.
+    // Mirrors what used to run in LookupFragment.onPrepareOptionsMenu, back
+    // when the search box itself was a menu-hosted action view.
     private void revealLookupTab() {
         final Application app = (Application) getApplication();
         if (app.autoPaste()) {
