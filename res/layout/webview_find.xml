@@ -15,6 +15,5 @@
         android:imeOptions="actionDone|flagNoExtractUi|flagNoFullscreen"
         android:layout_marginEnd="10dip"
         android:layout_marginRight="10dip"
-        android:textColor="@android:color/white"
         />
 </LinearLayout>

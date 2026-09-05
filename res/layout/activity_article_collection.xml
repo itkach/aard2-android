@@ -17,6 +17,8 @@
             android:background="?attr/colorPrimary"
             android:titleTextColor="?attr/colorOnPrimary"
             android:subtitleTextColor="?attr/colorOnPrimary"
+            android:theme="@style/ThemeOverlay.Aard2.Toolbar"
+            android:popupTheme="@style/ThemeOverlay.Aard2.ToolbarPopup"
             app:layout_scrollFlags="scroll|enterAlways" />
 
     </com.google.android.material.appbar.AppBarLayout>

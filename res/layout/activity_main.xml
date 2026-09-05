@@ -16,7 +16,9 @@
             android:layout_height="?android:attr/actionBarSize"
             android:background="?attr/colorPrimary"
             android:titleTextColor="?attr/colorOnPrimary"
-            android:subtitleTextColor="?attr/colorOnPrimary" />
+            android:subtitleTextColor="?attr/colorOnPrimary"
+            android:theme="@style/ThemeOverlay.Aard2.Toolbar"
+            android:popupTheme="@style/ThemeOverlay.Aard2.ToolbarPopup" />
 
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/tabs"

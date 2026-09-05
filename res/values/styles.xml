@@ -80,4 +80,36 @@
         <item name="android:textColorLink">@color/md_theme_dark_primary</item>
     </style>
 
+    <!-- Applied via android:theme on every <android.widget.Toolbar>. Its
+         title/subtitle already get colorOnPrimary directly
+         (titleTextColor/subtitleTextColor); this covers everything else
+         hosted in the Toolbar that derives its color from these framework/
+         MDC attributes instead - the overflow "⋮" icon and the up chevron
+         (colorControlNormal), and a SearchView action view's hint text and
+         clear icon (textColorSecondary/textColorHint/colorControlNormal) -
+         none of which otherwise have any reason to contrast with
+         colorPrimary. Uses ?attr/colorOnPrimary (not a literal color) so
+         one overlay works for both Theme.Aard2 and Theme.Aard2.Dark - it
+         resolves through to whichever is active. No parent: an
+         android:theme overlay merges on top of the ambient theme, so
+         anything not listed here still falls through unchanged. -->
+    <style name="ThemeOverlay.Aard2.Toolbar" parent="@android:style/ThemeOverlay">
+        <item name="colorControlNormal">?attr/colorOnPrimary</item>
+        <item name="colorControlActivated">?attr/colorOnPrimary</item>
+        <item name="android:textColorPrimary">?attr/colorOnPrimary</item>
+        <item name="android:textColorSecondary">?attr/colorOnPrimary</item>
+        <item name="android:textColorHint">?attr/colorOnPrimary</item>
+    </style>
+
+    <!-- android:popupTheme merges on top of the Toolbar's own android:theme
+         overlay above (not the plain ambient activity theme), so an empty
+         overlay is a no-op and popup menu text would otherwise stay
+         colorOnPrimary (near-white) - illegible against the popup's own
+         colorSurface background. colorOnSurface is the correct semantic
+         role for text drawn on colorSurface. -->
+    <style name="ThemeOverlay.Aard2.ToolbarPopup" parent="@android:style/ThemeOverlay">
+        <item name="android:textColorPrimary">?attr/colorOnSurface</item>
+        <item name="android:textColorSecondary">?attr/colorOnSurface</item>
+    </style>
+
 </resources>

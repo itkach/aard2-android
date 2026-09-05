@@ -439,7 +439,11 @@ public class ArticleCollectionActivity extends FragmentActivity {
     // of through the ActionBar bridge. android:homeAsUpIndicator is still
     // resolved from the theme rather than a hardcoded drawable.
     private void setupUpNavigation(Toolbar toolbar) {
-        TypedArray a = obtainStyledAttributes(new int[]{android.R.attr.homeAsUpIndicator});
+        // Resolved via the Toolbar's own context (not the Activity's), so
+        // this picks up ThemeOverlay.Aard2.Toolbar's colorControlNormal -
+        // the drawable's built-in tint otherwise follows the Activity's
+        // ambient (non-overlaid) theme instead of the toolbar's.
+        TypedArray a = toolbar.getContext().obtainStyledAttributes(new int[]{android.R.attr.homeAsUpIndicator});
         toolbar.setNavigationIcon(a.getDrawable(0));
         a.recycle();
         toolbar.setNavigationOnClickListener(v -> navigateUp());
