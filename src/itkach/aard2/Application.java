@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.database.DataSetObserver;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -14,9 +15,13 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 import android.webkit.WebView;
+import androidx.core.content.ContextCompat;
+import androidx.core.view.WindowCompat;
+import androidx.core.view.WindowInsetsControllerCompat;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.android.material.appbar.AppBarLayout;
 
 import java.io.File;
 import java.io.IOException;
@@ -262,6 +267,55 @@ public class Application extends android.app.Application {
         else {
             activity.setTheme(R.style.Theme_Aard2);
         }
+    }
+
+    // The app's own light/dark preference (above) is independent of the
+    // device's system dark mode setting - a user can pick "dark" for this
+    // app while their device is in light mode, or vice versa. Status bar
+    // icons (clock, battery, signal), though, are drawn by the system and
+    // don't follow that app-level choice - they follow the device's own
+    // setting (or get stuck, inconsistently across devices, if nothing
+    // ever explicitly declares their appearance, which this app never
+    // did). So the status bar's own backdrop has to be chosen the same way
+    // the icons actually are - by the device's dark mode, not by
+    // getPreferredTheme() - or the two can end up mismatched with no
+    // guaranteed contrast.
+    boolean isDeviceDark() {
+        int nightMode = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
+        return nightMode == Configuration.UI_MODE_NIGHT_YES;
+    }
+
+    // Paints appBar's status bar area (via AppBarLayout's own built-in
+    // statusBarForeground mechanism - see ArticleCollectionActivity for
+    // how that stays pinned to the true top of the window regardless of
+    // the bar's own scroll offset) and sets the system status bar icons'
+    // appearance to match - both driven by isDeviceDark(), not by this
+    // activity's own applied theme, for the reason above. Also sets the
+    // legacy Window.setStatusBarColor() to the same color: on a device
+    // that isn't actually running edge-to-edge (confirmed on a Samsung
+    // running Android 12 - our own targetSdkVersion enforces edge-to-edge
+    // on newer OS versions, but that enforcement lives in the OS itself,
+    // so an older device never learns about it regardless of what we
+    // target), the system reserves the status bar's space BEFORE
+    // dispatching insets to our content at all, so
+    // WindowInsetsCompat.Type.statusBars() is always zero there and
+    // AppBarLayout's own getTopInset() never sees a reason to draw its
+    // scrim - confirmed empirically: the status bar kept the theme's own
+    // colorPrimary-derived color regardless of anything set here. That
+    // older, deprecated API is what actually paints it there instead;
+    // it's a no-op on a real edge-to-edge device (deprecated exactly
+    // because the OS ignores it once edge-to-edge is enforced), so
+    // setting both unconditionally covers either case correctly.
+    @SuppressWarnings("deprecation")
+    void applyStatusBarAppearance(Activity activity, AppBarLayout appBar) {
+        boolean deviceDark = isDeviceDark();
+        int scrimColor = ContextCompat.getColor(activity,
+                deviceDark ? android.R.color.background_dark : android.R.color.background_light);
+        appBar.setStatusBarForegroundColor(scrimColor);
+        activity.getWindow().setStatusBarColor(scrimColor);
+        WindowInsetsControllerCompat controller = WindowCompat.getInsetsController(
+                activity.getWindow(), activity.getWindow().getDecorView());
+        controller.setAppearanceLightStatusBars(!deviceDark);
     }
 
     void push(Activity activity) {

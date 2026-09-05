@@ -5,16 +5,21 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!-- app:statusBarForeground paints the status bar area with the
-         Toolbar's own color; AppBarLayout draws it pinned to the true top
-         of the window (it negates its own current scroll offset before
-         drawing), so it stays put even once the Toolbar below has fully
-         hidden. AppBarLayout's own android:fitsSystemWindows="true" is what
-         makes it actually capture the dispatched WindowInsets into its
-         internal lastInsets field at all - confirmed by decompiling it:
-         it installs its own OnApplyWindowInsetsListener on itself in its
-         constructor, but that listener only stores the insets (as opposed
-         to discarding them) when AppBarLayout.getFitsSystemWindows() is
+    <!-- AppBarLayout's own statusBarForeground (color set programmatically
+         in Application.applyStatusBarAppearance() - status bar icons are
+         drawn by the system and follow the DEVICE's own dark mode, not
+         this app's own separate light/dark preference, so the backdrop
+         color has to be chosen the same way, not via a static ?attr/
+         reference into this activity's own theme) paints the status bar
+         area; AppBarLayout draws it pinned to the true top of the window
+         (it negates its own current scroll offset before drawing), so it
+         stays put even once the Toolbar below has fully hidden.
+         AppBarLayout's own android:fitsSystemWindows="true" is what makes
+         it actually capture the dispatched WindowInsets into its internal
+         lastInsets field at all - confirmed by decompiling it: it installs
+         its own OnApplyWindowInsetsListener on itself in its constructor,
+         but that listener only stores the insets (as opposed to
+         discarding them) when AppBarLayout.getFitsSystemWindows() is
          true; without it, getTopInset() silently returns 0 forever. The
          Toolbar ALSO needs its own android:fitsSystemWindows="true" (see
          below) - that's what getTotalScrollRange() checks (for a first
@@ -30,8 +35,7 @@
         android:id="@+id/appbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:fitsSystemWindows="true"
-        app:statusBarForeground="?attr/colorPrimary">
+        android:fitsSystemWindows="true">
 
         <android.widget.Toolbar
             android:id="@+id/toolbar"

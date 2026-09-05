@@ -20,6 +20,7 @@ import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.core.app.NavUtils;
 import androidx.core.app.TaskStackBuilder;
 import androidx.viewpager.widget.PagerTitleStrip;
+import com.google.android.material.appbar.AppBarLayout;
 import androidx.viewpager.widget.ViewPager;
 import androidx.viewpager.widget.ViewPager.OnPageChangeListener;
 import android.util.Log;
@@ -408,8 +409,9 @@ public class ArticleCollectionActivity extends FragmentActivity {
     // Toolbar's measured height grows by that inset (for correct expanded
     // positioning) but the bar can only ever collapse by its un-padded
     // height, never past the status bar line. The AppBarLayout's own
-    // app:statusBarForeground paints that area with the Toolbar's color and
-    // is drawn pinned to the true top of the window regardless of the
+    // statusBarForeground (color set in applyStatusBarAppearance(), not a
+    // static XML attribute - see there for why) paints that area and is
+    // drawn pinned to the true top of the window regardless of the
     // header's current scroll offset - both are real, built-in AppBarLayout
     // mechanisms for exactly this combination (collapsing header + edge-to-
     // edge status bar), not something to hand-roll. (An earlier version of
@@ -436,9 +438,11 @@ public class ArticleCollectionActivity extends FragmentActivity {
     // extends full-bleed regardless of both.
     private void applyContentInsets() {
         final View toolbar = findViewById(R.id.toolbar);
-        if (toolbar == null || viewPager == null) {
+        final AppBarLayout appBar = (AppBarLayout) findViewById(R.id.appbar);
+        if (toolbar == null || appBar == null || viewPager == null) {
             return;
         }
+        ((Application) getApplication()).applyStatusBarAppearance(this, appBar);
         ViewCompat.setOnApplyWindowInsetsListener(toolbar, (v, windowInsets) -> {
             Insets bars = windowInsets.getInsets(WindowInsetsCompat.Type.statusBars());
             v.setPadding(0, bars.top, 0, 0);

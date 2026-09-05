@@ -27,6 +27,7 @@ import android.widget.SearchView;
 import android.widget.Toast;
 import android.widget.Toolbar;
 
+import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.tabs.TabLayout;
 
 import java.util.Timer;
@@ -120,26 +121,39 @@ public class MainActivity extends FragmentActivity {
             startActivity(intent);
         });
 
-        final View appBar = findViewById(R.id.appbar);
+        final AppBarLayout appBar = (AppBarLayout) findViewById(R.id.appbar);
         viewPager = (ViewPager) findViewById(R.id.pager);
         viewPager.setOffscreenPageLimit(appSectionsPagerAdapter.getCount());
         viewPager.setAdapter(appSectionsPagerAdapter);
 
         // With edge-to-edge enforced (mandatory as of API 36), content draws
-        // behind the system bars unless we pad it ourselves: the status bar
-        // inset pads the AppBarLayout (wrap_content, so this grows it
-        // without squishing the Toolbar/TabLayout's own height), the
-        // navigation bar inset pads the ViewPager's bottom. Left/right are
-        // deliberately ignored: in landscape, navigationBars() reports a
-        // left inset for the back-gesture swipe zone (not a visible bar),
-        // and the display cutout reports a similar side inset - reserving
-        // visible padding for either would look wrong, since the app bar's
-        // own background already extends full-bleed regardless of both.
-        ViewCompat.setOnApplyWindowInsetsListener(appBar, (v, windowInsets) -> {
-            Insets bars = windowInsets.getInsets(WindowInsetsCompat.Type.statusBars());
-            v.setPadding(0, bars.top, 0, 0);
-            return windowInsets;
-        });
+        // behind the system bars unless we handle it ourselves. The status
+        // bar's own backdrop and system icon appearance are handled by
+        // applyStatusBarAppearance() (see there for why that has to follow
+        // the device's own dark mode, not this app's own light/dark
+        // preference) - it needs the AppBarLayout itself, not a listener
+        // set directly on it: AppBarLayout installs its own
+        // OnApplyWindowInsetsListener on itself in its constructor to
+        // capture insets for its statusBarForeground draw path, and
+        // calling ViewCompat.setOnApplyWindowInsetsListener on the same
+        // view again (as this used to) replaces that listener outright,
+        // silently breaking the capture. No manual top padding is needed
+        // anywhere for the status bar inset itself: with
+        // android:fitsSystemWindows="true" on the AppBarLayout (see the
+        // layout file) and none on its Toolbar child, AppBarLayout reserves
+        // that space in its own measurement automatically - confirmed
+        // empirically after an earlier version of this method ALSO padded
+        // the AppBarLayout manually by the same inset, which doubled it
+        // (230px instead of 115px on a device where the status bar is
+        // 115px tall) since AppBarLayout was already reserving it on its
+        // own. The navigation bar inset still pads the ViewPager's bottom.
+        // Left/right are deliberately ignored: in landscape,
+        // navigationBars() reports a left inset for the back-gesture swipe
+        // zone (not a visible bar), and the display cutout reports a
+        // similar side inset - reserving visible padding for either would
+        // look wrong, since the app bar's own background already extends
+        // full-bleed regardless of both.
+        app.applyStatusBarAppearance(this, appBar);
         ViewCompat.setOnApplyWindowInsetsListener(viewPager, (v, windowInsets) -> {
             Insets bars = windowInsets.getInsets(WindowInsetsCompat.Type.navigationBars());
             v.setPadding(0, 0, 0, bars.bottom);

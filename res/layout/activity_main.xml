@@ -5,10 +5,36 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <!-- android:fitsSystemWindows="true" here (not on the Toolbar) is what
+         lets AppBarLayout capture WindowInsets into its own internal
+         lastInsets field, which its statusBarForeground draw path and
+         getTopInset() both depend on - see ArticleCollectionActivity's
+         layout for the full explanation and the decompiled evidence for
+         why it has to be set here specifically. This AppBarLayout never
+         hides (Toolbar/TabLayout carry no scroll flags), so
+         getTotalScrollRange() isn't a concern here; only the
+         statusBarForeground/getTopInset() side of it applies. Its color
+         is set programmatically in Application.applyStatusBarAppearance()
+         - see there for why it can't just be ?attr/colorPrimary.
+
+         No manual padding is needed for the status bar inset itself:
+         because the Toolbar below has no android:fitsSystemWindows of its
+         own, AppBarLayout reserves that space in its own measurement
+         automatically, leaving a plain gap above the Toolbar (painted by
+         statusBarForeground) instead of growing the Toolbar's own
+         visibly-colored area - confirmed empirically after an earlier
+         version of MainActivity ALSO padded the AppBarLayout manually by
+         the same inset, which doubled it, since AppBarLayout was already
+         reserving that space on its own. ArticleCollectionActivity's
+         Toolbar deliberately does the opposite (fitsSystemWindows on the
+         Toolbar itself, growing it to include the inset) for a reason
+         specific to its collapsing behavior that doesn't apply here - see
+         there. -->
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:fitsSystemWindows="true">
 
         <android.widget.Toolbar
             android:id="@+id/toolbar"
