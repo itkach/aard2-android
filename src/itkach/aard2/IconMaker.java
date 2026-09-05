@@ -76,10 +76,6 @@ class IconMaker {
         return drawable;
     }
 
-    static FontDrawable makeWithColorRes(Context context, Glyph g, int sizeDp, int colorRes) {
-        return make(context, g, sizeDp, context.getResources().getColor(colorRes));
-    }
-
     // Resolves a theme attribute (framework or library) to an actual color,
     // so icon color follows the active theme (light/dark, or whatever brand
     // color it's set to) instead of a color resource baked in ahead of time.
@@ -92,8 +88,13 @@ class IconMaker {
         return fallbackColor;
     }
 
+    // Unselected/default tab icon color - textColorSecondary is the
+    // framework's own "de-emphasized icon or text" role, so this follows
+    // whatever the theme (and on Android 12+, the system's per-wallpaper
+    // dynamic color) actually is instead of a fixed grey chosen up front.
     static FontDrawable tab(Context context, Glyph g) {
-        return makeWithColorRes(context, g, 21, R.color.tab_icon);
+        int color = resolveThemeColor(context, android.R.attr.textColorSecondary, 0xff888888);
+        return make(context, g, 21, color);
     }
 
     // Content-area accent icons (favorite star, expand/collapse chevron,
@@ -121,12 +122,20 @@ class IconMaker {
         return make(context, g, 16, color);
     }
 
+    // colorError is Material's own dynamic-color-aware error role, replacing
+    // a fixed android.R.color.holo_red_dark this used to resolve to
+    // regardless of theme.
     static FontDrawable errorText(Context context, Glyph g) {
-        return makeWithColorRes(context, g, 16, android.R.color.holo_red_dark);
+        int color = resolveThemeColor(context, com.google.android.material.R.attr.colorError, 0xffcc0000);
+        return make(context, g, 16, color);
     }
 
+    // Placeholder icon for an empty list (e.g. "no bookmarks yet") -
+    // textColorHint is the framework's own role for exactly this kind of
+    // de-emphasized, content-absent state.
     static FontDrawable emptyView(Context context, Glyph g) {
-        return makeWithColorRes(context, g, 52, R.color.empty_view_icon);
+        int color = resolveThemeColor(context, android.R.attr.textColorHint, 0xffcccccc);
+        return make(context, g, 52, color);
     }
 
 }
