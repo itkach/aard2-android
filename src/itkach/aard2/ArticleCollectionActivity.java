@@ -50,17 +50,24 @@ public class ArticleCollectionActivity extends FragmentActivity {
     // ToolbarActionBar expects, the two end up stacked rather than one
     // swapping for the other. Hiding the Toolbar for the duration achieves
     // the intended "replace, not overlap" look with no fragile assumptions
-    // about ToolbarActionBar's internals.
+    // about ToolbarActionBar's internals. Only TYPE_PRIMARY (find-in-page)
+    // needs this - TYPE_FLOATING is the text-selection popup a long-press in
+    // the WebView triggers, which is a small overlay near the selection, not
+    // something that replaces the Toolbar.
     @Override
     public void onActionModeStarted(android.view.ActionMode mode) {
         super.onActionModeStarted(mode);
-        getToolbar().setVisibility(View.GONE);
+        if (mode.getType() == android.view.ActionMode.TYPE_PRIMARY) {
+            getToolbar().setVisibility(View.GONE);
+        }
     }
 
     @Override
     public void onActionModeFinished(android.view.ActionMode mode) {
         super.onActionModeFinished(mode);
-        getToolbar().setVisibility(View.VISIBLE);
+        if (mode.getType() == android.view.ActionMode.TYPE_PRIMARY) {
+            getToolbar().setVisibility(View.VISIBLE);
+        }
     }
 
     ArticleCollectionPagerAdapter articleCollectionPagerAdapter;

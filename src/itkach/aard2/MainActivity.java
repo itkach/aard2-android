@@ -164,17 +164,24 @@ public class MainActivity extends FragmentActivity {
     // a separate floating bar instead of replacing the Toolbar's content,
     // since our Toolbar isn't the standard decor action-bar slot
     // ToolbarActionBar expects. Hiding the Toolbar for the duration achieves
-    // the intended "replace, not overlap" look.
+    // the intended "replace, not overlap" look. Only TYPE_PRIMARY (the CAB)
+    // needs this - TYPE_FLOATING is the text-selection popup a long-press in
+    // the Lookup SearchView's EditText triggers, which is a small overlay
+    // near the selection, not something that replaces the Toolbar.
     @Override
     public void onActionModeStarted(ActionMode mode) {
         super.onActionModeStarted(mode);
-        getToolbar().setVisibility(View.GONE);
+        if (mode.getType() == ActionMode.TYPE_PRIMARY) {
+            getToolbar().setVisibility(View.GONE);
+        }
     }
 
     @Override
     public void onActionModeFinished(ActionMode mode) {
         super.onActionModeFinished(mode);
-        getToolbar().setVisibility(View.VISIBLE);
+        if (mode.getType() == ActionMode.TYPE_PRIMARY) {
+            getToolbar().setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
