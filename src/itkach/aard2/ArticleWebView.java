@@ -20,9 +20,6 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
-import androidx.core.view.NestedScrollingChild2;
-import androidx.core.view.NestedScrollingChildHelper;
-import androidx.core.view.ViewCompat;
 
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
@@ -36,7 +33,7 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-public class ArticleWebView extends SearchableWebView implements NestedScrollingChild2 {
+public class ArticleWebView extends SearchableWebView {
 
     public static final String LOCALHOST = Application.LOCALHOST;
     private final String styleSwitcherJs;
@@ -540,135 +537,51 @@ public class ArticleWebView extends SearchableWebView implements NestedScrolling
         }
     }
 
-    // Bridges WebView into the standard CoordinatorLayout/AppBarLayout
-    // scroll-away-toolbar mechanism (the same one RecyclerView/NestedScrollView
-    // get "for free"), since android.webkit.WebView does not implement
-    // NestedScrollingChild itself - its scrolling is handled internally by
-    // the separate Android System WebView component, not the normal View
-    // scrolling machinery. This intercepts touch deltas before WebView's own
-    // super.onTouchEvent() consumes them, offering each one to the nested
-    // scrolling parent (AppBarLayout's Behavior) first via
-    // dispatchNestedPreScroll, then reports back whatever WebView itself
-    // didn't use via dispatchNestedScroll. This is the standard
-    // "NestedScrollWebView" pattern used wherever a WebView needs to
-    // participate in nested scrolling.
-    private final NestedScrollingChildHelper nestedScrollingChildHelper =
-            new NestedScrollingChildHelper(this);
-    private final int[] nestedScrollConsumed = new int[2];
-    private final int[] nestedScrollOffsetInWindow = new int[2];
-    private int nestedScrollLastY;
-    private int nestedScrollYOffset;
+    // WebView participates in the scroll-away toolbar purely by REPORTING its
+    // own native scroll position; the toolbar/strip header is slid to match by
+    // ArticleCollectionActivity's scroll listener. WebView keeps 100% of its
+    // native scrolling AND kinetic fling (both handled by the System WebView
+    // compositor) - that is what gives the Chrome/Firefox feel. We do NOT
+    // intercept, offset, or synthesize any touch here, so links and taps
+    // behave exactly as a plain WebView (an earlier nested-scrolling bridge
+    // did all of that and could never match native fling, and its synthetic
+    // touch-down turned a flick into a link tap; see git history). The only
+    // touches we observe are down/up, so the header's snap-to-edge can wait
+    // until the gesture and any resulting fling have settled.
+    interface OnArticleScrollListener {
+        void onArticleScrollChanged(ArticleWebView view, int scrollY);
+        void onArticleTouchDown(ArticleWebView view);
+        void onArticleTouchUp(ArticleWebView view);
+    }
 
-    {
-        setNestedScrollingEnabled(true);
+    private OnArticleScrollListener onArticleScrollListener;
+
+    void setOnArticleScrollListener(OnArticleScrollListener listener) {
+        this.onArticleScrollListener = listener;
+    }
+
+    @Override
+    protected void onScrollChanged(int l, int t, int oldl, int oldt) {
+        super.onScrollChanged(l, t, oldl, oldt);
+        if (onArticleScrollListener != null) {
+            onArticleScrollListener.onArticleScrollChanged(this, t);
+        }
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        MotionEvent offsetEvent = MotionEvent.obtain(event);
-        offsetEvent.offsetLocation(0, nestedScrollYOffset);
-        int y = (int) event.getY();
-        switch (event.getActionMasked()) {
-            case MotionEvent.ACTION_DOWN:
-                nestedScrollYOffset = 0;
-                nestedScrollLastY = y;
-                startNestedScroll(ViewCompat.SCROLL_AXIS_VERTICAL, ViewCompat.TYPE_TOUCH);
-                break;
-            case MotionEvent.ACTION_MOVE:
-                int deltaY = nestedScrollLastY - y;
-                if (dispatchNestedPreScroll(0, deltaY, nestedScrollConsumed,
-                        nestedScrollOffsetInWindow, ViewCompat.TYPE_TOUCH)) {
-                    deltaY -= nestedScrollConsumed[1];
-                    nestedScrollYOffset += nestedScrollOffsetInWindow[1];
-                    offsetEvent.offsetLocation(0, nestedScrollOffsetInWindow[1]);
-                }
-                nestedScrollLastY = y - nestedScrollOffsetInWindow[1];
-                boolean handled = super.onTouchEvent(offsetEvent);
-                dispatchNestedScroll(0, 0, 0, deltaY, nestedScrollOffsetInWindow, ViewCompat.TYPE_TOUCH);
-                offsetEvent.recycle();
-                return handled;
-            case MotionEvent.ACTION_UP:
-            case MotionEvent.ACTION_CANCEL:
-                stopNestedScroll(ViewCompat.TYPE_TOUCH);
-                break;
+        if (onArticleScrollListener != null) {
+            switch (event.getActionMasked()) {
+                case MotionEvent.ACTION_DOWN:
+                    onArticleScrollListener.onArticleTouchDown(this);
+                    break;
+                case MotionEvent.ACTION_UP:
+                case MotionEvent.ACTION_CANCEL:
+                    onArticleScrollListener.onArticleTouchUp(this);
+                    break;
+            }
         }
-        boolean handled = super.onTouchEvent(offsetEvent);
-        offsetEvent.recycle();
-        return handled;
-    }
-
-    @Override
-    public void setNestedScrollingEnabled(boolean enabled) {
-        nestedScrollingChildHelper.setNestedScrollingEnabled(enabled);
-    }
-
-    @Override
-    public boolean isNestedScrollingEnabled() {
-        return nestedScrollingChildHelper.isNestedScrollingEnabled();
-    }
-
-    @Override
-    public boolean startNestedScroll(int axes, int type) {
-        return nestedScrollingChildHelper.startNestedScroll(axes, type);
-    }
-
-    @Override
-    public boolean startNestedScroll(int axes) {
-        return startNestedScroll(axes, ViewCompat.TYPE_TOUCH);
-    }
-
-    @Override
-    public void stopNestedScroll(int type) {
-        nestedScrollingChildHelper.stopNestedScroll(type);
-    }
-
-    @Override
-    public void stopNestedScroll() {
-        stopNestedScroll(ViewCompat.TYPE_TOUCH);
-    }
-
-    @Override
-    public boolean hasNestedScrollingParent(int type) {
-        return nestedScrollingChildHelper.hasNestedScrollingParent(type);
-    }
-
-    @Override
-    public boolean hasNestedScrollingParent() {
-        return hasNestedScrollingParent(ViewCompat.TYPE_TOUCH);
-    }
-
-    @Override
-    public boolean dispatchNestedScroll(int dxConsumed, int dyConsumed, int dxUnconsumed,
-            int dyUnconsumed, int[] offsetInWindow, int type) {
-        return nestedScrollingChildHelper.dispatchNestedScroll(
-                dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed, offsetInWindow, type);
-    }
-
-    @Override
-    public boolean dispatchNestedScroll(int dxConsumed, int dyConsumed, int dxUnconsumed,
-            int dyUnconsumed, int[] offsetInWindow) {
-        return dispatchNestedScroll(
-                dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed, offsetInWindow, ViewCompat.TYPE_TOUCH);
-    }
-
-    @Override
-    public boolean dispatchNestedPreScroll(int dx, int dy, int[] consumed, int[] offsetInWindow, int type) {
-        return nestedScrollingChildHelper.dispatchNestedPreScroll(dx, dy, consumed, offsetInWindow, type);
-    }
-
-    @Override
-    public boolean dispatchNestedPreScroll(int dx, int dy, int[] consumed, int[] offsetInWindow) {
-        return dispatchNestedPreScroll(dx, dy, consumed, offsetInWindow, ViewCompat.TYPE_TOUCH);
-    }
-
-    @Override
-    public boolean dispatchNestedFling(float velocityX, float velocityY, boolean consumed) {
-        return nestedScrollingChildHelper.dispatchNestedFling(velocityX, velocityY, consumed);
-    }
-
-    @Override
-    public boolean dispatchNestedPreFling(float velocityX, float velocityY) {
-        return nestedScrollingChildHelper.dispatchNestedPreFling(velocityX, velocityY);
+        return super.onTouchEvent(event);
     }
 
 }

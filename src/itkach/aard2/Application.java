@@ -306,16 +306,27 @@ public class Application extends android.app.Application {
     // it's a no-op on a real edge-to-edge device (deprecated exactly
     // because the OS ignores it once edge-to-edge is enforced), so
     // setting both unconditionally covers either case correctly.
+    // Sets the system status bar icons' appearance and the legacy window
+    // status bar color to the device-dark-aware backdrop color, and returns
+    // that color so the caller can paint its own status bar scrim/foreground
+    // to match. Callers apply the returned color to whatever actually covers
+    // the status bar area (MainActivity: AppBarLayout.setStatusBarForeground;
+    // ArticleCollectionActivity: a plain scrim View, since its header is slid
+    // by translationY and can't use AppBarLayout's foreground).
     @SuppressWarnings("deprecation")
-    void applyStatusBarAppearance(Activity activity, AppBarLayout appBar) {
+    int applyStatusBarAppearance(Activity activity) {
         boolean deviceDark = isDeviceDark();
         int scrimColor = ContextCompat.getColor(activity,
                 deviceDark ? android.R.color.background_dark : android.R.color.background_light);
-        appBar.setStatusBarForegroundColor(scrimColor);
         activity.getWindow().setStatusBarColor(scrimColor);
         WindowInsetsControllerCompat controller = WindowCompat.getInsetsController(
                 activity.getWindow(), activity.getWindow().getDecorView());
         controller.setAppearanceLightStatusBars(!deviceDark);
+        return scrimColor;
+    }
+
+    void applyStatusBarAppearance(Activity activity, AppBarLayout appBar) {
+        appBar.setStatusBarForegroundColor(applyStatusBarAppearance(activity));
     }
 
     void push(Activity activity) {

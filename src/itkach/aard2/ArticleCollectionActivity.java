@@ -19,17 +19,19 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.core.app.NavUtils;
 import androidx.core.app.TaskStackBuilder;
-import androidx.viewpager.widget.PagerTitleStrip;
-import com.google.android.material.appbar.AppBarLayout;
 import androidx.viewpager.widget.ViewPager;
 import androidx.viewpager.widget.ViewPager.OnPageChangeListener;
+import android.animation.ValueAnimator;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.view.Window;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.BaseAdapter;
 import android.widget.Toast;
 import android.widget.Toolbar;
@@ -73,6 +75,61 @@ public class ArticleCollectionActivity extends FragmentActivity {
 
     ArticleCollectionPagerAdapter articleCollectionPagerAdapter;
     ViewPager viewPager;
+
+    // Scroll-away header (toolbar + always-visible title bar) driven by the
+    // current article's native scroll position - see the scroll listener and
+    // onArticleScroll(). No CoordinatorLayout/AppBarLayout/nested-scrolling: the
+    // WebView scrolls and flings natively (chromium), and we just slide the
+    // header to match, which is what makes it feel like Chrome/Firefox.
+    private View header;
+    private Toolbar toolbarView;
+    private ArticleTitleStrip titleBar;
+    private View statusBarScrim;
+    private int statusBarInset = 0;
+    private int navBarInset = 0;
+    // How far the header can slide up = the toolbar's own height (so the title
+    // bar below it stays fully visible, coming to rest just below the status
+    // bar). Set once the toolbar is measured.
+    private int headerCollapseRange = 0;
+    // Top padding applied to every article WebView so its content starts below
+    // the header; equals the header's full height (status bar + toolbar +
+    // title bar). Content scrolls up behind the header (clipToPadding=false).
+    private int contentTopInset = 0;
+    private boolean fingerDown = false;
+    private boolean snapping = false;
+    private ValueAnimator snapAnimator;
+    private final Handler mainHandler = new Handler(Looper.getMainLooper());
+    private final Runnable snapRunnable = this::snapHeaderIfPartial;
+    // Every article WebView currently alive, weakly held so destroyed pages
+    // don't leak; used to (re-)apply the content top/bottom padding.
+    private final java.util.Set<ArticleWebView> liveWebViews =
+            java.util.Collections.newSetFromMap(new java.util.WeakHashMap<ArticleWebView, Boolean>());
+
+    // A single listener shared by every article WebView; it only drives the
+    // header for whichever page is currently front-and-center.
+    private final ArticleWebView.OnArticleScrollListener articleScrollListener =
+            new ArticleWebView.OnArticleScrollListener() {
+                @Override
+                public void onArticleScrollChanged(ArticleWebView view, int scrollY) {
+                    if (view != currentWebView()) {
+                        return;
+                    }
+                    onArticleScroll(scrollY);
+                }
+
+                @Override
+                public void onArticleTouchDown(ArticleWebView view) {
+                    fingerDown = true;
+                    mainHandler.removeCallbacks(snapRunnable);
+                    cancelSnapAnimation();
+                }
+
+                @Override
+                public void onArticleTouchUp(ArticleWebView view) {
+                    fingerDown = false;
+                    scheduleSnap();
+                }
+            };
 
 
     class ToBlobWithFragment implements ToBlob {
@@ -207,19 +264,32 @@ public class ArticleCollectionActivity extends FragmentActivity {
                 setActionBar(toolbar);
                 setupUpNavigation(toolbar);
 
-                findViewById(R.id.pager_title_strip).setVisibility(
-                        articleCollectionPagerAdapter.getCount() == 1 ? ViewGroup.GONE : ViewGroup.VISIBLE);
+                header = findViewById(R.id.header);
+                toolbarView = toolbar;
+                titleBar = (ArticleTitleStrip) findViewById(R.id.article_title_bar);
+                statusBarScrim = findViewById(R.id.status_bar_scrim);
+                // The title bar is only meaningful when there's more than one
+                // article to swipe between; hidden for a single result (which
+                // also shrinks the header, and thus the content top inset,
+                // accordingly - measured after layout below).
+                titleBar.setVisibility(
+                        articleCollectionPagerAdapter.getCount() == 1 ? View.GONE : View.VISIBLE);
 
                 viewPager = (ViewPager) findViewById(R.id.pager);
                 applyContentInsets();
                 viewPager.setAdapter(articleCollectionPagerAdapter);
+                titleBar.setPager(viewPager);
                 viewPager.setOnPageChangeListener(new OnPageChangeListener(){
 
                     @Override
                     public void onPageScrollStateChanged(int arg0) {}
 
                     @Override
-                    public void onPageScrolled(int arg0, float arg1, int arg2) {}
+                    public void onPageScrolled(int position, float offset, int offsetPixels) {
+                        if (titleBar != null) {
+                            titleBar.onPageScrolled(position, offset);
+                        }
+                    }
 
                     @Override
                     public void onPageSelected(final int position) {
@@ -229,20 +299,40 @@ public class ArticleCollectionActivity extends FragmentActivity {
                             public void run() {
                                 ArticleFragment fragment =(ArticleFragment) articleCollectionPagerAdapter.getItem(position);
                                 fragment.applyTextZoomPref();
+                                syncCurrentWebView(position);
                             }
                         });
 
                     }});
                 viewPager.setCurrentItem(position);
 
-                PagerTitleStrip titleStrip = (PagerTitleStrip)findViewById(R.id.pager_title_strip);
-                titleStrip.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 10);
+                // The header's full height (status bar + toolbar + title bar)
+                // isn't known until it's laid out; once it is, use it as the
+                // content top inset (padding every article WebView so its
+                // content starts just below the header) and remember the
+                // toolbar's height as the collapse range.
+                header.getViewTreeObserver().addOnGlobalLayoutListener(
+                        new ViewTreeObserver.OnGlobalLayoutListener() {
+                            @Override
+                            public void onGlobalLayout() {
+                                headerCollapseRange = toolbarView.getHeight();
+                                int newInset = header.getBottom();
+                                if (newInset > 0 && newInset != contentTopInset) {
+                                    contentTopInset = newInset;
+                                    applyContentInsetToWebViews();
+                                }
+                            }
+                        });
+
                 updateTitle(position);
+                syncCurrentWebView(position);
                 articleCollectionPagerAdapter.registerDataSetObserver(new DataSetObserver() {
                     @Override
                     public void onChanged() {
                         if (articleCollectionPagerAdapter.getCount() == 0) {
                             finish();
+                        } else if (titleBar != null && viewPager != null) {
+                            titleBar.update(viewPager.getCurrentItem(), articleCollectionPagerAdapter);
                         }
                     }
                 });
@@ -378,6 +468,9 @@ public class ArticleCollectionActivity extends FragmentActivity {
         else {
             actionBar.setTitle("???");
         }
+        if (titleBar != null) {
+            titleBar.update(position, articleCollectionPagerAdapter);
+        }
     }
 
 
@@ -402,57 +495,159 @@ public class ArticleCollectionActivity extends FragmentActivity {
     }
 
     // With edge-to-edge enforced (mandatory as of API 36), content draws
-    // behind the system bars unless we handle it ourselves. The Toolbar's
-    // own android:fitsSystemWindows="true" (see the layout file) is what
-    // AppBarLayout.getTotalScrollRange() checks (for a first child) to
-    // subtract the status bar inset back out of the collapsible range: the
-    // Toolbar's measured height grows by that inset (for correct expanded
-    // positioning) but the bar can only ever collapse by its un-padded
-    // height, never past the status bar line. The AppBarLayout's own
-    // statusBarForeground (color set in applyStatusBarAppearance(), not a
-    // static XML attribute - see there for why) paints that area and is
-    // drawn pinned to the true top of the window regardless of the
-    // header's current scroll offset - both are real, built-in AppBarLayout
-    // mechanisms for exactly this combination (collapsing header + edge-to-
-    // edge status bar), not something to hand-roll. (An earlier version of
-    // this method did exactly that - a separate overlay scrim View plus an
-    // AppBarLayout.OnOffsetChangedListener driving viewPager.translationY -
-    // and had visible timing glitches, e.g. a brief flash on a slow drag,
-    // that a manual per-frame listener couldn't avoid; see git history.)
-    // The Toolbar's padding still needs to be applied explicitly, though:
-    // fitsSystemWindows's own DEFAULT dispatch consumes and pads for every
-    // side of the system window insets, not just the top - on a
-    // gesture-nav device that meant the Toolbar also grew a bottom padding
-    // equal to the navigation bar's height, for no reason (it doesn't sit
-    // near the bottom of the screen), wasting that much vertical space
-    // (confirmed empirically). Attaching our own listener directly on the
-    // Toolbar overrides its default per-view dispatch, so only the status
-    // bar's top inset gets applied - the fitsSystemWindows flag itself
-    // stays set, satisfying AppBarLayout's check, independent of how the
-    // padding is actually computed. The ViewPager gets its own listener for
-    // the navigation bar's bottom inset. Left/right are deliberately
-    // ignored on both: in landscape, navigationBars() reports a left inset
-    // for the back-gesture swipe zone (not a visible bar), and the display
-    // cutout reports a similar side inset - reserving visible padding for
-    // either would look wrong, since the toolbar's own background already
-    // extends full-bleed regardless of both.
+    // behind the system bars unless we handle it ourselves. The header
+    // (toolbar + title bar overlay) is offset below the status bar by
+    // setting its topMargin to the status bar inset; the status_bar_scrim
+    // View is sized to that inset and painted the device-dark-aware backdrop
+    // color (drawn on top of the header, so the toolbar slides up behind it).
+    // Each article WebView gets a top padding equal to the header's full
+    // height so its content starts below the header, and a bottom padding
+    // equal to the navigation bar inset; clipToPadding is off so content
+    // scrolls up behind the header. Left/right insets are deliberately
+    // ignored: in landscape, navigationBars() reports a left inset for the
+    // back-gesture swipe zone (not a visible bar) and the display cutout a
+    // similar side inset - reserving visible padding for either would look
+    // wrong since the header background already extends full-bleed.
     private void applyContentInsets() {
-        final View toolbar = findViewById(R.id.toolbar);
-        final AppBarLayout appBar = (AppBarLayout) findViewById(R.id.appbar);
-        if (toolbar == null || appBar == null || viewPager == null) {
+        final View root = findViewById(R.id.article_collection_root);
+        if (root == null || header == null || statusBarScrim == null || viewPager == null) {
             return;
         }
-        ((Application) getApplication()).applyStatusBarAppearance(this, appBar);
-        ViewCompat.setOnApplyWindowInsetsListener(toolbar, (v, windowInsets) -> {
-            Insets bars = windowInsets.getInsets(WindowInsetsCompat.Type.statusBars());
-            v.setPadding(0, bars.top, 0, 0);
+        int scrimColor = ((Application) getApplication()).applyStatusBarAppearance(this);
+        statusBarScrim.setBackgroundColor(scrimColor);
+        ViewCompat.setOnApplyWindowInsetsListener(root, (v, windowInsets) -> {
+            statusBarInset = windowInsets.getInsets(WindowInsetsCompat.Type.statusBars()).top;
+            navBarInset = windowInsets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom;
+            ViewGroup.MarginLayoutParams headerParams =
+                    (ViewGroup.MarginLayoutParams) header.getLayoutParams();
+            headerParams.topMargin = statusBarInset;
+            header.setLayoutParams(headerParams);
+            ViewGroup.LayoutParams scrimParams = statusBarScrim.getLayoutParams();
+            scrimParams.height = statusBarInset;
+            statusBarScrim.setLayoutParams(scrimParams);
             return windowInsets;
         });
-        ViewCompat.setOnApplyWindowInsetsListener(viewPager, (v, windowInsets) -> {
-            Insets bars = windowInsets.getInsets(WindowInsetsCompat.Type.navigationBars());
-            v.setPadding(0, 0, 0, bars.bottom);
-            return windowInsets;
+    }
+
+    // Pads every currently-live article WebView (the current page and its
+    // offscreen neighbours) so content clears the header at the top and the
+    // navigation bar at the bottom, and lets content scroll up behind the
+    // header. Called once the header height is known and whenever it changes.
+    // Re-pads every live WebView (tracked as they're created) rather than
+    // fetching them via the adapter: FragmentStatePagerAdapter.getItem()
+    // creates a brand-new fragment each call (whose WebView is null), so the
+    // padding never reached the WebViews actually on screen.
+    private void applyContentInsetToWebViews() {
+        if (contentTopInset <= 0) {
+            return;
+        }
+        for (ArticleWebView wv : liveWebViews) {
+            padArticleWebView(wv);
+        }
+    }
+
+    private void padArticleWebView(ArticleWebView wv) {
+        wv.setClipToPadding(false);
+        wv.setPadding(0, contentTopInset, 0, navBarInset);
+    }
+
+    // Called by ArticleFragment as each WebView is created, so it starts out
+    // padded and reporting its scroll to us even before it becomes current.
+    // Kept in a weak set so it can be re-padded if the header height changes
+    // after the WebView already exists (e.g. the header lays out a frame after
+    // the first page's WebView is created).
+    void configureArticleWebView(ArticleWebView wv) {
+        wv.setOnArticleScrollListener(articleScrollListener);
+        liveWebViews.add(wv);
+        if (contentTopInset > 0) {
+            padArticleWebView(wv);
+        }
+    }
+
+    // The WebView of whichever page is currently front-and-center (the pager's
+    // primary item), or null if it isn't laid out yet. Derived live rather
+    // than cached, because the initial page's fragment/WebView often doesn't
+    // exist yet at the moment we'd want to cache it.
+    private ArticleWebView currentWebView() {
+        if (articleCollectionPagerAdapter == null) {
+            return null;
+        }
+        ArticleFragment f = articleCollectionPagerAdapter.getPrimaryItem();
+        return f == null ? null : f.getWebView();
+    }
+
+    // Re-syncs the header to whichever page is now current (each page scrolls
+    // independently; a freshly-opened page is at the top with the toolbar
+    // shown). Called on page change and once the initial page has loaded.
+    private void syncCurrentWebView(int position) {
+        cancelSnapAnimation();
+        mainHandler.removeCallbacks(snapRunnable);
+        ArticleWebView wv = currentWebView();
+        if (wv != null) {
+            padArticleWebView(wv);
+            onArticleScroll(wv.getScrollY());
+        } else if (header != null) {
+            header.setTranslationY(0);
+        }
+    }
+
+    // Slides the header to mirror the current article's scroll: it hides by at
+    // most the toolbar's height, so the toolbar disappears behind the status
+    // bar scrim while the title bar comes to rest just below it, still fully
+    // visible. This is a pure function of scrollY (single source of truth), so
+    // toolbar and content can never drift out of unison, and a native fling
+    // keeps calling this as it decelerates - the whole reason it feels like
+    // Chrome/Firefox.
+    private void onArticleScroll(int scrollY) {
+        if (header == null) {
+            return;
+        }
+        int offset = Math.min(Math.max(scrollY, 0), headerCollapseRange);
+        header.setTranslationY(-offset);
+        if (!fingerDown && !snapping) {
+            scheduleSnap();
+        }
+    }
+
+    // After the finger lifts and any fling settles, if the header is left
+    // partway collapsed, animate it (by scrolling the WebView) to the nearest
+    // rest state - fully shown if more than half the toolbar is visible, else
+    // fully hidden - so it never rests half-collapsed.
+    private void scheduleSnap() {
+        mainHandler.removeCallbacks(snapRunnable);
+        mainHandler.postDelayed(snapRunnable, 90);
+    }
+
+    private void snapHeaderIfPartial() {
+        final ArticleWebView wv = currentWebView();
+        if (fingerDown || snapping || wv == null || headerCollapseRange <= 0) {
+            return;
+        }
+        int scrollY = wv.getScrollY();
+        if (scrollY <= 0 || scrollY >= headerCollapseRange) {
+            return; // fully shown or fully hidden already - nothing to snap
+        }
+        int target = scrollY < headerCollapseRange / 2 ? 0 : headerCollapseRange;
+        snapping = true;
+        snapAnimator = ValueAnimator.ofInt(scrollY, target);
+        snapAnimator.setDuration(150);
+        snapAnimator.setInterpolator(new DecelerateInterpolator());
+        snapAnimator.addUpdateListener(a -> wv.scrollTo(0, (int) a.getAnimatedValue()));
+        snapAnimator.addListener(new android.animation.AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(android.animation.Animator animation) {
+                snapping = false;
+            }
         });
+        snapAnimator.start();
+    }
+
+    private void cancelSnapAnimation() {
+        if (snapAnimator != null) {
+            snapAnimator.cancel();
+            snapAnimator = null;
+        }
+        snapping = false;
     }
 
     @Override

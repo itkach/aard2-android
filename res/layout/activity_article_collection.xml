@@ -1,72 +1,65 @@
-<androidx.coordinatorlayout.widget.CoordinatorLayout
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/article_collection_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!-- AppBarLayout's own statusBarForeground (color set programmatically
-         in Application.applyStatusBarAppearance() - status bar icons are
-         drawn by the system and follow the DEVICE's own dark mode, not
-         this app's own separate light/dark preference, so the backdrop
-         color has to be chosen the same way, not via a static ?attr/
-         reference into this activity's own theme) paints the status bar
-         area; AppBarLayout draws it pinned to the true top of the window
-         (it negates its own current scroll offset before drawing), so it
-         stays put even once the Toolbar below has fully hidden.
-         AppBarLayout's own android:fitsSystemWindows="true" is what makes
-         it actually capture the dispatched WindowInsets into its internal
-         lastInsets field at all - confirmed by decompiling it: it installs
-         its own OnApplyWindowInsetsListener on itself in its constructor,
-         but that listener only stores the insets (as opposed to
-         discarding them) when AppBarLayout.getFitsSystemWindows() is
-         true; without it, getTopInset() silently returns 0 forever. The
-         Toolbar ALSO needs its own android:fitsSystemWindows="true" (see
-         below) - that's what getTotalScrollRange() checks (for a first
-         child) to subtract getTopInset() from its collapsible range, so
-         the bar can only ever collapse down to the status bar floor, never
-         past it. Both flags are required together; either alone is a
-         silent no-op. All of this is real, built-in AppBarLayout behavior,
-         not something we're approximating (see git history for an
-         earlier, hand-rolled overlay-scrim + OnOffsetChangedListener /
-         translationY version that had visible timing glitches a manual
-         per-frame listener couldn't avoid). -->
-    <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/appbar"
+    <!-- The article pager fills the whole window (edge to edge). Each page is
+         an ArticleWebView that scrolls and flings entirely natively; the
+         header below is slid to mirror the current WebView's scroll (see
+         ArticleCollectionActivity). Content is kept below the header by top
+         padding applied to each WebView at runtime, with clipToPadding=false
+         so it scrolls up behind the header. -->
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/pager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <!-- Collapsing header: the Toolbar plus the always-visible swipe-title
+         bar, stacked. Its top is offset below the status bar (topMargin set
+         to the status bar inset at runtime) and it is slid up via
+         translationY by exactly the TOOLBAR's height as the article scrolls -
+         so the toolbar disappears behind the status bar scrim while the title
+         bar comes to rest just below the status bar, staying fully visible. -->
+    <LinearLayout
+        android:id="@+id/header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:fitsSystemWindows="true">
+        android:layout_gravity="top"
+        android:orientation="vertical">
 
         <android.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:minHeight="?android:attr/actionBarSize"
+            android:layout_height="?android:attr/actionBarSize"
             android:background="?attr/colorPrimary"
-            android:fitsSystemWindows="true"
             android:titleTextColor="?attr/colorOnPrimary"
             android:subtitleTextColor="?attr/colorOnPrimary"
             android:theme="@style/ThemeOverlay.Aard2.Toolbar"
-            android:popupTheme="@style/ThemeOverlay.Aard2.ToolbarPopup"
-            app:layout_scrollFlags="scroll|enterAlways" />
+            android:popupTheme="@style/ThemeOverlay.Aard2.ToolbarPopup" />
 
-    </com.google.android.material.appbar.AppBarLayout>
-
-    <androidx.viewpager.widget.ViewPager
-        android:id="@+id/pager"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
-
-        <androidx.viewpager.widget.PagerTitleStrip
-            android:id="@+id/pager_title_strip"
-            android:background="?attr/colorSurfaceVariant"
+        <!-- Swipe-title bar (always visible): the faded prev | current | next
+             strip, reflecting the pager. -->
+        <itkach.aard2.ArticleTitleStrip
+            android:id="@+id/article_title_bar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="top"
+            android:background="?attr/colorSurfaceVariant"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
             android:paddingTop="2dp"
             android:paddingBottom="2dp" />
 
-    </androidx.viewpager.widget.ViewPager>
+    </LinearLayout>
 
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+    <!-- Opaque strip over the status bar area, drawn on top of the header so
+         the toolbar slides up behind it. Height and color set at runtime
+         (color follows the DEVICE's dark mode, matching the system status bar
+         icons, not this app's own light/dark preference). -->
+    <View
+        android:id="@+id/status_bar_scrim"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_gravity="top" />
+
+</FrameLayout>
