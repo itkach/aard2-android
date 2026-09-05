@@ -39,6 +39,7 @@ class IconMaker {
     static final char IC_LEVEL_UP = '\uf148';
     static final char IC_BAN = '\uf05e';
     static final char IC_FULLSCREEN = '\uf065';
+    static final char IC_RANDOM = '\uf074';
 
 
     static FontDrawable make(Context context, char c, int sizeDp, int color) {

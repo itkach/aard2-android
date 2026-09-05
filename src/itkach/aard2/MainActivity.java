@@ -21,11 +21,15 @@ import android.view.ActionMode;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.ImageButton;
+import android.widget.SearchView;
 import android.widget.Toast;
 import android.widget.Toolbar;
 
 import com.google.android.material.tabs.TabLayout;
 
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.regex.Pattern;
 
 import itkach.slob.Slob;
@@ -35,6 +39,9 @@ public class MainActivity extends FragmentActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
     private AppSectionsPagerAdapter appSectionsPagerAdapter;
     private ViewPager viewPager;
+    private SearchView searchView;
+    private View btnRandomArticle;
+    private Timer lookupTimer;
 
     private Pattern[] NO_PASTE_PATTERNS = new Pattern[]{
             Patterns.WEB_URL,
@@ -54,12 +61,51 @@ public class MainActivity extends FragmentActivity {
         Toolbar toolbar = getToolbar();
         setActionBar(toolbar);
         final ActionBar actionBar = getActionBar();
-        // R.drawable.ic_launcher is an adaptive icon meant for the launcher's
-        // own masking/inset conventions - drawn directly at Toolbar icon
-        // size it clips oddly. R.drawable.aard2 is the plain underlying
-        // image the adaptive icon itself wraps.
-        toolbar.setNavigationIcon(R.drawable.aard2);
-        toolbar.setNavigationOnClickListener(v -> {
+        actionBar.setDisplayShowHomeEnabled(false);
+        actionBar.setDisplayHomeAsUpEnabled(false);
+
+        lookupTimer = new Timer();
+        searchView = toolbar.findViewById(R.id.fldLookup);
+        searchView.setSubmitButtonEnabled(false);
+        searchView.setOnCloseListener(() -> true);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+
+            TimerTask scheduledLookup = null;
+
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                onQueryTextChange(query);
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                TimerTask doLookup = new TimerTask() {
+                    @Override
+                    public void run() {
+                        final String query = searchView.getQuery().toString();
+                        if (app.getLookupQuery().equals(query)) {
+                            return;
+                        }
+                        runOnUiThread(() -> app.lookup(query));
+                        scheduledLookup = null;
+                    }
+                };
+                final String query = searchView.getQuery().toString();
+                if (!app.getLookupQuery().equals(query)) {
+                    if (scheduledLookup != null) {
+                        scheduledLookup.cancel();
+                    }
+                    scheduledLookup = doLookup;
+                    lookupTimer.schedule(doLookup, 600);
+                }
+                return true;
+            }
+        });
+
+        btnRandomArticle = toolbar.findViewById(R.id.btnRandomArticle);
+        ((ImageButton) btnRandomArticle).setImageDrawable(IconMaker.actionBar(this, IconMaker.IC_RANDOM));
+        btnRandomArticle.setOnClickListener(v -> {
             Slob.Blob blob = app.random();
             if (blob == null) {
                 Toast.makeText(this,
@@ -98,8 +144,17 @@ public class MainActivity extends FragmentActivity {
             return windowInsets;
         });
 
-        final String[] subtitles = new String[] {
-                getString(R.string.subtitle_lookup),
+        // Position 0 (Lookup) gets no title: its search box is always shown
+        // expanded and needs the Toolbar's full width, and a "Lookup" title
+        // next to a search box would be redundant anyway. Every other tab's
+        // title is just its own name, replacing the app-wide "Aard 2" title
+        // (which used to appear alongside a now-removed logo/random-article
+        // button) - a title that's specific to the visible screen leaves
+        // much more room for the search box than app name + tab name both
+        // did together, which is what caused both to get ellipsized on a
+        // typical phone width.
+        final String[] titles = new String[] {
+                "",
                 getString(R.string.subtitle_bookmark),
                 getString(R.string.subtitle_history),
                 getString(R.string.subtitle_dictionaries),
@@ -107,22 +162,22 @@ public class MainActivity extends FragmentActivity {
         };
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
-        tabLayout.setupWithViewPager(viewPager);
 
-        Drawable[] tabIcons = new Drawable[5];
-        tabIcons[0] = IconMaker.tab(this, IconMaker.IC_SEARCH);
-        tabIcons[1] = IconMaker.tab(this, IconMaker.IC_BOOKMARK);
-        tabIcons[2] = IconMaker.tab(this, IconMaker.IC_HISTORY);
-        tabIcons[3] = IconMaker.tab(this, IconMaker.IC_DICTIONARY);
-        tabIcons[4] = IconMaker.tab(this, IconMaker.IC_SETTINGS);
-        for (int i = 0; i < appSectionsPagerAdapter.getCount(); i++) {
-            tabLayout.getTabAt(i).setIcon(tabIcons[i]);
-        }
-
+        // Registered before setupWithViewPager() so this listener also
+        // receives the initial tab-selected notification setup fires for
+        // the starting position - otherwise the title would stay unset
+        // (defaulting back to the app's manifest label) until the user
+        // first switches tabs.
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                actionBar.setSubtitle(subtitles[tab.getPosition()]);
+                actionBar.setTitle(titles[tab.getPosition()]);
+                boolean isLookup = tab.getPosition() == 0;
+                searchView.setVisibility(isLookup ? View.VISIBLE : View.GONE);
+                btnRandomArticle.setVisibility(isLookup ? View.VISIBLE : View.GONE);
+                if (isLookup) {
+                    revealLookupTab();
+                }
             }
 
             @Override
@@ -145,6 +200,18 @@ public class MainActivity extends FragmentActivity {
             }
         });
 
+        tabLayout.setupWithViewPager(viewPager);
+
+        Drawable[] tabIcons = new Drawable[5];
+        tabIcons[0] = IconMaker.tab(this, IconMaker.IC_SEARCH);
+        tabIcons[1] = IconMaker.tab(this, IconMaker.IC_BOOKMARK);
+        tabIcons[2] = IconMaker.tab(this, IconMaker.IC_HISTORY);
+        tabIcons[3] = IconMaker.tab(this, IconMaker.IC_DICTIONARY);
+        tabIcons[4] = IconMaker.tab(this, IconMaker.IC_SETTINGS);
+        for (int i = 0; i < appSectionsPagerAdapter.getCount(); i++) {
+            tabLayout.getTabAt(i).setIcon(tabIcons[i]);
+        }
+
         if (savedInstanceState != null) {
             onRestoreInstanceState(savedInstanceState);
         } else {
@@ -157,6 +224,26 @@ public class MainActivity extends FragmentActivity {
 
     Toolbar getToolbar() {
         return (Toolbar) findViewById(R.id.toolbar);
+    }
+
+    // Runs whenever the Lookup tab becomes the visible one - either via
+    // direct tab selection, or (see onWindowFocusChanged) when the window
+    // regains focus with clipboard text waiting to auto-paste. Mirrors what
+    // used to run in LookupFragment.onPrepareOptionsMenu, back when the
+    // search box was a menu-hosted action view refreshed by the options-menu
+    // lifecycle; now it's called directly since there's no menu involved.
+    private void revealLookupTab() {
+        final Application app = (Application) getApplication();
+        if (app.autoPaste()) {
+            CharSequence clipboard = Clipboard.take(this);
+            if (clipboard != null) {
+                app.lookup(clipboard.toString(), false);
+            }
+        }
+        searchView.setQuery(app.getLookupQuery(), true);
+        if (app.lastResult.getCount() > 0) {
+            searchView.clearFocus();
+        }
     }
 
     // See ArticleCollectionActivity's identical fix: the multi-select delete
@@ -197,6 +284,11 @@ public class MainActivity extends FragmentActivity {
         outState.putInt("currentSection", viewPager.getCurrentItem());
     }
 
+    @Override
+    protected void onDestroy() {
+        lookupTimer.cancel();
+        super.onDestroy();
+    }
 
     @Override
     protected void onPause() {
@@ -346,7 +438,7 @@ public class MainActivity extends FragmentActivity {
         CharSequence text = Clipboard.peek(this);
         if (text != null) {
             viewPager.setCurrentItem(0);
-            invalidateOptionsMenu();
+            revealLookupTab();
         }
     }
 
