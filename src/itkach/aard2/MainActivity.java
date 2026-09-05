@@ -335,7 +335,7 @@ public class MainActivity extends FragmentActivity {
         }
 
         @Override
-        char getEmptyIcon() {
+        IconMaker.Glyph getEmptyIcon() {
             return IconMaker.IC_BOOKMARK;
         }
 
@@ -369,7 +369,7 @@ public class MainActivity extends FragmentActivity {
         }
 
         @Override
-        char getEmptyIcon() {
+        IconMaker.Glyph getEmptyIcon() {
             return IconMaker.IC_HISTORY;
         }
 

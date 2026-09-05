@@ -32,7 +32,7 @@ public class DictionariesFragment extends BaseListFragment {
 
     private DictionaryListAdapter listAdapter;
 
-    protected char getEmptyIcon() {
+    protected IconMaker.Glyph getEmptyIcon() {
         return IconMaker.IC_DICTIONARY;
     }
 

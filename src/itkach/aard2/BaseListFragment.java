@@ -20,7 +20,7 @@ public abstract class BaseListFragment extends SimpleListFragment {
     protected View emptyView;
     ActionMode actionMode;
 
-    abstract char getEmptyIcon();
+    abstract IconMaker.Glyph getEmptyIcon();
 
     abstract CharSequence getEmptyText();
 

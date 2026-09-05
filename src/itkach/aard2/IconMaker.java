@@ -9,49 +9,75 @@ import com.kazy.fontdrawable.FontDrawable;
 
 class IconMaker {
 
-    static final String CUSTOM_FONT_PATH = "fontawesome-4.2.0.ttf";
+    // Font Awesome 7 Free splits each icon's outline ("regular") and filled
+    // ("solid") look into separate font files sharing the same codepoint,
+    // rather than FA4's separate "-o"-suffixed icon+codepoint per outline
+    // variant - so a Glyph has to carry which file it comes from, not just
+    // which character. Each asset is a subset built with fonttools
+    // (pyftsubset) containing only the glyphs actually used below, not the
+    // full ~2000-icon Free set (subsetting is why fontawesome-7-solid.otf is
+    // ~5KB and fontawesome-7-regular.otf ~2KB, rather than several hundred KB
+    // each) - see git history for the exact pyftsubset invocation if these
+    // ever need to be regenerated (e.g. to add another icon).
+    private static final String FONT_SOLID = "fontawesome-7-solid.otf";
+    private static final String FONT_REGULAR = "fontawesome-7-regular.otf";
 
-    static final char IC_SEARCH = '\uf002';
-    static final char IC_BOOKMARK = '\uf02e';
-    static final char IC_BOOKMARK_O = '\uf097';
-    static final char IC_HISTORY = '\uf1da';
-    static final char IC_DICTIONARY = '\uf02d';
-    static final char IC_SETTINGS = '\uf013';
-    static final char IC_RELOAD = '\uf021';
-    static final char IC_FILTER = '\uf0b0';
-    static final char IC_SORT_DESC = '\uf161';
-    static final char IC_SORT_ASC = '\uf160';
-    static final char IC_CLOCK = '\uf017';
-    static final char IC_LIST = '\uf03a';
-    static final char IC_TRASH = '\uf1f8';
-    static final char IC_LICENSE = '\uf19c';
-    static final char IC_EXTERNAL_LINK = '\uf08e';
-    static final char IC_FILE_ARCHIVE = '\uf1c6';
-    static final char IC_ERROR = '\uf071';
-    static final char IC_COPYRIGHT = '\uf1f9';
-    static final char IC_SELECT_ALL = '\uf046';
-    static final char IC_ADD = '\uf067';
-    static final char IC_ANGLE_UP = '\uf106';
-    static final char IC_ANGLE_DOWN = '\uf107';
-    static final char IC_STAR = '\uf005';
-    static final char IC_STAR_O = '\uf006';
-    static final char IC_FOLDER = '\uf07b';
-    static final char IC_LEVEL_UP = '\uf148';
-    static final char IC_BAN = '\uf05e';
-    static final char IC_FULLSCREEN = '\uf065';
-    static final char IC_RANDOM = '\uf074';
+    static final class Glyph {
+        final char code;
+        final String font;
+        private Glyph(char code, String font) {
+            this.code = code;
+            this.font = font;
+        }
+    }
 
+    private static Glyph solid(char code) {
+        return new Glyph(code, FONT_SOLID);
+    }
 
-    static FontDrawable make(Context context, char c, int sizeDp, int color) {
-        FontDrawable drawable = new FontDrawable.Builder(context, c, CUSTOM_FONT_PATH)
+    private static Glyph regular(char code) {
+        return new Glyph(code, FONT_REGULAR);
+    }
+
+    static final Glyph IC_SEARCH = solid('');            // magnifying-glass
+    static final Glyph IC_BOOKMARK = solid('');          // bookmark
+    static final Glyph IC_BOOKMARK_O = regular('');      // bookmark (outline)
+    static final Glyph IC_HISTORY = solid('');           // clock-rotate-left
+    static final Glyph IC_DICTIONARY = solid('');        // book
+    static final Glyph IC_SETTINGS = solid('');          // gear
+    static final Glyph IC_RELOAD = solid('');            // arrows-rotate
+    static final Glyph IC_FILTER = solid('');            // filter
+    static final Glyph IC_SORT_DESC = solid('');         // arrow-up-wide-short
+    static final Glyph IC_SORT_ASC = solid('');          // arrow-down-wide-short
+    static final Glyph IC_CLOCK = regular('');           // clock (outline)
+    static final Glyph IC_LIST = solid('');              // list
+    static final Glyph IC_TRASH = solid('');             // trash (FA7 Free has no outline style for this one)
+    static final Glyph IC_LICENSE = solid('');           // building-columns
+    static final Glyph IC_EXTERNAL_LINK = solid('');     // arrow-up-right-from-square
+    static final Glyph IC_FILE_ARCHIVE = regular('');    // file-zipper (outline)
+    static final Glyph IC_ERROR = solid('');             // triangle-exclamation
+    static final Glyph IC_COPYRIGHT = solid('');         // copyright
+    static final Glyph IC_SELECT_ALL = regular('');      // square-check (outline) - codepoint changed from FA4's f046
+    static final Glyph IC_ADD = solid('+');               // plus - FA7 maps this to the literal ASCII '+', changed from FA4's f067
+    static final Glyph IC_ANGLE_UP = solid('');          // angle-up
+    static final Glyph IC_ANGLE_DOWN = solid('');        // angle-down
+    static final Glyph IC_STAR = solid('');              // star
+    static final Glyph IC_STAR_O = regular('');          // star (outline) - same codepoint as IC_STAR, different font file
+    static final Glyph IC_FOLDER = solid('');            // folder
+    static final Glyph IC_LEVEL_UP = solid('');          // arrow-turn-up
+    static final Glyph IC_BAN = solid('');               // ban
+    static final Glyph IC_RANDOM = solid('');            // dice
+
+    static FontDrawable make(Context context, Glyph g, int sizeDp, int color) {
+        FontDrawable drawable = new FontDrawable.Builder(context, g.code, g.font)
                 .setSizeDp(sizeDp)
                 .setColor(color)
                 .build();
         return drawable;
     }
 
-    static FontDrawable makeWithColorRes(Context context, char c, int sizeDp, int colorRes) {
-        return make(context, c, sizeDp, context.getResources().getColor(colorRes));
+    static FontDrawable makeWithColorRes(Context context, Glyph g, int sizeDp, int colorRes) {
+        return make(context, g, sizeDp, context.getResources().getColor(colorRes));
     }
 
     // Resolves a theme attribute (framework or library) to an actual color,
@@ -66,17 +92,17 @@ class IconMaker {
         return fallbackColor;
     }
 
-    static FontDrawable tab(Context context, char c) {
-        return makeWithColorRes(context, c, 21, R.color.tab_icon);
+    static FontDrawable tab(Context context, Glyph g) {
+        return makeWithColorRes(context, g, 21, R.color.tab_icon);
     }
 
     // Content-area accent icons (favorite star, expand/collapse chevron,
     // trash, add) - tied to the theme's brand color (colorPrimary) so they
     // stay consistent with the rest of the UI instead of a separate
     // hardcoded accent.
-    static FontDrawable list(Context context, char c) {
+    static FontDrawable list(Context context, Glyph g) {
         int color = resolveThemeColor(context, com.google.android.material.R.attr.colorPrimary, 0xff0099cc);
-        return make(context, c, 26, color);
+        return make(context, g, 26, color);
     }
 
     // These icons are drawn directly in a Toolbar (bookmark toggle, CAB
@@ -85,22 +111,22 @@ class IconMaker {
     // @android:color/secondary_text_dark unconditionally (as this used to)
     // ignored the active theme entirely and read as a washed-out,
     // disabled-looking grey once that stopped coincidentally matching.
-    static FontDrawable actionBar(Context context, char c) {
+    static FontDrawable actionBar(Context context, Glyph g) {
         int color = resolveThemeColor(context, com.google.android.material.R.attr.colorOnPrimary, 0xff000000);
-        return make(context, c, 26, color);
+        return make(context, g, 26, color);
     }
 
-    static FontDrawable text(Context context, char c) {
+    static FontDrawable text(Context context, Glyph g) {
         int color = resolveThemeColor(context, android.R.attr.textColorSecondary, 0xff888888);
-        return make(context, c, 16, color);
+        return make(context, g, 16, color);
     }
 
-    static FontDrawable errorText(Context context, char c) {
-        return makeWithColorRes(context, c, 16, android.R.color.holo_red_dark);
+    static FontDrawable errorText(Context context, Glyph g) {
+        return makeWithColorRes(context, g, 16, android.R.color.holo_red_dark);
     }
 
-    static FontDrawable emptyView(Context context, char c) {
-        return makeWithColorRes(context, c, 52, R.color.empty_view_icon);
+    static FontDrawable emptyView(Context context, Glyph g) {
+        return makeWithColorRes(context, g, 52, R.color.empty_view_icon);
     }
 
 }

@@ -187,7 +187,7 @@ public class DictionaryListAdapter extends BaseAdapter {
 
         ImageView btnToggleDetail = (ImageView) view
                 .findViewById(R.id.dictionary_btn_toggle_detail);
-        char toggleIcon = desc.expandDetail ? IconMaker.IC_ANGLE_UP : IconMaker.IC_ANGLE_DOWN;
+        IconMaker.Glyph toggleIcon = desc.expandDetail ? IconMaker.IC_ANGLE_UP : IconMaker.IC_ANGLE_DOWN;
         btnToggleDetail.setImageDrawable(IconMaker.list(context, toggleIcon));
 
         View viewDetailToggle = view
@@ -201,7 +201,7 @@ public class DictionaryListAdapter extends BaseAdapter {
 
         ImageView btnToggleFav = (ImageView) view
                 .findViewById(R.id.dictionary_btn_toggle_fav);
-        char favIcon = desc.priority > 0 ? IconMaker.IC_STAR: IconMaker.IC_STAR_O;
+        IconMaker.Glyph favIcon = desc.priority > 0 ? IconMaker.IC_STAR: IconMaker.IC_STAR_O;
         btnToggleFav.setImageDrawable(IconMaker.list(context, favIcon));
         btnToggleFav.setTag(position);
         return view;
