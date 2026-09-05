@@ -401,26 +401,52 @@ public class ArticleCollectionActivity extends FragmentActivity {
     }
 
     // With edge-to-edge enforced (mandatory as of API 36), content draws
-    // behind the system bars unless we pad it ourselves. The status bar
-    // inset pads the AppBarLayout (which is wrap_content, so this grows it
-    // without squishing the Toolbar's own fixed height); the navigation bar
-    // inset pads the ViewPager's bottom. Left/right are deliberately
-    // ignored: in landscape, navigationBars() reports a left inset for the
-    // back-gesture swipe zone (not a visible bar), and the display cutout
-    // reports a similar side inset - reserving visible padding for either
-    // would look wrong, since the toolbar's own background already extends
-    // full-bleed regardless of both.
+    // behind the system bars unless we handle it ourselves. The Toolbar's
+    // own android:fitsSystemWindows="true" (see the layout file) is what
+    // AppBarLayout.getTotalScrollRange() checks (for a first child) to
+    // subtract the status bar inset back out of the collapsible range: the
+    // Toolbar's measured height grows by that inset (for correct expanded
+    // positioning) but the bar can only ever collapse by its un-padded
+    // height, never past the status bar line. The AppBarLayout's own
+    // app:statusBarForeground paints that area with the Toolbar's color and
+    // is drawn pinned to the true top of the window regardless of the
+    // header's current scroll offset - both are real, built-in AppBarLayout
+    // mechanisms for exactly this combination (collapsing header + edge-to-
+    // edge status bar), not something to hand-roll. (An earlier version of
+    // this method did exactly that - a separate overlay scrim View plus an
+    // AppBarLayout.OnOffsetChangedListener driving viewPager.translationY -
+    // and had visible timing glitches, e.g. a brief flash on a slow drag,
+    // that a manual per-frame listener couldn't avoid; see git history.)
+    // The Toolbar's padding still needs to be applied explicitly, though:
+    // fitsSystemWindows's own DEFAULT dispatch consumes and pads for every
+    // side of the system window insets, not just the top - on a
+    // gesture-nav device that meant the Toolbar also grew a bottom padding
+    // equal to the navigation bar's height, for no reason (it doesn't sit
+    // near the bottom of the screen), wasting that much vertical space
+    // (confirmed empirically). Attaching our own listener directly on the
+    // Toolbar overrides its default per-view dispatch, so only the status
+    // bar's top inset gets applied - the fitsSystemWindows flag itself
+    // stays set, satisfying AppBarLayout's check, independent of how the
+    // padding is actually computed. The ViewPager gets its own listener for
+    // the navigation bar's bottom inset. Left/right are deliberately
+    // ignored on both: in landscape, navigationBars() reports a left inset
+    // for the back-gesture swipe zone (not a visible bar), and the display
+    // cutout reports a similar side inset - reserving visible padding for
+    // either would look wrong, since the toolbar's own background already
+    // extends full-bleed regardless of both.
     private void applyContentInsets() {
-        View root = findViewById(R.id.article_collection_root);
-        final View appBar = findViewById(R.id.appbar);
-        if (root == null || appBar == null || viewPager == null) {
+        final View toolbar = findViewById(R.id.toolbar);
+        if (toolbar == null || viewPager == null) {
             return;
         }
-        ViewCompat.setOnApplyWindowInsetsListener(root, (v, windowInsets) -> {
-            Insets bars = windowInsets.getInsets(
-                    WindowInsetsCompat.Type.statusBars() | WindowInsetsCompat.Type.navigationBars());
-            appBar.setPadding(0, bars.top, 0, 0);
-            viewPager.setPadding(0, 0, 0, bars.bottom);
+        ViewCompat.setOnApplyWindowInsetsListener(toolbar, (v, windowInsets) -> {
+            Insets bars = windowInsets.getInsets(WindowInsetsCompat.Type.statusBars());
+            v.setPadding(0, bars.top, 0, 0);
+            return windowInsets;
+        });
+        ViewCompat.setOnApplyWindowInsetsListener(viewPager, (v, windowInsets) -> {
+            Insets bars = windowInsets.getInsets(WindowInsetsCompat.Type.navigationBars());
+            v.setPadding(0, 0, 0, bars.bottom);
             return windowInsets;
         });
     }

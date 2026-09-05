@@ -5,16 +5,41 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <!-- app:statusBarForeground paints the status bar area with the
+         Toolbar's own color; AppBarLayout draws it pinned to the true top
+         of the window (it negates its own current scroll offset before
+         drawing), so it stays put even once the Toolbar below has fully
+         hidden. AppBarLayout's own android:fitsSystemWindows="true" is what
+         makes it actually capture the dispatched WindowInsets into its
+         internal lastInsets field at all - confirmed by decompiling it:
+         it installs its own OnApplyWindowInsetsListener on itself in its
+         constructor, but that listener only stores the insets (as opposed
+         to discarding them) when AppBarLayout.getFitsSystemWindows() is
+         true; without it, getTopInset() silently returns 0 forever. The
+         Toolbar ALSO needs its own android:fitsSystemWindows="true" (see
+         below) - that's what getTotalScrollRange() checks (for a first
+         child) to subtract getTopInset() from its collapsible range, so
+         the bar can only ever collapse down to the status bar floor, never
+         past it. Both flags are required together; either alone is a
+         silent no-op. All of this is real, built-in AppBarLayout behavior,
+         not something we're approximating (see git history for an
+         earlier, hand-rolled overlay-scrim + OnOffsetChangedListener /
+         translationY version that had visible timing glitches a manual
+         per-frame listener couldn't avoid). -->
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:fitsSystemWindows="true"
+        app:statusBarForeground="?attr/colorPrimary">
 
         <android.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="?android:attr/actionBarSize"
+            android:layout_height="wrap_content"
+            android:minHeight="?android:attr/actionBarSize"
             android:background="?attr/colorPrimary"
+            android:fitsSystemWindows="true"
             android:titleTextColor="?attr/colorOnPrimary"
             android:subtitleTextColor="?attr/colorOnPrimary"
             android:theme="@style/ThemeOverlay.Aard2.Toolbar"
