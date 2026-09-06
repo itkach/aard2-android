@@ -139,13 +139,6 @@ public class ArticleFragment extends Fragment {
         View layout = inflater.inflate(R.layout.article_view, container, false);
         final ContentLoadingProgressBar progressBar = (ContentLoadingProgressBar) layout.findViewById(R.id.webViewPogress);
         view = (ArticleWebView) layout.findViewById(R.id.webView);
-        // Let the host wire up the scroll-away header (top/bottom padding so
-        // content clears the header, and a scroll listener so this WebView's
-        // native scroll drives the toolbar).
-        Activity host = getActivity();
-        if (host instanceof ArticleCollectionActivity) {
-            ((ArticleCollectionActivity) host).configureArticleWebView(view);
-        }
         view.restoreState(savedInstanceState);
         view.loadUrl(url);
         view.setWebChromeClient(new WebChromeClient() {

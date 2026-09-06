@@ -1,32 +1,25 @@
-<FrameLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/article_collection_root"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
-    <!-- The article pager fills the whole window (edge to edge). Each page is
-         an ArticleWebView that scrolls and flings entirely natively; the
-         header below is slid to mirror the current WebView's scroll (see
-         ArticleCollectionActivity). Content is kept below the header by top
-         padding applied to each WebView at runtime, with clipToPadding=false
-         so it scrolls up behind the header. -->
-    <androidx.viewpager.widget.ViewPager
-        android:id="@+id/pager"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-
-    <!-- Collapsing header: the Toolbar plus the always-visible swipe-title
-         bar, stacked. Its top is offset below the status bar (topMargin set
-         to the status bar inset at runtime) and it is slid up via
-         translationY by exactly the TOOLBAR's height as the article scrolls -
-         so the toolbar disappears behind the status bar scrim while the title
-         bar comes to rest just below the status bar, staying fully visible. -->
-    <LinearLayout
-        android:id="@+id/header"
+    <!-- Fixed header: the Toolbar, with AppBarLayout supplying the elevation
+         shadow that separates it from the article content below.
+         android:fitsSystemWindows="true" (on the AppBarLayout, NOT the
+         Toolbar) is what lets AppBarLayout capture the status bar inset into
+         its own lastInsets and reserve that space above the Toolbar - a plain
+         gap painted by its statusBarForeground (color set at runtime in
+         Application.applyStatusBarAppearance, which follows the DEVICE's dark
+         mode so it matches the system-drawn status bar icons rather than this
+         app's own light/dark preference). No manual top padding here: that
+         would double the reserved inset. -->
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="top"
-        android:orientation="vertical">
+        android:fitsSystemWindows="true">
 
         <android.widget.Toolbar
             android:id="@+id/toolbar"
@@ -38,28 +31,31 @@
             android:theme="@style/ThemeOverlay.Aard2.Toolbar"
             android:popupTheme="@style/ThemeOverlay.Aard2.ToolbarPopup" />
 
-        <!-- Swipe-title bar (always visible): the faded prev | current | next
-             strip, reflecting the pager. -->
-        <itkach.aard2.ArticleTitleStrip
-            android:id="@+id/article_title_bar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="?attr/colorSurfaceVariant"
-            android:paddingLeft="16dp"
-            android:paddingRight="16dp"
-            android:paddingTop="2dp"
-            android:paddingBottom="2dp" />
+    </com.google.android.material.appbar.AppBarLayout>
 
-    </LinearLayout>
-
-    <!-- Opaque strip over the status bar area, drawn on top of the header so
-         the toolbar slides up behind it. Height and color set at runtime
-         (color follows the DEVICE's dark mode, matching the system status bar
-         icons, not this app's own light/dark preference). -->
-    <View
-        android:id="@+id/status_bar_scrim"
+    <!-- The article pager fills the rest of the window. Each page is an
+         ArticleWebView whose content starts below the pager's title strip
+         purely by layout - no WebView padding or injected CSS - so it works
+         for every content type a WebView can display, not just HTML. The
+         swipe-title strip is a direct child of the ViewPager (the only place
+         PagerTitleStrip can live) and pins itself to the pager's top. -->
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/pager"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_gravity="top" />
+        android:layout_weight="1">
 
-</FrameLayout>
+        <androidx.viewpager.widget.PagerTitleStrip
+            android:id="@+id/pager_title_strip"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top"
+            android:background="?attr/colorSurfaceVariant"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            android:paddingTop="4dp"
+            android:paddingBottom="4dp" />
+
+    </androidx.viewpager.widget.ViewPager>
+
+</LinearLayout>
