@@ -10,11 +10,12 @@ import android.os.Bundle;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentPagerAdapter;
-import androidx.viewpager.widget.ViewPager;
+import androidx.viewpager2.adapter.FragmentStateAdapter;
+import androidx.viewpager2.widget.ViewPager2;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.ActionMode;
@@ -29,6 +30,7 @@ import android.widget.Toolbar;
 
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.tabs.TabLayout;
+import com.google.android.material.tabs.TabLayoutMediator;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -40,7 +42,7 @@ public class MainActivity extends FragmentActivity {
 
     private static final String TAG = MainActivity.class.getSimpleName();
     private AppSectionsPagerAdapter appSectionsPagerAdapter;
-    private ViewPager viewPager;
+    private ViewPager2 viewPager;
     private SearchView searchView;
     private View btnRandomArticle;
     private Timer lookupTimer;
@@ -58,8 +60,22 @@ public class MainActivity extends FragmentActivity {
         app.installTheme(this);
         setContentView(R.layout.activity_main);
 
-        appSectionsPagerAdapter = new AppSectionsPagerAdapter(
-                getSupportFragmentManager());
+        appSectionsPagerAdapter = new AppSectionsPagerAdapter(this);
+
+        // ViewPager2 + FragmentStateAdapter doesn't toggle each page fragment's
+        // options-menu visibility the way FragmentPagerAdapter's setPrimaryItem
+        // did, and menu dispatch ignores lifecycle state - so every offscreen
+        // (STARTED) tab would otherwise contribute its menu items at once.
+        // Re-assert "only the current tab's menu is visible" whenever any tab
+        // fragment reaches STARTED (offscreen instantiation) and on every page
+        // change (below).
+        getSupportFragmentManager().registerFragmentLifecycleCallbacks(
+                new FragmentManager.FragmentLifecycleCallbacks() {
+                    @Override
+                    public void onFragmentStarted(@NonNull FragmentManager fm, @NonNull Fragment f) {
+                        updateMenuVisibility(viewPager.getCurrentItem());
+                    }
+                }, false);
 
         Toolbar toolbar = getToolbar();
         setActionBar(toolbar);
@@ -122,9 +138,21 @@ public class MainActivity extends FragmentActivity {
         });
 
         final AppBarLayout appBar = (AppBarLayout) findViewById(R.id.appbar);
-        viewPager = (ViewPager) findViewById(R.id.pager);
-        viewPager.setOffscreenPageLimit(appSectionsPagerAdapter.getCount());
+        viewPager = (ViewPager2) findViewById(R.id.pager);
+        // Keep all tabs instantiated (they were, under the old pager) so their
+        // state survives switching between them and getFragment() can reach any
+        // of them.
+        viewPager.setOffscreenPageLimit(appSectionsPagerAdapter.getItemCount() - 1);
         viewPager.setAdapter(appSectionsPagerAdapter);
+        viewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+            @Override
+            public void onPageSelected(int position) {
+                updateMenuVisibility(position);
+                // Drives the title and Lookup search box/dice via
+                // onPrepareOptionsMenu - see there.
+                invalidateOptionsMenu();
+            }
+        });
 
         // With edge-to-edge enforced (mandatory as of API 36), content draws
         // behind the system bars unless we handle it ourselves. The status
@@ -189,7 +217,7 @@ public class MainActivity extends FragmentActivity {
 
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
-                Fragment frag = appSectionsPagerAdapter.getItem(tab.getPosition());
+                Fragment frag = getFragment(tab.getPosition());
                 if (frag instanceof BaseListFragment) {
                     ((BaseListFragment)frag).finishActionMode();
                 }
@@ -207,26 +235,47 @@ public class MainActivity extends FragmentActivity {
             }
         });
 
-        tabLayout.setupWithViewPager(viewPager);
-
-        Drawable[] tabIcons = new Drawable[5];
+        final Drawable[] tabIcons = new Drawable[5];
         tabIcons[0] = IconMaker.tab(this, IconMaker.IC_SEARCH);
         tabIcons[1] = IconMaker.tab(this, IconMaker.IC_BOOKMARK);
         tabIcons[2] = IconMaker.tab(this, IconMaker.IC_HISTORY);
         tabIcons[3] = IconMaker.tab(this, IconMaker.IC_DICTIONARY);
         tabIcons[4] = IconMaker.tab(this, IconMaker.IC_SETTINGS);
-        for (int i = 0; i < appSectionsPagerAdapter.getCount(); i++) {
-            tabLayout.getTabAt(i).setIcon(tabIcons[i]);
+        // TabLayoutMediator is ViewPager2's replacement for
+        // TabLayout.setupWithViewPager: it keeps tabs and pages in sync and
+        // configures each tab (here, just its icon) on demand.
+        new TabLayoutMediator(tabLayout, viewPager,
+                (tab, position) -> tab.setIcon(tabIcons[position])).attach();
+
+        // Don't call onRestoreInstanceState here: the framework calls it after
+        // onStart, and ViewPager2's FragmentStateAdapter can only restore its
+        // state once on a still-'fresh' adapter - restoring it early here (as we
+        // did under the old ViewPager) makes that framework restore throw
+        // "Expected the adapter to be 'fresh'". The current tab is restored by
+        // that framework call (and by ViewPager2's own saved state) instead.
+        if (savedInstanceState == null && app.dictionaries.size() == 0) {
+            viewPager.setCurrentItem(3, false);
         }
 
-        if (savedInstanceState != null) {
-            onRestoreInstanceState(savedInstanceState);
-        } else {
-            if (app.dictionaries.size() == 0) {
-                viewPager.setCurrentItem(3);
+    }
+
+    private Fragment getFragment(int position) {
+        // FragmentStateAdapter tags its fragments "f" + itemId, and our itemId
+        // is the position (default), so this resolves the live fragment for a
+        // tab without the adapter holding references to them.
+        return getSupportFragmentManager().findFragmentByTag("f" + position);
+    }
+
+    // Only the current tab's options menu should contribute to the Toolbar.
+    // ViewPager2 doesn't manage this, so we drive Fragment.setMenuVisibility
+    // ourselves; setMenuVisibility invalidates the options menu on change.
+    private void updateMenuVisibility(int selected) {
+        for (int i = 0; i < appSectionsPagerAdapter.getItemCount(); i++) {
+            Fragment f = getFragment(i);
+            if (f != null) {
+                f.setMenuVisibility(i == selected);
             }
         }
-
     }
 
     Toolbar getToolbar() {
@@ -314,7 +363,7 @@ public class MainActivity extends FragmentActivity {
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         int currentSection = savedInstanceState.getInt("currentSection");
-        viewPager.setCurrentItem(currentSection);
+        viewPager.setCurrentItem(currentSection, false);
     }
 
     @Override
@@ -347,7 +396,7 @@ public class MainActivity extends FragmentActivity {
     @Override
     public void onBackPressed() {
         int currentItem = viewPager.getCurrentItem();
-        Fragment frag = appSectionsPagerAdapter.getItem(currentItem);
+        Fragment frag = getFragment(currentItem);
         Log.d(TAG, "current tab: " + currentItem);
         if (frag instanceof BlobDescriptorListFragment) {
             BlobDescriptorListFragment bdFrag = (BlobDescriptorListFragment)frag;
@@ -429,38 +478,32 @@ public class MainActivity extends FragmentActivity {
 
     }
 
-    public static class AppSectionsPagerAdapter extends FragmentPagerAdapter {
-        private Fragment[]         fragments;
-        LookupFragment             tabLookup;
-        BlobDescriptorListFragment tabBookmarks;
-        BlobDescriptorListFragment tabHistory;
-        DictionariesFragment       tabDictionaries;
-        SettingsFragment           tabSettings;
+    public static class AppSectionsPagerAdapter extends FragmentStateAdapter {
 
-        public AppSectionsPagerAdapter(FragmentManager fm) {
-            super(fm);
-            tabLookup = new LookupFragment();
-            tabBookmarks = new BookmarksFragment();
-            tabHistory = new HistoryFragment();
-            tabDictionaries = new DictionariesFragment();
-            tabSettings = new SettingsFragment();
-            fragments = new Fragment[] { tabLookup, tabBookmarks, tabHistory,
-                    tabDictionaries, tabSettings };
+        public AppSectionsPagerAdapter(FragmentActivity fa) {
+            super(fa);
+        }
+
+        // FragmentStateAdapter creates pages on demand (and destroys distant
+        // ones) rather than the old adapter's up-front array; reach a live
+        // page via MainActivity.getFragment(position), not by holding refs.
+        @NonNull
+        @Override
+        public Fragment createFragment(int position) {
+            switch (position) {
+                case 0: return new LookupFragment();
+                case 1: return new BookmarksFragment();
+                case 2: return new HistoryFragment();
+                case 3: return new DictionariesFragment();
+                case 4: return new SettingsFragment();
+                default:
+                    throw new IllegalArgumentException("Unexpected tab position " + position);
+            }
         }
 
         @Override
-        public Fragment getItem(int i) {
-            return fragments[i];
-        }
-
-        @Override
-        public int getCount() {
-            return fragments.length;
-        }
-
-        @Override
-        public CharSequence getPageTitle(int position) {
-            return "";
+        public int getItemCount() {
+            return 5;
         }
     }
 
@@ -507,7 +550,7 @@ public class MainActivity extends FragmentActivity {
                 viewPager.setCurrentItem(current - 1);
             }
             else {
-                viewPager.setCurrentItem(appSectionsPagerAdapter.getCount() - 1);
+                viewPager.setCurrentItem(appSectionsPagerAdapter.getItemCount() - 1);
             }
             return true;
         }
@@ -517,7 +560,7 @@ public class MainActivity extends FragmentActivity {
                 return false;
             }
             int current = viewPager.getCurrentItem();
-            if (current < appSectionsPagerAdapter.getCount() - 1) {
+            if (current < appSectionsPagerAdapter.getItemCount() - 1) {
                 viewPager.setCurrentItem(current + 1);
             }
             else {

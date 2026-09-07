@@ -56,7 +56,10 @@ public abstract class BaseListFragment extends SimpleListFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        setRetainInstance(true);
+        // No setRetainInstance(true): these fragments are hosted in a
+        // ViewPager2 FragmentStateAdapter, which manages (and forbids retaining)
+        // its fragments' instance state itself. App-scoped data (lookup results,
+        // bookmarks, etc.) lives in Application and survives recreation anyway.
     }
 
     @Override

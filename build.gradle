@@ -70,6 +70,7 @@ android {
 dependencies {
     api 'androidx.fragment:fragment:1.7.1'
     api 'androidx.viewpager:viewpager:1.0.0'
+    api 'androidx.viewpager2:viewpager2:1.1.0'
     api 'androidx.recyclerview:recyclerview:1.2.1'
     api 'androidx.recyclerview:recyclerview-selection:1.1.0'
     api 'androidx.core:core:1.13.1'
