@@ -217,7 +217,7 @@ public class ArticleCollectionActivity extends FragmentActivity {
                 viewPager = (ViewPager) findViewById(R.id.pager);
                 applyContentInsets();
                 viewPager.setAdapter(articleCollectionPagerAdapter);
-                viewPager.setOnPageChangeListener(new OnPageChangeListener(){
+                viewPager.addOnPageChangeListener(new OnPageChangeListener(){
 
                     @Override
                     public void onPageScrollStateChanged(int arg0) {}
