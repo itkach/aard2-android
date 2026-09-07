@@ -68,6 +68,7 @@ class IconMaker {
     static final Glyph IC_LEVEL_UP = solid('');          // arrow-turn-up
     static final Glyph IC_BAN = solid('');               // ban
     static final Glyph IC_RANDOM = solid('');            // dice
+    static final Glyph IC_DRAG_HANDLE = solid('\uf58e'); // grip-vertical (drag-to-reorder handle)
 
     static FontDrawable make(Context context, Glyph g, int sizeDp, int color) {
         FontDrawable drawable = new FontDrawable.Builder(context, g.code, g.font)
@@ -105,6 +106,23 @@ class IconMaker {
     static FontDrawable list(Context context, Glyph g) {
         int color = resolveThemeColor(context, com.google.android.material.R.attr.colorPrimary, 0xff0099cc);
         return make(context, g, 26, color);
+    }
+
+    // Secondary row actions (a dictionary row's forget/trash) - deliberately
+    // smaller and in the muted secondary text color so they recede behind the
+    // dictionary name and its on/off toggle rather than competing with them the
+    // way full-size colorPrimary list() icons do.
+    static FontDrawable rowAction(Context context, Glyph g) {
+        int color = resolveThemeColor(context, android.R.attr.textColorSecondary, 0xff888888);
+        return make(context, g, 18, color);
+    }
+
+    // The expand/collapse chevron is a passive disclosure affordance, not an
+    // action - smaller still and in the faint hint colour so it recedes further
+    // than the row's actual actions (trash) instead of reading as a button.
+    static FontDrawable chevron(Context context, Glyph g) {
+        int color = resolveThemeColor(context, android.R.attr.textColorHint, 0xffaaaaaa);
+        return make(context, g, 13, color);
     }
 
     // These icons are drawn directly in a Toolbar (bookmark toggle, etc.), so

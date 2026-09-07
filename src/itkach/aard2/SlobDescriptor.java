@@ -23,7 +23,16 @@ public class SlobDescriptor extends BaseDescriptor {
     public String path;
     public Map<String, String> tags = new HashMap<String, String>();
     public boolean active = true;
+    // Legacy: pre-drag-reorder this doubled as the favourite flag (>0) and the
+    // sort key. It is now only read once, during the one-time migration in
+    // SlobDescriptorList, to seed useForRandomLookup and the initial order.
     public long priority;
+    // Explicit, user-arranged position in the list (drag to reorder). -1 marks
+    // a descriptor that predates this field and still needs migrating.
+    public int order = -1;
+    // Whether this dictionary participates in random-article lookup (the
+    // single-purpose successor to the old "favourite" marker).
+    public boolean useForRandomLookup = false;
     public long blobCount;
     public String error;
     public boolean expandDetail = false;

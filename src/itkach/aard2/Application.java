@@ -359,7 +359,7 @@ public class Application extends android.app.Application {
     Slob[] getFavoriteSlobs() {
         List<Slob> result = new ArrayList(dictionaries.size());
         for (SlobDescriptor sd : dictionaries) {
-            if (sd.active && sd.priority > 0) {
+            if (sd.active && sd.useForRandomLookup) {
                 Slob s = slobber.getSlob(sd.id);
                 if (s != null) {
                     result.add(s);
@@ -529,6 +529,7 @@ public class Application extends android.app.Application {
                 }
             }
         }
+        newDesc.order = dictionaries.nextOrder();
         dictionaries.add(newDesc);
         return false;
     }

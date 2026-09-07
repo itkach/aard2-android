@@ -8,40 +8,63 @@
     android:paddingRight="8dip"
     android:paddingTop="6dip">
 
+    <!-- Collapsed row is this single line: on/off toggle (leading), name, and a
+         trailing expand chevron + drag handle. The whole name+chevron span
+         (dictionary_toggle_detail_area) toggles the details, not just the
+         chevron. Favourite ("use in random lookup") and forget both live in the
+         expanded details below. -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_marginBottom="6dp"
+        android:layout_marginBottom="0dp"
         >
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/dictionary_btn_toggle_fav"
-            android:layout_gravity="top"
-            android:baselineAlignBottom="true"
-            android:paddingRight="6dp"
-            android:layout_marginTop="3dp"
-            android:layout_alignParentLeft="true"/>
-        <TextView
-            android:id="@+id/dictionary_label"
-            style="@android:style/TextAppearance.Holo.SearchResult.Title"
-            android:textSize="20sp"
-            android:text="WordNet"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="left|top"
-            android:layout_weight="1"/>
         <Switch
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:id="@+id/dictionary_active"
             android:checked="true"
             android:enabled="true"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true"
-            android:layout_gravity="top"
+            android:layout_gravity="center_vertical"
             android:layout_weight="0"/>
+        <LinearLayout
+            android:id="@+id/dictionary_toggle_detail_area"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?attr/selectableItemBackground">
+            <TextView
+                android:id="@+id/dictionary_label"
+                style="@android:style/TextAppearance.Holo.SearchResult.Title"
+                android:textSize="20sp"
+                android:text="WordNet"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:layout_weight="1"/>
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/dictionary_btn_toggle_detail"
+                android:paddingLeft="8dp"
+                android:paddingRight="8dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"/>
+        </LinearLayout>
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/dictionary_btn_drag_handle"
+            android:layout_gravity="center_vertical"
+            android:contentDescription="@string/dictionary_drag_handle"
+            android:paddingLeft="8dp"
+            android:paddingRight="4dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"/>
     </LinearLayout>
 
     <LinearLayout
@@ -77,6 +100,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
+        android:layout_marginTop="4dp"
         android:layout_marginBottom="6dp"
         android:layout_marginLeft="16dp"
         >
@@ -199,55 +223,32 @@
                 />
         </LinearLayout>
 
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/dictionary_btn_row"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginTop="4dp"
-        >
-
+        <!-- "Use for random lookup" (left) and forget (right) share the last
+             row; both only appear when the row is expanded. -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="left"
-            android:layout_weight="1"
-            android:id="@+id/dictionary_detail_toggle"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginTop="6dp"
             >
+            <CheckBox
+                android:id="@+id/dictionary_use_for_random"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/dictionary_use_for_random"
+                />
             <ImageView
+                android:id="@+id/dictionary_btn_forget"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/dictionary_btn_toggle_detail"
-                android:layout_gravity="left"
-                android:paddingRight="16dp"
-                android:paddingTop="8dp"
-                android:paddingBottom="4dp"
-                android:paddingLeft="16dp"
-                android:layout_alignParentLeft="true"/>
-
-            <Space
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:id="@+id/dictionary_btn_toggle_detail_space"
-                />
+                android:paddingLeft="12dp"
+                android:paddingRight="4dp"
+                android:paddingTop="6dp"
+                android:paddingBottom="6dp"/>
         </LinearLayout>
 
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/dictionary_btn_forget"
-            android:layout_gravity="right"
-            android:paddingRight="16dp"
-            android:paddingTop="8dp"
-            android:paddingBottom="4dp"
-            android:paddingLeft="16dp"
-            android:layout_alignParentRight="true"/>
-
     </LinearLayout>
-
 
 </LinearLayout>

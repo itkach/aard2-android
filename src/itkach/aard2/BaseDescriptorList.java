@@ -57,6 +57,20 @@ abstract class BaseDescriptorList<T extends BaseDescriptor> extends AbstractList
         this.addAll(this.store.load(typeParameterClass));
     }
 
+    // Persist a single item whose fields changed in place (the AbstractList
+    // mutators don't cover "same object, edited"). Used by reordering/migration.
+    protected void save(T item) {
+        this.store.save(item);
+    }
+
+    // Move an item within the list WITHOUT persisting - a drag fires this many
+    // times, so callers persist the settled order once at the end (see
+    // SlobDescriptorList.commitOrder). Does not notify on its own; the caller
+    // drives the RecyclerView with notifyItemMoved.
+    void move(int from, int to) {
+        this.list.add(to, this.list.remove(from));
+    }
+
     @Override
     public T get(int i) {
         return this.list.get(i);

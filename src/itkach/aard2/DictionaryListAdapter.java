@@ -1,5 +1,6 @@
 package itkach.aard2;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -9,12 +10,15 @@ import android.database.DataSetObserver;
 import android.net.Uri;
 import androidx.annotation.NonNull;
 import androidx.documentfile.provider.DocumentFile;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -30,6 +34,22 @@ public class DictionaryListAdapter extends RecyclerView.Adapter<DictionaryListAd
     private final SlobDescriptorList    data;
     private final Activity              context;
     private AlertDialog                 deleteConfirmationDialog;
+    private ItemTouchHelper             itemTouchHelper;
+
+    void setItemTouchHelper(ItemTouchHelper helper) {
+        this.itemTouchHelper = helper;
+    }
+
+    // Called repeatedly as a drag moves a row; rearranges the list visually. The
+    // settled order is persisted once, on drag end (onDragFinished).
+    void onItemMove(int from, int to) {
+        data.move(from, to);
+        notifyItemMoved(from, to);
+    }
+
+    void onDragFinished() {
+        data.commitOrder();
+    }
 
     private final static String hrefTemplate = "<a href=\'%1$s\'>%2$s</a>";
 
@@ -68,6 +88,7 @@ public class DictionaryListAdapter extends RecyclerView.Adapter<DictionaryListAd
 
     @NonNull
     @Override
+    @SuppressLint("ClickableViewAccessibility")
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.dictionary_list_item, parent, false);
@@ -103,28 +124,25 @@ public class DictionaryListAdapter extends RecyclerView.Adapter<DictionaryListAd
             desc.expandDetail = !desc.expandDetail;
             data.set(position, desc);
         };
-        view.findViewById(R.id.dictionary_detail_toggle).setOnClickListener(detailToggle);
+        view.findViewById(R.id.dictionary_toggle_detail_area).setOnClickListener(detailToggle);
 
-        View.OnClickListener toggleFavListener = v -> {
+        CheckBox useForRandom = (CheckBox) view.findViewById(R.id.dictionary_use_for_random);
+        useForRandom.setOnClickListener(v -> {
             int position = holder.getBindingAdapterPosition();
             if (position == RecyclerView.NO_POSITION) {
                 return;
             }
             SlobDescriptor desc = data.get(position);
-            long currentTime = System.currentTimeMillis();
-            if (desc.priority == 0) {
-                desc.priority = currentTime;
-            } else {
-                desc.priority = 0;
-            }
-            desc.lastAccess = currentTime;
-            data.beginUpdate();
+            desc.useForRandomLookup = ((CheckBox) v).isChecked();
             data.set(position, desc);
-            data.sort();
-            data.endUpdate(true);
-        };
-        view.findViewById(R.id.dictionary_btn_toggle_fav).setOnClickListener(toggleFavListener);
-        view.findViewById(R.id.dictionary_label).setOnClickListener(toggleFavListener);
+        });
+
+        view.findViewById(R.id.dictionary_btn_drag_handle).setOnTouchListener((v, event) -> {
+            if (event.getActionMasked() == MotionEvent.ACTION_DOWN && itemTouchHelper != null) {
+                itemTouchHelper.startDrag(holder);
+            }
+            return false;
+        });
 
         return holder;
     }
@@ -166,14 +184,16 @@ public class DictionaryListAdapter extends RecyclerView.Adapter<DictionaryListAd
 
         ImageView btnToggleDetail = (ImageView) view.findViewById(R.id.dictionary_btn_toggle_detail);
         IconMaker.Glyph toggleIcon = desc.expandDetail ? IconMaker.IC_ANGLE_UP : IconMaker.IC_ANGLE_DOWN;
-        btnToggleDetail.setImageDrawable(IconMaker.list(context, toggleIcon));
+        btnToggleDetail.setImageDrawable(IconMaker.chevron(context, toggleIcon));
 
         ImageView btnForget = (ImageView) view.findViewById(R.id.dictionary_btn_forget);
-        btnForget.setImageDrawable(IconMaker.list(context, IconMaker.IC_TRASH));
+        btnForget.setImageDrawable(IconMaker.rowAction(context, IconMaker.IC_TRASH));
 
-        ImageView btnToggleFav = (ImageView) view.findViewById(R.id.dictionary_btn_toggle_fav);
-        IconMaker.Glyph favIcon = desc.priority > 0 ? IconMaker.IC_STAR : IconMaker.IC_STAR_O;
-        btnToggleFav.setImageDrawable(IconMaker.list(context, favIcon));
+        ImageView dragHandle = (ImageView) view.findViewById(R.id.dictionary_btn_drag_handle);
+        dragHandle.setImageDrawable(IconMaker.rowAction(context, IconMaker.IC_DRAG_HANDLE));
+
+        CheckBox useForRandom = (CheckBox) view.findViewById(R.id.dictionary_use_for_random);
+        useForRandom.setChecked(desc.useForRandomLookup);
     }
 
     private void setupPathView(String path, boolean available, View view) {

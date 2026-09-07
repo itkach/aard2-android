@@ -9,6 +9,8 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import androidx.fragment.app.FragmentActivity;
+import androidx.recyclerview.widget.ItemTouchHelper;
+import androidx.recyclerview.widget.RecyclerView;
 import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -46,6 +48,39 @@ public class DictionariesFragment extends BaseListFragment {
         final Application app = (Application)getActivity().getApplication();
         listAdapter = new DictionaryListAdapter(app.dictionaries, getActivity());
         setListAdapter(listAdapter);
+
+        // Drag-to-reorder via the row's grip handle (long-press-drag disabled so
+        // the handle is the only initiator). onMove rearranges live; the settled
+        // order is persisted in clearView (drag end).
+        ItemTouchHelper helper = new ItemTouchHelper(
+                new ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP | ItemTouchHelper.DOWN, 0) {
+                    @Override
+                    public boolean onMove(@androidx.annotation.NonNull RecyclerView rv,
+                                          @androidx.annotation.NonNull RecyclerView.ViewHolder vh,
+                                          @androidx.annotation.NonNull RecyclerView.ViewHolder target) {
+                        listAdapter.onItemMove(vh.getBindingAdapterPosition(),
+                                target.getBindingAdapterPosition());
+                        return true;
+                    }
+
+                    @Override
+                    public void onSwiped(@androidx.annotation.NonNull RecyclerView.ViewHolder vh, int direction) {
+                    }
+
+                    @Override
+                    public boolean isLongPressDragEnabled() {
+                        return false;
+                    }
+
+                    @Override
+                    public void clearView(@androidx.annotation.NonNull RecyclerView rv,
+                                          @androidx.annotation.NonNull RecyclerView.ViewHolder vh) {
+                        super.clearView(rv, vh);
+                        listAdapter.onDragFinished();
+                    }
+                });
+        helper.attachToRecyclerView(getRecyclerView());
+        listAdapter.setItemTouchHelper(helper);
     }
 
     @Override
