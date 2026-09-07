@@ -11,7 +11,7 @@
          getTopInset() both depend on - see ArticleCollectionActivity's
          layout for the full explanation and the decompiled evidence for
          why it has to be set here specifically. This AppBarLayout never
-         hides (Toolbar/TabLayout carry no scroll flags), so
+         hides (the Toolbar carries no scroll flags), so
          getTotalScrollRange() isn't a concern here; only the
          statusBarForeground/getTopInset() side of it applies. Its color
          is set programmatically in Application.applyStatusBarAppearance()
@@ -84,18 +84,32 @@
 
         </android.widget.Toolbar>
 
-        <com.google.android.material.tabs.TabLayout
-            android:id="@+id/tabs"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:tabGravity="fill" />
-
     </com.google.android.material.appbar.AppBarLayout>
 
-    <androidx.viewpager2.widget.ViewPager2
-        android:id="@+id/pager"
+    <!-- Hosts the selected section's fragment; MainActivity adds all five once
+         and show/hide-s them so each keeps its state (like the old pager's
+         keep-all behaviour), and because hidden fragments don't contribute
+         options-menu items, only the visible one's menu reaches the Toolbar -
+         no manual menu-visibility juggling needed. -->
+    <FrameLayout
+        android:id="@+id/content"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1" />
+
+    <!-- Material Components (M2) style, not Material 3: the M3 NavigationBar
+         reserves label space and leaves the icon bottom-aligned with a large
+         dead band on top even when unlabeled (no per-item attr overrides it);
+         the M2 bar centres the icon in a compact 56dp row. Selection shows via
+         itemIconTint (checked vs unchecked) rather than the M3 pill. -->
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottom_nav"
+        style="@style/Widget.MaterialComponents.BottomNavigationView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorSurface"
+        app:itemIconSize="24dp"
+        app:labelVisibilityMode="unlabeled"
+        app:menu="@menu/bottom_nav" />
 
 </LinearLayout>

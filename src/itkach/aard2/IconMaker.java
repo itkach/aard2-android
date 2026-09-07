@@ -99,6 +99,20 @@ class IconMaker {
         return make(context, g, 21, color);
     }
 
+    // Bottom-navigation icon. The selected destination is drawn in the brand
+    // colour (colorPrimary) and the rest in the muted textColorSecondary -
+    // done by choosing the colour here rather than via itemIconTint, since the
+    // FontDrawable these produce doesn't honour a tint list. Size follows the
+    // bar's itemIconSize, so the glyph size passed here is just its intrinsic
+    // bound.
+    static FontDrawable tab(Context context, Glyph g, boolean selected) {
+        int attr = selected
+                ? com.google.android.material.R.attr.colorPrimary
+                : android.R.attr.textColorSecondary;
+        int fallback = selected ? 0xff0099cc : 0xff888888;
+        return make(context, g, 24, resolveThemeColor(context, attr, fallback));
+    }
+
     // Content-area accent icons (favorite star, expand/collapse chevron,
     // trash, add) - tied to the theme's brand color (colorPrimary) so they
     // stay consistent with the rest of the UI instead of a separate
