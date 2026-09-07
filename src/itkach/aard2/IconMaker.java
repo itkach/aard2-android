@@ -133,7 +133,11 @@ class IconMaker {
     // coincidentally matching.
     static FontDrawable actionBar(Context context, Glyph g) {
         int color = resolveThemeColor(context, com.google.android.material.R.attr.colorOnPrimary, 0xff000000);
-        return make(context, g, 26, color);
+        // 20dp (not the framework action icon's nominal 24dp): Font Awesome
+        // glyphs carry almost no built-in padding, unlike Material's icons, so
+        // they read larger at equal size - 20dp brings the bookmark glyph into
+        // line with the framework overflow "⋮" it sits next to.
+        return make(context, g, 20, color);
     }
 
     // Contextual-action-bar (multi-select) icons. Unlike the main Toolbar, the
@@ -143,7 +147,10 @@ class IconMaker {
     // matches the CAB's own title/close-button colour.
     static FontDrawable actionMode(Context context, Glyph g) {
         int color = resolveThemeColor(context, android.R.attr.textColorPrimary, 0xff000000);
-        return make(context, g, 26, color);
+        // Same 20dp as the main Toolbar's actionBar() icons so the two
+        // contextual bars (multi-select, find-in-page) match the regular
+        // toolbar rather than looking oversized next to it.
+        return make(context, g, 20, color);
     }
 
     static FontDrawable text(Context context, Glyph g) {

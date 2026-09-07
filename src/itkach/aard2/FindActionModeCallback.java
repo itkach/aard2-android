@@ -99,6 +99,14 @@ class FindActionModeCallback implements ActionMode.Callback, TextWatcher,
         mode.setCustomView(searchView);
         mode.getMenuInflater().inflate(R.menu.webview_find, menu);
 
+        // Match the previous/next arrows to every other action-bar icon: the
+        // same IconMaker.actionMode() glyphs (angle-up = previous, angle-down =
+        // next) at the same size and CAB colour, replacing the fixed-size AOSP
+        // ic_find_*_mtrl bitmaps the menu declares.
+        Context ctx = webview.getContext();
+        menu.findItem(R.id.find_prev).setIcon(IconMaker.actionMode(ctx, IconMaker.IC_ANGLE_UP));
+        menu.findItem(R.id.find_next).setIcon(IconMaker.actionMode(ctx, IconMaker.IC_ANGLE_DOWN));
+
         Editable edit = editText.getText();
         Selection.setSelection(edit, edit.length());
         editText.requestFocus();

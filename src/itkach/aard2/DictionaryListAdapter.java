@@ -122,7 +122,14 @@ public class DictionaryListAdapter extends RecyclerView.Adapter<DictionaryListAd
             }
             SlobDescriptor desc = data.get(position);
             desc.expandDetail = !desc.expandDetail;
-            data.set(position, desc);
+            // Expanding/collapsing changes only this one row. Rebind just it
+            // rather than routing through data.set(), whose list-wide
+            // notifyDataSetChanged rebinds every visible row - and each bind
+            // does a ContentResolver getName() query, so a full rebind gets
+            // noticeably slow as more dictionaries are installed. Persist the
+            // new flag without a list-wide notification.
+            notifyItemChanged(position);
+            data.save(desc);
         };
         view.findViewById(R.id.dictionary_toggle_detail_area).setOnClickListener(detailToggle);
 
