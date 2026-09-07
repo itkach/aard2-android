@@ -2,7 +2,7 @@
     android:id="@+id/dictionary_item"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:paddingBottom="8dip"
     android:paddingLeft="8dip"
     android:paddingRight="8dip"

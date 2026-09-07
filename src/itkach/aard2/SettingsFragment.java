@@ -29,35 +29,36 @@ public class SettingsFragment extends SimpleListFragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         listAdapter = new SettingsListAdapter(this);
+        listAdapter.setOnItemClickListener(position -> {
+            if (position == SettingsListAdapter.POS_CLEAR_CACHE) {
+                confirmClearCache();
+            }
+        });
         setListAdapter(listAdapter);
     }
 
-    @Override
-    public void onListItemClick(ListView l, View v, int position, long id) {
-        if (position == SettingsListAdapter.POS_CLEAR_CACHE) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-            builder.setMessage(R.string.confirm_clear_cached_content)
-                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            WebView webView = new WebView(getActivity());
-                            webView.clearCache(true);
-                        }
-                    })
-                    .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            // User cancelled the dialog
-                        }
-                    });
-            clearCacheConfirmationDialog = builder.create();
-            clearCacheConfirmationDialog.setOnDismissListener(new DialogInterface.OnDismissListener(){
-                @Override
-                public void onDismiss(DialogInterface dialogInterface) {
-                    clearCacheConfirmationDialog = null;
-                }
-            });
-            clearCacheConfirmationDialog.show();
-            return;
-        }
+    private void confirmClearCache() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setMessage(R.string.confirm_clear_cached_content)
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        WebView webView = new WebView(getActivity());
+                        webView.clearCache(true);
+                    }
+                })
+                .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // User cancelled the dialog
+                    }
+                });
+        clearCacheConfirmationDialog = builder.create();
+        clearCacheConfirmationDialog.setOnDismissListener(new DialogInterface.OnDismissListener(){
+            @Override
+            public void onDismiss(DialogInterface dialogInterface) {
+                clearCacheConfirmationDialog = null;
+            }
+        });
+        clearCacheConfirmationDialog.show();
     }
 
     @Override

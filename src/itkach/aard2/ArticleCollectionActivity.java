@@ -21,6 +21,7 @@ import androidx.core.app.NavUtils;
 import androidx.core.app.TaskStackBuilder;
 import androidx.viewpager.widget.ViewPager;
 import androidx.viewpager.widget.ViewPager.OnPageChangeListener;
+import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.appbar.AppBarLayout;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -56,8 +57,12 @@ public class ArticleCollectionActivity extends FragmentActivity {
     @Override
     public void onActionModeStarted(android.view.ActionMode mode) {
         super.onActionModeStarted(mode);
+        // INVISIBLE, not GONE: with windowActionModeOverlay the find-in-page
+        // bar (started via the host Activity - see SearchableWebView) overlays
+        // this Toolbar's spot, so keeping its layout space avoids a reflow as
+        // the bar animates in and out. Same as MainActivity's multi-select CAB.
         if (mode.getType() == android.view.ActionMode.TYPE_PRIMARY) {
-            getToolbar().setVisibility(View.GONE);
+            getToolbar().setVisibility(View.INVISIBLE);
         }
     }
 
@@ -122,7 +127,6 @@ public class ArticleCollectionActivity extends FragmentActivity {
                 setEnabled(true);
             }
         });
-        requestWindowFeature(Window.FEATURE_PROGRESS);
         final Application app = (Application)getApplication();
         app.installTheme(this);
         setContentView(R.layout.activity_article_collection_loading);
@@ -577,30 +581,44 @@ public class ArticleCollectionActivity extends FragmentActivity {
     public static class ArticleCollectionPagerAdapter extends FragmentStatePagerAdapter {
 
         private Application app;
-        private DataSetObserver observer;
-        private BaseAdapter data;
+        private RecyclerView.AdapterDataObserver observer;
+        private RecyclerView.Adapter<?> data;
+        private BlobSource source;
         private ToBlob toBlob;
         private int count;
         private ArticleFragment primaryItem;
 
-        public ArticleCollectionPagerAdapter(Application app, BaseAdapter data, ToBlob toBlob, FragmentManager fm) {
+        public ArticleCollectionPagerAdapter(Application app, RecyclerView.Adapter<?> data, ToBlob toBlob, FragmentManager fm) {
             super(fm);
             this.app = app;
             this.data = data;
-            this.count = data.getCount();
-            this.observer = new DataSetObserver(){
+            this.source = (BlobSource) data;
+            this.count = source.getBlobCount();
+            this.observer = new RecyclerView.AdapterDataObserver(){
                 @Override
                 public void onChanged() {
-                    count = ArticleCollectionPagerAdapter.this.data.getCount();
+                    count = source.getBlobCount();
+                    notifyDataSetChanged();
+                }
+
+                @Override
+                public void onItemRangeInserted(int positionStart, int itemCount) {
+                    count = source.getBlobCount();
+                    notifyDataSetChanged();
+                }
+
+                @Override
+                public void onItemRangeRemoved(int positionStart, int itemCount) {
+                    count = source.getBlobCount();
                     notifyDataSetChanged();
                 }
             };
-            data.registerDataSetObserver(observer);
+            data.registerAdapterDataObserver(observer);
             this.toBlob = toBlob;
         }
 
         void destroy() {
-            data.unregisterDataSetObserver(observer);
+            data.unregisterAdapterDataObserver(observer);
             data = null;
             app = null;
         }
@@ -635,13 +653,13 @@ public class ArticleCollectionActivity extends FragmentActivity {
         }
 
         Slob.Blob get(int position) {
-            return toBlob.convert(data.getItem(position));
+            return toBlob.convert(source.getBlobItem(position));
         }
 
         @Override
         public CharSequence getPageTitle(int position) {
-            if (position < data.getCount()) {
-                Object item = data.getItem(position);
+            if (position < source.getBlobCount()) {
+                Object item = source.getBlobItem(position);
                 if (item instanceof BlobDescriptor) {
                     return ((BlobDescriptor) item).key;
                 }

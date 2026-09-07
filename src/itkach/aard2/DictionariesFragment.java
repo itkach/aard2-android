@@ -41,11 +41,6 @@ public class DictionariesFragment extends BaseListFragment {
     }
 
     @Override
-    protected boolean supportsSelection() {
-        return false;
-    }
-
-    @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         final Application app = (Application)getActivity().getApplication();

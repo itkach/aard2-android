@@ -1,25 +1,36 @@
 package itkach.aard2;
 
-import android.content.Context;
 import android.database.DataSetObserver;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.CheckBox;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.recyclerview.selection.ItemDetailsLookup;
+import androidx.recyclerview.selection.SelectionTracker;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.text.DateFormat;
 
 import itkach.slob.Slob;
 
-public class BlobDescriptorListAdapter extends BaseAdapter {
+public class BlobDescriptorListAdapter
+        extends RecyclerView.Adapter<BlobDescriptorListAdapter.ViewHolder>
+        implements BlobSource {
 
     BlobDescriptorList      list;
     DateFormat              dateFormat;
     private DataSetObserver observer;
-    private boolean         selectionMode;
+    private OnItemClickListener itemClickListener;
+    private SelectionTracker<Long> tracker;
+    // Whether the contextual selection bar is open. Kept separate from the
+    // tracker's hasSelection() so the bar (and the row checkboxes) persist
+    // even when the selection is emptied by deselecting the last item.
+    private boolean selectionModeActive;
 
     public BlobDescriptorListAdapter(BlobDescriptorList list) {
         this.list = list;
@@ -32,67 +43,125 @@ public class BlobDescriptorListAdapter extends BaseAdapter {
 
             @Override
             public void onInvalidated() {
-                notifyDataSetInvalidated();
+                notifyDataSetChanged();
             }
         };
         this.list.registerDataSetObserver(observer);
     }
 
+    void setOnItemClickListener(OnItemClickListener listener) {
+        this.itemClickListener = listener;
+    }
+
+    void setSelectionTracker(SelectionTracker<Long> tracker) {
+        this.tracker = tracker;
+    }
+
+    void setSelectionModeActive(boolean active) {
+        this.selectionModeActive = active;
+        notifyDataSetChanged();
+    }
+
     @Override
-    public int getCount() {
+    public int getItemCount() {
         synchronized (list) {
             return list == null ? 0 : list.size();
         }
     }
 
     @Override
-    public Object getItem(int position) {
+    public int getBlobCount() {
+        return getItemCount();
+    }
+
+    @Override
+    public Object getBlobItem(int position) {
         synchronized (list) {
             return list.get(position);
         }
     }
 
+    @NonNull
     @Override
-    public long getItemId(int position) {
-        return position;
-    }
-
-    public void setSelectionMode(boolean selectionMode) {
-        this.selectionMode = selectionMode;
-        notifyDataSetChanged();
-    }
-
-    public boolean isSelectionMode() {
-        return selectionMode;
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.blob_descriptor_list_item, parent, false);
+        final ViewHolder holder = new ViewHolder(view);
+        view.setOnClickListener(v -> {
+            int position = holder.getBindingAdapterPosition();
+            if (position == RecyclerView.NO_POSITION) {
+                return;
+            }
+            // In selection mode a tap toggles the row. When the tracker
+            // already has a selection it consumes the tap itself and this
+            // listener never fires; this branch handles the remaining case -
+            // tapping while the selection is empty but the bar is still open.
+            if (selectionModeActive) {
+                if (tracker != null) {
+                    long key = (long) position;
+                    if (tracker.isSelected(key)) {
+                        tracker.deselect(key);
+                    } else {
+                        tracker.select(key);
+                    }
+                }
+                return;
+            }
+            if (itemClickListener != null) {
+                itemClickListener.onItemClick(position);
+            }
+        });
+        return holder;
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         BlobDescriptor item = list.get(position);
-        CharSequence timestamp = DateUtils.getRelativeTimeSpanString(item.createdAt);
-        View view;
-        if (convertView != null) {
-            view = convertView;
-        } else {
-            LayoutInflater inflater = (LayoutInflater) parent.getContext()
-                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            view = inflater.inflate(R.layout.blob_descriptor_list_item, parent,
-                    false);
-        }
-        TextView titleView = (TextView) view
-                .findViewById(R.id.blob_descriptor_key);
-        titleView.setText(item.key);
-        TextView sourceView = (TextView) view
-                .findViewById(R.id.blob_descriptor_source);
+        holder.title.setText(item.key);
         Slob slob = list.resolveOwner(item);
-        sourceView.setText(slob == null ? "???" : slob.getTags().get("label"));
-        TextView timestampView = (TextView) view
-                .findViewById(R.id.blob_descriptor_timestamp);
-        timestampView.setText(timestamp);
-        CheckBox cb = (CheckBox) view
-                .findViewById(R.id.blob_descriptor_checkbox);
-        cb.setVisibility(isSelectionMode() ? View.VISIBLE : View.GONE);
-        return view;
+        holder.source.setText(slob == null ? "???" : slob.getTags().get("label"));
+        holder.timestamp.setText(DateUtils.getRelativeTimeSpanString(item.createdAt));
+
+        boolean selected = tracker != null && tracker.isSelected((long) position);
+        holder.itemView.setActivated(selected);
+        holder.checkbox.setVisibility(selectionModeActive ? View.VISIBLE : View.GONE);
+        holder.checkbox.setChecked(selected);
+    }
+
+    static class ViewHolder extends RecyclerView.ViewHolder {
+        final TextView title;
+        final TextView source;
+        final TextView timestamp;
+        final CheckBox checkbox;
+
+        ViewHolder(View itemView) {
+            super(itemView);
+            title = (TextView) itemView.findViewById(R.id.blob_descriptor_key);
+            source = (TextView) itemView.findViewById(R.id.blob_descriptor_source);
+            timestamp = (TextView) itemView.findViewById(R.id.blob_descriptor_timestamp);
+            checkbox = (CheckBox) itemView.findViewById(R.id.blob_descriptor_checkbox);
+        }
+
+        // Lets the SelectionTracker map a touch on this row to its position/key.
+        // The position is snapshotted here (when the touch lands) rather than
+        // read live: the tracker calls getPosition() again after select(),
+        // and a notifyDataSetChanged() in between would otherwise make the
+        // live binding position NO_POSITION and crash anchorRange().
+        ItemDetailsLookup.ItemDetails<Long> getItemDetails() {
+            final int position = getBindingAdapterPosition();
+            return new ItemDetailsLookup.ItemDetails<Long>() {
+                @Override
+                public int getPosition() {
+                    return position;
+                }
+
+                @Nullable
+                @Override
+                public Long getSelectionKey() {
+                    return position == RecyclerView.NO_POSITION ? null : (long) position;
+                }
+            };
+        }
     }
 
 }

@@ -106,14 +106,24 @@ class IconMaker {
         return make(context, g, 26, color);
     }
 
-    // These icons are drawn directly in a Toolbar (bookmark toggle, CAB
-    // select-all/delete), so they need to contrast with colorPrimary the
-    // same way the Toolbar's own title text does - resolving
-    // @android:color/secondary_text_dark unconditionally (as this used to)
-    // ignored the active theme entirely and read as a washed-out,
-    // disabled-looking grey once that stopped coincidentally matching.
+    // These icons are drawn directly in a Toolbar (bookmark toggle, etc.), so
+    // they need to contrast with colorPrimary the same way the Toolbar's own
+    // title text does - resolving @android:color/secondary_text_dark
+    // unconditionally (as this used to) ignored the active theme entirely and
+    // read as a washed-out, disabled-looking grey once that stopped
+    // coincidentally matching.
     static FontDrawable actionBar(Context context, Glyph g) {
         int color = resolveThemeColor(context, com.google.android.material.R.attr.colorOnPrimary, 0xff000000);
+        return make(context, g, 26, color);
+    }
+
+    // Contextual-action-bar (multi-select) icons. Unlike the main Toolbar, the
+    // ActionMode bar uses the app theme's own surface (light in light theme)
+    // with a dark foreground - the same colorOnPrimary tint the Toolbar icons
+    // use would be white-on-white here. textColorPrimary follows the theme and
+    // matches the CAB's own title/close-button colour.
+    static FontDrawable actionMode(Context context, Glyph g) {
+        int color = resolveThemeColor(context, android.R.attr.textColorPrimary, 0xff000000);
         return make(context, g, 26, color);
     }
 

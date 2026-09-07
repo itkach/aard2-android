@@ -2,19 +2,19 @@ package itkach.aard2;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.database.DataSetObserver;
 import android.net.Uri;
+import androidx.annotation.NonNull;
 import androidx.documentfile.provider.DocumentFile;
+import androidx.recyclerview.widget.RecyclerView;
 import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -23,13 +23,12 @@ import java.util.Locale;
 
 import static java.lang.String.format;
 
-public class DictionaryListAdapter extends BaseAdapter {
+public class DictionaryListAdapter extends RecyclerView.Adapter<DictionaryListAdapter.ViewHolder> {
 
     private final static String TAG = DictionaryListAdapter.class.getName();
 
     private final SlobDescriptorList    data;
     private final Activity              context;
-    private View.OnClickListener        openUrlOnClick;
     private AlertDialog                 deleteConfirmationDialog;
 
     private final static String hrefTemplate = "<a href=\'%1$s\'>%2$s</a>";
@@ -45,135 +44,115 @@ public class DictionaryListAdapter extends BaseAdapter {
 
             @Override
             public void onInvalidated() {
-                notifyDataSetInvalidated();
+                notifyDataSetChanged();
             }
         };
         this.data.registerDataSetObserver(observer);
+    }
 
-        openUrlOnClick = new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String url = (String)v.getTag();
-                if (!Util.isBlank(url)) {
-                    try {
-                        Uri uri = Uri.parse(url);
-                        Intent browserIntent = new Intent(Intent.ACTION_VIEW, uri);
-                        v.getContext().startActivity(browserIntent);
-                    }
-                    catch (Exception e) {
-                        Log.d(TAG, "Failed to launch browser with url " + url, e);
-                    }
+    private final View.OnClickListener openUrlOnClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            String url = (String) v.getTag();
+            if (!Util.isBlank(url)) {
+                try {
+                    Uri uri = Uri.parse(url);
+                    Intent browserIntent = new Intent(Intent.ACTION_VIEW, uri);
+                    v.getContext().startActivity(browserIntent);
+                } catch (Exception e) {
+                    Log.d(TAG, "Failed to launch browser with url " + url, e);
                 }
             }
+        }
+    };
+
+    @NonNull
+    @Override
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.dictionary_list_item, parent, false);
+        final ViewHolder holder = new ViewHolder(view);
+
+        view.findViewById(R.id.dictionary_license).setOnClickListener(openUrlOnClick);
+        view.findViewById(R.id.dictionary_source).setOnClickListener(openUrlOnClick);
+
+        Switch activeSwitch = (Switch) view.findViewById(R.id.dictionary_active);
+        activeSwitch.setOnClickListener(v -> {
+            int position = holder.getBindingAdapterPosition();
+            if (position == RecyclerView.NO_POSITION) {
+                return;
+            }
+            SlobDescriptor desc = data.get(position);
+            desc.active = ((Switch) v).isChecked();
+            data.set(position, desc);
+        });
+
+        view.findViewById(R.id.dictionary_btn_forget).setOnClickListener(v -> {
+            int position = holder.getBindingAdapterPosition();
+            if (position != RecyclerView.NO_POSITION) {
+                forget(position);
+            }
+        });
+
+        View.OnClickListener detailToggle = v -> {
+            int position = holder.getBindingAdapterPosition();
+            if (position == RecyclerView.NO_POSITION) {
+                return;
+            }
+            SlobDescriptor desc = data.get(position);
+            desc.expandDetail = !desc.expandDetail;
+            data.set(position, desc);
         };
+        view.findViewById(R.id.dictionary_detail_toggle).setOnClickListener(detailToggle);
+
+        View.OnClickListener toggleFavListener = v -> {
+            int position = holder.getBindingAdapterPosition();
+            if (position == RecyclerView.NO_POSITION) {
+                return;
+            }
+            SlobDescriptor desc = data.get(position);
+            long currentTime = System.currentTimeMillis();
+            if (desc.priority == 0) {
+                desc.priority = currentTime;
+            } else {
+                desc.priority = 0;
+            }
+            desc.lastAccess = currentTime;
+            data.beginUpdate();
+            data.set(position, desc);
+            data.sort();
+            data.endUpdate(true);
+        };
+        view.findViewById(R.id.dictionary_btn_toggle_fav).setOnClickListener(toggleFavListener);
+        view.findViewById(R.id.dictionary_label).setOnClickListener(toggleFavListener);
+
+        return holder;
     }
 
     @Override
-    public View getView(int position, final View convertView, ViewGroup parent) {
-        SlobDescriptor desc = (SlobDescriptor) getItem(position);
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        View view = holder.itemView;
+        SlobDescriptor desc = data.get(position);
         String label = desc.getLabel();
         String fileName;
         try {
-            DocumentFile documentFile = DocumentFile.fromSingleUri(parent.getContext(), Uri.parse(desc.path));
+            DocumentFile documentFile = DocumentFile.fromSingleUri(view.getContext(), Uri.parse(desc.path));
             fileName = documentFile.getName();
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             fileName = desc.path;
             Log.w(TAG, "Couldn't parse get document file name from uri" + desc.path, ex);
         }
         long blobCount = desc.blobCount;
         boolean available = this.data.resolve(desc) != null;
-        View view;
-        if (convertView != null) {
-            view = convertView;
-        } else {
 
-            LayoutInflater inflater = (LayoutInflater) parent.getContext()
-                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            view = inflater.inflate(R.layout.dictionary_list_item, parent,
-                    false);
+        Resources r = view.getResources();
 
-            View licenseView= view.findViewById(R.id.dictionary_license);
-            licenseView.setOnClickListener(openUrlOnClick);
-
-            View sourceView= view.findViewById(R.id.dictionary_source);
-            sourceView.setOnClickListener(openUrlOnClick);
-
-            Switch activeSwitch = (Switch)view.findViewById(R.id.dictionary_active);
-            activeSwitch.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Switch activeSwitch = (Switch)view;
-                    Integer position = (Integer)view.getTag();
-                    SlobDescriptor desc = data.get(position);
-                    desc.active = activeSwitch.isChecked();
-                    data.set(position, desc);
-                }
-            });
-
-            View btnForget = view
-                    .findViewById(R.id.dictionary_btn_forget);
-            btnForget.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Integer position = (Integer)view.getTag();
-                    forget(position);
-                }
-            });
-
-            View.OnClickListener detailToggle = new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Integer position = (Integer)view.getTag();
-                    SlobDescriptor desc = data.get(position);
-                    desc.expandDetail = !desc.expandDetail;
-                    data.set(position, desc);
-                }
-            };
-
-            View viewDetailToggle = view
-                    .findViewById(R.id.dictionary_detail_toggle);
-            viewDetailToggle.setOnClickListener(detailToggle);
-
-            View.OnClickListener toggleFavListener = new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Integer position = (Integer) view.getTag();
-                    SlobDescriptor desc = data.get(position);
-                    long currentTime = System.currentTimeMillis();
-                    if (desc.priority == 0) {
-                        desc.priority = currentTime;
-                    } else {
-                        desc.priority = 0;
-                    }
-                    desc.lastAccess = currentTime;
-                    data.beginUpdate();
-                    data.set(position, desc);
-                    data.sort();
-                    data.endUpdate(true);
-                }
-            };
-            View btnToggleFav = view
-                    .findViewById(R.id.dictionary_btn_toggle_fav);
-            btnToggleFav.setOnClickListener(toggleFavListener);
-            View dictLabel = view
-                    .findViewById(R.id.dictionary_label);
-            dictLabel.setOnClickListener(toggleFavListener);
-        }
-
-        Resources r = parent.getResources();
-
-        Switch switchView = (Switch) view
-                .findViewById(R.id.dictionary_active);
-
+        Switch switchView = (Switch) view.findViewById(R.id.dictionary_active);
         switchView.setChecked(desc.active);
-        switchView.setTag(position);
 
-        TextView titleView = (TextView) view
-                .findViewById(R.id.dictionary_label);
+        TextView titleView = (TextView) view.findViewById(R.id.dictionary_label);
         titleView.setEnabled(available);
         titleView.setText(label);
-        titleView.setTag(position);
 
         View detailView = view.findViewById(R.id.dictionary_details);
         detailView.setVisibility(desc.expandDetail ? View.VISIBLE : View.GONE);
@@ -185,26 +164,16 @@ public class DictionaryListAdapter extends BaseAdapter {
         setupPathView(fileName, available, view);
         setupErrorView(desc, view);
 
-        ImageView btnToggleDetail = (ImageView) view
-                .findViewById(R.id.dictionary_btn_toggle_detail);
+        ImageView btnToggleDetail = (ImageView) view.findViewById(R.id.dictionary_btn_toggle_detail);
         IconMaker.Glyph toggleIcon = desc.expandDetail ? IconMaker.IC_ANGLE_UP : IconMaker.IC_ANGLE_DOWN;
         btnToggleDetail.setImageDrawable(IconMaker.list(context, toggleIcon));
 
-        View viewDetailToggle = view
-                .findViewById(R.id.dictionary_detail_toggle);
-        viewDetailToggle.setTag(position);
-
-        ImageView btnForget = (ImageView) view
-                .findViewById(R.id.dictionary_btn_forget);
+        ImageView btnForget = (ImageView) view.findViewById(R.id.dictionary_btn_forget);
         btnForget.setImageDrawable(IconMaker.list(context, IconMaker.IC_TRASH));
-        btnForget.setTag(position);
 
-        ImageView btnToggleFav = (ImageView) view
-                .findViewById(R.id.dictionary_btn_toggle_fav);
-        IconMaker.Glyph favIcon = desc.priority > 0 ? IconMaker.IC_STAR: IconMaker.IC_STAR_O;
+        ImageView btnToggleFav = (ImageView) view.findViewById(R.id.dictionary_btn_toggle_fav);
+        IconMaker.Glyph favIcon = desc.priority > 0 ? IconMaker.IC_STAR : IconMaker.IC_STAR_O;
         btnToggleFav.setImageDrawable(IconMaker.list(context, favIcon));
-        btnToggleFav.setTag(position);
-        return view;
     }
 
     private void setupPathView(String path, boolean available, View view) {
@@ -332,18 +301,14 @@ public class DictionaryListAdapter extends BaseAdapter {
     }
 
     @Override
-    public long getItemId(int position) {
-        return position;
-    }
-
-    @Override
-    public Object getItem(int position) {
-        return data.get(position);
-    }
-
-    @Override
-    public int getCount() {
+    public int getItemCount() {
         return data.size();
+    }
+
+    static class ViewHolder extends RecyclerView.ViewHolder {
+        ViewHolder(View itemView) {
+            super(itemView);
+        }
     }
 
 }

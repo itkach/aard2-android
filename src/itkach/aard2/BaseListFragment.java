@@ -2,23 +2,43 @@ package itkach.aard2;
 
 import android.os.Bundle;
 import android.text.method.LinkMovementMethod;
-import android.view.ActionMode;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 
 
 public abstract class BaseListFragment extends SimpleListFragment {
 
     protected View emptyView;
-    ActionMode actionMode;
+    // Whether the list (vs the loading spinner) should be showing; when false
+    // neither the list nor the empty view is shown, only the spinner.
+    private boolean listShown = true;
+
+    // Toggles the empty view in/out as the adapter's contents change -
+    // RecyclerView, unlike ListView, has no setEmptyView(), so we watch the
+    // adapter ourselves.
+    private final RecyclerView.AdapterDataObserver emptyObserver =
+            new RecyclerView.AdapterDataObserver() {
+                @Override
+                public void onChanged() {
+                    updateEmptyViewVisibility();
+                }
+
+                @Override
+                public void onItemRangeInserted(int positionStart, int itemCount) {
+                    updateEmptyViewVisibility();
+                }
+
+                @Override
+                public void onItemRangeRemoved(int positionStart, int itemCount) {
+                    updateEmptyViewVisibility();
+                }
+            };
 
     abstract IconMaker.Glyph getEmptyIcon();
 
@@ -42,78 +62,59 @@ public abstract class BaseListFragment extends SimpleListFragment {
         return super.onCreateView(inflater, container, savedInstanceState);
     }
 
-    protected void setSelectionMode(boolean selectionMode){};
-
-    protected int getSelectionMenuId(){return 0;};
-
-    protected boolean onSelectionActionItemClicked(final ActionMode mode, MenuItem item){
-        return false;
-    };
-
-    protected boolean supportsSelection() {
-        return true;
-    }
-
-    boolean finishActionMode() {
-        if (actionMode != null) {
-            actionMode.finish();
-            return true;
-        }
-        return false;
+    @Override
+    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        // Overlaid behind the RecyclerView in the same FrameLayout, shown only
+        // when the list is empty.
+        ((ViewGroup) getRecyclerView().getParent()).addView(emptyView, 0);
+        emptyView.setVisibility(View.GONE);
     }
 
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        final ListView listView = getListView();
-        listView.setEmptyView(emptyView);
-        ((ViewGroup) listView.getParent()).addView(emptyView, 0);
-
-        if (supportsSelection()) {
-            listView.setItemsCanFocus(false);
-            listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
-            listView.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
-
-                @Override
-                public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-                    actionMode = mode;
-                    MenuInflater inflater = mode.getMenuInflater();
-                    inflater.inflate(getSelectionMenuId(), menu);
-                    MenuItem miDelete = menu.findItem(R.id.blob_descriptor_delete);
-                    if (miDelete != null) {
-                        miDelete.setIcon(IconMaker.actionBar(getActivity(), IconMaker.IC_TRASH));
-                    }
-                    MenuItem miSelectAll = menu.findItem(R.id.blob_descriptor_select_all);
-                    if (miSelectAll != null) {
-                        miSelectAll.setIcon(IconMaker.actionBar(getActivity(), IconMaker.IC_SELECT_ALL));
-                    }
-                    setSelectionMode(true);
-                    return true;
-                }
-
-                @Override
-                public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-                    return false;
-                }
-
-                @Override
-                public boolean onActionItemClicked(final ActionMode mode, MenuItem item) {
-                    return onSelectionActionItemClicked(mode, item);
-                }
-
-                @Override
-                public void onDestroyActionMode(ActionMode mode) {
-                    setSelectionMode(false);
-                    actionMode = null;
-                }
-
-                @Override
-                public void onItemCheckedStateChanged(ActionMode mode,
-                                                      int position, long id, boolean checked) {
-                }
-            });
-
+    public void setListAdapter(RecyclerView.Adapter<? extends RecyclerView.ViewHolder> adapter) {
+        super.setListAdapter(adapter);
+        if (adapter != null) {
+            adapter.registerAdapterDataObserver(emptyObserver);
         }
+        updateEmptyViewVisibility();
+    }
+
+    // Coordinates the three states (loading spinner / empty view / list) in
+    // one place, since RecyclerView has neither setListShown nor setEmptyView
+    // of its own and the two would otherwise fight over the list's visibility.
+    @Override
+    public void setListShown(boolean shown) {
+        listShown = shown;
+        setProgressVisible(!shown);
+        updateEmptyViewVisibility();
+    }
+
+    private void updateEmptyViewVisibility() {
+        RecyclerView recyclerView = getRecyclerView();
+        if (recyclerView == null) {
+            return;
+        }
+        if (!listShown) {
+            // Loading: only the spinner shows.
+            recyclerView.setVisibility(View.GONE);
+            if (emptyView != null) {
+                emptyView.setVisibility(View.GONE);
+            }
+            return;
+        }
+        RecyclerView.Adapter<?> adapter = recyclerView.getAdapter();
+        boolean empty = adapter == null || adapter.getItemCount() == 0;
+        recyclerView.setVisibility(empty ? View.GONE : View.VISIBLE);
+        if (emptyView != null) {
+            emptyView.setVisibility(empty ? View.VISIBLE : View.GONE);
+        }
+    }
+
+    // Overridden by the screen that has a selection ActionMode (bookmarks /
+    // history); a no-op here so MainActivity can call it on any list fragment.
+    boolean finishActionMode() {
+        return false;
     }
 
 }

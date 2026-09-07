@@ -4,24 +4,22 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ListAdapter;
-import android.widget.ListView;
 import android.widget.ProgressBar;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 /**
- * Minimal replacement for android.support.v4.app.ListFragment, which has no
- * AndroidX equivalent (Google dropped it rather than porting it). Provides
- * just the subset of its API this codebase actually used: a fragment-owned
- * ListView, getListView()/setListAdapter(), an overridable onListItemClick()
- * callback matching ListFragment's own contract, and setListShown() for
- * toggling between the list and a loading spinner.
+ * Base for the app's list screens: hosts a RecyclerView plus a centered
+ * progress spinner, with setListShown() to toggle between them. This is the
+ * app's own thin glue over RecyclerView (there is no AndroidX ListFragment),
+ * not a re-implementation of a list widget.
  */
 public class SimpleListFragment extends Fragment {
 
-    private ListView listView;
+    private RecyclerView recyclerView;
     private ProgressBar progressView;
 
     @Override
@@ -30,31 +28,27 @@ public class SimpleListFragment extends Fragment {
     }
 
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        listView = (ListView) view.findViewById(R.id.list);
+        recyclerView = (RecyclerView) view.findViewById(R.id.list);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         progressView = (ProgressBar) view.findViewById(R.id.progress);
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-                onListItemClick(listView, v, position, id);
-            }
-        });
     }
 
-    public ListView getListView() {
-        return listView;
+    public RecyclerView getRecyclerView() {
+        return recyclerView;
     }
 
-    public void setListAdapter(ListAdapter adapter) {
-        listView.setAdapter(adapter);
-    }
-
-    public void onListItemClick(ListView l, View v, int position, long id) {
+    public void setListAdapter(RecyclerView.Adapter<? extends RecyclerView.ViewHolder> adapter) {
+        recyclerView.setAdapter(adapter);
     }
 
     public void setListShown(boolean shown) {
-        listView.setVisibility(shown ? View.VISIBLE : View.GONE);
-        progressView.setVisibility(shown ? View.GONE : View.VISIBLE);
+        recyclerView.setVisibility(shown ? View.VISIBLE : View.GONE);
+        setProgressVisible(!shown);
+    }
+
+    protected void setProgressVisible(boolean visible) {
+        progressView.setVisibility(visible ? View.VISIBLE : View.GONE);
     }
 }

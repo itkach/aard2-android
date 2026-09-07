@@ -4,9 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ListView;
 import android.widget.TextView;
 
 public class LookupFragment extends BaseListFragment implements LookupListener {
@@ -33,28 +30,23 @@ public class LookupFragment extends BaseListFragment implements LookupListener {
     }
 
     @Override
-    protected boolean supportsSelection() {
-        return false;
-    }
-
-    @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         setBusy(false);
-        ListView listView = getListView();
-        listView.setOnItemClickListener(new OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view,
-                                    int position, long id) {
-                Log.i("--", "Item clicked: " + position);
-                Intent intent = new Intent(getActivity(),
-                        ArticleCollectionActivity.class);
-                intent.putExtra("position", position);
-                startActivity(intent);
-            }
+        app.lastResult.setOnItemClickListener(position -> {
+            Log.i(TAG, "Item clicked: " + position);
+            Intent intent = new Intent(getActivity(),
+                    ArticleCollectionActivity.class);
+            intent.putExtra("position", position);
+            startActivity(intent);
         });
-        final Application app = (Application) getActivity().getApplication();
-        getListView().setAdapter(app.lastResult);
+        setListAdapter(app.lastResult);
+    }
+
+    @Override
+    public void onDestroyView() {
+        app.lastResult.setOnItemClickListener(null);
+        super.onDestroyView();
     }
 
     private void setBusy(boolean busy) {
@@ -72,7 +64,6 @@ public class LookupFragment extends BaseListFragment implements LookupListener {
 
     @Override
     public void onDestroy() {
-        Application app = (Application) getActivity().getApplication();
         app.removeLookupListener(this);
         super.onDestroy();
     }

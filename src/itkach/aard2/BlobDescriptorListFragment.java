@@ -7,17 +7,26 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
-import android.util.SparseBooleanArray;
+import androidx.recyclerview.selection.ItemDetailsLookup;
+import androidx.recyclerview.selection.ItemKeyProvider;
+import androidx.recyclerview.selection.MutableSelection;
+import androidx.recyclerview.selection.SelectionPredicates;
+import androidx.recyclerview.selection.SelectionTracker;
+import androidx.recyclerview.selection.StorageStrategy;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ListView;
 import android.widget.SearchView;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 
 abstract class BlobDescriptorListFragment extends BaseListFragment {
@@ -30,6 +39,14 @@ abstract class BlobDescriptorListFragment extends BaseListFragment {
 
     private BlobDescriptorListAdapter       listAdapter;
     private AlertDialog                     deleteConfirmationDialog = null;
+
+    private SelectionTracker<Long>          selectionTracker;
+    private ActionMode                      actionMode;
+    // Set while the ActionMode is being torn down. Clearing the selection and
+    // refreshing rows during teardown makes the tracker re-fire
+    // onSelectionChanged; without this guard that would start a fresh (empty)
+    // ActionMode on top of the one just closing - a stuck, buttonless bar.
+    private boolean                         tearingDownSelection;
 
     private final static String PREF_SORT_ORDER = "sortOrder";
     private final static String PREF_SORT_DIRECTION = "sortDir";
@@ -50,14 +67,6 @@ abstract class BlobDescriptorListFragment extends BaseListFragment {
 
     abstract String getItemClickAction();
 
-    protected void setSelectionMode(boolean selectionMode) {
-        listAdapter.setSelectionMode(selectionMode);
-    }
-
-    protected int getSelectionMenuId() {
-        return R.menu.blob_descriptor_selection;
-    }
-
     abstract int getDeleteConfirmationItemCountResId();
 
     abstract String getPreferencesNS();
@@ -66,97 +75,217 @@ abstract class BlobDescriptorListFragment extends BaseListFragment {
         return getActivity().getSharedPreferences(getPreferencesNS(), Activity.MODE_PRIVATE);
     }
 
-
-    protected boolean onSelectionActionItemClicked(final ActionMode mode, MenuItem item) {
-        ListView listView = getListView();
-        int itemId = item.getItemId();
-        if (itemId == R.id.blob_descriptor_delete) {
-            int count = listView.getCheckedItemCount();
-            String countStr = getResources().getQuantityString(getDeleteConfirmationItemCountResId(), count, count);
-            String message = getString(R.string.blob_descriptor_confirm_delete, countStr);
-            deleteConfirmationDialog = new AlertDialog.Builder(getActivity())
-                    .setIcon(android.R.drawable.ic_dialog_alert)
-                    .setTitle("")
-                    .setMessage(message)
-                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            deleteSelectedItems();
-                            mode.finish();
-                            deleteConfirmationDialog = null;
-                        }
-                    })
-                    .setNegativeButton(android.R.string.no, null).create();
-            deleteConfirmationDialog.setOnDismissListener(new DialogInterface.OnDismissListener(){
-                @Override
-                public void onDismiss(DialogInterface dialogInterface) {
-                    deleteConfirmationDialog = null;
-                }
-            });
-            deleteConfirmationDialog.show();
-            return true;
-        } else if (itemId == R.id.blob_descriptor_select_all) {
-            int itemCount = listView.getCount();
-            for (int i = itemCount - 1; i > -1; --i) {
-                listView.setItemChecked(i, true);
-            }
-            return true;
-        } else {
-            return false;
-        }
-    }
-
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
         BlobDescriptorList descriptorList = getDescriptorList();
 
         SharedPreferences p = this.prefs();
-
         String sortOrderStr = p.getString(PREF_SORT_ORDER,
                                           BlobDescriptorList.SortOrder.TIME.name());
         BlobDescriptorList.SortOrder sortOrder = BlobDescriptorList.SortOrder.valueOf(sortOrderStr);
-
         boolean sortDir = p.getBoolean(PREF_SORT_DIRECTION, false);
-
         descriptorList.setSort(sortOrder, sortDir);
 
         listAdapter = new BlobDescriptorListAdapter(descriptorList);
 
         final FragmentActivity activity = getActivity();
-
         icFilter = IconMaker.actionBar(activity, IconMaker.IC_FILTER);
         icClock =  IconMaker.actionBar(activity, IconMaker.IC_CLOCK);
         icList = IconMaker.actionBar(activity, IconMaker.IC_LIST);
         icArrowUp = IconMaker.actionBar(activity, IconMaker.IC_SORT_ASC);
         icArrowDown = IconMaker.actionBar(activity, IconMaker.IC_SORT_DESC);
 
-        final ListView listView = getListView();
-        listView.setOnItemClickListener(new OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view,
-                                    int position, long id) {
-                Intent intent = new Intent(activity,
-                        ArticleCollectionActivity.class);
-                intent.setAction(getItemClickAction());
-                intent.putExtra("position", position);
-                startActivity(intent);
-            }
+        listAdapter.setOnItemClickListener(position -> {
+            Intent intent = new Intent(activity, ArticleCollectionActivity.class);
+            intent.setAction(getItemClickAction());
+            intent.putExtra("position", position);
+            startActivity(intent);
         });
-
         setListAdapter(listAdapter);
+
+        RecyclerView recyclerView = getRecyclerView();
+        selectionTracker = new SelectionTracker.Builder<>(
+                "blob-descriptor-selection",
+                recyclerView,
+                new PositionKeyProvider(),
+                new DescriptorDetailsLookup(recyclerView),
+                StorageStrategy.createLongStorage())
+                .withSelectionPredicate(SelectionPredicates.createSelectAnything())
+                .build();
+        listAdapter.setSelectionTracker(selectionTracker);
+        selectionTracker.addObserver(new SelectionObserver());
     }
 
-    protected void deleteSelectedItems() {
-        SparseBooleanArray checkedItems = getListView().getCheckedItemPositions();
-        for (int i = checkedItems.size() - 1; i > -1; --i) {
-            int position = checkedItems.keyAt(i);
-            boolean checked = checkedItems.get(position);
-            if (checked) {
-                getDescriptorList().remove(position);
+    // Drives the contextual ActionMode off the selection state, replacing
+    // ListView's built-in CHOICE_MODE_MULTIPLE_MODAL. The bar opens on the
+    // first (long-press) selection and stays open - like the old ListView
+    // CAB - until the user backs out or deletes; emptying the selection by
+    // deselecting the last row does NOT close it.
+    private class SelectionObserver extends SelectionTracker.SelectionObserver<Long> {
+        @Override
+        public void onSelectionChanged() {
+            if (tearingDownSelection) {
+                return;
             }
-         }
+            if (selectionTracker.hasSelection() && actionMode == null) {
+                actionMode = getActivity().startActionMode(new SelectionActionModeCallback());
+                // Show the row checkboxes. Posted, not synchronous: this fires
+                // mid-gesture during the tracker's own long-press handling, and
+                // refreshing rows inline would reset their binding positions
+                // and crash the tracker.
+                getRecyclerView().post(() -> listAdapter.setSelectionModeActive(true));
+            }
+            if (actionMode != null) {
+                actionMode.setTitle(String.valueOf(selectionTracker.getSelection().size()));
+            }
+        }
+    }
+
+    private class SelectionActionModeCallback implements ActionMode.Callback {
+        @Override
+        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+            MenuInflater inflater = mode.getMenuInflater();
+            inflater.inflate(R.menu.blob_descriptor_selection, menu);
+            MenuItem miDelete = menu.findItem(R.id.blob_descriptor_delete);
+            if (miDelete != null) {
+                miDelete.setIcon(IconMaker.actionMode(getActivity(), IconMaker.IC_TRASH));
+            }
+            MenuItem miSelectAll = menu.findItem(R.id.blob_descriptor_select_all);
+            if (miSelectAll != null) {
+                miSelectAll.setIcon(IconMaker.actionMode(getActivity(), IconMaker.IC_SELECT_ALL));
+            }
+            return true;
+        }
+
+        @Override
+        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+            return false;
+        }
+
+        @Override
+        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+            int itemId = item.getItemId();
+            if (itemId == R.id.blob_descriptor_delete) {
+                confirmDelete();
+                return true;
+            } else if (itemId == R.id.blob_descriptor_select_all) {
+                int count = listAdapter.getItemCount();
+                if (selectionTracker.getSelection().size() == count) {
+                    // Everything already selected - toggle to deselect all.
+                    selectionTracker.clearSelection();
+                } else {
+                    List<Long> all = new ArrayList<>();
+                    for (long i = 0; i < count; i++) {
+                        all.add(i);
+                    }
+                    selectionTracker.setItemsSelected(all, true);
+                }
+                return true;
+            }
+            return false;
+        }
+
+        @Override
+        public void onDestroyActionMode(ActionMode mode) {
+            actionMode = null;
+            tearingDownSelection = true;
+            selectionTracker.clearSelection();
+            listAdapter.setSelectionModeActive(false);
+            tearingDownSelection = false;
+        }
+    }
+
+    private void confirmDelete() {
+        int count = selectionTracker.getSelection().size();
+        String countStr = getResources().getQuantityString(getDeleteConfirmationItemCountResId(), count, count);
+        String message = getString(R.string.blob_descriptor_confirm_delete, countStr);
+        deleteConfirmationDialog = new AlertDialog.Builder(getActivity())
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setTitle("")
+                .setMessage(message)
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        deleteSelectedItems();
+                        if (actionMode != null) {
+                            actionMode.finish();
+                        }
+                        deleteConfirmationDialog = null;
+                    }
+                })
+                .setNegativeButton(android.R.string.no, null).create();
+        deleteConfirmationDialog.setOnDismissListener(new DialogInterface.OnDismissListener(){
+            @Override
+            public void onDismiss(DialogInterface dialogInterface) {
+                deleteConfirmationDialog = null;
+            }
+        });
+        deleteConfirmationDialog.show();
+    }
+
+    private void deleteSelectedItems() {
+        MutableSelection<Long> selection = new MutableSelection<>();
+        selectionTracker.copySelection(selection);
+        List<Integer> positions = new ArrayList<>();
+        for (Long key : selection) {
+            positions.add(key.intValue());
+        }
+        // Remove from the end so earlier indices stay valid.
+        Collections.sort(positions, Collections.reverseOrder());
+        BlobDescriptorList list = getDescriptorList();
+        for (int position : positions) {
+            list.remove(position);
+        }
+    }
+
+    @Override
+    boolean finishActionMode() {
+        if (actionMode != null) {
+            actionMode.finish();
+            return true;
+        }
+        return false;
+    }
+
+    // Position-keyed selection (matching the old getCheckedItemPositions
+    // behaviour): key == position, so the trivial two-way mapping is always
+    // available.
+    private static class PositionKeyProvider extends ItemKeyProvider<Long> {
+        PositionKeyProvider() {
+            super(SCOPE_MAPPED);
+        }
+
+        @Override
+        public Long getKey(int position) {
+            return (long) position;
+        }
+
+        @Override
+        public int getPosition(@NonNull Long key) {
+            return key.intValue();
+        }
+    }
+
+    private static class DescriptorDetailsLookup extends ItemDetailsLookup<Long> {
+        private final RecyclerView recyclerView;
+
+        DescriptorDetailsLookup(RecyclerView recyclerView) {
+            this.recyclerView = recyclerView;
+        }
+
+        @Override
+        public ItemDetails<Long> getItemDetails(@NonNull MotionEvent e) {
+            View view = recyclerView.findChildViewUnder(e.getX(), e.getY());
+            if (view != null) {
+                RecyclerView.ViewHolder holder = recyclerView.getChildViewHolder(view);
+                if (holder instanceof BlobDescriptorListAdapter.ViewHolder) {
+                    return ((BlobDescriptorListAdapter.ViewHolder) holder).getItemDetails();
+                }
+            }
+            return null;
+        }
     }
 
     @Override
@@ -166,7 +295,6 @@ abstract class BlobDescriptorListFragment extends BaseListFragment {
 
     @Override
     public void onPrepareOptionsMenu(final Menu menu) {
-
         BlobDescriptorList list = getDescriptorList();
 
         miFilter = menu.findItem(R.id.action_filter);

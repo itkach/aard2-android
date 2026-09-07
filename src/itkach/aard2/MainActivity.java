@@ -276,7 +276,7 @@ public class MainActivity extends FragmentActivity {
             }
         }
         searchView.setQuery(app.getLookupQuery(), true);
-        if (app.lastResult.getCount() > 0) {
+        if (app.lastResult.getItemCount() > 0) {
             searchView.clearFocus();
         }
     }
@@ -293,8 +293,12 @@ public class MainActivity extends FragmentActivity {
     @Override
     public void onActionModeStarted(ActionMode mode) {
         super.onActionModeStarted(mode);
+        // INVISIBLE, not GONE: with windowActionModeOverlay the ActionMode bar
+        // is drawn over this Toolbar's spot, so we only need to stop the
+        // Toolbar painting through - keeping its layout space avoids the reflow
+        // that GONE (and the ActionMode's enter/exit animation) would cause.
         if (mode.getType() == ActionMode.TYPE_PRIMARY) {
-            getToolbar().setVisibility(View.GONE);
+            getToolbar().setVisibility(View.INVISIBLE);
         }
     }
 

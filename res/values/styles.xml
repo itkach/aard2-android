@@ -26,9 +26,20 @@
          reasonable approach in isolation, but unnecessary work once a
          system-provided equivalent exists, and one that would never have
          matched the system's own theme the way this now does. -->
-    <style name="Theme.Aard2" parent="@style/Theme.Material3.DynamicColors.Light.NoActionBar" />
+    <!-- windowActionModeOverlay=true draws a contextual ActionMode (multi-select
+         bar, find-in-page) OVER the content's top instead of inserting it and
+         pushing everything down. Without it the app had to hide its own Toolbar
+         for the ActionMode's duration to avoid a stacked double bar, and that
+         hide/show desynced from the ActionMode's own enter/exit animation,
+         causing a visible layout shift. With the overlay the Toolbar stays put
+         (covered by the bar) and nothing reflows. -->
+    <style name="Theme.Aard2" parent="@style/Theme.Material3.DynamicColors.Light.NoActionBar">
+        <item name="android:windowActionModeOverlay">true</item>
+    </style>
 
-    <style name="Theme.Aard2.Dark" parent="@style/Theme.Material3.DynamicColors.Dark.NoActionBar" />
+    <style name="Theme.Aard2.Dark" parent="@style/Theme.Material3.DynamicColors.Dark.NoActionBar">
+        <item name="android:windowActionModeOverlay">true</item>
+    </style>
 
     <!-- Applied via android:theme on every <android.widget.Toolbar>. Its
          title/subtitle already get colorOnPrimary directly
