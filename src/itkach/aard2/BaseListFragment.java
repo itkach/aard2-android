@@ -19,6 +19,14 @@ public abstract class BaseListFragment extends SimpleListFragment {
     // neither the list nor the empty view is shown, only the spinner.
     private boolean listShown = true;
 
+    // The adapter emptyObserver is currently registered on, so registration can
+    // be paired with an unregister. This fragment is retained across
+    // configuration changes (setRetainInstance) and some adapters are
+    // application-scoped (e.g. Lookup's app.lastResult), so without unregistering
+    // when the view goes away, the recreate after a theme switch would re-register
+    // the same observer on the same adapter - which throws "already registered".
+    private RecyclerView.Adapter<? extends RecyclerView.ViewHolder> observedAdapter;
+
     // Toggles the empty view in/out as the adapter's contents change -
     // RecyclerView, unlike ListView, has no setEmptyView(), so we watch the
     // adapter ourselves.
@@ -74,10 +82,26 @@ public abstract class BaseListFragment extends SimpleListFragment {
     @Override
     public void setListAdapter(RecyclerView.Adapter<? extends RecyclerView.ViewHolder> adapter) {
         super.setListAdapter(adapter);
-        if (adapter != null) {
-            adapter.registerAdapterDataObserver(emptyObserver);
+        if (observedAdapter != adapter) {
+            if (observedAdapter != null) {
+                observedAdapter.unregisterAdapterDataObserver(emptyObserver);
+                observedAdapter = null;
+            }
+            if (adapter != null) {
+                adapter.registerAdapterDataObserver(emptyObserver);
+                observedAdapter = adapter;
+            }
         }
         updateEmptyViewVisibility();
+    }
+
+    @Override
+    public void onDestroyView() {
+        if (observedAdapter != null) {
+            observedAdapter.unregisterAdapterDataObserver(emptyObserver);
+            observedAdapter = null;
+        }
+        super.onDestroyView();
     }
 
     // Coordinates the three states (loading spinner / empty view / list) in
