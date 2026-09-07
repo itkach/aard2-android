@@ -73,4 +73,23 @@
         <item name="android:textColorSecondary">?attr/colorOnSurface</item>
     </style>
 
+    <!-- List-item text roles, replacing the layouts' old
+         @android:style/TextAppearance.Holo.* references. Parented on the
+         Material 3 type scale so size/weight/letter-spacing follow the active
+         theme (and its dynamic color) rather than Holo. Titles inherit the
+         type scale's own on-surface colour; the muted subtitle/caption roles
+         use colorOnSurfaceVariant, M3's role for de-emphasised secondary text
+         (the modern stand-in for the old textColorSecondary the Holo subtitle
+         styles carried). Applied via style="..." exactly as the Holo ones
+         were. -->
+    <style name="TextAppearance.Aard2.ListTitle" parent="@style/TextAppearance.Material3.TitleMedium" />
+
+    <style name="TextAppearance.Aard2.ListSubtitle" parent="@style/TextAppearance.Material3.BodyMedium">
+        <item name="android:textColor">?attr/colorOnSurfaceVariant</item>
+    </style>
+
+    <style name="TextAppearance.Aard2.ListCaption" parent="@style/TextAppearance.Material3.BodySmall">
+        <item name="android:textColor">?attr/colorOnSurfaceVariant</item>
+    </style>
+
 </resources>

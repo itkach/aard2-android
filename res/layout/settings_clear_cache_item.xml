@@ -11,7 +11,7 @@
     >
     <TextView
         android:id="@+id/setting_clear_cache"
-        style="@android:style/TextAppearance.Holo.SearchResult.Title"
+        style="@style/TextAppearance.Aard2.ListTitle"
         android:text="@string/setting_clear_cache"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -20,7 +20,7 @@
 
     <TextView
         android:id="@+id/setting_clear_cache_subtitle"
-        style="@android:style/TextAppearance.Holo.SearchResult.Subtitle"
+        style="@style/TextAppearance.Aard2.ListSubtitle"
         android:text="@string/setting_clear_cache_subtitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

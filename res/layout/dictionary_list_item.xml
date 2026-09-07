@@ -39,7 +39,7 @@
             android:background="?attr/selectableItemBackground">
             <TextView
                 android:id="@+id/dictionary_label"
-                style="@android:style/TextAppearance.Holo.SearchResult.Title"
+                style="@style/TextAppearance.Aard2.ListTitle"
                 android:textSize="20sp"
                 android:text="WordNet"
                 android:layout_width="0dp"
@@ -86,9 +86,9 @@
 
         <TextView
             android:id="@+id/dictionary_error"
-            style="@android:style/TextAppearance.Holo.Small"
+            style="@style/TextAppearance.Aard2.ListCaption"
             android:text="File does not exist"
-            android:textColor="@android:color/holo_red_dark"
+            android:textColor="?attr/colorError"
             android:visibility="visible"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
@@ -107,7 +107,7 @@
 
         <TextView
             android:id="@+id/dictionary_blob_count"
-            style="@android:style/TextAppearance.Holo.Small"
+            style="@style/TextAppearance.Aard2.ListCaption"
             android:text="100,000 items"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -134,7 +134,7 @@
 
             <TextView
                 android:id="@+id/dictionary_copyright"
-                style="@android:style/TextAppearance.Holo.SearchResult.Subtitle"
+                style="@style/TextAppearance.Aard2.ListSubtitle"
                 android:text="2014 Wikipedia editors and contributors"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -161,7 +161,7 @@
                 />
             <TextView
                 android:id="@+id/dictionary_license"
-                style="@android:style/TextAppearance.Holo.SearchResult.Subtitle"
+                style="@style/TextAppearance.Aard2.ListSubtitle"
                 android:text="Creative Commons with Attribution"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -189,7 +189,7 @@
 
             <TextView
                 android:id="@+id/dictionary_source"
-                style="@android:style/TextAppearance.Holo.SearchResult.Subtitle"
+                style="@style/TextAppearance.Aard2.ListSubtitle"
                 android:text="http://en.wikipedia.org"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -215,7 +215,7 @@
                 />
             <TextView
                 android:id="@+id/dictionary_path"
-                style="@android:style/TextAppearance.Holo.SearchResult.Subtitle"
+                style="@style/TextAppearance.Aard2.ListSubtitle"
                 android:text="/mnt/sdcard/wordnet.slob"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

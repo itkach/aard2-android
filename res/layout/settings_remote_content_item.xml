@@ -11,7 +11,7 @@
         >
         <TextView
             android:id="@+id/setting_name"
-            style="@android:style/TextAppearance.Holo.SearchResult.Title"
+            style="@style/TextAppearance.Aard2.ListTitle"
             android:text="@string/setting_remote_content"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

@@ -11,7 +11,7 @@
 
     <TextView
         android:id="@+id/setting_about"
-        style="@android:style/TextAppearance.Holo.SearchResult.Title"
+        style="@style/TextAppearance.Aard2.ListTitle"
         android:text="@string/setting_about"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -20,7 +20,7 @@
 
     <TextView
         android:id="@+id/application_version"
-        style="@android:style/TextAppearance.Holo.SearchResult.Subtitle"
+        style="@style/TextAppearance.Aard2.ListSubtitle"
         android:text="@string/application_version"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -50,7 +50,7 @@
 
         <TextView
             android:id="@+id/application_copyright"
-            style="@android:style/TextAppearance.Holo.SearchResult.Subtitle"
+            style="@style/TextAppearance.Aard2.ListSubtitle"
             android:text="@string/application_copyright"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -78,7 +78,7 @@
             />
         <TextView
             android:id="@+id/application_license"
-            style="@android:style/TextAppearance.Holo.SearchResult.Subtitle"
+            style="@style/TextAppearance.Aard2.ListSubtitle"
             android:text="@string/application_license_name"
             android:autoLink="web"
             android:layout_width="wrap_content"
@@ -107,7 +107,7 @@
             />
 
         <TextView
-            style="@android:style/TextAppearance.Holo.SearchResult.Subtitle"
+            style="@style/TextAppearance.Aard2.ListSubtitle"
             android:text="@string/application_home_url"
             android:autoLink="web"
             android:layout_width="wrap_content"

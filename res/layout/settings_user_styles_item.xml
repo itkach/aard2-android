@@ -17,7 +17,7 @@
             >
             <TextView
                 android:id="@+id/setting_user_styles"
-                style="@android:style/TextAppearance.Holo.SearchResult.Title"
+                style="@style/TextAppearance.Aard2.ListTitle"
                 android:text="@string/setting_user_styles"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -40,7 +40,7 @@
 
         <TextView
             android:id="@+id/setting_user_styles_empty"
-            style="@android:style/TextAppearance.Holo.SearchResult.Title"
+            style="@style/TextAppearance.Aard2.ListTitle"
             android:text="@string/setting_user_styles_empty"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
