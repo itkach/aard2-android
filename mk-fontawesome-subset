@@ -1,0 +1,64 @@
+#!/usr/bin/env bash
+#
+# Regenerate the subset Font Awesome 7 Free OTFs in assets/ so they contain
+# ONLY the glyphs IconMaker.java actually uses. The full Free fonts are ~150KB+
+# each; these subsets are a couple KB.
+#
+# Run this whenever an icon is added to / removed from IconMaker.java - update
+# the REG_CODES / SOL_CODES lists below to match its glyphs, then run:
+#
+#     ./mk-fontawesome-subset [FONTAWESOME_DESKTOP_DIR]
+#
+# FONTAWESOME_DESKTOP_DIR defaults to the newest
+# ~/Downloads/fontawesome-free-*-desktop (the "Desktop" zip from
+# fontawesome.com, which ships the otfs/). It needs fonttools' pyftsubset; if
+# that isn't on PATH a throwaway venv is created under build/ (git-ignored).
+#
+# Codepoints correspond to IconMaker.java's Glyph constants:
+#
+#   regular() -> Font Awesome 7 Free-Regular-400.otf (outline style)
+#     f005 star            f017 clock           f02e bookmark
+#     f0c8 square          f14a square-check    f1c6 file-zipper
+#
+#   solid()   -> Font Awesome 7 Free-Solid-900.otf (filled style)
+#     002b plus            f002 magnifying-glass f005 star            f013 gear
+#     f021 arrows-rotate   f02d book             f02e bookmark        f03a list
+#     f05e ban             f071 triangle-exclamation                  f07b folder
+#     f08e arrow-up-right-from-square             f0b0 filter          f106 angle-up
+#     f107 angle-down      f148 arrow-turn-up    f160 arrow-down-wide-short
+#     f161 arrow-up-wide-short                    f19c building-columns
+#     f1da clock-rotate-left f1f8 trash           f1f9 copyright       f522 dice
+#
+set -euo pipefail
+cd "$(dirname "$0")"
+
+REG_CODES="f005,f017,f02e,f0c8,f14a,f1c6"
+SOL_CODES="002b,f002,f005,f013,f021,f02d,f02e,f03a,f05e,f071,f07b,f08e,f0b0,f106,f107,f148,f160,f161,f19c,f1da,f1f8,f1f9,f522"
+
+FA_DIR="${1:-$(ls -d "$HOME"/Downloads/fontawesome-free-*-desktop 2>/dev/null | sort -V | tail -1 || true)}"
+REG_SRC="$FA_DIR/otfs/Font Awesome 7 Free-Regular-400.otf"
+SOL_SRC="$FA_DIR/otfs/Font Awesome 7 Free-Solid-900.otf"
+for f in "$REG_SRC" "$SOL_SRC"; do
+    [ -f "$f" ] || { echo "Source font not found: $f" >&2
+        echo "Pass the Font Awesome desktop dir as the first argument." >&2; exit 1; }
+done
+
+PYFTSUBSET="$(command -v pyftsubset || true)"
+if [ -z "$PYFTSUBSET" ]; then
+    VENV="build/fonttools-venv"
+    if [ ! -x "$VENV/bin/pyftsubset" ]; then
+        echo "pyftsubset not on PATH; bootstrapping $VENV ..."
+        python3 -m venv "$VENV"
+        "$VENV/bin/pip" install -q fonttools
+    fi
+    PYFTSUBSET="$VENV/bin/pyftsubset"
+fi
+
+subset() { # <src> <unicodes> <out>
+    "$PYFTSUBSET" "$1" --unicodes="$2" --output-file="$3" \
+        --no-hinting --desubroutinize --layout-features='' --glyph-names
+    echo "wrote $3 ($(wc -c < "$3") bytes)"
+}
+
+subset "$REG_SRC" "$REG_CODES" assets/fontawesome-7-regular.otf
+subset "$SOL_SRC" "$SOL_CODES" assets/fontawesome-7-solid.otf

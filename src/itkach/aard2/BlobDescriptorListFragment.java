@@ -42,6 +42,7 @@ abstract class BlobDescriptorListFragment extends BaseListFragment {
 
     private SelectionTracker<Long>          selectionTracker;
     private ActionMode                      actionMode;
+    private MenuItem                        miSelectAll;
     // Set while the ActionMode is being torn down. Clearing the selection and
     // refreshing rows during teardown makes the tracker re-fire
     // onSelectionChanged; without this guard that would start a fresh (empty)
@@ -139,8 +140,23 @@ abstract class BlobDescriptorListFragment extends BaseListFragment {
             }
             if (actionMode != null) {
                 actionMode.setTitle(String.valueOf(selectionTracker.getSelection().size()));
+                updateSelectAllIcon();
             }
         }
+    }
+
+    // The select-all toggle's icon is a Gmail-style checkbox reflecting whether
+    // EVERYTHING is selected: a checked box when all items are (tap deselects
+    // all), an empty box otherwise - including when only some are selected (tap
+    // selects all).
+    private void updateSelectAllIcon() {
+        if (miSelectAll == null) {
+            return;
+        }
+        int count = listAdapter.getItemCount();
+        boolean allSelected = count > 0 && selectionTracker.getSelection().size() == count;
+        miSelectAll.setIcon(IconMaker.actionMode(getActivity(),
+                allSelected ? IconMaker.IC_CHECK_SQUARE : IconMaker.IC_SQUARE));
     }
 
     private class SelectionActionModeCallback implements ActionMode.Callback {
@@ -152,10 +168,8 @@ abstract class BlobDescriptorListFragment extends BaseListFragment {
             if (miDelete != null) {
                 miDelete.setIcon(IconMaker.actionMode(getActivity(), IconMaker.IC_TRASH));
             }
-            MenuItem miSelectAll = menu.findItem(R.id.blob_descriptor_select_all);
-            if (miSelectAll != null) {
-                miSelectAll.setIcon(IconMaker.actionMode(getActivity(), IconMaker.IC_SELECT_ALL));
-            }
+            miSelectAll = menu.findItem(R.id.blob_descriptor_select_all);
+            updateSelectAllIcon();
             return true;
         }
 
@@ -190,6 +204,7 @@ abstract class BlobDescriptorListFragment extends BaseListFragment {
         @Override
         public void onDestroyActionMode(ActionMode mode) {
             actionMode = null;
+            miSelectAll = null;
             tearingDownSelection = true;
             selectionTracker.clearSelection();
             listAdapter.setSelectionModeActive(false);

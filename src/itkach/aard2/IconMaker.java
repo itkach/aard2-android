@@ -57,7 +57,8 @@ class IconMaker {
     static final Glyph IC_FILE_ARCHIVE = regular('');    // file-zipper (outline)
     static final Glyph IC_ERROR = solid('');             // triangle-exclamation
     static final Glyph IC_COPYRIGHT = solid('');         // copyright
-    static final Glyph IC_SELECT_ALL = regular('');      // square-check (outline) - codepoint changed from FA4's f046
+    static final Glyph IC_CHECK_SQUARE = regular('\uf14a'); // square-check (checked box) - codepoint changed from FA4's f046
+    static final Glyph IC_SQUARE = regular('\uf0c8');       // square (empty box)
     static final Glyph IC_ADD = solid('+');               // plus - FA7 maps this to the literal ASCII '+', changed from FA4's f067
     static final Glyph IC_ANGLE_UP = solid('');          // angle-up
     static final Glyph IC_ANGLE_DOWN = solid('');        // angle-down
