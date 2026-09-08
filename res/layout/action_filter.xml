@@ -1,7 +1,15 @@
+<!-- The toolbar force-stretches a menu action view to the full action-bar
+     height (unlike the Lookup box, a raw Toolbar child that honours its own
+     height), so its underline would sit flush against the toolbar's bottom. The
+     vertical padding insets the search field within that stretched height so it
+     centres with a little breathing room below the underline, matching Lookup.
+     Separate top/bottom (not paddingVertical, which is API 26+) for minSdk. -->
 <SearchView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/fldFilter"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:paddingTop="4dp"
+    android:paddingBottom="4dp"
     android:actionViewClass="android.widget.SearchView"
     android:iconifiedByDefault="true"
     android:queryHint="Filter"
