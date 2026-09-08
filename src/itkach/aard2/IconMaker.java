@@ -99,7 +99,7 @@ class IconMaker {
     // so the glyph size passed to make() is just its intrinsic bound.
     static FontDrawable tab(Context context, Glyph g, boolean selected) {
         int attr = selected
-                ? com.google.android.material.R.attr.colorPrimary
+                ? androidx.appcompat.R.attr.colorPrimary
                 : android.R.attr.textColorSecondary;
         int fallback = selected ? 0xff0099cc : 0xff888888;
         return make(context, g, 24, resolveThemeColor(context, attr, fallback));
@@ -110,7 +110,7 @@ class IconMaker {
     // stay consistent with the rest of the UI instead of a separate
     // hardcoded accent.
     static FontDrawable list(Context context, Glyph g) {
-        int color = resolveThemeColor(context, com.google.android.material.R.attr.colorPrimary, 0xff0099cc);
+        int color = resolveThemeColor(context, androidx.appcompat.R.attr.colorPrimary, 0xff0099cc);
         return make(context, g, 26, color);
     }
 
@@ -168,7 +168,7 @@ class IconMaker {
     // a fixed android.R.color.holo_red_dark this used to resolve to
     // regardless of theme.
     static FontDrawable errorText(Context context, Glyph g) {
-        int color = resolveThemeColor(context, com.google.android.material.R.attr.colorError, 0xffcc0000);
+        int color = resolveThemeColor(context, androidx.appcompat.R.attr.colorError, 0xffcc0000);
         return make(context, g, 16, color);
     }
 
