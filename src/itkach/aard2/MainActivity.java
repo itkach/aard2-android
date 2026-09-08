@@ -363,20 +363,6 @@ public class MainActivity extends FragmentActivity {
         super.onPause();
     }
 
-    @Override
-    public void onBackPressed() {
-        Fragment frag = getFragment(selectedPosition);
-        if (frag instanceof BlobDescriptorListFragment) {
-            BlobDescriptorListFragment bdFrag = (BlobDescriptorListFragment)frag;
-            if (bdFrag.isFilterExpanded()) {
-                Log.d(TAG, "Filter is expanded");
-                bdFrag.collapseFilter();
-                return;
-            }
-        }
-        super.onBackPressed();
-    }
-
     public static final class BookmarksFragment extends
             BlobDescriptorListFragment {
         @Override

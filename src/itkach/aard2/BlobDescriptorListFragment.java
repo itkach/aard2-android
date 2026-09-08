@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.selection.ItemDetailsLookup;
@@ -54,6 +55,12 @@ abstract class BlobDescriptorListFragment extends BaseListFragment {
 
     private MenuItem miFilter = null;
 
+    // "Back collapses an open filter" lives here (not MainActivity.onBackPressed)
+    // so it participates in predictive back: the callback advertises whether it
+    // will consume back, which it does only while this section is visible and its
+    // filter is expanded - otherwise back falls through to the default (exit).
+    private OnBackPressedCallback filterBackCallback;
+
     public boolean isFilterExpanded() {
         return miFilter != null && miFilter.isActionViewExpanded();
     }
@@ -62,6 +69,21 @@ abstract class BlobDescriptorListFragment extends BaseListFragment {
         if (miFilter != null) {
             miFilter.collapseActionView();
         }
+    }
+
+    // Enabled only when this section is the visible one AND its filter is open;
+    // a hidden section can still hold an expanded filter, and its back must not
+    // steal the visible section's back press.
+    private void syncFilterBackEnabled() {
+        if (filterBackCallback != null) {
+            filterBackCallback.setEnabled(!isHidden() && isFilterExpanded());
+        }
+    }
+
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        syncFilterBackEnabled();
     }
 
     abstract BlobDescriptorList getDescriptorList();
@@ -79,6 +101,15 @@ abstract class BlobDescriptorListFragment extends BaseListFragment {
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        filterBackCallback = new OnBackPressedCallback(false) {
+            @Override
+            public void handleOnBackPressed() {
+                collapseFilter();
+            }
+        };
+        requireActivity().getOnBackPressedDispatcher()
+                .addCallback(getViewLifecycleOwner(), filterBackCallback);
 
         BlobDescriptorList descriptorList = getDescriptorList();
 
@@ -314,6 +345,23 @@ abstract class BlobDescriptorListFragment extends BaseListFragment {
 
         miFilter = menu.findItem(R.id.action_filter);
         miFilter.setIcon(icFilter);
+        // The expand/collapse transition tells us the new state directly (unlike
+        // isActionViewExpanded(), which still reads the old state inside these
+        // callbacks). onHiddenChanged/syncFilterBackEnabled handle the rest.
+        miFilter.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
+            @Override
+            public boolean onMenuItemActionExpand(MenuItem item) {
+                filterBackCallback.setEnabled(!isHidden());
+                return true;
+            }
+
+            @Override
+            public boolean onMenuItemActionCollapse(MenuItem item) {
+                filterBackCallback.setEnabled(false);
+                return true;
+            }
+        });
+        syncFilterBackEnabled();
 
         View filterActionView = miFilter.getActionView();
         SearchView searchView = (SearchView) filterActionView
