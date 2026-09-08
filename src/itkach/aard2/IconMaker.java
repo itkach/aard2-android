@@ -90,21 +90,13 @@ class IconMaker {
         return fallbackColor;
     }
 
-    // Unselected/default tab icon color - textColorSecondary is the
-    // framework's own "de-emphasized icon or text" role, so this follows
-    // whatever the theme (and on Android 12+, the system's per-wallpaper
-    // dynamic color) actually is instead of a fixed grey chosen up front.
-    static FontDrawable tab(Context context, Glyph g) {
-        int color = resolveThemeColor(context, android.R.attr.textColorSecondary, 0xff888888);
-        return make(context, g, 21, color);
-    }
-
     // Bottom-navigation icon. The selected destination is drawn in the brand
-    // colour (colorPrimary) and the rest in the muted textColorSecondary -
-    // done by choosing the colour here rather than via itemIconTint, since the
-    // FontDrawable these produce doesn't honour a tint list. Size follows the
-    // bar's itemIconSize, so the glyph size passed here is just its intrinsic
-    // bound.
+    // colour (colorPrimary), the rest in the muted textColorSecondary (the
+    // framework's own "de-emphasized icon" role, which follows the theme and,
+    // on Android 12+, the system's per-wallpaper dynamic color). The colour is
+    // chosen here rather than via itemIconTint because the FontDrawable this
+    // produces doesn't honour a tint list. Size follows the bar's itemIconSize,
+    // so the glyph size passed to make() is just its intrinsic bound.
     static FontDrawable tab(Context context, Glyph g, boolean selected) {
         int attr = selected
                 ? com.google.android.material.R.attr.colorPrimary

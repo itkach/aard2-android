@@ -4,13 +4,12 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
 
-    <!-- Fixed-header Toolbar height for both activities. A little more compact
-         than the platform's 56dp ?android:attr/actionBarSize to save vertical
-         space, but not so tight that the Lookup SearchView's underline ends up
-         flush against the toolbar's bottom edge (which happens at 48dp, the
-         field's own natural height) - 52dp keeps a little breathing room below
-         it. -->
-    <dimen name="toolbar_height">52dp</dimen>
+    <!-- Fixed-header Toolbar height for both activities - more compact than the
+         platform's 56dp ?android:attr/actionBarSize. The Lookup SearchView is
+         given an explicit 40dp height (see activity_main.xml) so it centres in
+         this with breathing room rather than filling it and pushing its
+         underline flush against the bottom edge. -->
+    <dimen name="toolbar_height">48dp</dimen>
 
     <!-- Default sizes for Samsung multiwindow. -->
     <dimen name="app_defaultsize_w">632.0dip</dimen>

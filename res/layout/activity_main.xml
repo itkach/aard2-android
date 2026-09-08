@@ -72,11 +72,16 @@
                 android:padding="12dp"
                 android:visibility="gone" />
 
+            <!-- Fixed 40dp (not wrap_content, which the framework SearchView
+                 measures to a taller ~48dp min, leaving the query text floating
+                 well above its underline and forcing a taller Toolbar). At 40dp,
+                 centred in the 48dp Toolbar, the box is compact and the
+                 text-to-underline gap tightens. -->
             <SearchView
                 android:id="@+id/fldLookup"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="start"
+                android:layout_height="40dp"
+                android:layout_gravity="center_vertical|start"
                 android:iconifiedByDefault="false"
                 android:queryHint="@string/action_lookup"
                 android:imeOptions="flagNoExtractUi"
