@@ -37,16 +37,30 @@
          and find-in-page). The main Toolbar sets its own @dimen/toolbar_height and
          so ignores this, but the ActionMode bars don't - point both at the same
          dimen so they match the slimmer Toolbar instead of the 56dp default. -->
+    <!-- statusBarColor / windowLightStatusBar give the launch "starting window"
+         (drawn before onCreate) a neutral, device-dark-aware status bar instead
+         of the Material3 default (colorPrimary-derived), which otherwise flashes
+         the toolbar colour up there until applyStatusBarAppearance paints its
+         runtime scrim. Both resolve through -night resources (see
+         res/values/status_bar.xml) so they follow the DEVICE's dark mode - the
+         same signal the runtime scrim uses - not this app's theme; identical to
+         the runtime result in every case, so no flash even when app theme and
+         device dark mode disagree. Same values in both themes on purpose: the
+         starting window is device-driven, not app-theme-driven. -->
     <style name="Theme.Aard2" parent="@style/Theme.Material3.DynamicColors.Light.NoActionBar">
         <item name="android:windowActionModeOverlay">true</item>
         <item name="android:actionBarSize">@dimen/toolbar_height</item>
         <item name="actionBarSize">@dimen/toolbar_height</item>
+        <item name="android:statusBarColor">@color/status_bar_scrim</item>
+        <item name="android:windowLightStatusBar">@bool/status_bar_light_appearance</item>
     </style>
 
     <style name="Theme.Aard2.Dark" parent="@style/Theme.Material3.DynamicColors.Dark.NoActionBar">
         <item name="android:windowActionModeOverlay">true</item>
         <item name="android:actionBarSize">@dimen/toolbar_height</item>
         <item name="actionBarSize">@dimen/toolbar_height</item>
+        <item name="android:statusBarColor">@color/status_bar_scrim</item>
+        <item name="android:windowLightStatusBar">@bool/status_bar_light_appearance</item>
     </style>
 
     <!-- Applied via android:theme on every <android.widget.Toolbar>. Its

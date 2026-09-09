@@ -147,7 +147,11 @@ public class ArticleCollectionActivity extends FragmentActivity {
         setContentView(R.layout.activity_article_collection_loading);
         Toolbar loadingToolbar = (Toolbar) findViewById(R.id.toolbar);
         setActionBar(loadingToolbar);
-        applyStatusBarInset(loadingToolbar);
+        // Paint the loading screen's status bar with the AppBarLayout's neutral
+        // scrim now (same mechanism the real content uses), so it doesn't show
+        // the toolbar colour up there while the article loads.
+        ((Application) getApplication()).applyStatusBarAppearance(
+                this, (AppBarLayout) findViewById(R.id.appbar));
         app.push(this);
         final ActionBar actionBar = getActionBar();
         actionBar.setTitle("...");
@@ -406,17 +410,6 @@ public class ArticleCollectionActivity extends FragmentActivity {
     // than replacing it.
     Toolbar getToolbar() {
         return (Toolbar) findViewById(R.id.toolbar);
-    }
-
-    // Padding for the loading screen's standalone Toolbar, which - unlike
-    // the real content's AppBarLayout - has no wrap_content container of its
-    // own to grow into, so it needs its own top-only status bar inset.
-    private void applyStatusBarInset(View toolbar) {
-        ViewCompat.setOnApplyWindowInsetsListener(toolbar, (v, windowInsets) -> {
-            Insets bars = windowInsets.getInsets(WindowInsetsCompat.Type.statusBars());
-            v.setPadding(0, bars.top, 0, 0);
-            return windowInsets;
-        });
     }
 
     // With edge-to-edge enforced (mandatory as of API 36), content draws

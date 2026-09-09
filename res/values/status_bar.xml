@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Status-bar backdrop + icon appearance for the launch "starting window"
+     (drawn from the theme before onCreate runs). Qualified by -night so they
+     follow the DEVICE's dark mode - the same thing Application.isDeviceDark()
+     reads and applyStatusBarAppearance() uses at runtime - rather than this
+     app's own light/dark theme preference. That keeps the starting window's
+     status bar identical to the runtime scrim in every case, including when the
+     app theme and the device's dark mode disagree, so there's no flash. The app
+     doesn't override the config night mode (no setDefaultNightMode), so -night
+     tracks the device. -->
+<resources>
+    <color name="status_bar_scrim">@android:color/background_light</color>
+    <!-- Light status bar (background_light) wants dark icons: windowLightStatusBar=true. -->
+    <bool name="status_bar_light_appearance">true</bool>
+</resources>

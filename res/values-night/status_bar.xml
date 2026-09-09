@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Dark-mode (device) variant of the starting-window status bar - see
+     res/values/status_bar.xml. -->
+<resources>
+    <color name="status_bar_scrim">@android:color/background_dark</color>
+    <!-- Dark status bar (background_dark) wants light icons: windowLightStatusBar=false. -->
+    <bool name="status_bar_light_appearance">false</bool>
+</resources>

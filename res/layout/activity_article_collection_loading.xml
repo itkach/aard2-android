@@ -3,17 +3,30 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <android.widget.Toolbar
-        android:id="@+id/toolbar"
+    <!-- Same AppBarLayout + Toolbar header as activity_article_collection.xml,
+         so the loading screen's status bar area is painted by the AppBarLayout's
+         neutral statusBarForeground (set in onCreate via applyStatusBarAppearance)
+         rather than the Toolbar's own colorPrimary background bleeding up into it.
+         Without this the status bar flashes the toolbar colour while the article
+         loads, then snaps to neutral once the real content (which does have an
+         AppBarLayout) appears. -->
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:minHeight="?android:attr/actionBarSize"
-        android:background="?attr/colorPrimary"
-        android:titleTextColor="?attr/colorOnPrimary"
-        android:subtitleTextColor="?attr/colorOnPrimary"
-        android:theme="@style/ThemeOverlay.Aard2.Toolbar"
-        android:popupTheme="@style/ThemeOverlay.Aard2.ToolbarPopup"
-        android:layout_gravity="top" />
+        android:fitsSystemWindows="true">
+
+        <android.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/toolbar_height"
+            android:background="?attr/colorPrimary"
+            android:titleTextColor="?attr/colorOnPrimary"
+            android:subtitleTextColor="?attr/colorOnPrimary"
+            android:theme="@style/ThemeOverlay.Aard2.Toolbar"
+            android:popupTheme="@style/ThemeOverlay.Aard2.ToolbarPopup" />
+
+    </com.google.android.material.appbar.AppBarLayout>
 
     <ProgressBar
         android:id="@+id/webViewPogress"
