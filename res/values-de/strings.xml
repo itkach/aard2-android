@@ -92,4 +92,10 @@
     <string name="action_load_remote_content">Lade externen Inhalt</string>
     <string name="setting_use_volume_for_nav">Lautstärketasten für die Navigation verwenden</string>
     <string name="find_hint">Suche in Seite</string>
+    <string name="setting_user_styles_add">Hinzufügen</string>
+    <string name="dictionary_marked_for_random_content_desc">%s, für Zufallssuche markiert</string>
+    <string name="setting_record_history">Verlauf aufzeichnen</string>
+    <string name="setting_record_history_off_title">Verlauf deaktivieren?</string>
+    <string name="setting_record_history_off_message">Ihr aufgezeichneter Verlauf wird gelöscht.</string>
+    <string name="setting_record_history_off_confirm">Deaktivieren</string>
 </resources>

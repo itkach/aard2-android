@@ -100,4 +100,10 @@
     <string name="find_next">Siguiente</string>
     <string name="find_previous">Anterior"</string>
 
+    <string name="setting_user_styles_add">Añadir</string>
+    <string name="dictionary_marked_for_random_content_desc">%s, marcado para búsqueda aleatoria</string>
+    <string name="setting_record_history">Registrar historial</string>
+    <string name="setting_record_history_off_title">¿Desactivar historial?</string>
+    <string name="setting_record_history_off_message">Se eliminará tu historial registrado.</string>
+    <string name="setting_record_history_off_confirm">Desactivar</string>
 </resources>

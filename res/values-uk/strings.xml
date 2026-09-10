@@ -90,4 +90,10 @@
     <string name="setting_auto_paste">Авто-вставка з буфіру обміну</string>
 
 
+    <string name="setting_user_styles_add">Додати</string>
+    <string name="dictionary_marked_for_random_content_desc">%s, позначено для випадкового пошуку</string>
+    <string name="setting_record_history">Записувати історію</string>
+    <string name="setting_record_history_off_title">Вимкнути історію?</string>
+    <string name="setting_record_history_off_message">Записану історію буде видалено.</string>
+    <string name="setting_record_history_off_confirm">Вимкнути</string>
 </resources>

@@ -275,6 +275,23 @@ final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
         return bd;
     }
 
+    // Delete every entry, from both the in-memory list and the backing store.
+    // Used when history recording is turned off.
+    public void clear() {
+        for (BlobDescriptor bd : this.list) {
+            store.delete(bd.id);
+        }
+        this.list.clear();
+        notifyDataSetChanged();
+    }
+
+    @Override
+    public boolean isEmpty() {
+        // The true count, independent of any active filter (AbstractList's
+        // default isEmpty() reflects the filtered view - size() below).
+        return this.list.isEmpty();
+    }
+
     public boolean contains(String contentUrl) {
         BlobDescriptor toFind = createDescriptor(contentUrl);
         for (BlobDescriptor bd : this.list) {

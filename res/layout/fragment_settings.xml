@@ -55,6 +55,8 @@
                     layout="@layout/settings_use_volume_for_nav" />
                 <include android:id="@+id/card_auto_paste"
                     layout="@layout/settings_auto_paste" />
+                <include android:id="@+id/card_record_history"
+                    layout="@layout/settings_record_history" />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 

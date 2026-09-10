@@ -97,4 +97,10 @@
     <string name="auto_style_title">Automatisch</string>
     <string name="setting_use_volume_for_nav">Volumeknoppen gebruiken voor navigatie</string>
 
+    <string name="setting_user_styles_add">Toevoegen</string>
+    <string name="dictionary_marked_for_random_content_desc">%s, gemarkeerd voor willekeurig opzoeken</string>
+    <string name="setting_record_history">Geschiedenis bijhouden</string>
+    <string name="setting_record_history_off_title">Geschiedenis uitschakelen?</string>
+    <string name="setting_record_history_off_message">Je opgeslagen geschiedenis wordt verwijderd.</string>
+    <string name="setting_record_history_off_confirm">Uitschakelen</string>
 </resources>

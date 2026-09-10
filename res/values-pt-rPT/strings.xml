@@ -97,4 +97,10 @@
     <string name="auto_style_title">Automático</string>
     <string name="setting_use_volume_for_nav">Usar botões de volume para navegação</string>
 
+    <string name="setting_user_styles_add">Adicionar</string>
+    <string name="dictionary_marked_for_random_content_desc">%s, marcado para consulta aleatória</string>
+    <string name="setting_record_history">Registar histórico</string>
+    <string name="setting_record_history_off_title">Desativar histórico?</string>
+    <string name="setting_record_history_off_message">O seu histórico registado será eliminado.</string>
+    <string name="setting_record_history_off_confirm">Desativar</string>
 </resources>

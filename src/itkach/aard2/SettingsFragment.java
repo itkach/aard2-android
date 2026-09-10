@@ -70,6 +70,7 @@ public class SettingsFragment extends Fragment
                 app.useVolumeForNav(), app::setUseVolumeForNav);
         setupSwitch(view, R.id.setting_auto_paste,
                 app.autoPaste(), app::setAutoPaste);
+        setupRecordHistory(view);
         setupUserStyles(view);
         setupAbout(view);
     }
@@ -144,6 +145,38 @@ public class SettingsFragment extends Fragment
         toggle.setChecked(initial);
         // The switch auto-toggles its own state on click; persist that new state.
         toggle.setOnClickListener(v -> setter.set(toggle.isChecked()));
+    }
+
+    // Record history is not a plain toggle: turning it off deletes the history
+    // recorded so far and hides the History section, so it confirms first (unless
+    // there is nothing to delete). Turning it back on just resumes recording and
+    // restores the section.
+    private void setupRecordHistory(View view) {
+        CompoundButton toggle = view.findViewById(R.id.setting_record_history);
+        toggle.setChecked(app.recordHistory());
+        toggle.setOnClickListener(v -> {
+            if (toggle.isChecked()) {
+                app.setRecordHistory(true);
+                ((MainActivity) requireActivity()).setHistoryVisible(true);
+            } else if (app.history.isEmpty()) {
+                app.setRecordHistory(false);
+                ((MainActivity) requireActivity()).setHistoryVisible(false);
+            } else {
+                new AlertDialog.Builder(requireActivity())
+                        .setTitle(R.string.setting_record_history_off_title)
+                        .setMessage(R.string.setting_record_history_off_message)
+                        .setPositiveButton(R.string.setting_record_history_off_confirm,
+                                (dialog, which) -> {
+                                    app.setRecordHistory(false);
+                                    app.history.clear();
+                                    ((MainActivity) requireActivity()).setHistoryVisible(false);
+                                })
+                        .setNegativeButton(android.R.string.cancel,
+                                (dialog, which) -> toggle.setChecked(true))
+                        .setOnCancelListener(dialog -> toggle.setChecked(true))
+                        .show();
+            }
+        });
     }
 
     private void setupUserStyles(View view) {

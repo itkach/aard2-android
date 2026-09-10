@@ -90,4 +90,10 @@
     <string name="find_hint">Znajdź na stronie</string>
     <string name="find_next">Następne</string>
     <string name="find_previous">Poprzednie</string>
+    <string name="setting_user_styles_add">Dodaj</string>
+    <string name="dictionary_marked_for_random_content_desc">%s, oznaczony do losowego wyszukiwania</string>
+    <string name="setting_record_history">Zapisuj historię</string>
+    <string name="setting_record_history_off_title">Wyłączyć historię?</string>
+    <string name="setting_record_history_off_message">Zapisana historia zostanie usunięta.</string>
+    <string name="setting_record_history_off_confirm">Wyłącz</string>
 </resources>

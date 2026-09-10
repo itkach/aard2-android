@@ -89,6 +89,7 @@ public class Application extends android.app.Application {
     static final String PREF_UI_THEME_DARK              = "dark";
     static final String PREF_USE_VOLUME_FOR_NAV         = "useVolumeForNav";
     static final String PREF_AUTO_PASTE                 = "autoPaste";
+    static final String PREF_RECORD_HISTORY             = "recordHistory";
 
     private static final String TAG = Application.class.getSimpleName();
 
@@ -430,6 +431,18 @@ public class Application extends android.app.Application {
         final SharedPreferences prefs = prefs();
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean(Application.PREF_AUTO_PASTE, value);
+        editor.commit();
+    }
+
+    boolean recordHistory() {
+        final SharedPreferences prefs = prefs();
+        return prefs.getBoolean(Application.PREF_RECORD_HISTORY, true);
+    }
+
+    void setRecordHistory(boolean value) {
+        final SharedPreferences prefs = prefs();
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean(Application.PREF_RECORD_HISTORY, value);
         editor.commit();
     }
 

@@ -149,6 +149,9 @@ public class MainActivity extends FragmentActivity {
             return true;
         });
 
+        // The History section is hidden entirely when history recording is off.
+        bottomNav.getMenu().findItem(R.id.nav_history).setVisible(app.recordHistory());
+
         // The activity is windowSoftInputMode=adjustNothing (see the manifest):
         // when the keyboard opens for a lookup it simply draws over the bottom of
         // the window, leaving the nav bar pinned at the bottom (covered, not
@@ -162,6 +165,10 @@ public class MainActivity extends FragmentActivity {
         } else if (app.dictionaries.size() == 0) {
             initial = DICTIONARIES;
         } else {
+            initial = LOOKUP;
+        }
+        // Don't restore into the History section if history is (now) off.
+        if (!app.recordHistory() && initial == positionForItemId(R.id.nav_history)) {
             initial = LOOKUP;
         }
         setupSections(initial);
@@ -181,6 +188,17 @@ public class MainActivity extends FragmentActivity {
         m.findItem(R.id.nav_history).setIcon(IconMaker.tab(this, IconMaker.IC_HISTORY, selectedPosition == 2));
         m.findItem(R.id.nav_dictionaries).setIcon(IconMaker.tab(this, IconMaker.IC_DICTIONARY, selectedPosition == 3));
         m.findItem(R.id.nav_settings).setIcon(IconMaker.tab(this, IconMaker.IC_SETTINGS, selectedPosition == 4));
+    }
+
+    // Show or hide the History section's bottom-nav entry. Called at startup
+    // from the record-history preference and when Settings toggles it. Nav
+    // positions are keyed by item id, not contiguous index, so hiding one entry
+    // leaves the others' positions untouched.
+    void setHistoryVisible(boolean visible) {
+        bottomNav.getMenu().findItem(R.id.nav_history).setVisible(visible);
+        if (!visible && selectedPosition == positionForItemId(R.id.nav_history)) {
+            bottomNav.setSelectedItemId(itemIdForPosition(LOOKUP));
+        }
     }
 
     // Add all five fragments (once) and show the initial one, hide the rest.

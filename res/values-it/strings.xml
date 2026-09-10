@@ -95,4 +95,10 @@ is missing a quantity used in that language, otherwise the app will crash
 <string name="find_hint">Trova nella pagina</string>
 <string name="find_next">Successivo</string>
 <string name="find_previous">Precedente</string>
+    <string name="setting_user_styles_add">Aggiungi</string>
+    <string name="dictionary_marked_for_random_content_desc">%s, contrassegnato per la ricerca casuale</string>
+    <string name="setting_record_history">Registra cronologia</string>
+    <string name="setting_record_history_off_title">Disattivare la cronologia?</string>
+    <string name="setting_record_history_off_message">La cronologia registrata verrà eliminata.</string>
+    <string name="setting_record_history_off_confirm">Disattiva</string>
 </resources>
