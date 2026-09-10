@@ -19,14 +19,33 @@
         android:orientation="horizontal"
         android:layout_marginBottom="0dp"
         >
-        <Switch
+        <!-- The M3 switch has no compact variant, so it is scaled down for these
+             dense rows. Scaling shrinks its touch area too, so the switch is not
+             clickable itself and instead sits in this 48dp frame that owns the
+             tap (and the ripple) and toggles it - small graphic, full-size
+             target. -->
+        <FrameLayout
+            android:id="@+id/dictionary_active_touch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/dictionary_active"
-            android:checked="true"
-            android:enabled="true"
+            android:minWidth="48dp"
+            android:minHeight="48dp"
             android:layout_gravity="center_vertical"
-            android:layout_weight="0"/>
+            android:layout_weight="0"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?attr/selectableItemBackgroundBorderless">
+            <com.google.android.material.materialswitch.MaterialSwitch
+                android:id="@+id/dictionary_active"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:checked="true"
+                android:enabled="true"
+                android:clickable="false"
+                android:scaleX="0.75"
+                android:scaleY="0.75" />
+        </FrameLayout>
         <LinearLayout
             android:id="@+id/dictionary_toggle_detail_area"
             android:layout_width="0dp"

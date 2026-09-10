@@ -26,7 +26,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.ImageView;
-import android.widget.Switch;
+import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import java.util.Locale;
@@ -103,14 +103,17 @@ public class DictionaryListAdapter extends RecyclerView.Adapter<DictionaryListAd
         view.findViewById(R.id.dictionary_license).setOnClickListener(openUrlOnClick);
         view.findViewById(R.id.dictionary_source).setOnClickListener(openUrlOnClick);
 
-        Switch activeSwitch = (Switch) view.findViewById(R.id.dictionary_active);
-        activeSwitch.setOnClickListener(v -> {
+        // The switch itself isn't clickable (its scaled-down touch area would be
+        // small); its 48dp frame owns the tap and toggles it.
+        CompoundButton activeSwitch = (CompoundButton) view.findViewById(R.id.dictionary_active);
+        view.findViewById(R.id.dictionary_active_touch).setOnClickListener(v -> {
             int position = holder.getBindingAdapterPosition();
             if (position == RecyclerView.NO_POSITION) {
                 return;
             }
+            activeSwitch.toggle();
             SlobDescriptor desc = data.get(position);
-            desc.active = ((Switch) v).isChecked();
+            desc.active = activeSwitch.isChecked();
             data.set(position, desc);
         });
 
@@ -178,7 +181,7 @@ public class DictionaryListAdapter extends RecyclerView.Adapter<DictionaryListAd
 
         Resources r = view.getResources();
 
-        Switch switchView = (Switch) view.findViewById(R.id.dictionary_active);
+        CompoundButton switchView = (CompoundButton) view.findViewById(R.id.dictionary_active);
         switchView.setChecked(desc.active);
 
         TextView titleView = (TextView) view.findViewById(R.id.dictionary_label);
