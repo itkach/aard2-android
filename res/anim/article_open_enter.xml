@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Opening an article (Samsung only - see ArticleCollectionActivity). A
+     faithful port of the platform's own core/res/res/anim/activity_open_enter:
+     the incoming window fades in quickly (83ms) while drifting a small 96dp
+     into place, on top of the outgoing window which stays opaque right behind
+     it (article_open_exit). Two details are what make this clean where a
+     full-width slide could not:
+
+     - 96dp, not 100%p: the still-loading article barely moves, so there is
+       almost nothing to tear as it repaints mid-transition.
+     - the fade blends the incoming window into the opaque outgoing one behind
+       it, so its not-yet-painted content never flashes - there is always real
+       content behind the 96dp of travel to blend with.
+
+     Default z-order already draws the entering window on top, so no
+     zAdjustment. The platform's <extend> edge-clip is omitted: it is an
+     internal animation type with no public equivalent, and translate+alpha
+     carry the effect. fast_out_extra_slow_in is the platform's curve; the fade
+     timing (50ms delay, 83ms) is copied verbatim - it, not the translate
+     duration, sets the perceived speed. -->
+<set xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shareInterpolator="false">
+    <alpha
+        android:fromAlpha="0.0"
+        android:toAlpha="1.0"
+        android:startOffset="50"
+        android:duration="83"
+        android:interpolator="@android:anim/linear_interpolator" />
+    <translate
+        android:fromXDelta="96dp"
+        android:toXDelta="0"
+        android:duration="@integer/article_transition_open_duration"
+        android:interpolator="@android:interpolator/fast_out_extra_slow_in" />
+</set>

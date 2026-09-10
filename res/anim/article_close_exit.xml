@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Closing an article (back/up, Samsung only). A port of the platform's own
+     activity_close_exit: the departing article fades out quickly (83ms) while
+     drifting a small 96dp to the right - the mirror of the open. Default
+     z-order draws the closing window on top, so it fades out to reveal the
+     screen returning beneath it (article_close_enter); no zAdjustment needed.
+     The fade (35ms delay, 83ms) is what makes back feel immediate: the article
+     is gone well before the 96dp drift finishes. The platform's <extend>
+     edge-clip is omitted. -->
+<set xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shareInterpolator="false">
+    <alpha
+        android:fromAlpha="1.0"
+        android:toAlpha="0.0"
+        android:startOffset="35"
+        android:duration="83"
+        android:interpolator="@android:anim/linear_interpolator" />
+    <translate
+        android:fromXDelta="0"
+        android:toXDelta="96dp"
+        android:duration="@integer/article_transition_close_duration"
+        android:interpolator="@android:interpolator/fast_out_extra_slow_in" />
+</set>

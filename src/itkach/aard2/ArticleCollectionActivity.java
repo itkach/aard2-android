@@ -11,6 +11,7 @@ import android.database.DataSetObserver;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.SparseArray;
 import android.webkit.WebChromeClient;
@@ -123,6 +124,7 @@ public class ArticleCollectionActivity extends FragmentActivity {
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        samsungTransition(R.anim.article_open_enter, R.anim.article_open_exit);
         // Registered via OnBackPressedDispatcher rather than intercepted in
         // onKeyUp(KEYCODE_BACK): ComponentActivity's own back dispatch runs
         // ahead of onKeyUp regardless of what that returns, so an onKeyUp
@@ -144,18 +146,23 @@ public class ArticleCollectionActivity extends FragmentActivity {
         });
         final Application app = (Application)getApplication();
         app.installTheme(this);
-        setContentView(R.layout.activity_article_collection_loading);
-        Toolbar loadingToolbar = (Toolbar) findViewById(R.id.toolbar);
-        setActionBar(loadingToolbar);
-        // Paint the loading screen's status bar with the AppBarLayout's neutral
-        // scrim now (same mechanism the real content uses), so it doesn't show
-        // the toolbar colour up there while the article loads.
+        // One content view for the whole lifetime: the pager plus an overlaid
+        // spinner (see the layout). The spinner shows while the lookup resolves
+        // in the background; onPostExecute just flips visibility to the pager.
+        // No setContentView swap means nothing flashes through the open transition.
+        setContentView(R.layout.activity_article_collection);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setActionBar(toolbar);
+        // Paint the status bar with the AppBarLayout's neutral scrim from the
+        // first frame, so it never shows the toolbar colour up there.
         ((Application) getApplication()).applyStatusBarAppearance(
                 this, (AppBarLayout) findViewById(R.id.appbar));
         app.push(this);
         final ActionBar actionBar = getActionBar();
         actionBar.setTitle("...");
-        setupUpNavigation(loadingToolbar);
+        setupUpNavigation(toolbar);
+        // Debounced, so it doesn't even appear on fast lookups.
+        ((ContentLoadingProgressBar) findViewById(R.id.loading_progress)).show();
         final Intent intent = getIntent();
         final int position = intent.getIntExtra("position", 0);
 
@@ -223,11 +230,8 @@ public class ArticleCollectionActivity extends FragmentActivity {
                     return;
                 }
 
-                setContentView(R.layout.activity_article_collection);
-                Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-                setActionBar(toolbar);
-                setupUpNavigation(toolbar);
-
+                // The content view, toolbar and status bar are already set up in
+                // onCreate; just populate the (still-hidden) pager and reveal it.
                 View titleStrip = findViewById(R.id.pager_title_strip);
                 // The swipe-title strip is only meaningful when there's more
                 // than one article to page between; hide it for a single result.
@@ -268,6 +272,10 @@ public class ArticleCollectionActivity extends FragmentActivity {
                         }
                     }
                 });
+
+                // Content ready: hide the spinner and reveal the pager in place.
+                ((ContentLoadingProgressBar) findViewById(R.id.loading_progress)).hide();
+                viewPager.setVisibility(View.VISIBLE);
             }
         };
 
@@ -438,6 +446,29 @@ public class ArticleCollectionActivity extends FragmentActivity {
             v.setPadding(0, 0, 0, bars.bottom);
             return windowInsets;
         });
+    }
+
+    @Override
+    public void finish() {
+        super.finish();
+        samsungTransition(R.anim.article_close_enter, R.anim.article_close_exit);
+    }
+
+    // Samsung One UI animates the status bar inset during its default activity
+    // transition, and the fitsSystemWindows content follows it - sliding up under
+    // the status bar and bouncing back on every open/close. overridePendingTransition
+    // replaces One UI's transition entirely, so substituting a plain horizontal
+    // slide (res/anim/article_*) gives the same slide as other devices with no
+    // inset animation to bounce. Samsung only; everywhere else keeps the genuine
+    // platform transition (which also masks the brief loading-screen swap). The
+    // theme's windowAnimationStyle can't do this - installTheme's setTheme
+    // re-applies the default; only overridePendingTransition overrides the
+    // actual transition.
+    @SuppressWarnings("deprecation")  // overridePendingTransition: replacement is API 34+, minSdk is 23
+    private void samsungTransition(int enterAnim, int exitAnim) {
+        if ("samsung".equalsIgnoreCase(Build.MANUFACTURER)) {
+            overridePendingTransition(enterAnim, exitAnim);
+        }
     }
 
     @Override

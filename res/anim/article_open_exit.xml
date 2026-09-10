@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Opening an article (Samsung only). A port of the platform's own
+     activity_open_exit: the outgoing window (the screen the article was opened
+     from) stays fully opaque and drifts a small 96dp to the left, sitting
+     behind the incoming article which fades in on top of it
+     (article_open_enter). Staying opaque is the point - it is the real content
+     the incoming window's fade blends into, so nothing flashes through. The
+     platform's no-op alpha (1.0 -> 1.0) and <extend> edge-clip are omitted; the
+     translate is the whole visible effect. -->
+<translate xmlns:android="http://schemas.android.com/apk/res/android"
+    android:fromXDelta="0"
+    android:toXDelta="-96dp"
+    android:duration="@integer/article_transition_open_duration"
+    android:interpolator="@android:interpolator/fast_out_extra_slow_in" />

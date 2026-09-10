@@ -1,0 +1,19 @@
+<resources>
+
+    <!-- Translate duration for the article open/close transition (Samsung only -
+         see the res/anim/article_* animations and ArticleCollectionActivity).
+         These mirror the platform's own activity-open/close animations, which
+         run the translate over 450ms; the perceived speed comes from the quick
+         83ms alpha fade layered on top (the window is opaque a third of the way
+         in), not from the translate, so a shorter translate still feels
+         responsive while keeping the gentle fast_out_extra_slow_in settle.
+         Trimmed below the platform's 450ms for a snappier feel. -->
+    <integer name="article_transition_open_duration">300</integer>
+
+    <!-- Close is shorter still: on back the article fades out in ~120ms
+         (see article_close_exit), so it visually clears fast regardless of the
+         translate; a shorter translate just keeps the 96dp drift from
+         lingering. -->
+    <integer name="article_transition_close_duration">200</integer>
+
+</resources>

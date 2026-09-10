@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Closing an article (back/up, Samsung only). A port of the platform's own
+     activity_close_enter: the screen being returned to stays fully opaque and
+     drifts back from -96dp to its place, beneath the departing article which
+     fades out on top of it (article_close_exit). The reverse of the open. -->
+<translate xmlns:android="http://schemas.android.com/apk/res/android"
+    android:fromXDelta="-96dp"
+    android:toXDelta="0"
+    android:duration="@integer/article_transition_close_duration"
+    android:interpolator="@android:interpolator/fast_out_extra_slow_in" />

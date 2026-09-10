@@ -33,29 +33,50 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <!-- The article pager fills the rest of the window. Each page is an
-         ArticleWebView whose content starts below the pager's title strip
-         purely by layout - no WebView padding or injected CSS - so it works
-         for every content type a WebView can display, not just HTML. The
-         swipe-title strip is a direct child of the ViewPager (the only place
-         PagerTitleStrip can live) and pins itself to the pager's top. -->
-    <androidx.viewpager.widget.ViewPager
-        android:id="@+id/pager"
+    <!-- Content area: the article pager plus a loading spinner overlaid on it.
+         The activity shows the spinner while the lookup resolves in the
+         background, then just flips visibility to the pager - no setContentView
+         swap, so nothing flashes through during the open transition. The spinner
+         is a ContentLoadingProgressBar so it doesn't even appear on fast
+         lookups. -->
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1">
 
-        <androidx.viewpager.widget.PagerTitleStrip
-            android:id="@+id/pager_title_strip"
+        <!-- Each page is an ArticleWebView whose content starts below the pager's
+             title strip purely by layout - no WebView padding or injected CSS -
+             so it works for every content type a WebView can display, not just
+             HTML. The swipe-title strip is a direct child of the ViewPager (the
+             only place PagerTitleStrip can live) and pins itself to the pager's
+             top. Hidden until the adapter is set (see ArticleCollectionActivity). -->
+        <androidx.viewpager.widget.ViewPager
+            android:id="@+id/pager"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="top"
-            android:background="?attr/colorSurfaceVariant"
-            android:paddingLeft="8dp"
-            android:paddingRight="8dp"
-            android:paddingTop="4dp"
-            android:paddingBottom="4dp" />
+            android:layout_height="match_parent"
+            android:visibility="gone">
 
-    </androidx.viewpager.widget.ViewPager>
+            <androidx.viewpager.widget.PagerTitleStrip
+                android:id="@+id/pager_title_strip"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top"
+                android:background="?attr/colorSurfaceVariant"
+                android:paddingLeft="8dp"
+                android:paddingRight="8dp"
+                android:paddingTop="4dp"
+                android:paddingBottom="4dp" />
+
+        </androidx.viewpager.widget.ViewPager>
+
+        <androidx.core.widget.ContentLoadingProgressBar
+            android:id="@+id/loading_progress"
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:indeterminate="true" />
+
+    </FrameLayout>
 
 </LinearLayout>
