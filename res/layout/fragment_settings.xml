@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Settings is a fixed set of sections, not a dynamic list, so it is a plain
+     ScrollView rather than a RecyclerView. Each section is wrapped in a filled
+     Material 3 card so the groups read as distinct panels against the window
+     background. The section content is reused verbatim from the individual
+     settings_*_item layouts via <include>; each include is given its own id so
+     the shared "settings_item" root id doesn't collide. -->
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="8dp">
+
+        <com.google.android.material.card.MaterialCardView
+            style="?attr/materialCardViewFilledStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            app:contentPadding="4dp">
+            <include android:id="@+id/card_ui_theme"
+                layout="@layout/settings_ui_theme_item" />
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            style="?attr/materialCardViewFilledStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            app:contentPadding="4dp">
+            <include android:id="@+id/card_remote_content"
+                layout="@layout/settings_remote_content_item" />
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- The three toggles share one card. No header: the card is the
+             grouping, and there is no honest one-word label for the mix. -->
+        <com.google.android.material.card.MaterialCardView
+            style="?attr/materialCardViewFilledStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            app:contentPadding="4dp">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <include android:id="@+id/card_fav_random"
+                    layout="@layout/settings_fav_random_search" />
+                <include android:id="@+id/card_volume_nav"
+                    layout="@layout/settings_use_volume_for_nav" />
+                <include android:id="@+id/card_auto_paste"
+                    layout="@layout/settings_auto_paste" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            style="?attr/materialCardViewFilledStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            app:contentPadding="4dp">
+            <include android:id="@+id/card_user_styles"
+                layout="@layout/settings_user_styles_item" />
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            style="?attr/materialCardViewFilledStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:contentPadding="4dp">
+            <include android:id="@+id/card_about"
+                layout="@layout/settings_about_item" />
+        </com.google.android.material.card.MaterialCardView>
+
+    </LinearLayout>
+</ScrollView>

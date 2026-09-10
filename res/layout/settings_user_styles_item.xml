@@ -10,53 +10,36 @@
         android:orientation="vertical"
         >
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            >
-            <TextView
-                android:id="@+id/setting_user_styles"
-                style="@style/TextAppearance.Aard2.ListTitle"
-                android:text="@string/setting_user_styles"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="22dip"
-                android:layout_gravity="left|top"
-                android:layout_weight="1"
-                android:textSize="20sp"/>
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/setting_btn_add_user_style"
-                android:layout_gravity="right|center_vertical"
-                android:paddingTop="6dp"
-                android:paddingLeft="10dp"
-                android:paddingRight="10dp"
-                android:paddingBottom="10dp"
-                android:layout_alignParentRight="true"
-                />
-        </LinearLayout>
-
         <TextView
-            android:id="@+id/setting_user_styles_empty"
+            android:id="@+id/setting_user_styles"
             style="@style/TextAppearance.Aard2.ListTitle"
-            android:text="@string/setting_user_styles_empty"
+            android:text="@string/setting_user_styles"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_weight="1"
-            android:textColor="@android:color/darker_gray"
-            android:textAlignment="center"
-            android:gravity="center"/>
+            android:layout_marginRight="14dip"
+            android:textSize="20sp"/>
 
+        <!-- The list of styles. When empty there is no placeholder text - the
+             Add button below already makes the empty state clear. -->
         <LinearLayout
             android:id="@+id/setting_user_styles_list"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
             android:orientation="vertical"
             >
 
         </LinearLayout>
+
+        <!-- Add-a-style action on its own button below the list, rather than a
+             "+" fused to the section title. -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/setting_btn_add_user_style"
+            style="@style/Widget.Material3.Button.OutlinedButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="6dp"
+            android:text="@string/setting_user_styles_add" />
 
     </LinearLayout>

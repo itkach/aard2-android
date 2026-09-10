@@ -37,13 +37,10 @@
     <string name="setting_remote_content_wifi">Gdy korzystasz z Wi-Fi</string>
     <string name="setting_remote_content_never">Nigdy</string>
     <string name="setting_remote_content">Załaduj zdalną zawartość</string>
-    <string name="setting_about">O aplikacji %1$s</string>
+    <string name="setting_about_section">O aplikacji</string>
     <string name="application_license_name">GNU General Public License v3</string>
     <string name="application_license_url">https://gnu.org/licenses/gpl.html</string>
     <string name="application_version">Wersja %1$s</string>
-    <string name="setting_clear_cache">Wyczyść pamięć podręczną</string>
-    <string name="setting_clear_cache_subtitle">Usuń zawartość pamięci podręcznej z uwzględnieniem zdalnych zdjęć</string>
-    <string name="confirm_clear_cached_content">Wyczyścić zawartość pamięci podręcznej?</string>
     <string name="article_collection_nothing_found">Nic nie znaleziono</string>
     <string name="article_collection_selected_not_available">Wybrany artykuł nie jest dostępny</string>
     <string name="article_collection_nothing_to_lookup">Nie ma nic do wyszukania</string>
@@ -72,7 +69,6 @@
     <string name="msg_failed_to_read_file">Nie udało się odczytać pliku</string>
     <string name="msg_file_too_big">Plik jest za duży</string>
     <string name="setting_user_styles">Style użytkownika</string>
-    <string name="setting_user_styles_empty">Brak stylów</string>
     <string name="msg_failed_to_store_user_style">Nie udało się zapisać stylu użytkownika</string>
     <string name="setting_user_style_confirm_forget">Zapomnieć %1$s?</string>
     <string name="msg_file_not_css">Nie wygląda na plik CSS</string>

@@ -30,6 +30,7 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/setting_ui_theme_light"
                 android:text="@string/setting_ui_theme_light"
+                android:textAppearance="?attr/textAppearanceBodyLarge"
                 android:layout_marginBottom="5dip"
                 />
             <RadioButton
@@ -37,6 +38,7 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/setting_ui_theme_dark"
                 android:text="@string/setting_ui_theme_dark"
+                android:textAppearance="?attr/textAppearanceBodyLarge"
                 android:layout_marginBottom="5dip"
                 />
 

@@ -40,13 +40,10 @@
     <string name="setting_remote_content_wifi">Seulement avec wi-fi</string>
     <string name="setting_remote_content_never">Jamais</string>
     <string name="setting_remote_content">Charger contenu extérieur</string>
-    <string name="setting_about">Au sujet d\' %1$s</string>
+    <string name="setting_about_section">À propos</string>
     <string name="application_license_name">Licence publique générale GNU version 3</string>
     <string name="application_license_url">https://gnu.org/licenses/gpl.html</string>
     <string name="application_version">Version %1$s</string>
-    <string name="setting_clear_cache">Supprimer cache</string>
-    <string name="setting_clear_cache_subtitle">Supprimer cache, ainsi que les images extérieures</string>
-    <string name="confirm_clear_cached_content">Supprimer cache ?</string>
     <string name="article_collection_nothing_found">Rien trouvé</string>
     <string name="article_collection_selected_not_available">L\'article sélectionné est indisponible</string>
     <string name="article_collection_nothing_to_lookup">Rien à rechercher</string>
@@ -81,7 +78,6 @@
     <string name="msg_failed_to_read_file">Fichier illisible</string>
     <string name="msg_file_too_big">Fichier trop gros</string>
     <string name="setting_user_styles">Styles utilisateur</string>
-    <string name="setting_user_styles_empty">Pas de styles</string>
     <string name="msg_failed_to_store_user_style">Impossible de sauvegarder le style utilisateur</string>
     <string name="setting_user_style_confirm_forget">Oublier %1$s ?</string>
     <string name="msg_file_not_css">Ce fichier ne semble pas être un fichier CSS</string>

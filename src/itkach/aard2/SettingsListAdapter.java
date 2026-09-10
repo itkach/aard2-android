@@ -18,7 +18,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckedTextView;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
@@ -43,7 +43,6 @@ public class SettingsListAdapter extends RecyclerView.Adapter<SettingsListAdapte
     private SharedPreferences       userStylePrefs;
     private View.OnClickListener    onDeleteUserStyle;
     private Fragment                fragment;
-    private OnItemClickListener     itemClickListener;
 
 
     final static int POS_UI_THEME = 0;
@@ -52,8 +51,7 @@ public class SettingsListAdapter extends RecyclerView.Adapter<SettingsListAdapte
     final static int POS_USE_VOLUME_FOR_NAV = 3;
     final static int POS_AUTO_PASTE = 4;
     final static int POS_USER_STYLES = 5;
-    final static int POS_CLEAR_CACHE = 6;
-    final static int POS_ABOUT = 7;
+    final static int POS_ABOUT = 6;
 
     SettingsListAdapter(Fragment fragment) {
         this.fragment = fragment;
@@ -72,13 +70,9 @@ public class SettingsListAdapter extends RecyclerView.Adapter<SettingsListAdapte
         };
     }
 
-    void setOnItemClickListener(OnItemClickListener listener) {
-        this.itemClickListener = listener;
-    }
-
     @Override
     public int getItemCount() {
-        return 8;
+        return 7;
     }
 
     @Override
@@ -105,7 +99,6 @@ public class SettingsListAdapter extends RecyclerView.Adapter<SettingsListAdapte
             case POS_USE_VOLUME_FOR_NAV: return createUseVolumeForNavView(parent);
             case POS_AUTO_PASTE: return createAutoPasteView(parent);
             case POS_USER_STYLES: return createUserStylesView(parent);
-            case POS_CLEAR_CACHE: return createClearCacheView(parent);
             case POS_ABOUT: return createAboutView(parent);
         }
         throw new IllegalArgumentException("Unexpected view type " + viewType);
@@ -119,7 +112,7 @@ public class SettingsListAdapter extends RecyclerView.Adapter<SettingsListAdapte
             case POS_USE_VOLUME_FOR_NAV: bindUseVolumeForNavView(view); break;
             case POS_AUTO_PASTE: bindAutoPasteView(view); break;
             case POS_USER_STYLES: bindUserStylesView(view); break;
-            default: break; // clear-cache and about rows are static
+            default: break; // the about row is static
         }
     }
 
@@ -166,7 +159,7 @@ public class SettingsListAdapter extends RecyclerView.Adapter<SettingsListAdapte
 
     private View createFavRandomSwitchView(ViewGroup parent) {
         View view = inflater(parent).inflate(R.layout.settings_fav_random_search, parent, false);
-        final CheckedTextView toggle = (CheckedTextView)view.findViewById(R.id.setting_fav_random_search);
+        final CompoundButton toggle = (CompoundButton)view.findViewById(R.id.setting_fav_random_search);
         toggle.setOnClickListener(v -> {
             boolean newValue = !app.isOnlyFavDictsForRandomLookup();
             app.setOnlyFavDictsForRandomLookup(newValue);
@@ -176,13 +169,13 @@ public class SettingsListAdapter extends RecyclerView.Adapter<SettingsListAdapte
     }
 
     private void bindFavRandomSwitchView(View view) {
-        ((CheckedTextView)view.findViewById(R.id.setting_fav_random_search))
+        ((CompoundButton)view.findViewById(R.id.setting_fav_random_search))
                 .setChecked(app.isOnlyFavDictsForRandomLookup());
     }
 
     private View createUseVolumeForNavView(ViewGroup parent) {
         View view = inflater(parent).inflate(R.layout.settings_use_volume_for_nav, parent, false);
-        final CheckedTextView toggle = (CheckedTextView)view.findViewById(R.id.setting_use_volume_for_nav);
+        final CompoundButton toggle = (CompoundButton)view.findViewById(R.id.setting_use_volume_for_nav);
         toggle.setOnClickListener(v -> {
             boolean newValue = !app.useVolumeForNav();
             app.setUseVolumeForNav(newValue);
@@ -192,13 +185,13 @@ public class SettingsListAdapter extends RecyclerView.Adapter<SettingsListAdapte
     }
 
     private void bindUseVolumeForNavView(View view) {
-        ((CheckedTextView)view.findViewById(R.id.setting_use_volume_for_nav))
+        ((CompoundButton)view.findViewById(R.id.setting_use_volume_for_nav))
                 .setChecked(app.useVolumeForNav());
     }
 
     private View createAutoPasteView(ViewGroup parent) {
         View view = inflater(parent).inflate(R.layout.settings_auto_paste, parent, false);
-        final CheckedTextView toggle = (CheckedTextView)view.findViewById(R.id.setting_auto_paste);
+        final CompoundButton toggle = (CompoundButton)view.findViewById(R.id.setting_auto_paste);
         toggle.setOnClickListener(v -> {
             boolean newValue = !app.autoPaste();
             app.setAutoPaste(newValue);
@@ -208,14 +201,20 @@ public class SettingsListAdapter extends RecyclerView.Adapter<SettingsListAdapte
     }
 
     private void bindAutoPasteView(View view) {
-        ((CheckedTextView)view.findViewById(R.id.setting_auto_paste))
+        ((CompoundButton)view.findViewById(R.id.setting_auto_paste))
                 .setChecked(app.autoPaste());
     }
 
     private View createUserStylesView(final ViewGroup parent) {
         View view = inflater(parent).inflate(R.layout.settings_user_styles_item, parent, false);
-        ImageView btnAdd = view.findViewById(R.id.setting_btn_add_user_style);
-        btnAdd.setImageDrawable(IconMaker.list(context, IconMaker.IC_ADD));
+        com.google.android.material.button.MaterialButton btnAdd =
+                view.findViewById(R.id.setting_btn_add_user_style);
+        // Keep the glyph's own colour (colorPrimary) rather than letting the
+        // button re-tint it, so it matches the outlined button's text.
+        btnAdd.setIcon(IconMaker.make(context, IconMaker.IC_ADD, 18,
+                IconMaker.resolveThemeColor(context,
+                        androidx.appcompat.R.attr.colorPrimary, 0xff0099cc)));
+        btnAdd.setIconTint(null);
         btnAdd.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
@@ -240,9 +239,6 @@ public class SettingsListAdapter extends RecyclerView.Adapter<SettingsListAdapte
         this.userStyleData = userStylePrefs.getAll();
         this.userStyleNames = new ArrayList<String>(this.userStyleData.keySet());
         Util.sort(this.userStyleNames);
-
-        View emptyView = view.findViewById(R.id.setting_user_styles_empty);
-        emptyView.setVisibility(userStyleNames.size() == 0 ? View.VISIBLE : View.GONE);
 
         LayoutInflater inflater = (LayoutInflater) view.getContext()
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -335,16 +331,6 @@ public class SettingsListAdapter extends RecyclerView.Adapter<SettingsListAdapte
                 .setChecked(currentValue.equals(ArticleWebView.PREF_REMOTE_CONTENT_NEVER));
     }
 
-    private View createClearCacheView(ViewGroup parent) {
-        View view = inflater(parent).inflate(R.layout.settings_clear_cache_item, parent, false);
-        view.setOnClickListener(v -> {
-            if (itemClickListener != null) {
-                itemClickListener.onItemClick(POS_CLEAR_CACHE);
-            }
-        });
-        return view;
-    }
-
     private View createAboutView(ViewGroup parent) {
         final Context context = parent.getContext();
         View view = inflater(parent).inflate(R.layout.settings_about_item, parent, false);
@@ -358,11 +344,8 @@ public class SettingsListAdapter extends RecyclerView.Adapter<SettingsListAdapte
         ImageView sourceIcon = (ImageView) view.findViewById(R.id.setting_about_source_icon);
         sourceIcon.setImageDrawable(IconMaker.text(context, IconMaker.IC_EXTERNAL_LINK));
 
-        String appName = context.getString(R.string.app_name);
-        String title = context.getString(R.string.setting_about, appName);
-        TextView titleView = (TextView)view.findViewById(R.id.setting_about);
-        titleView.setText(title);
-
+        // The section header ("About") and the app name are static text set in
+        // the layout; only the version below is filled in here.
         String licenseName = context.getString(R.string.application_license_name);
         final String licenseUrl = context.getString(R.string.application_license_url);
         String license = context.getString(R.string.application_license, licenseUrl, licenseName);

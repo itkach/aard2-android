@@ -41,10 +41,7 @@
     <string name="setting_remote_content_wifi">Nur mit WLAN</string>
     <string name="setting_remote_content_never">Nie</string>
     <string name="setting_remote_content">Lade externen Inhalt</string>
-    <string name="setting_about">Über %1$s</string>
-    <string name="setting_clear_cache">Cache löschen</string>
-    <string name="setting_clear_cache_subtitle">Inhalt des Caches mit externen Bildern löschen</string>
-    <string name="confirm_clear_cached_content">Cache löschen?</string>
+    <string name="setting_about_section">Über</string>
     <string name="article_collection_nothing_found">Nichts gefunden</string>
     <string name="article_collection_selected_not_available">Gewählter Artikel nicht verfügbar</string>
     <string name="article_collection_nothing_to_lookup">Nichts zum Nachschlagen</string>
@@ -77,7 +74,6 @@
     <string name="msg_failed_to_read_file">Datei nicht lesbar</string>
     <string name="msg_file_too_big">Datei zu gross</string>
     <string name="setting_user_styles">Anwenderstile</string>
-    <string name="setting_user_styles_empty">Keine Stile</string>
     <string name="msg_failed_to_store_user_style">Kann Stil nicht speichern</string>
     <string name="setting_user_style_confirm_forget">Vergesse %1$s?</string>
     <string name="msg_file_not_css">Scheint keine CSS-Datei zu sein</string>

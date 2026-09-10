@@ -40,10 +40,7 @@ is missing a quantity used in that language, otherwise the app will crash
 <string name="setting_remote_content_wifi">Solo in Wi-Fi</string>
 <string name="setting_remote_content_never">Mai</string>
 <string name="setting_remote_content">Carica contenuto remoto</string>
-<string name="setting_about">Informazioni su %1$s</string>
-<string name="setting_clear_cache">Ripulisci la cache</string>
-<string name="setting_clear_cache_subtitle">Cancella il contenuto della cache (comprese le immagini remote)</string>
-<string name="confirm_clear_cached_content">Vuoi davvero ripulire la cache?</string>
+<string name="setting_about_section">Informazioni</string>
 <string name="article_collection_nothing_found">Nessun risultato</string>
 <string name="article_collection_selected_not_available">La voce selezionata non è disponibile</string>
 <string name="article_collection_nothing_to_lookup">Nulla da cercare</string>
@@ -78,7 +75,6 @@ is missing a quantity used in that language, otherwise the app will crash
 <string name="msg_failed_to_read_file">Lettura file non riuscita</string>
 <string name="msg_file_too_big">Il file è troppo grande</string>
 <string name="setting_user_styles">Stili utente</string>
-<string name="setting_user_styles_empty">Niente stili</string>
 <string name="msg_failed_to_store_user_style">Salvataggio stile utente non riuscito</string>
 <string name="setting_user_style_confirm_forget">Sei sicuro di voler dimenticare %1$s?</string>
 <string name="msg_file_not_css">File CSS non riconosciuto</string>

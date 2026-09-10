@@ -40,13 +40,10 @@
     <string name="setting_remote_content_wifi">Alleen via Wi-Fi</string>
     <string name="setting_remote_content_never">Nooit</string>
     <string name="setting_remote_content">Externe inhoud laden</string>
-    <string name="setting_about">Over %1$s</string>
+    <string name="setting_about_section">Over</string>
     <string name="application_license_name">GNU General Public License v3</string>
     <string name="application_license_url">https://gnu.org/licenses/gpl.html</string>
     <string name="application_version">Versie %1$s</string>
-    <string name="setting_clear_cache">Cache wissen</string>
-    <string name="setting_clear_cache_subtitle">Gecachete inhoud wissen, inclusief externe afbeeldingen</string>
-    <string name="confirm_clear_cached_content">Gecachete inhoud wissen?</string>
     <string name="article_collection_nothing_found">Niks gevonden</string>
     <string name="article_collection_selected_not_available">Het geselecteerde artikel is niet beschikbaar.</string>
     <string name="article_collection_nothing_to_lookup">Niks om op te zoeken</string>
@@ -81,7 +78,6 @@
     <string name="msg_failed_to_read_file">Lezen van bestand mislukt</string>
     <string name="msg_file_too_big">Bestand is te groot</string>
     <string name="setting_user_styles">Gebruikersstijlen</string>
-    <string name="setting_user_styles_empty">Geen stijlen</string>
     <string name="msg_failed_to_store_user_style">Opslaan van gebruikersstijl mislukt</string>
     <string name="setting_user_style_confirm_forget">%1$s vergeten?</string>
     <string name="msg_file_not_css">Lijkt geen CSS-bestand te zijn</string>

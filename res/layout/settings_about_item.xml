@@ -9,26 +9,63 @@
     android:clickable="false"
     >
 
+    <!-- Section header, matching the other Settings sections (Clear Cache etc.). -->
     <TextView
         android:id="@+id/setting_about"
         style="@style/TextAppearance.Aard2.ListTitle"
-        android:text="@string/setting_about"
+        android:text="@string/setting_about_section"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginRight="14dip"
         android:textSize="20sp"/>
 
-    <TextView
-        android:id="@+id/application_version"
-        style="@style/TextAppearance.Aard2.ListSubtitle"
-        android:text="@string/application_version"
+    <!-- Logo + app name + version, the identity block for the section. Sized to
+         its content and centred horizontally (the detail rows below stay left
+         justified). Logo left, name over version to its right, centred against
+         that two-line block. -->
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
+        android:layout_gravity="center_horizontal"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginTop="8dp"
         android:layout_marginBottom="6dp"
-        android:layout_marginRight="14dip"
-        android:layout_marginLeft="14dip"
-        />
+        >
+
+        <ImageView
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:layout_marginRight="12dp"
+            android:layout_marginEnd="12dp"
+            android:src="@drawable/aard2"
+            android:contentDescription="@string/app_name" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            >
+
+            <TextView
+                android:id="@+id/application_name"
+                style="@style/TextAppearance.Aard2.ListTitle"
+                android:text="@string/app_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="18sp"/>
+
+            <TextView
+                android:id="@+id/application_version"
+                style="@style/TextAppearance.Aard2.ListSubtitle"
+                android:text="@string/application_version"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                />
+
+        </LinearLayout>
+
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"

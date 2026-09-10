@@ -40,13 +40,10 @@
     <string name="setting_remote_content_wifi">Cuando está en Wi-Fi</string>
     <string name="setting_remote_content_never">Nunca</string>
     <string name="setting_remote_content">Cargar contenido de la web</string>
-    <string name="setting_about">Acerca de %1$s</string>
+    <string name="setting_about_section">Acerca de</string>
     <string name="application_license_name">GNU General Public License v3</string>
     <string name="application_license_url">https://gnu.org/licenses/gpl.html</string>
     <string name="application_version">Versión %1$s</string>
-    <string name="setting_clear_cache">Limpiar caché</string>
-    <string name="setting_clear_cache_subtitle">Eliminar contenido de la caché incuído imágenes descargadas de la web</string>
-    <string name="confirm_clear_cached_content">¿Limpiar contenido de la caché?</string>
     <string name="article_collection_nothing_found">Sin resultados</string>
     <string name="article_collection_selected_not_available">El artículo seleccionado no está disponible</string>
     <string name="article_collection_nothing_to_lookup">Nada a encontrar</string>
@@ -81,7 +78,6 @@
     <string name="msg_failed_to_read_file">Error al leer el archivo</string>
     <string name="msg_file_too_big">Archivo demasiado grande</string>
     <string name="setting_user_styles">Temas de usuario</string>
-    <string name="setting_user_styles_empty">Sin temas</string>
     <string name="msg_failed_to_store_user_style">Error al guardar tema de usuario</string>
     <string name="setting_user_style_confirm_forget">¿Olvidar %1$s?</string>
     <string name="msg_file_not_css">No parece ser un archivo CSS</string>

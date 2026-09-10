@@ -31,6 +31,7 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/setting_remote_content_always"
                 android:text="@string/setting_remote_content_always"
+                android:textAppearance="?attr/textAppearanceBodyLarge"
                 android:layout_marginBottom="5dip"
                 />
             <RadioButton
@@ -38,6 +39,7 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/setting_remote_content_wifi"
                 android:text="@string/setting_remote_content_wifi"
+                android:textAppearance="?attr/textAppearanceBodyLarge"
                 android:layout_marginBottom="5dip"
                 />
             <RadioButton
@@ -45,6 +47,7 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/setting_remote_content_never"
                 android:text="@string/setting_remote_content_never"
+                android:textAppearance="?attr/textAppearanceBodyLarge"
                 android:layout_marginBottom="5dip"
                 />
 

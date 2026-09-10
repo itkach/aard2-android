@@ -18,7 +18,6 @@
     <string name="article_collection_nothing_to_lookup">Не вказано що шукати</string>
     <string name="article_view_msg_not_found">Ресурс не знайдено</string>
     <string name="blob_descriptor_confirm_delete">Видалити %1$s?</string>
-    <string name="confirm_clear_cached_content">Зпорожнити кеш?</string>
     <string name="delete">Видалити</string>
     <string name="lookup_nothing_found">Нічого не знайдено</string>
     <string name="main_empty_bookmarks">Немає закладинок</string>
@@ -40,18 +39,15 @@
     <string name="subtitle_history">Історія</string>
     <string name="subtitle_dictionaries">Словники</string>
     <string name="subtitle_bookmark">Закладинки</string>
-    <string name="setting_user_styles_empty">Немає стилів</string>
     <string name="setting_user_styles">Стилі користувача</string>
     <string name="setting_user_style_confirm_forget">Видалити %1$s?</string>
     <string name="setting_remote_content_wifi">Тільки по Wi-Fi</string>
     <string name="setting_remote_content_never">Ніколи</string>
     <string name="setting_remote_content_always">Завжди</string>
     <string name="setting_remote_content">Завантажувати віддалений контент</string>
-    <string name="setting_clear_cache">Випорожнити кеш</string>
     <string name="msg_file_not_css">Це не CSS файл</string>
     <string name="subtitle_settings">Налаштування</string>
-    <string name="setting_clear_cache_subtitle">Видалити кешований контент, в тому числі завантаженні зображення</string>
-    <string name="setting_about">Про %1$s</string>
+    <string name="setting_about_section">Про програму</string>
     <string name="msg_failed_to_store_user_style">Не вдалося зберегти стиль користувача</string>
     <string name="dictionaries_please_wait">Зачекайте</string>
     <string name="dictionaries_confirm_forget">Забути %1$s?</string>

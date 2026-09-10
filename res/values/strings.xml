@@ -41,7 +41,7 @@
     <string name="setting_remote_content_wifi">When on Wi-Fi</string>
     <string name="setting_remote_content_never">Never</string>
     <string name="setting_remote_content">Load Remote Content</string>
-    <string name="setting_about">About %1$s</string>
+    <string name="setting_about_section">About</string>
     <string name="application_home_url" translatable="false">http://aarddict.org</string>
     <string name="application_copyright" translatable="false">Igor Tkach</string>
     <string name="application_license_name">GNU General Public License v3</string>
@@ -52,9 +52,6 @@
         ]]>
     </string>
     <string name="application_version">Version %1$s</string>
-    <string name="setting_clear_cache">Clear Cache</string>
-    <string name="setting_clear_cache_subtitle">Delete cached content including remote images</string>
-    <string name="confirm_clear_cached_content">Clear cached content?</string>
     <string name="article_collection_nothing_found">Nothing found</string>
     <string name="article_collection_selected_not_available">Selected article is not available</string>
     <string name="article_collection_nothing_to_lookup">Nothing to look up</string>
@@ -89,7 +86,7 @@
     <string name="msg_failed_to_read_file">Failed to read file</string>
     <string name="msg_file_too_big">File is too big</string>
     <string name="setting_user_styles">User Styles</string>
-    <string name="setting_user_styles_empty">No styles</string>
+    <string name="setting_user_styles_add">Add</string>
     <string name="msg_failed_to_store_user_style">Failed to store user style</string>
     <string name="setting_user_style_confirm_forget">Forget %1$s?</string>
     <string name="msg_file_not_css">Doesn\'t appear to be a CSS file</string>

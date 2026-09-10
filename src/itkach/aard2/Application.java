@@ -76,7 +76,7 @@ public class Application extends android.app.Application {
 
     private static final String PREF                    = "app";
     // Shared by ArticleWebView (text zoom, remote-content policy, and
-    // per-dictionary style prefs) and SettingsListAdapter (remote-content
+    // per-dictionary style prefs) and SettingsFragment (remote-content
     // UI) as well as this class - not specific to any one of them, so it
     // lives here rather than on whichever of those happened to declare
     // it first.
