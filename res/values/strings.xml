@@ -102,6 +102,7 @@
     <string name="msg_dictionary_added">Added dictionary from %1$s</string>
     <string name="setting_fav_random_search">Use only marked dictionaries for random lookup</string>
     <string name="dictionary_use_for_random">Use for random lookup</string>
+    <string name="dictionary_marked_for_random_content_desc">%s, marked for random lookup</string>
     <string name="dictionary_drag_handle">Drag to reorder</string>
     <string name="article_collection_invalid_link">Invalid link</string>
     <string name="setting_ui_theme">User Interface Style</string>

@@ -7,12 +7,18 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.database.DataSetObserver;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import androidx.annotation.NonNull;
 import androidx.documentfile.provider.DocumentFile;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 import android.text.Html;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
+import android.text.style.ImageSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -177,7 +183,10 @@ public class DictionaryListAdapter extends RecyclerView.Adapter<DictionaryListAd
 
         TextView titleView = (TextView) view.findViewById(R.id.dictionary_label);
         titleView.setEnabled(available);
-        titleView.setText(label);
+        titleView.setText(labelWithRandomMarker(label, desc.useForRandomLookup));
+        titleView.setContentDescription(desc.useForRandomLookup
+                ? context.getString(R.string.dictionary_marked_for_random_content_desc, label)
+                : label);
 
         View detailView = view.findViewById(R.id.dictionary_details);
         detailView.setVisibility(desc.expandDetail ? View.VISIBLE : View.GONE);
@@ -201,6 +210,56 @@ public class DictionaryListAdapter extends RecyclerView.Adapter<DictionaryListAd
 
         CheckBox useForRandom = (CheckBox) view.findViewById(R.id.dictionary_use_for_random);
         useForRandom.setChecked(desc.useForRandomLookup);
+    }
+
+    // A small dice glyph (the same IC_RANDOM used by the toolbar's random-lookup
+    // button) tacked onto the end of the name of any dictionary marked for
+    // random lookup, so the marked ones are visible at a glance without
+    // expanding each row. Deliberately not tied to the "use only marked
+    // dictionaries" setting: the mark is a persistent choice worth showing
+    // regardless, and that setting lives on a different tab that wouldn't
+    // refresh these rows anyway.
+    private CharSequence labelWithRandomMarker(String label, boolean marked) {
+        if (!marked) {
+            return label;
+        }
+        Drawable dice = IconMaker.make(context, IconMaker.IC_RANDOM, 13,
+                IconMaker.resolveThemeColor(context,
+                        androidx.appcompat.R.attr.colorPrimary, 0xff0099cc));
+        dice.setBounds(0, 0, dice.getIntrinsicWidth(), dice.getIntrinsicHeight());
+        SpannableStringBuilder sb = new SpannableStringBuilder(label);
+        // A gap, then an object-replacement placeholder (U+FFFC) the span
+        // renders over.
+        sb.append(" ￼");
+        sb.setSpan(new SuperscriptImageSpan(dice), sb.length() - 1, sb.length(),
+                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        return sb;
+    }
+
+    // ImageSpan draws its drawable on (or below) the baseline; this lifts the
+    // small dice up to the text's cap height so it reads as a superscript, and
+    // reserves only its width so the line height is unaffected.
+    private static final class SuperscriptImageSpan extends ImageSpan {
+        SuperscriptImageSpan(Drawable drawable) {
+            super(drawable);
+        }
+
+        @Override
+        public int getSize(@NonNull Paint paint, CharSequence text, int start, int end,
+                           Paint.FontMetricsInt fm) {
+            return getDrawable().getBounds().width();
+        }
+
+        @Override
+        public void draw(@NonNull Canvas canvas, CharSequence text, int start, int end,
+                         float x, int top, int y, int bottom, @NonNull Paint paint) {
+            Drawable drawable = getDrawable();
+            canvas.save();
+            // y is the text baseline; ascent (negative) is the top of the text.
+            canvas.translate(x, y + paint.getFontMetricsInt().ascent);
+            drawable.draw(canvas);
+            canvas.restore();
+        }
     }
 
     private void setupPathView(String path, boolean available, View view) {
