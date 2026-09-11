@@ -376,6 +376,19 @@ public class Application extends android.app.Application {
     };
 
 
+    // A dictionary's active/random flags changing in place - as opposed to a
+    // structural add/remove/replace - doesn't change which slob files are open,
+    // only which of the already-loaded ones a lookup considers (getActiveSlobs
+    // filters the open set by the live flag). The dictionaries observer reopens
+    // every dictionary file on any change, which is needless here and gets
+    // slower the more dictionaries are installed, so the active toggle calls
+    // this instead: refresh just what the active set feeds - the current lookup
+    // and link handling - without touching a single file.
+    void onActiveDictionariesChanged() {
+        new EnableLinkHandling().execute(getActiveSlobs());
+        lookup(lookupQuery);
+    }
+
     Iterator<Blob> find(String key) {
         return Slob.find(key, getActiveSlobs());
     }

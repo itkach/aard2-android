@@ -114,7 +114,14 @@ public class DictionaryListAdapter extends RecyclerView.Adapter<DictionaryListAd
             activeSwitch.toggle();
             SlobDescriptor desc = data.get(position);
             desc.active = activeSwitch.isChecked();
-            data.set(position, desc);
+            // Toggling active changes only which already-open dictionaries a
+            // lookup considers, not which files are open, and nothing else in
+            // this row reflects it (the switch is already toggled). So persist
+            // the flag and refresh the active set directly, bypassing
+            // data.set(), whose list-wide observer reopens every dictionary
+            // file - increasingly slow as more are installed.
+            data.save(desc);
+            ((Application) context.getApplication()).onActiveDictionariesChanged();
         });
 
         view.findViewById(R.id.dictionary_btn_forget).setOnClickListener(v -> {
@@ -150,7 +157,11 @@ public class DictionaryListAdapter extends RecyclerView.Adapter<DictionaryListAd
             }
             SlobDescriptor desc = data.get(position);
             desc.useForRandomLookup = ((CheckBox) v).isChecked();
-            data.set(position, desc);
+            // Only affects random-article selection and this row's dice marker -
+            // no files to reopen, no lookup to refresh. Persist and rebind just
+            // this row, not data.set()'s list-wide reload of every dictionary.
+            data.save(desc);
+            notifyItemChanged(position);
         });
 
         view.findViewById(R.id.dictionary_btn_drag_handle).setOnTouchListener((v, event) -> {
