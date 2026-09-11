@@ -173,23 +173,15 @@ public class ArticleWebView extends SearchableWebView {
                 else {
                     Log.w(TAG, "onPageFinished: Unexpected page finished event for " + url);
                 }
-                // Discovers this page's declared styles (for the style
-                // picker dialog).
+                // Both canned and user styles are already correctly active from
+                // the very first byte the server sent - Slobber applies the
+                // ?style= preference server-side, selecting a built-in alternate
+                // and/or linking the user stylesheet (see
+                // Application.getUrl(Blob) / StylePreference / /user-styles). So
+                // nothing needs to be (re-)applied here; this only discovers the
+                // page's declared style titles for the picker dialog.
                 view.loadUrl("javascript:" + styleSwitcherJs +
                         ";$SLOB.setStyleTitles($styleSwitcher.getTitles())");
-                // A canned style is already correctly active from the very
-                // first byte the server sent (see Slobber's StylePreference
-                // / Application.getUrl(Blob)), so re-applying one here
-                // would just force an avoidable reflow - see onPageStarted
-                // above. A saved *user* style is different: it's plain
-                // client-side CSS injection the server has no way to
-                // apply (Slobber deliberately knows nothing about this
-                // Android-only feature), so it still needs to be
-                // (re-)injected on every fresh load, same as before.
-                String preferredStyle = getPreferredStyle();
-                if (isUserStyle(preferredStyle)) {
-                    setStyle(preferredStyle);
-                }
             }
 
             @Override
@@ -311,44 +303,34 @@ public class ArticleWebView extends SearchableWebView {
         return false;
     }
 
-    private SharedPreferences userStylesPrefs() {
-        return getContext().getSharedPreferences("userStyles", Activity.MODE_PRIVATE);
-    }
-
-    // Whether styleTitle names a user-authored custom style rather than one
-    // of a dictionary's own declared ("canned") styles or the Default/Auto
-    // sentinels.
-    private boolean isUserStyle(String styleTitle) {
-        return userStylesPrefs().contains(styleTitle);
-    }
-
     String[] getAvailableStyles() {
-        Map<String, ?> data = userStylesPrefs().getAll();
-        List<String> names = new ArrayList<String>(data.keySet());
-        Util.sort(names);
-        names.addAll(styleTitles);
+        // The document's own built-in styles first, then the Default/Auto
+        // sentinels, then the user's own styles last.
+        List<String> names = new ArrayList<String>(styleTitles);
         names.add(defaultStyleTitle);
         names.add(autoStyleTitle);
+        List<String> userStyles = new ArrayList<String>(getApplication().userStyleNames());
+        Util.sort(userStyles);
+        names.addAll(userStyles);
         return names.toArray(new String[names.size()]);
     }
 
+    // Applies a style in place (the picker's live preview), the client-side twin
+    // of Slobber's server-side application on load. A user style: link its
+    // stylesheet from /user-styles and drop the document's built-in alternates
+    // (setStyle("")). A built-in one: remove any user link and enable that
+    // alternate. Either way the CSS itself comes from the server - the injected
+    // <link> is fetched by the WebView - so no CSS text passes through here.
     private void setStyle(String styleTitle) {
-        String js;
-        if (isUserStyle(styleTitle)) {
-            String css = userStylesPrefs().getString(styleTitle, "");
-            String elementId = getCurrentSlobId();
-            js = String.format(
-                    "javascript:" + Application.jsUserStyle, elementId, css);
-        }
-        else {
-            js = String.format(
-                    "javascript:" + Application.jsClearUserStyle + Application.jsSetCannedStyle,
-                    getCurrentSlobId(), styleTitle);
-        }
+        boolean userStyle = getApplication().isUserStyle(styleTitle);
+        String userHref = userStyle ? "/user-styles/" + Uri.encode(styleTitle) : "";
+        String cannedTitle = userStyle ? "" : styleTitle;
+        String js = String.format(Application.jsSetUserStyle, userHref)
+                + String.format(Application.jsSetCannedStyle, cannedTitle);
         if (Log.isLoggable(TAG, Log.DEBUG)) {
             Log.d(TAG, js);
         }
-        this.loadUrl(js);
+        this.evaluateJavascript(js, null);
     }
 
     private SharedPreferences prefs() {

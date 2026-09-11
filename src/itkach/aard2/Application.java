@@ -24,6 +24,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.android.material.appbar.AppBarLayout;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -35,6 +36,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
@@ -49,6 +51,7 @@ public class Application extends android.app.Application {
     public static final String CONTENT_URL_TEMPLATE = "http://" + LOCALHOST + ":%s%s";
 
     private Slobber                         slobber;
+    private File                            userStyleDir;
 
     BlobDescriptorList                      bookmarks;
     BlobDescriptorList                      history;
@@ -70,8 +73,7 @@ public class Application extends android.app.Application {
     private List<Activity>                  articleActivities;
 
     static String jsStyleSwitcher;
-    static String jsUserStyle;
-    static String jsClearUserStyle;
+    static String jsSetUserStyle;
     static String jsSetCannedStyle;
 
     private static final String PREF                    = "app";
@@ -121,6 +123,11 @@ public class Application extends android.app.Application {
         historyStore = new DescriptorStore<BlobDescriptor>(mapper, getDir(
                 "history", MODE_PRIVATE));
         slobber = new Slobber();
+        // User CSS lives in a flat directory Slobber serves under /user-styles
+        // and inlines a <link> to when requested (see ArticleWebView styles).
+        userStyleDir = getDir("user-styles", MODE_PRIVATE);
+        slobber.setStyleDir(userStyleDir);
+        migrateUserStylesToFiles();
 
         long t0 = System.currentTimeMillis();
 
@@ -132,10 +139,8 @@ public class Application extends android.app.Application {
             InputStream is;
             is = getClass().getClassLoader().getResourceAsStream("styleswitcher.js");
             jsStyleSwitcher = readTextFile(is, 0);
-            is = getAssets().open("userstyle.js");
-            jsUserStyle = readTextFile(is, 0);
-            is = getAssets().open("clearuserstyle.js");
-            jsClearUserStyle = readTextFile(is, 0);
+            is = getAssets().open("setuserstyle.js");
+            jsSetUserStyle = readTextFile(is, 0);
             is = getAssets().open("setcannedstyle.js");
             jsSetCannedStyle = readTextFile(is, 0);
         } catch (IOException e) {
@@ -459,6 +464,72 @@ public class Application extends android.app.Application {
             path = StylePreference.withStyleParam(path, styleTitle);
         }
         return String.format(CONTENT_URL_TEMPLATE, port, path);
+    }
+
+    // ---- User styles: flat .css files under userStyleDir, which Slobber serves
+    //      under /user-styles and injects a <link> to when ?style=<name> asks
+    //      for one. The file name (extension included) is the style identifier
+    //      everywhere; clients strip ".css" only for display. ----
+
+    // The user style file names (with the .css extension), unsorted.
+    List<String> userStyleNames() {
+        List<String> names = new ArrayList<String>();
+        File[] files = userStyleDir == null ? null : userStyleDir.listFiles();
+        if (files != null) {
+            for (File f : files) {
+                if (f.isFile() && f.getName().endsWith(".css")) {
+                    names.add(f.getName());
+                }
+            }
+        }
+        return names;
+    }
+
+    boolean isUserStyle(String name) {
+        return name != null && name.endsWith(".css") && userStyleDir != null
+                && new File(userStyleDir, name).isFile();
+    }
+
+    void saveUserStyle(String name, String css) throws IOException {
+        FileOutputStream out = new FileOutputStream(new File(userStyleDir, name));
+        try {
+            out.write(css.getBytes("UTF-8"));
+        } finally {
+            out.close();
+        }
+    }
+
+    void deleteUserStyle(String name) {
+        new File(userStyleDir, name).delete();
+    }
+
+    // One-time move of user styles from the old SharedPreferences store (style
+    // name -> CSS text, with newlines escaped as "\n" for the JavaScript that
+    // used to inject them) into the flat <name>.css files Slobber now serves.
+    // Runs on every start but is a no-op once the old prefs have been cleared.
+    private void migrateUserStylesToFiles() {
+        SharedPreferences prefs = getSharedPreferences("userStyles", MODE_PRIVATE);
+        Map<String, ?> stored = prefs.getAll();
+        if (stored.isEmpty()) {
+            return;
+        }
+        for (Map.Entry<String, ?> entry : stored.entrySet()) {
+            if (!(entry.getValue() instanceof String)) {
+                continue;
+            }
+            String name = entry.getKey().endsWith(".css")
+                    ? entry.getKey() : entry.getKey() + ".css";
+            if (new File(userStyleDir, name).exists()) {
+                continue;
+            }
+            String css = ((String) entry.getValue()).replace("\\n", "\n");
+            try {
+                saveUserStyle(name, css);
+            } catch (IOException e) {
+                Log.w(TAG, "Failed to migrate user style " + entry.getKey(), e);
+            }
+        }
+        prefs.edit().clear().commit();
     }
 
     /**

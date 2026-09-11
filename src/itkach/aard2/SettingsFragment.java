@@ -29,6 +29,7 @@ import androidx.fragment.app.Fragment;
 
 import com.google.android.material.button.MaterialButton;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,15 +39,13 @@ import java.util.List;
  * (see fragment_settings.xml) - there is nothing dynamic to recycle, so no
  * RecyclerView/adapter. Each section's controls are wired up here.
  */
-public class SettingsFragment extends Fragment
-        implements SharedPreferences.OnSharedPreferenceChangeListener {
+public class SettingsFragment extends Fragment {
 
     private final static String TAG = SettingsFragment.class.getSimpleName();
 
     final static int CSS_SELECT_REQUEST = 13;
 
     private Application app;
-    private SharedPreferences userStylePrefs;
     private View rootView;
 
     @Override
@@ -59,8 +58,6 @@ public class SettingsFragment extends Fragment
         super.onViewCreated(view, savedInstanceState);
         this.rootView = view;
         this.app = (Application) requireActivity().getApplication();
-        this.userStylePrefs = requireActivity().getSharedPreferences(
-                "userStyles", Activity.MODE_PRIVATE);
 
         setupUiTheme(view);
         setupRemoteContent(view);
@@ -75,20 +72,12 @@ public class SettingsFragment extends Fragment
         setupAbout(view);
     }
 
-    // The user-styles list mirrors the "userStyles" prefs; refresh it whenever
-    // this screen becomes visible and whenever those prefs change (a style is
-    // added via the file picker or removed via the trash button).
+    // The user-styles list mirrors the .css files in the user style directory;
+    // refresh it whenever this screen becomes visible (and after add/delete).
     @Override
     public void onResume() {
         super.onResume();
-        userStylePrefs.registerOnSharedPreferenceChangeListener(this);
         populateUserStyles(rootView);
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        userStylePrefs.unregisterOnSharedPreferenceChangeListener(this);
     }
 
     private void setupUiTheme(View view) {
@@ -205,7 +194,7 @@ public class SettingsFragment extends Fragment
         if (view == null) {
             return;
         }
-        List<String> names = new ArrayList<>(userStylePrefs.getAll().keySet());
+        List<String> names = new ArrayList<>(app.userStyleNames());
         Util.sort(names);
         LayoutInflater inflater = LayoutInflater.from(requireActivity());
         LinearLayout list = view.findViewById(R.id.setting_user_styles_list);
@@ -216,26 +205,30 @@ public class SettingsFragment extends Fragment
             btnDelete.setImageDrawable(IconMaker.list(requireActivity(), IconMaker.IC_TRASH));
             btnDelete.setOnClickListener(v -> confirmDeleteUserStyle(name));
             TextView nameView = row.findViewById(R.id.user_styles_list_name);
-            nameView.setText(name);
+            // The identifier carries the .css extension; show it stripped.
+            nameView.setText(displayStyleName(name));
             list.addView(row);
         }
     }
 
+    // Style identifiers are file names (with .css); labels drop the extension.
+    private static String displayStyleName(String name) {
+        return name.endsWith(".css") ? name.substring(0, name.length() - 4) : name;
+    }
+
     private void confirmDeleteUserStyle(final String name) {
-        String message = getString(R.string.setting_user_style_confirm_forget, name);
+        String message = getString(R.string.setting_user_style_confirm_forget,
+                displayStyleName(name));
         new AlertDialog.Builder(requireActivity())
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setTitle("")
                 .setMessage(message)
-                .setPositiveButton(android.R.string.yes,
-                        (dialog, which) -> userStylePrefs.edit().remove(name).commit())
+                .setPositiveButton(android.R.string.yes, (dialog, which) -> {
+                    app.deleteUserStyle(name);
+                    populateUserStyles(rootView);
+                })
                 .setNegativeButton(android.R.string.no, null)
                 .show();
-    }
-
-    @Override
-    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, @Nullable String key) {
-        populateUserStyles(rootView);
     }
 
     private void setupAbout(View view) {
@@ -281,25 +274,20 @@ public class SettingsFragment extends Fragment
                 String fileName = documentFile.getName();
                 Application app = (Application)getActivity().getApplication();
                 String userCss = app.readTextFile(is, 256 * 1024);
-                List<String> pathSegments = dataUri.getPathSegments();
-                Log.d(TAG, fileName);
-                Log.d(TAG, userCss);
-                int lastIndexOfDot = fileName.lastIndexOf(".");
-                if (lastIndexOfDot > -1) {
-                    fileName = fileName.substring(0, lastIndexOfDot);
+                // The file name (with a .css extension) is the style identifier
+                // and, sanitized of path separators, the file Slobber serves.
+                if (fileName == null || fileName.isEmpty()) {
+                    fileName = "user";
                 }
-                if (fileName.length() == 0) {
-                    fileName = "???";
+                fileName = fileName.replaceAll("[/\\\\]", "_");
+                if (!fileName.toLowerCase().endsWith(".css")) {
+                    fileName = fileName + ".css";
                 }
-                final SharedPreferences prefs = getActivity().getSharedPreferences(
-                        "userStyles", Activity.MODE_PRIVATE);
-
-                userCss = userCss.replace("\r", "").replace("\n", "\\n");
-
-                SharedPreferences.Editor editor = prefs.edit();
-                editor.putString(fileName, userCss);
-                boolean saved = editor.commit();
-                if (!saved) {
+                try {
+                    app.saveUserStyle(fileName, userCss);
+                    populateUserStyles(rootView);
+                } catch (IOException e) {
+                    Log.d(TAG, "Failed to store user style " + fileName, e);
                     Toast.makeText(getActivity(), R.string.msg_failed_to_store_user_style,
                             Toast.LENGTH_LONG).show();
                 }

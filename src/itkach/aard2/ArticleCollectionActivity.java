@@ -630,9 +630,17 @@ public class ArticleCollectionActivity extends FragmentActivity {
         }
         if (itemId == R.id.action_select_style) {
             final String[] styleTitles = webView.getAvailableStyles();
+            // User styles are file names (with .css); show that stripped, but
+            // keep the full name as the value saved as the preference.
+            String[] labels = new String[styleTitles.length];
+            for (int i = 0; i < styleTitles.length; i++) {
+                labels[i] = styleTitles[i].endsWith(".css")
+                        ? styleTitles[i].substring(0, styleTitles[i].length() - 4)
+                        : styleTitles[i];
+            }
             new AlertDialog.Builder(this)
                     .setTitle(R.string.select_style)
-                    .setItems(styleTitles, (dialog, which) -> {
+                    .setItems(labels, (dialog, which) -> {
                         webView.saveStylePref(styleTitles[which]);
                         webView.applyStylePref();
                     })
