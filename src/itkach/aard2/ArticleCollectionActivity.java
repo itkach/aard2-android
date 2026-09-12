@@ -6,8 +6,11 @@ import android.app.SearchManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
 import android.database.DataSetObserver;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -146,6 +149,14 @@ public class ArticleCollectionActivity extends FragmentActivity {
         });
         final Application app = (Application)getApplication();
         app.installTheme(this);
+        // Paint the window from its very first frame with the color the article
+        // being opened is expected to paint, so following a link doesn't flash
+        // the theme's (often dark) window background - behind the loading spinner
+        // while the pager is built off the main thread, and before the WebView
+        // paints. The WebView's own placeholder handles it from then on; this is
+        // the same measured color, so the two never disagree.
+        final int[] loadingColors = resolveLoadingColors(app, getIntent());
+        getWindow().setBackgroundDrawable(new ColorDrawable(loadingColors[0]));
         // One content view for the whole lifetime: the pager plus an overlaid
         // spinner (see the layout). The spinner shows while the lookup resolves
         // in the background; onPostExecute just flips visibility to the pager.
@@ -161,8 +172,14 @@ public class ArticleCollectionActivity extends FragmentActivity {
         final ActionBar actionBar = getActionBar();
         actionBar.setTitle("...");
         setupUpNavigation(toolbar);
-        // Debounced, so it doesn't even appear on fast lookups.
-        ((ContentLoadingProgressBar) findViewById(R.id.loading_progress)).show();
+        // Debounced, so it doesn't even appear on fast lookups. Tinted to the
+        // article's text color (the same measured pair that colors the window),
+        // so it reads against the loading background rather than showing the
+        // theme's accent - which, on a light-on-white article, would be an
+        // off-key splash of the device's accent color.
+        ContentLoadingProgressBar loadingProgress = findViewById(R.id.loading_progress);
+        loadingProgress.setIndeterminateTintList(ColorStateList.valueOf(loadingColors[1]));
+        loadingProgress.show();
         final Intent intent = getIntent();
         final int position = intent.getIntExtra("position", 0);
 
@@ -262,6 +279,20 @@ public class ArticleCollectionActivity extends FragmentActivity {
                     }});
                 viewPager.setCurrentItem(position);
 
+                // Now that the target blob is resolved, repaint the window with
+                // its dictionary's actual article background - this is what covers
+                // the paths onCreate couldn't resolve up front (bookmarks and
+                // history resolve their blobs lazily), and refines the rest. The
+                // per-page WebView placeholder takes over painting from here.
+                Slob.Blob primary = articleCollectionPagerAdapter.get(position);
+                if (primary != null && primary.owner != null) {
+                    String slobUri = app.getSlobURI(primary.owner.getId().toString());
+                    if (slobUri != null) {
+                        getWindow().setBackgroundDrawable(
+                                new ColorDrawable(articleColors(app, slobUri)[0]));
+                    }
+                }
+
                 updateTitle(position);
                 invalidateOptionsMenu();
                 articleCollectionPagerAdapter.registerDataSetObserver(new DataSetObserver() {
@@ -281,6 +312,62 @@ public class ArticleCollectionActivity extends FragmentActivity {
 
         createAdapterTask.execute();
 
+    }
+
+    // The {background, foreground} to paint the loading screen with while the
+    // article being opened has its pager built off the main thread - the window
+    // background, and the tint for the loading spinner. Uses the dictionary the
+    // article belongs to when it can be determined up front (see targetSlobUri);
+    // when it can't, the theme's own colors stand until onPostExecute repaints
+    // with the resolved blob's colors.
+    private int[] resolveLoadingColors(Application app, Intent intent) {
+        String slobUri = targetSlobUri(app, intent);
+        if (slobUri != null) {
+            return articleColors(app, slobUri);
+        }
+        return new int[]{
+                IconMaker.resolveThemeColor(this, android.R.attr.colorBackground, Color.WHITE),
+                IconMaker.resolveThemeColor(this, android.R.attr.textColorPrimary, Color.BLACK)};
+    }
+
+    // The uri of the dictionary this activity is opening an article from, when it
+    // can be known before the pager is built: from the link URL (following a
+    // cross-reference) or, for the main lookup results, the already-resolved blob
+    // at the target position. Bookmarks/history resolve their blobs lazily, so
+    // those return null here and are handled once the pager is built (see the
+    // repaint in onPostExecute).
+    private String targetSlobUri(Application app, Intent intent) {
+        try {
+            Uri data = intent.getData();
+            if (data != null) {
+                BlobDescriptor bd = BlobDescriptor.fromUri(data);
+                return bd != null && bd.slobId != null ? app.getSlobURI(bd.slobId) : null;
+            }
+            if (intent.getAction() == null) {
+                Object item = app.lastResult.getBlobItem(intent.getIntExtra("position", 0));
+                if (item instanceof Slob.Blob) {
+                    return app.getSlobURI(((Slob.Blob) item).owner.getId().toString());
+                }
+            }
+        } catch (Exception e) {
+            Log.d(TAG, "Couldn't resolve target dictionary for loading colors", e);
+        }
+        return null;
+    }
+
+    // The {background, foreground} for an article from this dictionary: the pair
+    // the WebView measured on a previous visit (keyed by resolved style and UI
+    // theme - see ArticleWebView/Application), or, if never measured, the same
+    // name-heuristic prior the WebView placeholder uses (with a contrasting
+    // foreground) so the two agree.
+    private int[] articleColors(Application app, String slobUri) {
+        String style = app.resolveStyleTitle(slobUri);
+        int[] c = app.getStyleColors(slobUri, style);
+        if (c != null) {
+            return c;
+        }
+        boolean dark = Application.isDarkStyleTitle(style);
+        return new int[]{dark ? Color.BLACK : Color.WHITE, dark ? Color.WHITE : Color.BLACK};
     }
 
     private ArticleCollectionPagerAdapter createFromUri(Application app, Uri articleUrl) {
@@ -836,6 +923,13 @@ public class ArticleCollectionActivity extends FragmentActivity {
                     }
                 });
                 webView.loadUrl(app.getUrl(blob));
+                // The per-page bar keeps its theme color: it's a thin load
+                // affordance pinned to the top edge against the toolbar, reading
+                // as app chrome rather than sitting on the article-colored
+                // surface (unlike the full-screen loading spinner, which does and
+                // so is tinted to match). Tying it to article text color would be
+                // arbitrary - black under the bar for one dictionary, grey for
+                // the next - with no background there that it needs to contrast.
             }
             container.addView(pageView);
             pages.put(position, pageView);

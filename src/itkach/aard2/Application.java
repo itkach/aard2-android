@@ -3,6 +3,7 @@ package itkach.aard2;
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -75,6 +76,7 @@ public class Application extends android.app.Application {
     static String jsStyleSwitcher;
     static String jsSetUserStyle;
     static String jsSetCannedStyle;
+    static String jsProbeColors;
 
     private static final String PREF                    = "app";
     // Shared by ArticleWebView (text zoom, remote-content policy, and
@@ -85,6 +87,10 @@ public class Application extends android.app.Application {
     static final String ARTICLE_VIEW_PREF               = "articleView";
     static final String PREF_STYLE                      = "style.";
     static final String PREF_STYLE_AVAILABLE            = "style.available.";
+    // Per (dictionary, resolved style, UI dark/light) cache of the article
+    // background/foreground colors the WebView actually paints - measured once by
+    // the real engine (see probecolors.js) so the loading placeholder can match.
+    static final String STYLE_COLOR_PREF                = "styleColors";
     static final String PREF_RANDOM_FAV_LOOKUP          = "onlyFavDictsForRandomLookup";
     static final String PREF_UI_THEME                   = "UITheme";
     static final String PREF_UI_THEME_LIGHT             = "light";
@@ -143,6 +149,8 @@ public class Application extends android.app.Application {
             jsSetUserStyle = readTextFile(is, 0);
             is = getAssets().open("setcannedstyle.js");
             jsSetCannedStyle = readTextFile(is, 0);
+            is = getAssets().open("probecolors.js");
+            jsProbeColors = readTextFile(is, 0);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -611,6 +619,95 @@ public class Application extends android.app.Application {
                 PREF_STYLE_AVAILABLE + slobUri, Collections.<String>emptySet());
         return resolveStyle(storedStyleTitle, autoStyleTitle,
                 defaultStyleTitle, isUIDark(), availableTitles);
+    }
+
+    // ---- Article color cache: the background/foreground the WebView actually
+    //      paints for a dictionary+style, measured once by the real engine (see
+    //      probecolors.js) and reused as the loading placeholder so it stops
+    //      flashing a color guessed from the style's name. ----
+
+    // '|' delimits the parts: it can't occur in a slob's uri tag and is
+    // vanishingly unlikely in a style name; a stray collision would only pick a
+    // slightly-off placeholder color the next probe corrects anyway. (The key
+    // becomes a SharedPreferences XML attribute name, so a NUL/control-char
+    // separator is out - it would corrupt the file or normalize to a space.)
+    private String styleColorKey(String slobUri, String styleTitle) {
+        return slobUri + '|' + styleTitle + '|' + (isUIDark() ? 'd' : 'l');
+    }
+
+    // Cached {background, foreground} for this dictionary+style, or null if never
+    // measured. The UI light/dark state is part of the key: a style that adapts
+    // via @media prefers-color-scheme paints differently in each.
+    int[] getStyleColors(String slobUri, String styleTitle) {
+        if (slobUri == null) {
+            return null;
+        }
+        String value = getSharedPreferences(STYLE_COLOR_PREF, MODE_PRIVATE)
+                .getString(styleColorKey(slobUri, styleTitle), null);
+        if (value == null) {
+            return null;
+        }
+        int sep = value.indexOf(',');
+        try {
+            return new int[]{
+                    Integer.parseInt(value.substring(0, sep)),
+                    Integer.parseInt(value.substring(sep + 1))};
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    private void saveStyleColors(String slobUri, String styleTitle, int bg, int fg) {
+        if (slobUri == null) {
+            return;
+        }
+        getSharedPreferences(STYLE_COLOR_PREF, MODE_PRIVATE).edit()
+                .putString(styleColorKey(slobUri, styleTitle), bg + "," + fg)
+                .apply();
+    }
+
+    // Parses a probecolors.js result and stores the resolved placeholder colors.
+    void cacheProbedColors(String slobUri, String styleTitle, String json) {
+        if (slobUri == null || json == null) {
+            return;
+        }
+        double[] c;
+        try {
+            c = mapper.readValue(json, double[].class);
+        } catch (Exception e) {
+            Log.w(TAG, "Failed to parse probed colors: " + json, e);
+            return;
+        }
+        if (c.length < 11) {
+            return;
+        }
+        int bg = resolveBg(c[0], c[1], c[2], c[3], c[4], c[5], c[6], c[7]);
+        int fg = Color.rgb((int) c[8], (int) c[9], (int) c[10]);
+        saveStyleColors(slobUri, styleTitle, bg, fg);
+    }
+
+    // body wins when opaque, html is the fallback. A transparent or translucent
+    // background reveals whatever is behind it - which, for HTML in a WebView, is
+    // the browser's default white, the surface the content was authored against
+    // (dictionary markup with dark text and no background of its own assumes a
+    // white page). So a partly transparent color composites over white and a
+    // fully transparent one (getComputedStyle's rgba(0,0,0,0) for unset, whose
+    // RGB is a meaningless black) resolves to white - NOT the app's own theme
+    // background, which for a dark UI would put dark text on a dark page.
+    private static int resolveBg(double br, double bg, double bb, double ba,
+                                 double hr, double hg, double hb, double ha) {
+        if (ba >= 1) return Color.rgb((int) br, (int) bg, (int) bb);
+        if (ha >= 1) return Color.rgb((int) hr, (int) hg, (int) hb);
+        if (ba > 0) return composite(br, bg, bb, ba, Color.WHITE);
+        if (ha > 0) return composite(hr, hg, hb, ha, Color.WHITE);
+        return Color.WHITE;
+    }
+
+    private static int composite(double r, double g, double b, double a, int base) {
+        return Color.rgb(
+                (int) Math.round(r * a + Color.red(base) * (1 - a)),
+                (int) Math.round(g * a + Color.green(base) * (1 - a)),
+                (int) Math.round(b * a + Color.blue(base) * (1 - a)));
     }
 
     Slob getSlob(String slobId) {

@@ -185,6 +185,19 @@ public class ArticleWebView extends SearchableWebView {
             }
 
             @Override
+            public void onPageCommitVisible(WebView view, String url) {
+                // First pixels of the new page are up - the earliest point the
+                // computed style is real and painted, so measure and cache the
+                // colors the page actually paints here (onPageFinished is later;
+                // the pre-load placeholder in updateBackgrounColor is earlier and
+                // has only the style name to go on).
+                if (url == null || url.startsWith("about:")) {
+                    return;
+                }
+                probeColors();
+            }
+
+            @Override
             public WebResourceResponse shouldInterceptRequest(WebView view, String url) {
                 Uri parsed;
                 try {
@@ -478,21 +491,35 @@ public class ArticleWebView extends SearchableWebView {
         }
     }
 
+    // The WebView's own background shows through before the page's style paints
+    // (and after, wherever the style sets no background), so it is preset to the
+    // color the page is expected to paint, to avoid a flash of the wrong one.
+    // That color is the one this dictionary+style was actually measured to paint
+    // last time (probeColors below caches it per style, keyed on the UI theme
+    // too). The very first time a dictionary+style is shown there's no
+    // measurement yet, so fall back to the cheap prior - dark if the style's name
+    // says "night"/"dark", else white - which that first load's probe then
+    // replaces with the real color for next time.
     private void updateBackgrounColor() {
-        int color = Color.WHITE;
         String preferredStyle = getPreferredStyle();
-        // webview's default background may "show through" before page
-        // load started and/or before page's style applies (and even after that if
-        // style doesn't explicitly set background).
-        // this is a hack to preemptively set "right" background and prevent
-        // extra flash
-        //
-        // TODO Hack it even more - allow style title to include background color spec
-        // so that this can work with "strategically" named user css
-        if (Application.isDarkStyleTitle(preferredStyle)) {
-            color = Color.BLACK;
-        }
+        int[] cached = getApplication().getStyleColors(currentSlobUri, preferredStyle);
+        int color = cached != null ? cached[0]
+                : (Application.isDarkStyleTitle(preferredStyle) ? Color.BLACK : Color.WHITE);
         setBackgroundColor(color);
+    }
+
+    // Measures the colors the page actually painted (probecolors.js reads them
+    // from the real CSS engine) and caches them for this dictionary+style. Runs
+    // at first paint (onPageCommitVisible); the cache is self-healing, so a style
+    // edit costs at most one stale placeholder before the next probe corrects it.
+    private void probeColors() {
+        final String slobUri = currentSlobUri;
+        if (slobUri == null) {
+            return;
+        }
+        final String styleTitle = getPreferredStyle();
+        evaluateJavascript(Application.jsProbeColors, value ->
+                getApplication().cacheProbedColors(slobUri, styleTitle, value));
     }
 
     private Application getApplication() {
