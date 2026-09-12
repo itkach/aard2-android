@@ -69,12 +69,19 @@
 
         </androidx.viewpager.widget.ViewPager>
 
+        <!-- Starts gone so ContentLoadingProgressBar's debounce actually works:
+             show() then only reveals it after a short delay, and hide() before
+             that delay cancels it - so a quick load never flashes the spinner,
+             and once shown it stays up a minimum time rather than sub-animating.
+             Without visibility="gone" the bar is on screen from inflation and
+             that debounce is defeated. -->
         <androidx.core.widget.ContentLoadingProgressBar
             android:id="@+id/loading_progress"
             style="?android:attr/progressBarStyleLarge"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:visibility="gone"
             android:indeterminate="true" />
 
     </FrameLayout>
