@@ -44,6 +44,14 @@ public class MainActivity extends FragmentActivity {
     private static final int LOOKUP = 0;
     private static final int DICTIONARIES = 3;
     private static final String STATE_SELECTED = "selectedSection";
+    // Persisted so the last section is restored no matter how the app was last
+    // torn down. Instance state (STATE_SELECTED) covers an OS kill while the task
+    // is kept, but not a recents swipe-dismiss (Android discards a dismissed
+    // task's saved state) or the task ageing out - so this pref seeds the initial
+    // section whenever there is no saved instance state, giving "come back to the
+    // tab I left" consistently, which is what a user expects regardless of the
+    // framework's task-vs-process distinction.
+    private static final String PREF_LAST_SECTION = "lastSection";
 
     private BottomNavigationView bottomNav;
     private SearchView searchView;
@@ -165,7 +173,7 @@ public class MainActivity extends FragmentActivity {
         } else if (app.dictionaries.size() == 0) {
             initial = DICTIONARIES;
         } else {
-            initial = LOOKUP;
+            initial = getPreferences(MODE_PRIVATE).getInt(PREF_LAST_SECTION, LOOKUP);
         }
         // Don't restore into the History section if history is (now) off.
         if (!app.recordHistory() && initial == positionForItemId(R.id.nav_history)) {
@@ -250,6 +258,8 @@ public class MainActivity extends FragmentActivity {
             }
         }
         selectedPosition = position;
+        // Remember the section so the next launch reopens it (see PREF_LAST_SECTION).
+        getPreferences(MODE_PRIVATE).edit().putInt(PREF_LAST_SECTION, position).apply();
         updateNavIcons();
         // Refresh the title and the Lookup-only search box / dice button.
         invalidateOptionsMenu();
