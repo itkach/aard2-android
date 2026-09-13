@@ -5,7 +5,7 @@
         android:paddingLeft="8dip"
         android:paddingRight="8dip"
         android:paddingTop="3dip"
-        android:background="@android:drawable/list_selector_background"
+        android:background="@drawable/blob_list_item_background"
     >
     
     <LinearLayout

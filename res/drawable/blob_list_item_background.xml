@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Theme-aware background for lookup/bookmark/history rows, replacing the
+     framework's @android:drawable/list_selector_background whose pressed and
+     activated highlight is a fixed orange that ignores the app's Material theme
+     and dark mode. The press ripple and the persistent activated/checked tint
+     (used by the bookmarks/history multi-select) both draw in the theme's own
+     colorControlHighlight, so they follow light/dark correctly. -->
+<ripple xmlns:android="http://schemas.android.com/apk/res/android"
+    android:color="?attr/colorControlHighlight">
+    <item android:id="@android:id/mask">
+        <color android:color="@android:color/white" />
+    </item>
+    <item>
+        <selector>
+            <item android:state_activated="true">
+                <color android:color="?attr/colorControlHighlight" />
+            </item>
+            <item android:state_checked="true">
+                <color android:color="?attr/colorControlHighlight" />
+            </item>
+            <item>
+                <color android:color="@android:color/transparent" />
+            </item>
+        </selector>
+    </item>
+</ripple>
