@@ -487,45 +487,42 @@ public class MainActivity extends FragmentActivity {
         return app.autoPaste();
     }
 
-    @Override
-    public boolean onKeyUp(int keyCode, KeyEvent event) {
-
-        if (event.isCanceled()) {
-            return true;
-        }
-
-        if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
-            if (!useVolumeForNav()) {
-                return false;
-            }
-            int next = selectedPosition > 0
-                    ? selectedPosition - 1 : SECTION_TAGS.length - 1;
-            bottomNav.setSelectedItemId(itemIdForPosition(next));
-            return true;
-        }
-
-        if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
-            if (!useVolumeForNav()) {
-                return false;
-            }
-            int next = selectedPosition < SECTION_TAGS.length - 1
-                    ? selectedPosition + 1 : 0;
-            bottomNav.setSelectedItemId(itemIdForPosition(next));
-            return true;
-        }
-
-        return super.onKeyUp(keyCode, event);
-    }
-
+    // Volume-key tab navigation acts on key-down (matching ArticleCollectionActivity)
+    // so pressing responds immediately and a stray key-up arriving from an article
+    // that just finished can't trigger an unexpected tab switch. Only the initial
+    // press (repeatCount 0) switches tabs; auto-repeats and key-up are swallowed.
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_VOLUME_UP || keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
             if (!useVolumeForNav()) {
                 return false;
             }
+            if (event.getRepeatCount() == 0) {
+                int next;
+                if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
+                    next = selectedPosition > 0
+                            ? selectedPosition - 1 : SECTION_TAGS.length - 1;
+                }
+                else {
+                    next = selectedPosition < SECTION_TAGS.length - 1
+                            ? selectedPosition + 1 : 0;
+                }
+                bottomNav.setSelectedItemId(itemIdForPosition(next));
+            }
             return true;
         }
         return super.onKeyDown(keyCode, event);
+    }
+
+    @Override
+    public boolean onKeyUp(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_VOLUME_UP || keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
+            if (!useVolumeForNav()) {
+                return false;
+            }
+            return true;
+        }
+        return super.onKeyUp(keyCode, event);
     }
 
 }

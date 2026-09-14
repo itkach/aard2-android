@@ -756,78 +756,64 @@ public class ArticleCollectionActivity extends FragmentActivity {
     }
 
 
-    @Override
-    public boolean onKeyUp(int keyCode, KeyEvent event) {
-        if (event.isCanceled()) {
-            return true;
-        }
-        if (articleCollectionPagerAdapter == null) {
-            return false;
-        }
-        ArticleWebView webView = articleCollectionPagerAdapter.getPrimaryWebView();
-        if (webView != null) {
-            if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
-                if (!useVolumeForNav()) {
-                    return false;
-                }
-                boolean scrolled = webView.pageUp(false);
-                if (!scrolled) {
-                    int current = viewPager.getCurrentItem();
-                    if (current > 0) {
-                        viewPager.setCurrentItem(current - 1);
-                    }
-                    else {
-                        finish();
-                    }
-                }
-                return true;
-            }
-            if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
-                if (!useVolumeForNav()) {
-                    return false;
-                }
-                boolean scrolled = webView.pageDown(false);
-                if (!scrolled) {
-                    int current = viewPager.getCurrentItem();
-                    if (current < articleCollectionPagerAdapter.getCount() - 1) {
-                        viewPager.setCurrentItem(current + 1);
-                    }
-                }
-                return true;
-            }
-        }
-        return super.onKeyUp(keyCode, event);
-    }
-
+    // Volume-key navigation acts on key-down (not key-up) so it responds the
+    // instant the button is pressed, and so a press that exits this activity (by
+    // finishing on volume-up past the first article's top) doesn't leave a stray
+    // key-up to be picked up by MainActivity's own volume navigation. Only the
+    // initial press (repeatCount 0) scrolls; auto-repeat events and key-up are
+    // swallowed, so a held key does nothing further and the system volume UI
+    // never appears while this is on.
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_VOLUME_UP || keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
             if (!useVolumeForNav()) {
                 return false;
             }
-            event.startTracking();
+            if (event.getRepeatCount() == 0) {
+                ArticleWebView webView = articleCollectionPagerAdapter == null ? null
+                        : articleCollectionPagerAdapter.getPrimaryWebView();
+                if (webView != null) {
+                    boolean down = keyCode == KeyEvent.KEYCODE_VOLUME_DOWN;
+                    if (!webView.pageScroll(down)) {
+                        goToAdjacentArticle(down);
+                    }
+                }
+            }
             return true;
         }
         return super.onKeyDown(keyCode, event);
     }
 
     @Override
-    public boolean onKeyLongPress(int keyCode, KeyEvent event) {
-        if (!useVolumeForNav()) {
-            return false;
-        }
-        ArticleWebView webView = articleCollectionPagerAdapter.getPrimaryWebView();
-        if (webView != null) {
-            if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
-                webView.pageUp(true);
-                return true;
+    public boolean onKeyUp(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_VOLUME_UP || keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
+            if (!useVolumeForNav()) {
+                return false;
             }
-            if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
-                webView.pageDown(true);
-                return true;
+            return true;
+        }
+        return super.onKeyUp(keyCode, event);
+    }
+
+    // Volume-down past the last page moves to the next article; volume-up past the
+    // top moves to the previous one, or exits when already on the first article's
+    // top (matching the previous behaviour).
+    private void goToAdjacentArticle(boolean forward) {
+        if (articleCollectionPagerAdapter == null) {
+            return;
+        }
+        int current = viewPager.getCurrentItem();
+        if (forward) {
+            if (current < articleCollectionPagerAdapter.getCount() - 1) {
+                viewPager.setCurrentItem(current + 1);
             }
         }
-        return super.onKeyLongPress(keyCode, event);
+        else if (current > 0) {
+            viewPager.setCurrentItem(current - 1);
+        }
+        else {
+            finish();
+        }
     }
 
 

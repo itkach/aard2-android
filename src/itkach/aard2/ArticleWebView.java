@@ -1,5 +1,6 @@
 package itkach.aard2;
 
+import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -14,6 +15,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.animation.DecelerateInterpolator;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
@@ -524,6 +526,51 @@ public class ArticleWebView extends SearchableWebView {
 
     private Application getApplication() {
         return (Application)((Activity)getContext()).getApplication();
+    }
+
+    // Volume-key page scrolling. The framework's WebView.pageDown/pageUp move
+    // only a partial page and animate through the scroller's gentle easing, which
+    // feels short and sluggish; these replace them with a full-page move and a
+    // brief, snappy animation. See ArticleCollectionActivity's key handlers.
+    private static final float PAGE_FRACTION = 0.92f;  // one screen, small overlap
+    private static final int   PAGE_SCROLL_MS = 150;
+
+    private ValueAnimator scrollAnim;
+
+    // Scroll one page (down if true, up otherwise). Returns false when already at
+    // that edge, so the caller can page to the adjacent article instead.
+    public boolean pageScroll(boolean down) {
+        int dir = down ? 1 : -1;
+        if (!canScrollVertically(dir)) {
+            return false;
+        }
+        animateScrollBy(dir * (int) (getHeight() * PAGE_FRACTION));
+        return true;
+    }
+
+    private int maxScrollY() {
+        return Math.max(0, computeVerticalScrollRange() - getHeight());
+    }
+
+    private void animateScrollBy(int dy) {
+        cancelScrollAnim();
+        int from = getScrollY();
+        int to = Math.max(0, Math.min(from + dy, maxScrollY()));
+        if (to == from) {
+            return;
+        }
+        scrollAnim = ValueAnimator.ofInt(from, to);
+        scrollAnim.setDuration(PAGE_SCROLL_MS);
+        scrollAnim.setInterpolator(new DecelerateInterpolator());
+        scrollAnim.addUpdateListener(a ->
+                scrollTo(getScrollX(), (int) a.getAnimatedValue()));
+        scrollAnim.start();
+    }
+
+    private void cancelScrollAnim() {
+        if (scrollAnim != null && scrollAnim.isRunning()) {
+            scrollAnim.cancel();
+        }
     }
 
     private void setCurrentSlobIdFromUrl(String url) {
