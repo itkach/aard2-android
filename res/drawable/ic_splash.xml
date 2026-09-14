@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Icon for the API 31+ system splash. The system draws this into a circular
+     slot and only the center ~2/3 is safe from the mask, so the logo (which
+     fills its own bounds) is inset to keep it inside the circle - unclipped. The
+     source (aard2_splash) is a high-res render of the logo SVG, so drawing it at
+     splash size does not upscale it (the launcher's aard2 raster is only 192px
+     and would blur). See styles.xml windowSplashScreenAnimatedIcon. -->
+<inset xmlns:android="http://schemas.android.com/apk/res/android"
+    android:drawable="@drawable/aard2_splash"
+    android:inset="18%" />

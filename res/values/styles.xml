@@ -53,6 +53,13 @@
         <item name="actionBarSize">@dimen/toolbar_height</item>
         <item name="android:statusBarColor">@color/status_bar_scrim</item>
         <item name="android:windowLightStatusBar">@bool/status_bar_light_appearance</item>
+        <!-- Give the API 31+ system splash its own icon (a high-res, padded logo
+             - see @drawable/ic_splash) instead of deriving one from the launcher
+             icon. The launcher icon's opaque background makes the splash draw it
+             in the large masked mode, which upscaled the 192px launcher raster
+             and softened it; a dedicated high-res, pre-padded icon stays sharp
+             and unclipped, and decouples the two. Ignored below API 31. -->
+        <item name="android:windowSplashScreenAnimatedIcon">@drawable/ic_splash</item>
     </style>
 
     <style name="Theme.Aard2.Dark" parent="@style/Theme.Material3.DynamicColors.Dark.NoActionBar">
@@ -61,6 +68,7 @@
         <item name="actionBarSize">@dimen/toolbar_height</item>
         <item name="android:statusBarColor">@color/status_bar_scrim</item>
         <item name="android:windowLightStatusBar">@bool/status_bar_light_appearance</item>
+        <item name="android:windowSplashScreenAnimatedIcon">@drawable/ic_splash</item>
     </style>
 
     <!-- Applied via android:theme on every <android.widget.Toolbar>. Its
