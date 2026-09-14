@@ -16,7 +16,9 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.util.SparseArray;
+import android.util.TypedValue;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.widget.ImageView;
@@ -35,6 +37,7 @@ import androidx.viewpager.widget.ViewPager;
 import androidx.viewpager.widget.ViewPager.OnPageChangeListener;
 import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.appbar.AppBarLayout;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -89,6 +92,131 @@ public class ArticleCollectionActivity extends FragmentActivity {
 
     ArticleCollectionPagerAdapter articleCollectionPagerAdapter;
     ViewPager viewPager;
+
+    // Scroll-to-top button. The button is only worth offering when a jump to the
+    // top is actually useful, so it appears in two cases, and in both only when
+    // there is more than one screen between the current position and the top
+    // (scrollY > viewport):
+    //
+    //  - Scrolling UP (content moving toward the top): a transient reveal. To
+    //    avoid flashing on a small nudge it waits until the up-scroll has been
+    //    running for SHOW_DELAY_MS (with a scroll event still landing within
+    //    ACTIVE_WINDOW_MS of that check, i.e. it's still moving), then fades out
+    //    HIDE_DELAY_MS after scrolling stops. Scrolling down never reveals it.
+    //  - At the BOTTOM of a long article: shown immediately and kept (no
+    //    auto-fade), since there's a standing need to get back up from there.
+    private static final long SHOW_DELAY_MS = 600;
+    private static final long HIDE_DELAY_MS = 1200;
+    private static final long ACTIVE_WINDOW_MS = 150;
+    private static final float FAB_ALPHA = 0.50f;
+
+    private FloatingActionButton scrollTopFab;
+    private long lastScrollAt;
+    private int lastScrollY;
+    private int lastScrollViewportHeight;
+    private boolean fabShown;
+    private boolean fabShowScheduled;
+
+    private final Runnable showFabRunnable = new Runnable() {
+        @Override
+        public void run() {
+            fabShowScheduled = false;
+            boolean stillScrolling =
+                    SystemClock.uptimeMillis() - lastScrollAt <= ACTIVE_WINDOW_MS;
+            if (stillScrolling && lastScrollY > lastScrollViewportHeight) {
+                showFab();
+            }
+        }
+    };
+
+    private final Runnable hideFabRunnable = new Runnable() {
+        @Override
+        public void run() {
+            hideFab();
+        }
+    };
+
+    // Called from every page's WebView scroll; acts only for the current page.
+    private void onArticleScrolled(View v, int scrollY) {
+        if (articleCollectionPagerAdapter == null
+                || v != articleCollectionPagerAdapter.getPrimaryWebView()) {
+            return;
+        }
+        int prevScrollY = lastScrollY;
+        lastScrollAt = SystemClock.uptimeMillis();
+        lastScrollY = scrollY;
+        lastScrollViewportHeight = v.getHeight();
+
+        boolean farFromTop = scrollY > v.getHeight();  // > 1 screen above
+        boolean scrollingUp = scrollY < prevScrollY;
+        boolean atBottom = !v.canScrollVertically(1);
+
+        if (farFromTop && atBottom) {
+            // Standing need at the bottom of a long article: reveal at once and
+            // keep it there (cancel the pending delayed check and the fade).
+            cancelPendingShow();
+            scrollTopFab.removeCallbacks(hideFabRunnable);
+            showFab();
+            return;
+        }
+        if (farFromTop && scrollingUp) {
+            // Heading toward the top: reveal after the up-scroll has clearly been
+            // running a while, then fade once it stops.
+            if (!fabShown && !fabShowScheduled) {
+                fabShowScheduled = true;
+                scrollTopFab.postDelayed(showFabRunnable, SHOW_DELAY_MS);
+            }
+            scrollTopFab.removeCallbacks(hideFabRunnable);
+            scrollTopFab.postDelayed(hideFabRunnable, HIDE_DELAY_MS);
+            return;
+        }
+        // Scrolling down, or within a screen of the top: don't reveal, and drop a
+        // pending up-reveal if the direction just changed. Any already-shown
+        // button is left to fade via its scheduled hide.
+        cancelPendingShow();
+    }
+
+    private void cancelPendingShow() {
+        scrollTopFab.removeCallbacks(showFabRunnable);
+        fabShowScheduled = false;
+    }
+
+    private void showFab() {
+        if (fabShown) {
+            return;
+        }
+        fabShown = true;
+        scrollTopFab.setVisibility(View.VISIBLE);
+        scrollTopFab.animate().alpha(FAB_ALPHA).setDuration(150).withEndAction(null);
+    }
+
+    private void hideFab() {
+        if (!fabShown) {
+            return;
+        }
+        fabShown = false;
+        scrollTopFab.animate().alpha(0f).setDuration(150).withEndAction(
+                () -> scrollTopFab.setVisibility(View.GONE));
+    }
+
+    private int themeColor(int attr) {
+        TypedValue tv = new TypedValue();
+        getTheme().resolveAttribute(attr, tv, true);
+        return tv.data;
+    }
+
+    // Immediately drop the button and clear any pending show/hide (used when the
+    // button is tapped and when the current page changes).
+    private void resetFab() {
+        scrollTopFab.removeCallbacks(showFabRunnable);
+        scrollTopFab.removeCallbacks(hideFabRunnable);
+        fabShowScheduled = false;
+        fabShown = false;
+        lastScrollY = 0;
+        scrollTopFab.animate().cancel();
+        scrollTopFab.setAlpha(0f);
+        scrollTopFab.setVisibility(View.GONE);
+    }
 
     // The article menu (bookmark/find/zoom/style/remote) lives on the Activity
     // now that pages are raw ArticleWebViews rather than ArticleFragments; it
@@ -172,6 +300,21 @@ public class ArticleCollectionActivity extends FragmentActivity {
         final ActionBar actionBar = getActionBar();
         actionBar.setTitle("...");
         setupUpNavigation(toolbar);
+        scrollTopFab = findViewById(R.id.scroll_top_fab);
+        // Use the FontDrawable's own colour (not the FAB's default image tint) so
+        // the up-chevron is drawn in the on-container role against the FAB's
+        // container background.
+        scrollTopFab.setImageTintList(null);
+        scrollTopFab.setImageDrawable(IconMaker.make(this, IconMaker.IC_ANGLE_UP, 22,
+                themeColor(com.google.android.material.R.attr.colorOnPrimaryContainer)));
+        scrollTopFab.setOnClickListener(v -> {
+            ArticleWebView webView = articleCollectionPagerAdapter == null ? null
+                    : articleCollectionPagerAdapter.getPrimaryWebView();
+            if (webView != null) {
+                webView.scrollToTop();
+            }
+            resetFab();
+        });
         // Debounced, so it doesn't even appear on fast lookups. Tinted to the
         // article's text color (the same measured pair that colors the window),
         // so it reads against the loading background rather than showing the
@@ -257,6 +400,11 @@ public class ArticleCollectionActivity extends FragmentActivity {
 
                 viewPager = (ViewPager) findViewById(R.id.pager);
                 applyContentInsets();
+                // Report scrolls of any page to the Activity (drives the
+                // scroll-to-top button); set before setAdapter so it's attached
+                // to every page as it's instantiated.
+                articleCollectionPagerAdapter.setOnWebViewScrollListener(
+                        (v, sx, sy, osx, osy) -> onArticleScrolled(v, sy));
                 viewPager.setAdapter(articleCollectionPagerAdapter);
                 viewPager.addOnPageChangeListener(new OnPageChangeListener(){
 
@@ -269,6 +417,9 @@ public class ArticleCollectionActivity extends FragmentActivity {
                     @Override
                     public void onPageSelected(final int position) {
                         updateTitle(position);
+                        // The new page has its own scroll position; drop the
+                        // button and any pending show/hide from the old one.
+                        resetFab();
                         ArticleWebView webView = articleCollectionPagerAdapter.getWebView(position);
                         if (webView != null) {
                             webView.applyTextZoomPref();
@@ -840,6 +991,15 @@ public class ArticleCollectionActivity extends FragmentActivity {
         private final SparseArray<View> pages = new SparseArray<>();
         private int primaryPosition = -1;
 
+        // Attached to every page's WebView so the Activity is told when the
+        // article scrolls (drives the scroll-to-top button). Set before the
+        // adapter is handed to the ViewPager, so it's in place for every page.
+        private View.OnScrollChangeListener scrollListener;
+
+        void setOnWebViewScrollListener(View.OnScrollChangeListener l) {
+            this.scrollListener = l;
+        }
+
         public ArticleCollectionPagerAdapter(Application app, RecyclerView.Adapter<?> data, ToBlob toBlob) {
             this.app = app;
             this.data = data;
@@ -895,6 +1055,9 @@ public class ArticleCollectionActivity extends FragmentActivity {
                 final ContentLoadingProgressBar progressBar =
                         pageView.findViewById(R.id.webViewPogress);
                 ArticleWebView webView = pageView.findViewById(R.id.webView);
+                if (scrollListener != null) {
+                    webView.setOnScrollChangeListener(scrollListener);
+                }
                 webView.setWebChromeClient(new WebChromeClient() {
                     @Override
                     public void onProgressChanged(WebView view, int newProgress) {

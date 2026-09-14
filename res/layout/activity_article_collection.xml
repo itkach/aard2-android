@@ -1,5 +1,6 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/article_collection_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -83,6 +84,24 @@
             android:layout_gravity="center"
             android:visibility="gone"
             android:indeterminate="true" />
+
+        <!-- Scroll-to-top affordance for long articles. Overlaid bottom-right on
+             the article content; starts hidden (alpha 0 / gone) and is faded in
+             by the activity only while a scroll has been running for a moment
+             (so a flick in a long article shows it, a tap or short scroll does
+             not), then faded out shortly after scrolling stops. Kept semi-
+             transparent so it doesn't obscure the text underneath. -->
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/scroll_top_fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="16dp"
+            android:visibility="gone"
+            android:alpha="0"
+            android:contentDescription="@string/scroll_to_top"
+            app:fabSize="mini"
+            app:elevation="3dp" />
 
     </FrameLayout>
 

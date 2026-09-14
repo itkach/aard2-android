@@ -548,6 +548,12 @@ public class ArticleWebView extends SearchableWebView {
         return true;
     }
 
+    // Jump straight to the top (used by the scroll-to-top button).
+    public void scrollToTop() {
+        cancelScrollAnim();
+        scrollTo(getScrollX(), 0);
+    }
+
     private int maxScrollY() {
         return Math.max(0, computeVerticalScrollRange() - getHeight());
     }
