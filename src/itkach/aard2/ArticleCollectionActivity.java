@@ -103,17 +103,26 @@ public class ArticleCollectionActivity extends FragmentActivity {
     //    running for SHOW_DELAY_MS (with a scroll event still landing within
     //    ACTIVE_WINDOW_MS of that check, i.e. it's still moving), then fades out
     //    HIDE_DELAY_MS after scrolling stops. Scrolling down never reveals it.
-    //  - At the BOTTOM of a long article: shown immediately and kept (no
-    //    auto-fade), since there's a standing need to get back up from there.
+    //  - At the BOTTOM of a long article, reached BY SCROLLING: shown and kept
+    //    (no auto-fade) while we stay there, since there's a standing need to get
+    //    back up. "By scrolling" matters: reaching the bottom via a footnote/
+    //    anchor jump (or a Back scroll restore) is a single isolated position
+    //    change, not a run of scroll events, and must not summon the button -
+    //    otherwise it looks like it appeared in response to the footnote and
+    //    promises to take you back, which it doesn't. Once we move away from the
+    //    bottom the button is scheduled to fade (see the handler's last branch),
+    //    so it can never get stuck on screen.
     private static final long SHOW_DELAY_MS = 600;
     private static final long HIDE_DELAY_MS = 1200;
     private static final long ACTIVE_WINDOW_MS = 150;
+    private static final int MIN_SCROLL_RUN = 3;   // events to count as a real scroll
     private static final float FAB_ALPHA = 0.50f;
 
     private FloatingActionButton scrollTopFab;
     private long lastScrollAt;
     private int lastScrollY;
     private int lastScrollViewportHeight;
+    private int scrollRun;
     private boolean fabShown;
     private boolean fabShowScheduled;
 
@@ -142,18 +151,26 @@ public class ArticleCollectionActivity extends FragmentActivity {
                 || v != articleCollectionPagerAdapter.getPrimaryWebView()) {
             return;
         }
+        long now = SystemClock.uptimeMillis();
+        long sinceLast = now - lastScrollAt;
         int prevScrollY = lastScrollY;
-        lastScrollAt = SystemClock.uptimeMillis();
+        lastScrollAt = now;
         lastScrollY = scrollY;
         lastScrollViewportHeight = v.getHeight();
+        // Closely-spaced events are a real scroll (drag/fling); an isolated
+        // position change - a footnote/anchor jump or a Back scroll restore -
+        // resets the run, so it never reaches MIN_SCROLL_RUN.
+        scrollRun = sinceLast <= ACTIVE_WINDOW_MS ? scrollRun + 1 : 1;
 
         boolean farFromTop = scrollY > v.getHeight();  // > 1 screen above
         boolean scrollingUp = scrollY < prevScrollY;
         boolean atBottom = !v.canScrollVertically(1);
+        boolean scrolledHere = scrollRun >= MIN_SCROLL_RUN;
 
-        if (farFromTop && atBottom) {
-            // Standing need at the bottom of a long article: reveal at once and
-            // keep it there (cancel the pending delayed check and the fade).
+        if (farFromTop && atBottom && scrolledHere) {
+            // Reached the bottom of a long article by scrolling: reveal and keep
+            // it while we stay here (no fade). Moving away later falls into one of
+            // the branches below, which schedules the fade.
             cancelPendingShow();
             scrollTopFab.removeCallbacks(hideFabRunnable);
             showFab();
@@ -170,10 +187,15 @@ public class ArticleCollectionActivity extends FragmentActivity {
             scrollTopFab.postDelayed(hideFabRunnable, HIDE_DELAY_MS);
             return;
         }
-        // Scrolling down, or within a screen of the top: don't reveal, and drop a
-        // pending up-reveal if the direction just changed. Any already-shown
-        // button is left to fade via its scheduled hide.
+        // Not a reveal case (scrolling down, or within a screen of the top). Drop
+        // any pending up-reveal, and make sure a visible button - including a
+        // persistent at-bottom one we've now moved away from - is scheduled to
+        // fade, so it can never get stuck on screen.
         cancelPendingShow();
+        if (fabShown) {
+            scrollTopFab.removeCallbacks(hideFabRunnable);
+            scrollTopFab.postDelayed(hideFabRunnable, HIDE_DELAY_MS);
+        }
     }
 
     private void cancelPendingShow() {
@@ -213,6 +235,7 @@ public class ArticleCollectionActivity extends FragmentActivity {
         fabShowScheduled = false;
         fabShown = false;
         lastScrollY = 0;
+        scrollRun = 0;
         scrollTopFab.animate().cancel();
         scrollTopFab.setAlpha(0f);
         scrollTopFab.setVisibility(View.GONE);
@@ -267,6 +290,11 @@ public class ArticleCollectionActivity extends FragmentActivity {
                 ArticleWebView webView = articleCollectionPagerAdapter == null ? null
                         : articleCollectionPagerAdapter.getPrimaryWebView();
                 if (webView != null && webView.canGoBack()) {
+                    // Going back within the article (e.g. returning from a
+                    // footnote) restores a scroll position without a scroll
+                    // gesture; drop the button so it doesn't linger from wherever
+                    // we were before.
+                    resetFab();
                     webView.goBack();
                     return;
                 }
