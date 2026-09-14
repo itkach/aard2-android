@@ -1,9 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Adaptive icon: the launcher masks this to whatever shape the device theme
+     uses (circle, squircle, rounded square, ...). The background must fill the
+     whole 108dp canvas so no mask shape ever exposes a transparent (black) edge,
+     and the foreground logo must stay within the ~66dp safe zone so no mask clips
+     it. The globe fills its own drawable edge-to-edge, so a 20% inset puts it at
+     ~65dp - matching the monochrome layer's 0.6 scale. -->
 <adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
-    <background>
+    <background android:drawable="@color/ic_launcher_background" />
+    <foreground>
         <inset
             android:drawable="@drawable/aard2"
-            android:inset="15%" />
-    </background>
+            android:inset="20%" />
+    </foreground>
     <monochrome android:drawable="@drawable/aard2_monochrome" />
 </adaptive-icon>

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Fill behind the launcher-icon logo. The globe logo has transparent corners,
+     so this is what shows around it once the launcher masks the icon to shape. -->
+<resources>
+    <color name="ic_launcher_background">#FFFFFFFF</color>
+</resources>
