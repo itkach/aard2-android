@@ -35,4 +35,9 @@
           android:showAsAction="never"
         />
 
+    <item android:id="@+id/action_full_screen"
+          android:title="@string/action_full_screen"
+          android:showAsAction="ifRoom"
+        />
+
 </menu>

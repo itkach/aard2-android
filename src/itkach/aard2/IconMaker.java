@@ -69,6 +69,8 @@ class IconMaker {
     static final Glyph IC_BAN = solid('');               // ban
     static final Glyph IC_RANDOM = solid('');            // dice
     static final Glyph IC_DRAG_HANDLE = solid('\uf58e'); // grip-vertical (drag-to-reorder handle)
+    static final Glyph IC_COMPRESS = solid('\uf066');    // compress (exit full screen)
+    static final Glyph IC_EXPAND = solid('\uf065');      // expand (enter full screen)
 
     static FontDrawable make(Context context, Glyph g, int sizeDp, int color) {
         FontDrawable drawable = new FontDrawable.Builder(context, g.code, g.font)

@@ -6,7 +6,9 @@ import android.app.SearchManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
+import android.content.res.Configuration;
 import android.content.res.TypedArray;
 import android.database.DataSetObserver;
 import android.graphics.Color;
@@ -27,7 +29,9 @@ import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.core.view.WindowInsetsControllerCompat;
 import androidx.core.widget.ContentLoadingProgressBar;
 import androidx.fragment.app.FragmentActivity;
 import androidx.core.app.NavUtils;
@@ -43,6 +47,7 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -116,7 +121,7 @@ public class ArticleCollectionActivity extends FragmentActivity {
     private static final long HIDE_DELAY_MS = 1200;
     private static final long ACTIVE_WINDOW_MS = 150;
     private static final int MIN_SCROLL_RUN = 3;   // events to count as a real scroll
-    private static final float FAB_ALPHA = 0.50f;
+    private static final float FAB_ALPHA = 0.65f;
 
     private FloatingActionButton scrollTopFab;
     private long lastScrollAt;
@@ -125,6 +130,18 @@ public class ArticleCollectionActivity extends FragmentActivity {
     private int scrollRun;
     private boolean fabShown;
     private boolean fabShowScheduled;
+
+    // Full-screen reading mode: hides the toolbar and the system bars for a
+    // chrome-free article. It's a persisted mode (see ARTICLE_VIEW_PREF /
+    // PREF_FULLSCREEN) applied to every article until switched off, mirroring the
+    // old version. Because the toolbar - and thus the overflow menu - is hidden
+    // while active, exit is via the floating button (exitFullScreenFab); not via a
+    // swipe, which would clash with the notification shade, and not via Back, which
+    // keeps its normal navigation function.
+    private static final String PREF_FULLSCREEN = "fullscreen";
+    private static final long EXIT_FAB_TIMEOUT_MS = 2500;
+    private FloatingActionButton exitFullScreenFab;
+    private boolean fullScreen;
 
     private final Runnable showFabRunnable = new Runnable() {
         @Override
@@ -241,6 +258,110 @@ public class ArticleCollectionActivity extends FragmentActivity {
         scrollTopFab.setVisibility(View.GONE);
     }
 
+    private SharedPreferences articleViewPrefs() {
+        return getSharedPreferences(Application.ARTICLE_VIEW_PREF, MODE_PRIVATE);
+    }
+
+    // The user's explicit full-screen choice (persisted). Distinct from the
+    // effective state (the field fullScreen), which is also on whenever the
+    // device is in landscape - see the orientation rule in onConfigurationChanged.
+    private boolean getExplicitFullScreenPref() {
+        return articleViewPrefs().getBoolean(PREF_FULLSCREEN, false);
+    }
+
+    private void setExplicitFullScreenPref(boolean value) {
+        articleViewPrefs().edit().putBoolean(PREF_FULLSCREEN, value).apply();
+    }
+
+    private boolean isLandscape() {
+        return getResources().getConfiguration().orientation
+                == Configuration.ORIENTATION_LANDSCAPE;
+    }
+
+    // Enter from the toolbar action: an explicit, persisted choice that stays on
+    // across orientation changes until the user exits.
+    void enterFullScreen() {
+        setExplicitFullScreenPref(true);
+        applyFullScreen(true);
+    }
+
+    // Exit from the corner button: clears the explicit choice and drops
+    // full-screen now. The orientation rule is re-evaluated on the next rotation,
+    // so landscape auto-enters again then.
+    void exitFullScreen() {
+        setExplicitFullScreenPref(false);
+        applyFullScreen(false);
+    }
+
+    private void applyFullScreen(boolean on) {
+        fullScreen = on;
+        AppBarLayout appBar = findViewById(R.id.appbar);
+        WindowInsetsControllerCompat controller = WindowCompat.getInsetsController(
+                getWindow(), getWindow().getDecorView());
+        if (on) {
+            appBar.setVisibility(View.GONE);
+            // Transient-by-swipe (not sticky-immersive): a swipe brings the bars
+            // back only briefly; the button is the real way out.
+            controller.setSystemBarsBehavior(
+                    WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE);
+            controller.hide(WindowInsetsCompat.Type.systemBars());
+            revealExitFab();
+        } else {
+            appBar.setVisibility(View.VISIBLE);
+            controller.show(WindowInsetsCompat.Type.systemBars());
+            exitFullScreenFab.removeCallbacks(hideExitFabRunnable);
+            exitFullScreenFab.animate().cancel();
+            exitFullScreenFab.setAlpha(0f);
+            exitFullScreenFab.setVisibility(View.GONE);
+        }
+    }
+
+    // Show the exit button, then schedule it to fade away so it doesn't sit over
+    // the article. A screen touch (see dispatchTouchEvent) calls this again to
+    // bring it back.
+    private void revealExitFab() {
+        exitFullScreenFab.removeCallbacks(hideExitFabRunnable);
+        exitFullScreenFab.animate().cancel();
+        exitFullScreenFab.setVisibility(View.VISIBLE);
+        exitFullScreenFab.animate().alpha(FAB_ALPHA).setDuration(150).withEndAction(null);
+        exitFullScreenFab.postDelayed(hideExitFabRunnable, EXIT_FAB_TIMEOUT_MS);
+    }
+
+    private final Runnable hideExitFabRunnable = new Runnable() {
+        @Override
+        public void run() {
+            exitFullScreenFab.animate().alpha(0f).setDuration(200).withEndAction(
+                    () -> exitFullScreenFab.setVisibility(View.GONE));
+        }
+    };
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        if (fullScreen && ev.getActionMasked() == MotionEvent.ACTION_DOWN) {
+            revealExitFab();
+        }
+        return super.dispatchTouchEvent(ev);
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        // Landscape auto-enters full-screen; portrait leaves it - unless the user
+        // turned it on explicitly, in which case it stays until they exit.
+        applyFullScreen(getExplicitFullScreenPref() || isLandscape());
+    }
+
+    // Re-assert the hidden bars after regaining focus (returning from a dialog,
+    // app switch, etc.), which otherwise brings them back.
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        if (hasFocus && fullScreen) {
+            WindowCompat.getInsetsController(getWindow(), getWindow().getDecorView())
+                    .hide(WindowInsetsCompat.Type.systemBars());
+        }
+    }
+
     // The article menu (bookmark/find/zoom/style/remote) lives on the Activity
     // now that pages are raw ArticleWebViews rather than ArticleFragments; it
     // acts on the current page's WebView.
@@ -343,6 +464,15 @@ public class ArticleCollectionActivity extends FragmentActivity {
             }
             resetFab();
         });
+        exitFullScreenFab = findViewById(R.id.exit_full_screen_fab);
+        exitFullScreenFab.setImageTintList(null);
+        exitFullScreenFab.setImageDrawable(IconMaker.make(this, IconMaker.IC_COMPRESS, 20,
+                themeColor(com.google.android.material.R.attr.colorOnPrimaryContainer)));
+        exitFullScreenFab.setOnClickListener(v -> exitFullScreen());
+        // Apply full-screen from the first frame (covers the loading screen too,
+        // so opening an article in full-screen doesn't flash the toolbar): on if
+        // the user turned it on explicitly, or if we're in landscape.
+        applyFullScreen(getExplicitFullScreenPref() || isLandscape());
         // Debounced, so it doesn't even appear on fast lookups. Tinted to the
         // article's text color (the same measured pair that colors the window),
         // so it reads against the loading background rather than showing the
@@ -789,11 +919,13 @@ public class ArticleCollectionActivity extends FragmentActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.article, menu);
         miBookmark = menu.findItem(R.id.action_bookmark_article);
+        Context themed = getActionBar().getThemedContext();
         if (icBookmark == null) {
-            Context themed = getActionBar().getThemedContext();
             icBookmark = IconMaker.actionBar(themed, IconMaker.IC_BOOKMARK);
             icBookmarkO = IconMaker.actionBar(themed, IconMaker.IC_BOOKMARK_O);
         }
+        menu.findItem(R.id.action_full_screen)
+                .setIcon(IconMaker.actionBar(themed, IconMaker.IC_EXPAND));
         return true;
     }
 
@@ -853,6 +985,10 @@ public class ArticleCollectionActivity extends FragmentActivity {
         int itemId = item.getItemId();
         if (itemId == android.R.id.home) {
             navigateUp();
+            return true;
+        }
+        if (itemId == R.id.action_full_screen) {
+            enterFullScreen();
             return true;
         }
         final ArticleWebView webView = currentWebView();

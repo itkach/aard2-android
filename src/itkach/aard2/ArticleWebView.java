@@ -554,6 +554,7 @@ public class ArticleWebView extends SearchableWebView {
         scrollTo(getScrollX(), 0);
     }
 
+
     private int maxScrollY() {
         return Math.max(0, computeVerticalScrollRange() - getHeight());
     }

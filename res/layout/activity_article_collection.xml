@@ -103,6 +103,25 @@
             app:fabSize="mini"
             app:elevation="3dp" />
 
+        <!-- Exit-full-screen affordance. In full-screen mode the toolbar (and
+             thus the overflow menu) is hidden, so this semi-transparent button is
+             the way back out - avoiding a reliance on a swipe-down gesture, which
+             would clash with pulling down the notification shade. Bottom-left, to
+             stay clear of the pager title strip (top) and the scroll-to-top
+             button (bottom-right). Hidden except while full-screen is active, and
+             it fades out on its own after a moment, reappearing on a screen touch. -->
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/exit_full_screen_fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|start"
+            android:layout_margin="16dp"
+            android:visibility="gone"
+            android:alpha="0"
+            android:contentDescription="@string/action_full_screen_exit"
+            app:fabSize="mini"
+            app:elevation="3dp" />
+
     </FrameLayout>
 
 </LinearLayout>
