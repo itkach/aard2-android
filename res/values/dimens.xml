@@ -1,9 +1,5 @@
 <resources>
 
-    <!-- Default screen margins, per the Android Design guidelines. -->
-    <dimen name="activity_horizontal_margin">16dp</dimen>
-    <dimen name="activity_vertical_margin">16dp</dimen>
-
     <!-- Fixed-header Toolbar height for both activities - more compact than the
          platform's 56dp ?android:attr/actionBarSize. The Lookup SearchView is
          given an explicit 40dp height (see activity_main.xml) so it centres in

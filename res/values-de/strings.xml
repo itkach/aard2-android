@@ -5,7 +5,6 @@
     <string name="subtitle_history">Verlauf</string>
     <string name="subtitle_dictionaries">Wörterbücher</string>
 
-    <string name="action_find_dictionaries">Finde Wörterbücher</string>
     <string name="action_find_in_page">Suche in Seite</string>
     <string name="action_bookmark_article">Lesezeichen</string>
     <string name="action_filter">Filter</string>
@@ -45,9 +44,6 @@
     <string name="article_collection_nothing_found">Nichts gefunden</string>
     <string name="article_collection_selected_not_available">Gewählter Artikel nicht verfügbar</string>
     <string name="article_collection_nothing_to_lookup">Nichts zum Nachschlagen</string>
-    <string name="article_view_msg_not_found">Nichts gefunden</string>
-    <string name="dictionaries_please_wait">Bitte warten</string>
-    <string name="dictionaries_scanning_device">Durchsuche Gerät nach Wörterbüchern...</string>
     <string name="dictionaries_confirm_forget">Vergesse %1$s?</string>
     <string name="lookup_nothing_found">Nichts gefunden</string>
     <string name="main_empty_bookmarks">Kein Lesezeichen</string>
@@ -76,14 +72,8 @@
     <string name="setting_user_styles">Anwenderstile</string>
     <string name="msg_failed_to_store_user_style">Kann Stil nicht speichern</string>
     <string name="setting_user_style_confirm_forget">Vergesse %1$s?</string>
-    <string name="msg_file_not_css">Scheint keine CSS-Datei zu sein</string>
     <string name="msg_no_activity_to_get_content">Kann Datei nicht öffnen</string>
     <string name="action_add_dictionaries">Hinzufügen</string>
-    <string name="title_activity_file_select">Wähle Wörterbuch</string>
-    <string name="action_goto_parent_dir">Hoch</string>
-    <string name="action_reload_directory">Neu laden</string>
-    <string name="msg_dictionary_already_open">Schon geöffnet</string>
-    <string name="msg_dictionary_added">Wörterbuch hinzugefügt von %1$s</string>
     <string name="setting_fav_random_search">Für zufällige Suche nur favorisierte Wörterbücher verwenden</string>
     <string name="article_collection_invalid_link">Ungültiger Link</string>
     <string name="setting_ui_theme">Benutzeroberfläche</string>

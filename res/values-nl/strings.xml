@@ -6,7 +6,6 @@
     <string name="subtitle_bookmark">Bladwijzers</string>
     <string name="subtitle_history">Geschiedenis</string>
     <string name="subtitle_dictionaries">Woordenboeken</string>
-    <string name="action_find_dictionaries">Woordenboeken zoeken</string>
     <string name="action_find_in_page">Zoeken in pagina</string>
     <string name="action_bookmark_article">Toevoegen aan bladwijzers</string>
     <string name="action_filter">Filteren</string>
@@ -47,9 +46,6 @@
     <string name="article_collection_nothing_found">Niks gevonden</string>
     <string name="article_collection_selected_not_available">Het geselecteerde artikel is niet beschikbaar.</string>
     <string name="article_collection_nothing_to_lookup">Niks om op te zoeken</string>
-    <string name="article_view_msg_not_found">Niet gevonden</string>
-    <string name="dictionaries_please_wait">Even geduld...</string>
-    <string name="dictionaries_scanning_device">Bezig met zoeken naar woordenboeken op apparaat...</string>
     <string name="dictionaries_confirm_forget">"%1$s" vergeten?</string>
     <string name="lookup_nothing_found">Niks gevonden</string>
     <string name="main_empty_bookmarks">Geen bladwijzers</string>
@@ -80,14 +76,8 @@
     <string name="setting_user_styles">Gebruikersstijlen</string>
     <string name="msg_failed_to_store_user_style">Opslaan van gebruikersstijl mislukt</string>
     <string name="setting_user_style_confirm_forget">%1$s vergeten?</string>
-    <string name="msg_file_not_css">Lijkt geen CSS-bestand te zijn</string>
     <string name="msg_no_activity_to_get_content">Geen activiteit beschikbaar om bestand te openen</string>
     <string name="action_add_dictionaries">Toevoegen</string>
-    <string name="title_activity_file_select">Woordenboekbestand selecteren</string>
-    <string name="action_goto_parent_dir">Omhoog</string>
-    <string name="action_reload_directory">Herladen</string>
-    <string name="msg_dictionary_already_open">Reeds geopend</string>
-    <string name="msg_dictionary_added">Woordenboek toegevoegd uit %1$s</string>
     <string name="setting_fav_random_search">Alleen favoriete woordenboeken gebruiken voor willekeurig opzoeken</string>
     <string name="article_collection_invalid_link">Ongeldige link</string>
     <string name="setting_ui_theme">Uiterlijk</string>

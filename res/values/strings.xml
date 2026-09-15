@@ -6,7 +6,6 @@
     <string name="subtitle_bookmark">Bookmarks</string>
     <string name="subtitle_history">History</string>
     <string name="subtitle_dictionaries">Dictionaries</string>
-    <string name="action_find_dictionaries">Find Dictionaries</string>
     <string name="action_find_in_page">Find in page</string>
     <string name="action_bookmark_article">Bookmark</string>
     <string name="action_filter">Filter</string>
@@ -55,12 +54,9 @@
     <string name="article_collection_nothing_found">Nothing found</string>
     <string name="article_collection_selected_not_available">Selected article is not available</string>
     <string name="article_collection_nothing_to_lookup">Nothing to look up</string>
-    <string name="article_view_msg_not_found">Not found</string>
     <string name="scroll_to_top">Scroll to top</string>
     <string name="action_full_screen">Full screen</string>
     <string name="action_full_screen_exit">Exit full screen</string>
-    <string name="dictionaries_please_wait">Please wait</string>
-    <string name="dictionaries_scanning_device">Scanning device for dictionaries...</string>
     <string name="dictionaries_confirm_forget">Forget "%1$s"?</string>
     <string name="lookup_nothing_found">Nothing found</string>
     <string name="main_empty_bookmarks">No bookmarks</string>
@@ -92,14 +88,8 @@
     <string name="setting_user_styles_add">Add</string>
     <string name="msg_failed_to_store_user_style">Failed to store user style</string>
     <string name="setting_user_style_confirm_forget">Forget %1$s?</string>
-    <string name="msg_file_not_css">Doesn\'t appear to be a CSS file</string>
     <string name="msg_no_activity_to_get_content">No activity is available to open file</string>
     <string name="action_add_dictionaries">Add</string>
-    <string name="title_activity_file_select">Select Dictionary File</string>
-    <string name="action_goto_parent_dir">Up</string>
-    <string name="action_reload_directory">Reload</string>
-    <string name="msg_dictionary_already_open">Already open</string>
-    <string name="msg_dictionary_added">Added dictionary from %1$s</string>
     <string name="setting_fav_random_search">Use only marked dictionaries for random lookup</string>
     <string name="dictionary_use_for_random">Use for random lookup</string>
     <string name="dictionary_marked_for_random_content_desc">%s, marked for random lookup</string>

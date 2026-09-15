@@ -6,7 +6,6 @@
     <string name="subtitle_bookmark">Bokmerker</string>
     <string name="subtitle_history">Historikk</string>
     <string name="subtitle_dictionaries">Ordlister</string>
-    <string name="action_find_dictionaries">Finn ordlister</string>
     <string name="action_find_in_page">Finn på side</string>
     <string name="action_bookmark_article">Bokmerk</string>
     <string name="action_filter">Filtrer</string>
@@ -48,9 +47,6 @@
     <string name="article_collection_nothing_found">Fant ikke noe</string>
     <string name="article_collection_selected_not_available">Valgt artikkel er ikke tilgjengelig</string>
     <string name="article_collection_nothing_to_lookup">Ingenting å slå opp</string>
-    <string name="article_view_msg_not_found">Ikke funnet</string>
-    <string name="dictionaries_please_wait">Vent</string>
-    <string name="dictionaries_scanning_device">Skanner enhet for ordlister…</string>
     <string name="dictionaries_confirm_forget">Glem "%1$s"?</string>
     <string name="lookup_nothing_found">Fant ikke noe</string>
     <string name="main_empty_bookmarks">Ingen bokmerker</string>
@@ -81,14 +77,8 @@
     <string name="setting_user_styles">Brukerstiler</string>
     <string name="msg_failed_to_store_user_style">Klarte ikke å lagre brukerstil</string>
     <string name="setting_user_style_confirm_forget">Glem %1$s?</string>
-    <string name="msg_file_not_css">Later ikke til å være ei CSS-fil</string>
     <string name="msg_no_activity_to_get_content">Ingen aktivitet er i stand til å åpne fila</string>
     <string name="action_add_dictionaries">Legg til</string>
-    <string name="title_activity_file_select">Velg ordlistefil</string>
-    <string name="action_goto_parent_dir">Opp</string>
-    <string name="action_reload_directory">Les inn på nytt</string>
-    <string name="msg_dictionary_already_open">Allerede åpen</string>
-    <string name="msg_dictionary_added">La til ordliste fra %1$s</string>
     <string name="setting_fav_random_search">Bare bruk favorittordlister for tilfeldig oppslag</string>
     <string name="article_collection_invalid_link">Ugyldig lenke</string>
     <string name="setting_ui_theme">Brukergrensesnittstil</string>

@@ -6,7 +6,6 @@
     <string name="subtitle_bookmark">Zakładki</string>
     <string name="subtitle_history">Historia</string>
     <string name="subtitle_dictionaries">Słowniki</string>
-    <string name="action_find_dictionaries">Znajdź słowniki</string>
     <string name="action_find_in_page">Znajdź na stronie</string>
     <string name="action_bookmark_article">Dodaj do zakładek</string>
     <string name="action_filter">Filtruj</string>
@@ -44,9 +43,6 @@
     <string name="article_collection_nothing_found">Nic nie znaleziono</string>
     <string name="article_collection_selected_not_available">Wybrany artykuł nie jest dostępny</string>
     <string name="article_collection_nothing_to_lookup">Nie ma nic do wyszukania</string>
-    <string name="article_view_msg_not_found">Nie znaleziono</string>
-    <string name="dictionaries_please_wait">Proszę czekać</string>
-    <string name="dictionaries_scanning_device">Skanowanie urządzenia w poszukiwaniu słowników...</string>
     <string name="dictionaries_confirm_forget">Zapomnieć o "%1$s"?</string>
     <string name="lookup_nothing_found">Nic nie znaleziono</string>
     <string name="main_empty_bookmarks">Brak zakładek</string>
@@ -71,14 +67,8 @@
     <string name="setting_user_styles">Style użytkownika</string>
     <string name="msg_failed_to_store_user_style">Nie udało się zapisać stylu użytkownika</string>
     <string name="setting_user_style_confirm_forget">Zapomnieć %1$s?</string>
-    <string name="msg_file_not_css">Nie wygląda na plik CSS</string>
     <string name="msg_no_activity_to_get_content">Brak dostępnej aplikacji do otwarcia pliku</string>
     <string name="action_add_dictionaries">Dodaj</string>
-    <string name="title_activity_file_select">Wybierz plik słownika</string>
-    <string name="action_goto_parent_dir">W górę</string>
-    <string name="action_reload_directory">Przeładuj</string>
-    <string name="msg_dictionary_already_open">Już otwarte</string>
-    <string name="msg_dictionary_added">Słownik dodany z %1$s</string>
     <string name="setting_fav_random_search">Używaj tylko ulubionych słowników do losowego wyszukiwania</string>
     <string name="article_collection_invalid_link">Niepoprawny link</string>
     <string name="setting_ui_theme">Styl interfejsu użytkownika</string>
