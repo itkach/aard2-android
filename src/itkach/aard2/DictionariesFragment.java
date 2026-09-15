@@ -8,6 +8,8 @@ import android.content.ClipData;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
@@ -30,9 +32,11 @@ public class DictionariesFragment extends BaseListFragment {
 
     private final static String TAG = DictionariesFragment.class.getSimpleName();
 
-    final static int FILE_SELECT_REQUEST = 17;
-
     private DictionaryListAdapter listAdapter;
+
+    private final ActivityResultLauncher<Intent> filePicker = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> onFilesSelected(result.getResultCode(), result.getData()));
 
     protected IconMaker.Glyph getEmptyIcon() {
         return IconMaker.IC_DICTIONARY;
@@ -137,7 +141,7 @@ public class DictionariesFragment extends BaseListFragment {
         intent.addCategory(Intent.CATEGORY_OPENABLE);
         intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
         try {
-            startActivityForResult(intent, FILE_SELECT_REQUEST);
+            filePicker.launch(intent);
         }
         catch (ActivityNotFoundException e){
             Log.d(TAG, "Not activity to get content", e);
@@ -147,15 +151,9 @@ public class DictionariesFragment extends BaseListFragment {
     }
 
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent intent) {
-        if (requestCode != FILE_SELECT_REQUEST) {
-            Log.d(TAG, "Unknown request code: " + requestCode);
-            return;
-        }
-
+    private void onFilesSelected(int resultCode, Intent intent) {
         Uri dataUri = intent == null ? null : intent.getData();
-        Log.d(TAG, String.format("req code %s, result code: %s, data: %s", requestCode, resultCode, dataUri));
+        Log.d(TAG, String.format("result code: %s, data: %s", resultCode, dataUri));
 
         if (resultCode == Activity.RESULT_OK && intent != null) {
             final Application app = ((Application)getActivity().getApplication());

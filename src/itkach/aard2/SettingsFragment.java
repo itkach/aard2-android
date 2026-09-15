@@ -22,6 +22,8 @@ import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.documentfile.provider.DocumentFile;
@@ -43,10 +45,12 @@ public class SettingsFragment extends Fragment {
 
     private final static String TAG = SettingsFragment.class.getSimpleName();
 
-    final static int CSS_SELECT_REQUEST = 13;
-
     private Application app;
     private View rootView;
+
+    private final ActivityResultLauncher<Intent> cssPicker = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> onCssSelected(result.getResultCode(), result.getData()));
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -181,7 +185,7 @@ public class SettingsFragment extends Fragment {
             intent.setType("text/*");
             Intent chooser = Intent.createChooser(intent, "Select CSS file");
             try {
-                startActivityForResult(chooser, CSS_SELECT_REQUEST);
+                cssPicker.launch(chooser);
             } catch (ActivityNotFoundException e) {
                 Log.d(TAG, "No activity to get content", e);
                 Toast.makeText(getContext(), R.string.msg_no_activity_to_get_content,
@@ -259,14 +263,9 @@ public class SettingsFragment extends Fragment {
                 .setText(Html.fromHtml(getString(R.string.application_version, versionName)));
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode != CSS_SELECT_REQUEST) {
-            Log.d(TAG, String.format("Unknown request code: %d", requestCode));
-            return;
-        }
+    private void onCssSelected(int resultCode, Intent data) {
         Uri dataUri = data == null ? null : data.getData();
-        Log.d(TAG, String.format("req code %s, result code: %s, data: %s", requestCode, resultCode, dataUri));
+        Log.d(TAG, String.format("result code: %s, data: %s", resultCode, dataUri));
         if (resultCode == Activity.RESULT_OK && dataUri != null) {
             try {
                 InputStream is = getActivity().getContentResolver().openInputStream(dataUri);
