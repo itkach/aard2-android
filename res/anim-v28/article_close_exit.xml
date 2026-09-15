@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- API 28+ variant: identical to res/anim/article_close_exit (see there for the
+     full rationale), but using the platform's own fast_out_extra_slow_in curve,
+     which only exists from API 28. Base falls back to fast_out_slow_in. -->
+<set xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shareInterpolator="false">
+    <alpha
+        android:fromAlpha="1.0"
+        android:toAlpha="0.0"
+        android:startOffset="35"
+        android:duration="83"
+        android:interpolator="@android:anim/linear_interpolator" />
+    <translate
+        android:fromXDelta="0"
+        android:toXDelta="96dp"
+        android:duration="@integer/article_transition_close_duration"
+        android:interpolator="@android:interpolator/fast_out_extra_slow_in" />
+</set>

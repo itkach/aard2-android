@@ -2,9 +2,11 @@
 <!-- Closing an article (back/up, Samsung only). A port of the platform's own
      activity_close_enter: the screen being returned to stays fully opaque and
      drifts back from -96dp to its place, beneath the departing article which
-     fades out on top of it (article_close_exit). The reverse of the open. -->
+     fades out on top of it (article_close_exit). The reverse of the open. Uses
+     fast_out_slow_in (API 21+) as the base; res/anim-v28/ carries the platform's
+     fast_out_extra_slow_in (API 28+). -->
 <translate xmlns:android="http://schemas.android.com/apk/res/android"
     android:fromXDelta="-96dp"
     android:toXDelta="0"
     android:duration="@integer/article_transition_close_duration"
-    android:interpolator="@android:interpolator/fast_out_extra_slow_in" />
+    android:interpolator="@android:interpolator/fast_out_slow_in" />

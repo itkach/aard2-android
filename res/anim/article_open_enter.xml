@@ -15,9 +15,11 @@
      Default z-order already draws the entering window on top, so no
      zAdjustment. The platform's <extend> edge-clip is omitted: it is an
      internal animation type with no public equivalent, and translate+alpha
-     carry the effect. fast_out_extra_slow_in is the platform's curve; the fade
-     timing (50ms delay, 83ms) is copied verbatim - it, not the translate
-     duration, sets the perceived speed. -->
+     carry the effect. The fade timing (50ms delay, 83ms) is copied verbatim -
+     it, not the translate duration, sets the perceived speed. The platform's
+     curve is fast_out_extra_slow_in, but that resource only exists from API 28,
+     so this base copy uses fast_out_slow_in (API 21+); res/anim-v28/ carries
+     the exact curve for API 28+. -->
 <set xmlns:android="http://schemas.android.com/apk/res/android"
     android:shareInterpolator="false">
     <alpha
@@ -30,5 +32,5 @@
         android:fromXDelta="96dp"
         android:toXDelta="0"
         android:duration="@integer/article_transition_open_duration"
-        android:interpolator="@android:interpolator/fast_out_extra_slow_in" />
+        android:interpolator="@android:interpolator/fast_out_slow_in" />
 </set>

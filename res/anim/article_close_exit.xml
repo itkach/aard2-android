@@ -6,7 +6,8 @@
      screen returning beneath it (article_close_enter); no zAdjustment needed.
      The fade (35ms delay, 83ms) is what makes back feel immediate: the article
      is gone well before the 96dp drift finishes. The platform's <extend>
-     edge-clip is omitted. -->
+     edge-clip is omitted. Uses fast_out_slow_in (API 21+) as the base;
+     res/anim-v28/ carries the platform's fast_out_extra_slow_in (API 28+). -->
 <set xmlns:android="http://schemas.android.com/apk/res/android"
     android:shareInterpolator="false">
     <alpha
@@ -19,5 +20,5 @@
         android:fromXDelta="0"
         android:toXDelta="96dp"
         android:duration="@integer/article_transition_close_duration"
-        android:interpolator="@android:interpolator/fast_out_extra_slow_in" />
+        android:interpolator="@android:interpolator/fast_out_slow_in" />
 </set>
