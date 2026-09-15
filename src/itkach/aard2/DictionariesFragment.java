@@ -19,9 +19,9 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Toast;
+import com.google.android.material.button.MaterialButton;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -87,10 +87,12 @@ public class DictionariesFragment extends BaseListFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View result = super.onCreateView(inflater, container, savedInstanceState);
         View extraEmptyView = inflater.inflate(R.layout.dictionaries_empty_view_extra, container, false);
-        Button btn = extraEmptyView.findViewById(R.id.dictionaries_empty_btn_scan);
-        btn.setCompoundDrawablesWithIntrinsicBounds(
-                IconMaker.list(getActivity(), IconMaker.IC_ADD),
-                null, null, null);
+        MaterialButton btn = extraEmptyView.findViewById(R.id.dictionaries_empty_btn_scan);
+        // FontDrawable ignores tint, so colour the "+" to the button's own text
+        // colour (onPrimary for the filled button) and disable MaterialButton's
+        // icon tint so it isn't overridden.
+        btn.setIconTint(null);
+        btn.setIcon(IconMaker.make(getActivity(), IconMaker.IC_ADD, 20, btn.getCurrentTextColor()));
         btn.setOnClickListener(new OnClickListener(){
             @Override
             public void onClick(View v) {
