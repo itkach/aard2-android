@@ -11,7 +11,6 @@ import android.content.res.Configuration;
 import android.database.DataSetObserver;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
@@ -30,8 +29,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringWriter;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -104,20 +101,7 @@ public class Application extends android.app.Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        if(Build.VERSION.SDK_INT >= 19) {
-            try {
-                Method setWebContentsDebuggingEnabledMethod = WebView.class.getMethod(
-                        "setWebContentsDebuggingEnabled", boolean.class);
-                setWebContentsDebuggingEnabledMethod.invoke(null, true);
-            } catch (NoSuchMethodException e1) {
-                Log.d(TAG,
-                        "setWebContentsDebuggingEnabledMethod method not found");
-            } catch (InvocationTargetException e) {
-                e.printStackTrace();
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            }
-        }
+        WebView.setWebContentsDebuggingEnabled(true);
         articleActivities = Collections.synchronizedList(new ArrayList<Activity>());
 
         mapper = new ObjectMapper();

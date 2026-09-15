@@ -6,7 +6,6 @@
 package itkach.aard2;
 
 import android.content.Context;
-import android.os.Build;
 import android.text.Editable;
 import android.text.Selection;
 import android.text.Spannable;
@@ -66,12 +65,7 @@ class FindActionModeCallback implements ActionMode.Callback, TextWatcher,
      * Highlight all the instances of the string from editText in webview.
      */
     void findAll() {
-        String find = editText.getText().toString();
-
-        if (Build.VERSION.SDK_INT < 16)
-            webview.findAll(find);
-        else
-            webview.findAllAsync(find);
+        webview.findAllAsync(editText.getText().toString());
     }
 
     void showSoftInput() {
