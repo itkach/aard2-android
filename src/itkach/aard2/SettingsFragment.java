@@ -91,7 +91,7 @@ public class SettingsFragment extends Fragment {
         View.OnClickListener clickListener = v -> {
             String value = v.getId() == R.id.setting_ui_theme_dark
                     ? Application.PREF_UI_THEME_DARK : Application.PREF_UI_THEME_LIGHT;
-            app.prefs().edit().putString(Application.PREF_UI_THEME, value).commit();
+            app.prefs().edit().putString(Application.PREF_UI_THEME, value).apply();
             requireActivity().recreate();
         };
         light.setOnClickListener(clickListener);
@@ -119,7 +119,7 @@ public class SettingsFragment extends Fragment {
                 value = ArticleWebView.PREF_REMOTE_CONTENT_NEVER;
             }
             if (value != null) {
-                prefs.edit().putString(ArticleWebView.PREF_REMOTE_CONTENT, value).commit();
+                prefs.edit().putString(ArticleWebView.PREF_REMOTE_CONTENT, value).apply();
             }
         };
         always.setOnClickListener(clickListener);

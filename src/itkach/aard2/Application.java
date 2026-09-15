@@ -413,7 +413,7 @@ public class Application extends android.app.Application {
         final SharedPreferences prefs = prefs();
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean(Application.PREF_RANDOM_FAV_LOOKUP, value);
-        editor.commit();
+        editor.apply();
     }
 
     Blob random() {
@@ -430,7 +430,7 @@ public class Application extends android.app.Application {
         final SharedPreferences prefs = prefs();
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean(Application.PREF_USE_VOLUME_FOR_NAV, value);
-        editor.commit();
+        editor.apply();
     }
 
     boolean autoPaste() {
@@ -442,7 +442,7 @@ public class Application extends android.app.Application {
         final SharedPreferences prefs = prefs();
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean(Application.PREF_AUTO_PASTE, value);
-        editor.commit();
+        editor.apply();
     }
 
     boolean recordHistory() {
@@ -454,7 +454,7 @@ public class Application extends android.app.Application {
         final SharedPreferences prefs = prefs();
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean(Application.PREF_RECORD_HISTORY, value);
-        editor.commit();
+        editor.apply();
     }
 
 
@@ -535,7 +535,7 @@ public class Application extends android.app.Application {
                 Log.w(TAG, "Failed to migrate user style " + entry.getKey(), e);
             }
         }
-        prefs.edit().clear().commit();
+        prefs.edit().clear().apply();
     }
 
     /**
