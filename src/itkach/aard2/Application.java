@@ -34,6 +34,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
@@ -573,7 +574,7 @@ public class Application extends android.app.Application {
      * convention is the only signal available.
      */
     static boolean isDarkStyleTitle(String title) {
-        String lower = title.toLowerCase();
+        String lower = title.toLowerCase(Locale.ROOT);
         return lower.contains("night") || lower.contains("dark");
     }
 
@@ -835,7 +836,7 @@ public class Application extends android.app.Application {
                     Uri uri = Uri.parse(uriValue);
                     String host = uri.getHost();
                     if (host != null) {
-                        hosts.add(host.toLowerCase());
+                        hosts.add(host.toLowerCase(Locale.ROOT));
                     }
                 }
                 catch (Exception ex) {

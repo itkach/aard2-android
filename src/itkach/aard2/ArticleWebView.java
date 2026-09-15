@@ -30,6 +30,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
@@ -212,7 +213,7 @@ public class ArticleWebView extends SearchableWebView {
                     return null;
                 }
                 String host = parsed.getHost();
-                if (host == null || host.toLowerCase().equals(LOCALHOST)) {
+                if (host == null || host.toLowerCase(Locale.ROOT).equals(LOCALHOST)) {
                     return null;
                 }
                 if (allowRemoteContent()) {

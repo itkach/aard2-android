@@ -35,6 +35,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * The Settings screen. A fixed set of sections laid out in a plain ScrollView
@@ -279,7 +280,7 @@ public class SettingsFragment extends Fragment {
                     fileName = "user";
                 }
                 fileName = fileName.replaceAll("[/\\\\]", "_");
-                if (!fileName.toLowerCase().endsWith(".css")) {
+                if (!fileName.toLowerCase(Locale.ROOT).endsWith(".css")) {
                     fileName = fileName + ".css";
                 }
                 try {
