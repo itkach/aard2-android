@@ -25,9 +25,6 @@
         <item quantity="other">%,d elementów</item>
     </plurals>
 
-    <string name="action_zoom_out">Oddal</string>
-    <string name="action_zoom_in">Przybliż</string>
-    <string name="action_zoom_reset">Domyślne powiększenie </string>
     <string name="action_select_style">Styl...</string>
     <string name="select_style">Wybierz styl</string>
     <string name="default_style_title">Domyślny</string>

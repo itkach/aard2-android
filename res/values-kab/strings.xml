@@ -29,9 +29,6 @@
         <item quantity="other">%,d n wawalen</item>
     </plurals>
 
-    <string name="action_zoom_out">Senɣes</string>
-    <string name="action_zoom_in">Semɣer</string>
-    <string name="action_zoom_reset">Ales awennez n zoom</string>
     <string name="action_select_style">Iɣunab</string>
     <string name="select_style">Fren aɣanib</string>
     <string name="default_style_title">Amezwar</string>

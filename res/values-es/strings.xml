@@ -28,9 +28,6 @@
         <item quantity="other">%,d elementos</item>
     </plurals>
 
-    <string name="action_zoom_out">Reducir</string>
-    <string name="action_zoom_in">Ampliar</string>
-    <string name="action_zoom_reset">Reestablecer ampliación</string>
     <string name="action_select_style">Tema…</string>
     <string name="select_style">Selecione tema</string>
     <string name="default_style_title">Predeterminado</string>

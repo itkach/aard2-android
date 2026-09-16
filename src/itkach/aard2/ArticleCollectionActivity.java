@@ -43,6 +43,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -51,8 +52,10 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.widget.PopupWindow;
 import android.widget.Toast;
 import android.widget.Toolbar;
+import com.google.android.material.button.MaterialButton;
 
 import java.util.Iterator;
 import java.util.List;
@@ -1013,16 +1016,8 @@ public class ArticleCollectionActivity extends FragmentActivity {
             }
             return true;
         }
-        if (itemId == R.id.action_zoom_in) {
-            webView.textZoomIn();
-            return true;
-        }
-        if (itemId == R.id.action_zoom_out) {
-            webView.textZoomOut();
-            return true;
-        }
-        if (itemId == R.id.action_zoom_reset) {
-            webView.resetTextZoom();
+        if (itemId == R.id.action_text_size) {
+            showTextSizePopup(webView);
             return true;
         }
         if (itemId == R.id.action_load_remote_content) {
@@ -1051,6 +1046,70 @@ public class ArticleCollectionActivity extends FragmentActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    // One "Text size" control replacing the old three zoom menu rows: a
+    // lightweight floating bar (not a modal dialog) centered in the lower part of
+    // the screen, like a browser's zoom widget. The slider adjusts the page live;
+    // it dismisses on an outside tap or after an idle timeout re-armed on each
+    // change.
+    private static final long TEXT_SIZE_POPUP_TIMEOUT_MS = 6000;
+    private static final long TEXT_SIZE_APPLY_DEBOUNCE_MS = 120;
+
+    private void showTextSizePopup(final ArticleWebView webView) {
+        View content = getLayoutInflater().inflate(R.layout.text_size_popup, null);
+        final com.google.android.material.slider.Slider slider =
+                content.findViewById(R.id.text_size_slider);
+        final MaterialButton reset = content.findViewById(R.id.text_size_reset);
+        final TextView value = content.findViewById(R.id.text_size_value);
+
+        final PopupWindow popup = new PopupWindow(content,
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, true);
+        popup.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        popup.setOutsideTouchable(true);
+
+        final Runnable dismiss = popup::dismiss;
+        final Runnable arm = () -> {
+            content.removeCallbacks(dismiss);
+            content.postDelayed(dismiss, TEXT_SIZE_POPUP_TIMEOUT_MS);
+        };
+        // The slider is 1% granularity, but re-flowing the WebView on every tick
+        // is expensive, so the readout tracks live while the actual zoom is
+        // applied debounced (after a short pause) and immediately on release.
+        final Runnable applyZoom = () -> webView.setTextZoom((int) slider.getValue());
+
+        int zoom = Math.max(40, Math.min(200, webView.getTextZoom()));
+        slider.setValue(zoom);
+        value.setText(zoom + "%");
+        slider.addOnChangeListener((s, val, fromUser) -> {
+            value.setText((int) val + "%");
+            content.removeCallbacks(applyZoom);
+            content.postDelayed(applyZoom, TEXT_SIZE_APPLY_DEBOUNCE_MS);
+            arm.run();
+        });
+        slider.addOnSliderTouchListener(new com.google.android.material.slider.Slider.OnSliderTouchListener() {
+            @Override
+            public void onStartTrackingTouch(@NonNull com.google.android.material.slider.Slider s) {
+                arm.run();
+            }
+            @Override
+            public void onStopTrackingTouch(@NonNull com.google.android.material.slider.Slider s) {
+                content.removeCallbacks(applyZoom);
+                applyZoom.run();   // apply the final value promptly on release
+                arm.run();
+            }
+        });
+        reset.setOnClickListener(v -> {
+            content.removeCallbacks(applyZoom);
+            webView.resetTextZoom();
+            slider.setValue(100);
+            value.setText("100%");
+            arm.run();
+        });
+
+        int yOffset = Math.round(88 * getResources().getDisplayMetrics().density);
+        popup.showAtLocation(getToolbar(), Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL, 0, yOffset);
+        arm.run();
     }
 
     @Override

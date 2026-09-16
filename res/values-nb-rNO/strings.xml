@@ -28,9 +28,6 @@
         <item quantity="other">%,d elementer</item>
     </plurals>
 
-    <string name="action_zoom_out">Forminsk</string>
-    <string name="action_zoom_in">Forstørr</string>
-    <string name="action_zoom_reset">Tilbakestill forstørrelsesnivå</string>
     <string name="action_select_style">Stil…</string>
     <string name="select_style">Velg stil</string>
     <string name="default_style_title">Forvalg</string>

@@ -23,9 +23,6 @@
         <item quantity="many">%,d статей</item>
     </plurals>
 
-    <string name="action_zoom_out">Уменьшить</string>
-    <string name="action_zoom_in">Увеличить</string>
-    <string name="action_zoom_reset">Сброс масштаба</string>
     <string name="action_select_style">Стиль...</string>
     <string name="select_style">Выбрать стиль</string>
     <string name="default_style_title">По умолчанию</string>

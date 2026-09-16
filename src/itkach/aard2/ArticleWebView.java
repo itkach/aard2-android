@@ -443,6 +443,15 @@ public class ArticleWebView extends SearchableWebView {
         this.setStyle(styleTitle);
     }
 
+    int getTextZoom() {
+        return getSettings().getTextZoom();
+    }
+
+    void setTextZoom(int zoom) {
+        getSettings().setTextZoom(Math.max(40, Math.min(200, zoom)));
+        saveTextZoomPref();
+    }
+
     boolean textZoomIn() {
         WebSettings settings = getSettings();
         int newZoom = settings.getTextZoom() + 20;

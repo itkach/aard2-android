@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The "Text size" control: a lightweight floating bar (not a dialog) shown
+     centered in the lower part of the screen, like a browser's zoom widget. The
+     slider adjusts the page live, Reset returns to 100%; it dismisses on an
+     outside tap or after an idle timeout (see ArticleCollectionActivity). The
+     outer frame lets the card inset from the screen edges while the popup itself
+     spans the width. -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        app:cardCornerRadius="28dp"
+        app:cardElevation="6dp">
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:paddingLeft="16dp"
+            android:paddingRight="8dp"
+            android:paddingTop="4dp"
+            android:paddingBottom="4dp">
+
+            <TextView
+                android:id="@+id/text_size_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minWidth="52dp"
+                android:gravity="center"
+                android:textSize="16sp"
+                android:text="100%" />
+
+            <com.google.android.material.slider.Slider
+                android:id="@+id/text_size_slider"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:valueFrom="40"
+                android:valueTo="200"
+                android:stepSize="1"
+                android:value="100"
+                app:labelBehavior="gone"
+                app:tickVisible="false"
+                app:trackStopIndicatorSize="0dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/text_size_reset"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minWidth="0dp"
+                android:text="@string/action_reset" />
+
+        </LinearLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
+</FrameLayout>

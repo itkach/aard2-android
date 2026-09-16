@@ -8,8 +8,6 @@
     <string name="action_select_style">Стиль...</string>
     <string name="action_sort_by_time">За часом</string>
     <string name="action_sort_by_title">За назвою</string>
-    <string name="action_zoom_in">Збільшити</string>
-    <string name="action_zoom_out">Зменшити</string>
     <string name="article_collection_nothing_found">Нічого не знайдено</string>
     <string name="article_collection_nothing_to_lookup">Не вказано що шукати</string>
     <string name="blob_descriptor_confirm_delete">Видалити %1$s?</string>
@@ -40,7 +38,6 @@
     <string name="setting_about_section">Про програму</string>
     <string name="msg_failed_to_store_user_style">Не вдалося зберегти стиль користувача</string>
     <string name="default_style_title">Типовий</string>
-    <string name="action_zoom_reset">Початковий розмір</string>
 
     <plurals name="dict_item_count">
         <item quantity="zero">%,d записів</item>

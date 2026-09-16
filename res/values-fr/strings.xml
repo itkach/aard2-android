@@ -28,9 +28,6 @@
         <item quantity="other">%,d termes</item>
     </plurals>
 
-    <string name="action_zoom_out">Dézoomer</string>
-    <string name="action_zoom_in">Zoomer</string>
-    <string name="action_zoom_reset">Zoom 100%</string>
     <string name="action_select_style">Styles...</string>
     <string name="select_style">Choisissez un style</string>
     <string name="default_style_title">Défaut</string>

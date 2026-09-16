@@ -28,9 +28,6 @@
         <item quantity="other">%,d items</item>
     </plurals>
 
-    <string name="action_zoom_out">Uitzoomen</string>
-    <string name="action_zoom_in">Inzoomen</string>
-    <string name="action_zoom_reset">Zoom terugzetten</string>
     <string name="action_select_style">Stijl...</string>
     <string name="select_style">Stijl selecteren</string>
     <string name="default_style_title">Standaard</string>

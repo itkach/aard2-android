@@ -29,9 +29,8 @@
         <item quantity="other">%,d items</item>
     </plurals>
 
-    <string name="action_zoom_out">Zoom Out</string>
-    <string name="action_zoom_in">Zoom In</string>
-    <string name="action_zoom_reset">Zoom Reset</string>
+    <string name="action_text_size">Text size</string>
+    <string name="action_reset">Reset</string>
     <string name="action_select_style">Style...</string>
     <string name="select_style">Select style</string>
     <string name="default_style_title">Default</string>

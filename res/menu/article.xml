@@ -16,17 +16,8 @@
         android:showAsAction="never"
         />
 
-    <item android:id="@+id/action_zoom_in"
-          android:title="@string/action_zoom_in"
-          android:showAsAction="never"
-        />
-    <item android:id="@+id/action_zoom_out"
-          android:title="@string/action_zoom_out"
-          android:showAsAction="never"
-        />
-
-    <item android:id="@+id/action_zoom_reset"
-          android:title="@string/action_zoom_reset"
+    <item android:id="@+id/action_text_size"
+          android:title="@string/action_text_size"
           android:showAsAction="never"
         />
 
