@@ -1341,6 +1341,13 @@ public class ArticleCollectionActivity extends FragmentActivity {
         }
 
         Slob.Blob get(int position) {
+            // Guard against the list having emptied out from under us (e.g. a
+            // bookmarks/history collection whose last item was removed): the
+            // DataSetObserver finishes the activity, but a menu prepare can run
+            // first in the same frame and ask for a now-out-of-range position.
+            if (position < 0 || position >= source.getBlobCount()) {
+                return null;
+            }
             return toBlob.convert(source.getBlobItem(position));
         }
 
