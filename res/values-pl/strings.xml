@@ -43,7 +43,6 @@
     <string name="article_collection_nothing_found">Nic nie znaleziono</string>
     <string name="article_collection_selected_not_available">Wybrany artykuł nie jest dostępny</string>
     <string name="article_collection_nothing_to_lookup">Nie ma nic do wyszukania</string>
-    <string name="dictionaries_confirm_forget">Zapomnieć o "%1$s"?</string>
     <string name="lookup_nothing_found">Nic nie znaleziono</string>
     <string name="main_empty_bookmarks">Brak zakładek</string>
     <string name="main_empty_history">Brak historii</string>
@@ -68,7 +67,6 @@
     <string name="msg_failed_to_store_user_style">Nie udało się zapisać stylu użytkownika</string>
     <string name="setting_user_style_confirm_forget">Zapomnieć %1$s?</string>
     <string name="msg_no_activity_to_get_content">Brak dostępnej aplikacji do otwarcia pliku</string>
-    <string name="action_add_dictionaries">Dodaj</string>
     <string name="setting_fav_random_search">Używaj tylko ulubionych słowników do losowego wyszukiwania</string>
     <string name="article_collection_invalid_link">Niepoprawny link</string>
     <string name="setting_ui_theme">Styl interfejsu użytkownika</string>

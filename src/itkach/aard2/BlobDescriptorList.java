@@ -263,6 +263,15 @@ final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
         return null;
     }
 
+    // Re-insert a descriptor removed via remove(int) - the undo of a swipe-remove.
+    // Keeps the original object (and its timestamp), so it re-sorts back into its
+    // natural place rather than jumping to the top like a fresh add would.
+    public void restore(BlobDescriptor bd) {
+        this.list.add(bd);
+        store.save(bd);
+        notifyDataSetChanged();
+    }
+
     private BlobDescriptor removeByIndex(int index) {
         BlobDescriptor bd = this.list.remove(index);
         if (bd != null) {

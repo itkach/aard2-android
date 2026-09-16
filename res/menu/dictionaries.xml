@@ -1,6 +1,10 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
     <item android:id="@+id/action_add_dictionaries"
-        android:title="@string/action_add_dictionaries"
+        android:title="@string/action_open_dictionaries"
         android:showAsAction="always"
+        />
+    <item android:id="@+id/action_download_dictionaries"
+        android:title="@string/action_download_dictionaries"
+        android:showAsAction="ifRoom"
         />
 </menu>

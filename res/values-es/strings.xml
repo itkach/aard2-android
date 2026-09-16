@@ -46,7 +46,6 @@
     <string name="article_collection_nothing_found">Sin resultados</string>
     <string name="article_collection_selected_not_available">El artículo seleccionado no está disponible</string>
     <string name="article_collection_nothing_to_lookup">Nada a encontrar</string>
-    <string name="dictionaries_confirm_forget">¿Olvidar "%1$s"?</string>
     <string name="lookup_nothing_found">Sin resultados</string>
     <string name="main_empty_bookmarks">Sin marcadores</string>
     <string name="main_empty_history">Sin historial</string>
@@ -77,7 +76,6 @@
     <string name="msg_failed_to_store_user_style">Error al guardar tema de usuario</string>
     <string name="setting_user_style_confirm_forget">¿Olvidar %1$s?</string>
     <string name="msg_no_activity_to_get_content">Sin actividad disponible para abrir el archivo</string>
-    <string name="action_add_dictionaries">Agregar</string>
     <string name="setting_fav_random_search">Usar únicamente diccionarios favoritos para búsquedas aleatorias</string>
     <string name="article_collection_invalid_link">Enlace inválido</string>
     <string name="setting_ui_theme">Estilo de Interfaz de usuario Interface Style</string>

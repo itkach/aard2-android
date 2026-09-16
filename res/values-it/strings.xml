@@ -43,7 +43,6 @@ is missing a quantity used in that language, otherwise the app will crash
 <string name="article_collection_nothing_found">Nessun risultato</string>
 <string name="article_collection_selected_not_available">La voce selezionata non è disponibile</string>
 <string name="article_collection_nothing_to_lookup">Nulla da cercare</string>
-<string name="dictionaries_confirm_forget">Sei sicuro di voler dimenticare %1$s?</string>
 <string name="lookup_nothing_found">Nessun risultato</string>
 <string name="main_empty_bookmarks">Niente segnalibri</string>
 <string name="main_empty_history">Niente cronologia</string>
@@ -74,7 +73,6 @@ is missing a quantity used in that language, otherwise the app will crash
 <string name="msg_failed_to_store_user_style">Salvataggio stile utente non riuscito</string>
 <string name="setting_user_style_confirm_forget">Sei sicuro di voler dimenticare %1$s?</string>
 <string name="msg_no_activity_to_get_content">Nessuna attività disponibile per aprire il file</string>
-<string name="action_add_dictionaries">Aggiungi</string>
 <string name="setting_fav_random_search">Usa solo i dizionari preferiti per la ricerca casuale</string>
 <string name="article_collection_invalid_link">Collegamento non valido</string>
 <string name="setting_ui_theme">Stile interfaccia utente</string>

@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.ClipData;
 import android.content.Intent;
+import android.graphics.Canvas;
 import android.net.Uri;
 import android.os.Bundle;
 import androidx.activity.result.ActivityResultLauncher;
@@ -53,11 +54,13 @@ public class DictionariesFragment extends BaseListFragment {
         listAdapter = new DictionaryListAdapter(app.dictionaries, getActivity());
         setListAdapter(listAdapter);
 
-        // Drag-to-reorder via the row's grip handle (long-press-drag disabled so
-        // the handle is the only initiator). onMove rearranges live; the settled
-        // order is persisted in clearView (drag end).
+        // Reorder by dragging the row's grip handle (long-press-drag disabled so
+        // the handle is the only initiator). Swipe a row left or right to close
+        // (remove) the dictionary; it's offered with Undo rather than a confirm
+        // dialog because the file on disk is left untouched (see closeDictionary).
         ItemTouchHelper helper = new ItemTouchHelper(
-                new ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP | ItemTouchHelper.DOWN, 0) {
+                new ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP | ItemTouchHelper.DOWN,
+                        ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
                     @Override
                     public boolean onMove(@androidx.annotation.NonNull RecyclerView rv,
                                           @androidx.annotation.NonNull RecyclerView.ViewHolder vh,
@@ -69,6 +72,16 @@ public class DictionariesFragment extends BaseListFragment {
 
                     @Override
                     public void onSwiped(@androidx.annotation.NonNull RecyclerView.ViewHolder vh, int direction) {
+                        closeDictionary(vh.getBindingAdapterPosition());
+                    }
+
+                    @Override
+                    public void onChildDraw(@androidx.annotation.NonNull Canvas c,
+                                            @androidx.annotation.NonNull RecyclerView rv,
+                                            @androidx.annotation.NonNull RecyclerView.ViewHolder vh,
+                                            float dX, float dY, int actionState, boolean isCurrentlyActive) {
+                        drawSwipeBackground(c, vh, dX, actionState);
+                        super.onChildDraw(c, rv, vh, dX, dY, actionState, isCurrentlyActive);
                     }
 
                     @Override
@@ -87,20 +100,46 @@ public class DictionariesFragment extends BaseListFragment {
         listAdapter.setItemTouchHelper(helper);
     }
 
+    // Close the swiped dictionary and offer Undo. Closing only removes it from
+    // the app's list (the .slob file is untouched), so Undo can re-add it at the
+    // same spot.
+    private void closeDictionary(int position) {
+        if (position == RecyclerView.NO_POSITION) {
+            return;
+        }
+        SlobDescriptor desc = listAdapter.close(position);
+        undoSnackbar(getString(R.string.dictionaries_closed, desc.getLabel()),
+                () -> listAdapter.reopen(position, desc)).show();
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View result = super.onCreateView(inflater, container, savedInstanceState);
+        // Hide the shared placeholder (icon + "No dictionaries") for this tab -
+        // the Add/Download buttons below are self-explanatory, so there's nothing
+        // to "hold the place" for.
+        emptyView.findViewById(R.id.empty_icon).setVisibility(View.GONE);
+        emptyView.findViewById(R.id.empty_text).setVisibility(View.GONE);
         View extraEmptyView = inflater.inflate(R.layout.dictionaries_empty_view_extra, container, false);
         MaterialButton btn = extraEmptyView.findViewById(R.id.dictionaries_empty_btn_scan);
-        // FontDrawable ignores tint, so colour the "+" to the button's own text
-        // colour (onPrimary for the filled button) and disable MaterialButton's
-        // icon tint so it isn't overridden.
+        // FontDrawable ignores tint, so colour the glyph to the button's own text
+        // colour and disable MaterialButton's icon tint so it isn't overridden.
         btn.setIconTint(null);
-        btn.setIcon(IconMaker.make(getActivity(), IconMaker.IC_ADD, 20, btn.getCurrentTextColor()));
+        btn.setIcon(IconMaker.make(getActivity(), IconMaker.IC_FOLDER_OPEN, 18, btn.getCurrentTextColor()));
         btn.setOnClickListener(new OnClickListener(){
             @Override
             public void onClick(View v) {
                 selectDictionaryFiles();
+            }
+        });
+        MaterialButton downloadBtn = extraEmptyView.findViewById(R.id.dictionaries_empty_btn_download);
+        downloadBtn.setIconTint(null);
+        downloadBtn.setIcon(IconMaker.make(getActivity(), IconMaker.IC_EXTERNAL_LINK, 18,
+                downloadBtn.getCurrentTextColor()));
+        downloadBtn.setOnClickListener(new OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                openDictionaryDownloads();
             }
         });
         LinearLayout emptyViewLayout = (LinearLayout)emptyView;
@@ -120,8 +159,10 @@ public class DictionariesFragment extends BaseListFragment {
     @Override
     public void onPrepareOptionsMenu(final Menu menu) {
         FragmentActivity activity = getActivity();
-        MenuItem miAddDictionaries = menu.findItem(R.id.action_add_dictionaries);
-        miAddDictionaries.setIcon(IconMaker.actionBar(activity, IconMaker.IC_ADD));
+        menu.findItem(R.id.action_add_dictionaries)
+                .setIcon(IconMaker.actionBar(activity, IconMaker.IC_FOLDER_OPEN));
+        menu.findItem(R.id.action_download_dictionaries)
+                .setIcon(IconMaker.actionBar(activity, IconMaker.IC_EXTERNAL_LINK));
     }
 
     @Override
@@ -130,7 +171,26 @@ public class DictionariesFragment extends BaseListFragment {
             selectDictionaryFiles();
             return true;
         }
+        if (item.getItemId() == R.id.action_download_dictionaries) {
+            openDictionaryDownloads();
+            return true;
+        }
         return super.onOptionsItemSelected(item);
+    }
+
+    // Open the community dictionaries page in a browser. The URL is a redirect
+    // (see @string/dictionaries_download_url) so where the list actually lives
+    // can change without an app update.
+    private void openDictionaryDownloads() {
+        Uri uri = Uri.parse(getString(R.string.dictionaries_download_url));
+        try {
+            startActivity(new Intent(Intent.ACTION_VIEW, uri));
+        }
+        catch (ActivityNotFoundException e) {
+            Log.d(TAG, "No activity to view " + uri, e);
+            Toast.makeText(getContext(), R.string.msg_no_activity_to_get_content,
+                    Toast.LENGTH_LONG).show();
+        }
     }
 
     private void selectDictionaryFiles() {

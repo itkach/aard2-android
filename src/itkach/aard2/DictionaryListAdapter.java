@@ -2,8 +2,6 @@ package itkach.aard2;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.database.DataSetObserver;
@@ -39,7 +37,6 @@ public class DictionaryListAdapter extends RecyclerView.Adapter<DictionaryListAd
 
     private final SlobDescriptorList    data;
     private final Activity              context;
-    private AlertDialog                 deleteConfirmationDialog;
     private ItemTouchHelper             itemTouchHelper;
 
     void setItemTouchHelper(ItemTouchHelper helper) {
@@ -122,13 +119,6 @@ public class DictionaryListAdapter extends RecyclerView.Adapter<DictionaryListAd
             // file - increasingly slow as more are installed.
             data.save(desc);
             ((Application) context.getApplication()).onActiveDictionariesChanged();
-        });
-
-        view.findViewById(R.id.dictionary_btn_forget).setOnClickListener(v -> {
-            int position = holder.getBindingAdapterPosition();
-            if (position != RecyclerView.NO_POSITION) {
-                forget(position);
-            }
         });
 
         View.OnClickListener detailToggle = v -> {
@@ -216,8 +206,6 @@ public class DictionaryListAdapter extends RecyclerView.Adapter<DictionaryListAd
         IconMaker.Glyph toggleIcon = desc.expandDetail ? IconMaker.IC_ANGLE_UP : IconMaker.IC_ANGLE_DOWN;
         btnToggleDetail.setImageDrawable(IconMaker.chevron(context, toggleIcon));
 
-        ImageView btnForget = (ImageView) view.findViewById(R.id.dictionary_btn_forget);
-        btnForget.setImageDrawable(IconMaker.rowAction(context, IconMaker.IC_TRASH));
 
         ImageView dragHandle = (ImageView) view.findViewById(R.id.dictionary_btn_drag_handle);
         dragHandle.setImageDrawable(IconMaker.rowAction(context, IconMaker.IC_DRAG_HANDLE));
@@ -375,29 +363,15 @@ public class DictionaryListAdapter extends RecyclerView.Adapter<DictionaryListAd
         licenseRow.setEnabled(available);
     }
 
-    private void forget(final int position) {
-        SlobDescriptor desc = data.get(position);
-        final String label = desc.getLabel();
-        String message = context.getString(R.string.dictionaries_confirm_forget, label);
-        deleteConfirmationDialog = new AlertDialog.Builder(context)
-                .setIcon(android.R.drawable.ic_dialog_alert)
-                .setTitle("")
-                .setMessage(message)
-                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        data.remove(position);
-                    }
-                })
-                .setNegativeButton(android.R.string.no, null)
-                .create();
-        deleteConfirmationDialog.setOnDismissListener(new DialogInterface.OnDismissListener(){
-            @Override
-            public void onDismiss(DialogInterface dialogInterface) {
-                deleteConfirmationDialog = null;
-            }
-        });
-        deleteConfirmationDialog.show();
+    // Close (remove from the app) the dictionary at position, returning the
+    // removed descriptor so the caller can offer Undo. Not a delete: the file on
+    // disk is untouched, and reopen() puts it back.
+    SlobDescriptor close(int position) {
+        return data.remove(position);
+    }
+
+    void reopen(int position, SlobDescriptor desc) {
+        data.add(position, desc);
     }
 
     @Override

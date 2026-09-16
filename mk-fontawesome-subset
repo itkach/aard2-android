@@ -23,8 +23,9 @@
 #   solid()   -> Font Awesome 7 Free-Solid-900.otf (filled style)
 #     002b plus            f002 magnifying-glass f005 star            f013 gear
 #     f021 arrows-rotate   f02d book             f02e bookmark        f03a list
-#     f05e ban             f065 expand           f066 compress
-#     f071 triangle-exclamation                  f07b folder
+#     f00d xmark            f05e ban              f065 expand
+#     f066 compress         f071 triangle-exclamation
+#     f07b folder           f07c folder-open
 #     f08e arrow-up-right-from-square             f0b0 filter          f106 angle-up
 #     f107 angle-down      f148 arrow-turn-up    f160 arrow-down-wide-short
 #     f161 arrow-up-wide-short                    f19c building-columns
@@ -35,7 +36,7 @@ set -euo pipefail
 cd "$(dirname "$0")"
 
 REG_CODES="f005,f017,f02e,f0c8,f14a,f1c6"
-SOL_CODES="002b,f002,f005,f013,f021,f02d,f02e,f03a,f05e,f065,f066,f071,f07b,f08e,f0b0,f106,f107,f148,f160,f161,f19c,f1da,f1f8,f1f9,f522,f58e"
+SOL_CODES="002b,f002,f005,f00d,f013,f021,f02d,f02e,f03a,f05e,f065,f066,f071,f07b,f07c,f08e,f0b0,f106,f107,f148,f160,f161,f19c,f1da,f1f8,f1f9,f522,f58e"
 
 FA_DIR="${1:-$(ls -d "$HOME"/Downloads/fontawesome-free-*-desktop 2>/dev/null | sort -V | tail -1 || true)}"
 REG_SRC="$FA_DIR/otfs/Font Awesome 7 Free-Regular-400.otf"

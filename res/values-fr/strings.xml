@@ -46,7 +46,6 @@
     <string name="article_collection_nothing_found">Rien trouvé</string>
     <string name="article_collection_selected_not_available">L\'article sélectionné est indisponible</string>
     <string name="article_collection_nothing_to_lookup">Rien à rechercher</string>
-    <string name="dictionaries_confirm_forget">Oublier "%1$s" ?</string>
     <string name="lookup_nothing_found">Rien trouvé</string>
     <string name="main_empty_bookmarks">Pas de signets</string>
     <string name="main_empty_history">Historique vide</string>
@@ -77,7 +76,6 @@
     <string name="msg_failed_to_store_user_style">Impossible de sauvegarder le style utilisateur</string>
     <string name="setting_user_style_confirm_forget">Oublier %1$s ?</string>
     <string name="msg_no_activity_to_get_content">Aucune activité ne peut ouvrir le fichier</string>
-    <string name="action_add_dictionaries">Ajouter</string>
     <string name="setting_fav_random_search">En recherche aléatoire, ouvrir uniquement les dictionnaires favorisés</string>
     <string name="article_collection_invalid_link">Lien périmé</string>
     <string name="setting_ui_theme">Interface utilisateur</string>

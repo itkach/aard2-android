@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import androidx.activity.OnBackPressedCallback;
@@ -16,6 +17,7 @@ import androidx.recyclerview.selection.MutableSelection;
 import androidx.recyclerview.selection.SelectionPredicates;
 import androidx.recyclerview.selection.SelectionTracker;
 import androidx.recyclerview.selection.StorageStrategy;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 import android.view.ActionMode;
 import android.view.Menu;
@@ -148,6 +150,63 @@ abstract class BlobDescriptorListFragment extends BaseListFragment {
                 .build();
         listAdapter.setSelectionTracker(selectionTracker);
         selectionTracker.addObserver(new SelectionObserver());
+
+        // Swipe a row left or right to remove it (with Undo), the same gesture as
+        // the dictionaries list. Selection mode (long-press) stays for bulk
+        // delete; swipe is suppressed while a selection is active so the two
+        // gestures don't fight.
+        ItemTouchHelper swipeHelper = new ItemTouchHelper(
+                new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+                    @Override
+                    public int getSwipeDirs(@NonNull RecyclerView rv, @NonNull RecyclerView.ViewHolder vh) {
+                        if (selectionTracker != null && selectionTracker.hasSelection()) {
+                            return 0;
+                        }
+                        return super.getSwipeDirs(rv, vh);
+                    }
+
+                    @Override
+                    public boolean onMove(@NonNull RecyclerView rv, @NonNull RecyclerView.ViewHolder vh,
+                                          @NonNull RecyclerView.ViewHolder target) {
+                        return false;
+                    }
+
+                    @Override
+                    public void onSwiped(@NonNull RecyclerView.ViewHolder vh, int direction) {
+                        removeItem(vh.getBindingAdapterPosition());
+                    }
+
+                    @Override
+                    public void onChildDraw(@NonNull Canvas c, @NonNull RecyclerView rv,
+                                            @NonNull RecyclerView.ViewHolder vh, float dX, float dY,
+                                            int actionState, boolean isCurrentlyActive) {
+                        drawSwipeBackground(c, vh, dX, actionState);
+                        super.onChildDraw(c, rv, vh, dX, dY, actionState, isCurrentlyActive);
+                    }
+                });
+        swipeHelper.attachToRecyclerView(recyclerView);
+    }
+
+    // Removal here is a real delete, so the swipe reveals the trashcan (matching
+    // the bulk-delete action), not the dictionaries list's "close" X.
+    @Override
+    protected IconMaker.Glyph swipeIconGlyph() {
+        return IconMaker.IC_TRASH;
+    }
+
+    // Remove the swiped item and offer Undo. remove() returns the exact
+    // descriptor, so restore() puts it back with its original timestamp.
+    private void removeItem(int position) {
+        if (position == RecyclerView.NO_POSITION) {
+            return;
+        }
+        final BlobDescriptorList list = getDescriptorList();
+        final BlobDescriptor removed = list.remove(position);
+        if (removed == null) {
+            return;
+        }
+        undoSnackbar(getString(R.string.blob_descriptor_removed, removed.key),
+                () -> list.restore(removed)).show();
     }
 
     // Drives the contextual ActionMode off the selection state, replacing

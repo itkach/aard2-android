@@ -57,7 +57,8 @@
     <string name="scroll_to_top">Scroll to top</string>
     <string name="action_full_screen">Full screen</string>
     <string name="action_full_screen_exit">Exit full screen</string>
-    <string name="dictionaries_confirm_forget">Forget "%1$s"?</string>
+    <string name="dictionaries_closed">Closed "%1$s"</string>
+    <string name="action_undo">Undo</string>
     <string name="lookup_nothing_found">Nothing found</string>
     <string name="main_empty_bookmarks">No bookmarks</string>
     <string name="main_empty_history">No history</string>
@@ -82,6 +83,7 @@
     </plurals>
 
     <string name="blob_descriptor_confirm_delete">Delete %1$s?</string>
+    <string name="blob_descriptor_removed">Removed "%1$s"</string>
     <string name="msg_failed_to_read_file">Failed to read file</string>
     <string name="msg_file_too_big">File is too big</string>
     <string name="setting_user_styles">User Styles</string>
@@ -89,7 +91,9 @@
     <string name="msg_failed_to_store_user_style">Failed to store user style</string>
     <string name="setting_user_style_confirm_forget">Forget %1$s?</string>
     <string name="msg_no_activity_to_get_content">No activity is available to open file</string>
-    <string name="action_add_dictionaries">Add</string>
+    <string name="action_open_dictionaries">Open</string>
+    <string name="action_download_dictionaries">Download</string>
+    <string name="dictionaries_download_url" translatable="false">https://aarddict.org/dictionaries</string>
     <string name="setting_fav_random_search">Use only marked dictionaries for random lookup</string>
     <string name="dictionary_use_for_random">Use for random lookup</string>
     <string name="dictionary_marked_for_random_content_desc">%s, marked for random lookup</string>

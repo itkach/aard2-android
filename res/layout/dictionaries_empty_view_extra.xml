@@ -1,25 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Dictionaries tab empty view: the two ways to get content, side by side and
+     styled alike (they're equal siblings, like the toolbar's two actions) -
+     Open (.slob files already on the device) and Download (opens the
+     dictionaries page in a browser). The shared placeholder icon/text is hidden
+     for this tab (see DictionariesFragment). -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:orientation="horizontal"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:gravity="center">
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/dictionaries_empty_btn_scan"
+        style="@style/Widget.Material3.Button.OutlinedButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="30dp"
-        android:layout_gravity="center_horizontal"
-        android:text="@string/action_add_dictionaries"
-    />
+        android:text="@string/action_open_dictionaries" />
 
-    <TextView
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/dictionaries_empty_btn_download"
+        style="@style/Widget.Material3.Button.OutlinedButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_gravity="center_horizontal"
-        android:autoLink="web"
-        android:text="@string/application_home_url"
-        />
+        android:layout_marginStart="12dp"
+        android:text="@string/action_download_dictionaries" />
 
 </LinearLayout>

@@ -44,7 +44,6 @@
     <string name="article_collection_nothing_found">Ula ayen yettwafen</string>
     <string name="article_collection_selected_not_available">Amagrad yettwafernen ulac-it</string>
     <string name="article_collection_nothing_to_lookup">Ulac i unadi</string>
-    <string name="dictionaries_confirm_forget">Ttu %1$s?</string>
     <string name="lookup_nothing_found">Ulac ayen yettwafen</string>
     <string name="main_empty_bookmarks">Ulac asɣal</string>
     <string name="main_empty_history">Ulac timsirin</string>
@@ -73,7 +72,6 @@
     <string name="msg_failed_to_store_user_style">Ur yezmir ara ad yessekles aɣanib</string>
     <string name="setting_user_style_confirm_forget">Ttu %1$s?</string>
     <string name="msg_no_activity_to_get_content">Ur yezmir ara ad d-yeldi afaylu-agi</string>
-    <string name="action_add_dictionaries">Rnu</string>
     <string name="setting_fav_random_search">Seqdec kan imawalen yettwafernen i unadi agacuṛan</string>
     <string name="article_collection_invalid_link">Aseɣwen yemmut</string>
     <string name="setting_ui_theme">Agrudem n useqdac</string>

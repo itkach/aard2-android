@@ -47,7 +47,6 @@
     <string name="article_collection_nothing_found">Fant ikke noe</string>
     <string name="article_collection_selected_not_available">Valgt artikkel er ikke tilgjengelig</string>
     <string name="article_collection_nothing_to_lookup">Ingenting å slå opp</string>
-    <string name="dictionaries_confirm_forget">Glem "%1$s"?</string>
     <string name="lookup_nothing_found">Fant ikke noe</string>
     <string name="main_empty_bookmarks">Ingen bokmerker</string>
     <string name="main_empty_history">Ingen historikk</string>
@@ -78,7 +77,6 @@
     <string name="msg_failed_to_store_user_style">Klarte ikke å lagre brukerstil</string>
     <string name="setting_user_style_confirm_forget">Glem %1$s?</string>
     <string name="msg_no_activity_to_get_content">Ingen aktivitet er i stand til å åpne fila</string>
-    <string name="action_add_dictionaries">Legg til</string>
     <string name="setting_fav_random_search">Bare bruk favorittordlister for tilfeldig oppslag</string>
     <string name="article_collection_invalid_link">Ugyldig lenke</string>
     <string name="setting_ui_theme">Brukergrensesnittstil</string>

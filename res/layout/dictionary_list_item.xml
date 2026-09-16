@@ -243,8 +243,9 @@
                 />
         </LinearLayout>
 
-        <!-- "Use for random lookup" (left) and forget (right) share the last
-             row; both only appear when the row is expanded. -->
+        <!-- "Use for random lookup", shown only when the row is expanded.
+             Removing a dictionary is done by swiping the row (see
+             DictionariesFragment), not a button here. -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -254,19 +255,10 @@
             >
             <CheckBox
                 android:id="@+id/dictionary_use_for_random"
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:text="@string/dictionary_use_for_random"
                 />
-            <ImageView
-                android:id="@+id/dictionary_btn_forget"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingLeft="12dp"
-                android:paddingRight="4dp"
-                android:paddingTop="6dp"
-                android:paddingBottom="6dp"/>
         </LinearLayout>
 
     </LinearLayout>
