@@ -1,16 +1,16 @@
 package itkach.aard2;
 
-import android.app.ActionBar;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import android.util.Log;
 import android.util.Patterns;
-import android.view.ActionMode;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -19,7 +19,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageButton;
 import android.widget.SearchView;
 import android.widget.Toast;
-import android.widget.Toolbar;
 
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -30,7 +29,7 @@ import java.util.regex.Pattern;
 
 import itkach.slob.Slob;
 
-public class MainActivity extends FragmentActivity {
+public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
@@ -73,8 +72,8 @@ public class MainActivity extends FragmentActivity {
         setContentView(R.layout.activity_main);
 
         Toolbar toolbar = getToolbar();
-        setActionBar(toolbar);
-        final ActionBar actionBar = getActionBar();
+        setSupportActionBar(toolbar);
+        final ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayShowHomeEnabled(false);
         actionBar.setDisplayHomeAsUpEnabled(false);
 
@@ -311,7 +310,7 @@ public class MainActivity extends FragmentActivity {
     public boolean onPrepareOptionsMenu(Menu menu) {
         boolean result = super.onPrepareOptionsMenu(menu);
         boolean isLookup = selectedPosition == LOOKUP;
-        getActionBar().setTitle(titles[selectedPosition]);
+        getSupportActionBar().setTitle(titles[selectedPosition]);
         searchView.setVisibility(isLookup ? View.VISIBLE : View.GONE);
         btnRandomArticle.setVisibility(isLookup ? View.VISIBLE : View.GONE);
         if (isLookup) {
@@ -337,32 +336,14 @@ public class MainActivity extends FragmentActivity {
         }
     }
 
-    // See ArticleCollectionActivity's identical fix: the multi-select delete
-    // CAB renders as a separate floating bar instead of replacing the Toolbar's
-    // content, since our Toolbar isn't the standard decor action-bar slot
-    // ToolbarActionBar expects. Hiding the Toolbar for the duration achieves the
-    // intended "replace, not overlap" look. Only TYPE_PRIMARY (the CAB) needs
-    // this - TYPE_FLOATING is the text-selection popup a long-press in the
-    // Lookup SearchView's EditText triggers, a small overlay near the selection.
-    @Override
-    public void onActionModeStarted(ActionMode mode) {
-        super.onActionModeStarted(mode);
-        // INVISIBLE, not GONE: with windowActionModeOverlay the ActionMode bar
-        // is drawn over this Toolbar's spot, so we only need to stop the Toolbar
-        // painting through - keeping its layout space avoids the reflow GONE (and
-        // the ActionMode's enter/exit animation) would cause.
-        if (mode.getType() == ActionMode.TYPE_PRIMARY) {
-            getToolbar().setVisibility(View.INVISIBLE);
-        }
-    }
-
-    @Override
-    public void onActionModeFinished(ActionMode mode) {
-        super.onActionModeFinished(mode);
-        if (mode.getType() == ActionMode.TYPE_PRIMARY) {
-            getToolbar().setVisibility(View.VISIBLE);
-        }
-    }
+    // The multi-select CAB (Bookmarks/History) is themed and positioned entirely
+    // by the theme's windowActionModeOverlay + actionModeStyle now that this is an
+    // AppCompatActivity: AppCompat wraps the native ActionMode, draws its
+    // (opaque, colorPrimary) bar over this Toolbar's spot, and reveals the Toolbar
+    // again on exit - no manual hide/show needed (which flashed both bars during
+    // the exit animation). The text-selection popup a long-press in the Lookup
+    // field triggers is a framework floating mode AppCompat leaves alone, so it
+    // doesn't interfere either.
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {

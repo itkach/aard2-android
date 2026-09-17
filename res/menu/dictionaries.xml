@@ -1,10 +1,11 @@
-<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto" >
     <item android:id="@+id/action_add_dictionaries"
         android:title="@string/action_open_dictionaries"
-        android:showAsAction="always"
+        app:showAsAction="always"
         />
     <item android:id="@+id/action_download_dictionaries"
         android:title="@string/action_download_dictionaries"
-        android:showAsAction="ifRoom"
+        app:showAsAction="ifRoom"
         />
 </menu>

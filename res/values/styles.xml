@@ -32,11 +32,9 @@
          for the ActionMode's duration to avoid a stacked double bar, and that
          hide/show desynced from the ActionMode's own enter/exit animation,
          causing a visible layout shift. With the overlay the Toolbar stays put
-         (covered by the bar) and nothing reflows. Both spellings are needed:
-         AppCompatActivity (ArticleCollectionActivity's find-in-page) reads the
-         unprefixed AppCompat attribute, while a plain framework Activity
-         (MainActivity's Bookmarks/History multi-select) reads the android:
-         one - set only the AppCompat one and the framework CAB stops overlaying. -->
+         (covered by the bar) and nothing reflows. The unprefixed AppCompat
+         attribute is what both activities read now that they're both
+         AppCompatActivity and their ActionModes are AppCompat-wrapped. -->
     <!-- actionBarSize drives the contextual ActionMode bars' height (multi-select
          and find-in-page). The main Toolbar sets its own @dimen/toolbar_height and
          so ignores this, but the ActionMode bars don't - point both at the same
@@ -53,19 +51,17 @@
          starting window is device-driven, not app-theme-driven. -->
     <style name="Theme.Aard2" parent="@style/Theme.Material3.DynamicColors.Light.NoActionBar">
         <item name="windowActionModeOverlay">true</item>
-        <item name="android:windowActionModeOverlay">true</item>
         <item name="android:actionBarSize">@dimen/toolbar_height</item>
         <item name="actionBarSize">@dimen/toolbar_height</item>
-        <!-- Give the find-in-page contextual bar (an AppCompat-wrapped
-             ActionMode, since this is an AppCompatActivity) the main Toolbar's
-             colorPrimary background instead of Material3's default dark surface,
-             so the bar it overlays matches the app bar. Material3's ActionMode
-             style hardcodes its own background, so overriding the
-             actionModeBackground attr alone is ignored - the style has to be
-             replaced. The custom find view's EditText and arrow icons are tinted
-             to colorOnPrimary in FindActionModeCallback, and the close button via
-             actionModeCloseButtonStyle. All AppCompat (unprefixed) attributes, so
-             MainActivity's framework ActionModes are unaffected. -->
+        <!-- Give the contextual ActionMode bars (find-in-page, and the
+             Bookmarks/History multi-select) the main Toolbar's colorPrimary
+             background instead of Material3's default dark surface, so the bar
+             they overlay matches the app bar. Both activities are
+             AppCompatActivity, so their ActionModes are AppCompat-wrapped and
+             read these attributes. Material3's ActionMode style hardcodes its own
+             background, so overriding the actionModeBackground attr alone is
+             ignored - the style has to be replaced (see Widget.Aard2.ActionMode
+             for the content styling). -->
         <item name="actionModeStyle">@style/Widget.Aard2.ActionMode</item>
         <item name="actionModeCloseButtonStyle">@style/Widget.Aard2.ActionButton.CloseMode</item>
         <item name="android:statusBarColor">@color/status_bar_scrim</item>
@@ -81,7 +77,6 @@
 
     <style name="Theme.Aard2.Dark" parent="@style/Theme.Material3.DynamicColors.Dark.NoActionBar">
         <item name="windowActionModeOverlay">true</item>
-        <item name="android:windowActionModeOverlay">true</item>
         <item name="android:actionBarSize">@dimen/toolbar_height</item>
         <item name="actionBarSize">@dimen/toolbar_height</item>
         <item name="actionModeStyle">@style/Widget.Aard2.ActionMode</item>
@@ -104,16 +99,24 @@
          resolves through to whichever is active. No parent: an
          android:theme overlay merges on top of the ambient theme, so
          anything not listed here still falls through unchanged. -->
-    <!-- Find-in-page contextual bar, styled to match the Toolbar it overlays:
-         colorPrimary background (replacing Material3's hardcoded dark surface)
-         and a colorOnPrimary close button. The bar's other content - the find
-         field and the up/down arrows - is themed in FindActionModeCallback. -->
+    <!-- Contextual ActionMode bars (find-in-page, and Bookmarks/History
+         multi-select), styled to match the Toolbar they overlay: colorPrimary
+         background (replacing Material3's hardcoded dark surface), a
+         colorOnPrimary close button, and a colorOnPrimary title so the
+         multi-select count reads on the blue bar. The find bar's own content -
+         the field and the up/down arrows - is themed in FindActionModeCallback;
+         the multi-select icons come from IconMaker.actionMode. -->
     <style name="Widget.Aard2.ActionMode" parent="@style/Widget.Material3.ActionMode">
         <item name="background">?attr/colorPrimary</item>
         <item name="backgroundSplit">?attr/colorPrimary</item>
+        <item name="titleTextStyle">@style/TextAppearance.Aard2.ActionMode.Title</item>
         <!-- Slimmer close button so the find field doesn't start far right of
              where the Filter/Lookup fields do - see the layout. -->
         <item name="closeItemLayout">@layout/aard2_action_mode_close_item</item>
+    </style>
+
+    <style name="TextAppearance.Aard2.ActionMode.Title" parent="@style/TextAppearance.Material3.ActionBar.Title">
+        <item name="android:textColor">?attr/colorOnPrimary</item>
     </style>
 
     <style name="Widget.Aard2.ActionButton.CloseMode" parent="@style/Widget.AppCompat.ActionButton.CloseMode">

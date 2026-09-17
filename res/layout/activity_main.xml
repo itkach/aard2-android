@@ -36,17 +36,17 @@
         android:layout_height="wrap_content"
         android:fitsSystemWindows="true">
 
-        <android.widget.Toolbar
+        <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="@dimen/toolbar_height"
             android:background="?attr/colorPrimary"
-            android:titleTextColor="?attr/colorOnPrimary"
-            android:subtitleTextColor="?attr/colorOnPrimary"
+            app:titleTextColor="?attr/colorOnPrimary"
+            app:subtitleTextColor="?attr/colorOnPrimary"
             android:theme="@style/ThemeOverlay.Aard2.Toolbar"
-            android:popupTheme="@style/ThemeOverlay.Aard2.ToolbarPopup"
-            android:contentInsetStart="0dp"
-            android:titleMarginStart="16dp">
+            app:popupTheme="@style/ThemeOverlay.Aard2.ToolbarPopup"
+            app:contentInsetStart="0dp"
+            app:titleMarginStart="16dp">
 
             <!-- Raw Toolbar children (not options-menu items) for the Lookup
                  tab's search box - hosting it as a menu/actionLayout item
@@ -87,7 +87,7 @@
                 android:imeOptions="flagNoExtractUi"
                 android:visibility="gone" />
 
-        </android.widget.Toolbar>
+        </androidx.appcompat.widget.Toolbar>
 
     </com.google.android.material.appbar.AppBarLayout>
 

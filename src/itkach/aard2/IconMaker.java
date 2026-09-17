@@ -170,16 +170,14 @@ class IconMaker {
                 .build();
     }
 
-    // Contextual-action-bar (multi-select) icons. Unlike the main Toolbar, the
-    // ActionMode bar uses the app theme's own surface (light in light theme)
-    // with a dark foreground - the same colorOnPrimary tint the Toolbar icons
-    // use would be white-on-white here. textColorPrimary follows the theme and
-    // matches the CAB's own title/close-button colour.
+    // Contextual-action-bar (multi-select) icons. The CAB now carries the same
+    // colorPrimary background as the Toolbar (see Widget.Aard2.ActionMode), so its
+    // icons take the Toolbar's colorOnPrimary tint too - matching the CAB's own
+    // title and close-button colour on the blue bar.
     static FontDrawable actionMode(Context context, Glyph g) {
-        int color = resolveThemeColor(context, android.R.attr.textColorPrimary, 0xff000000);
-        // Same 20dp as the main Toolbar's actionBar() icons so the two
-        // contextual bars (multi-select, find-in-page) match the regular
-        // toolbar rather than looking oversized next to it.
+        int color = resolveThemeColor(context, com.google.android.material.R.attr.colorOnPrimary, 0xff000000);
+        // Same 20dp as the main Toolbar's actionBar() icons so the CAB matches
+        // the regular toolbar rather than looking oversized next to it.
         return make(context, g, 20, color);
     }
 

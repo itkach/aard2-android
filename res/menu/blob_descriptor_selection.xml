@@ -1,11 +1,17 @@
-<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto" >
 
+    <!-- Shown as icons in the selection CAB. app:showAsAction is explicit now
+         that AppCompat's SupportMenuInflater builds this (its default is overflow,
+         unlike the framework ActionMode's, which surfaced them by default). -->
     <item
         android:id="@+id/blob_descriptor_select_all"
-        android:title="@android:string/selectAll"/>
-    
+        android:title="@android:string/selectAll"
+        app:showAsAction="always"/>
+
     <item
         android:id="@+id/blob_descriptor_delete"
         android:title="@string/delete"
+        app:showAsAction="always"
         />
 </menu>
