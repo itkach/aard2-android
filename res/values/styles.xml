@@ -32,7 +32,11 @@
          for the ActionMode's duration to avoid a stacked double bar, and that
          hide/show desynced from the ActionMode's own enter/exit animation,
          causing a visible layout shift. With the overlay the Toolbar stays put
-         (covered by the bar) and nothing reflows. -->
+         (covered by the bar) and nothing reflows. Both spellings are needed:
+         AppCompatActivity (ArticleCollectionActivity's find-in-page) reads the
+         unprefixed AppCompat attribute, while a plain framework Activity
+         (MainActivity's Bookmarks/History multi-select) reads the android:
+         one - set only the AppCompat one and the framework CAB stops overlaying. -->
     <!-- actionBarSize drives the contextual ActionMode bars' height (multi-select
          and find-in-page). The main Toolbar sets its own @dimen/toolbar_height and
          so ignores this, but the ActionMode bars don't - point both at the same
@@ -49,6 +53,7 @@
          starting window is device-driven, not app-theme-driven. -->
     <style name="Theme.Aard2" parent="@style/Theme.Material3.DynamicColors.Light.NoActionBar">
         <item name="windowActionModeOverlay">true</item>
+        <item name="android:windowActionModeOverlay">true</item>
         <item name="android:actionBarSize">@dimen/toolbar_height</item>
         <item name="actionBarSize">@dimen/toolbar_height</item>
         <!-- Give the find-in-page contextual bar (an AppCompat-wrapped
@@ -76,6 +81,7 @@
 
     <style name="Theme.Aard2.Dark" parent="@style/Theme.Material3.DynamicColors.Dark.NoActionBar">
         <item name="windowActionModeOverlay">true</item>
+        <item name="android:windowActionModeOverlay">true</item>
         <item name="android:actionBarSize">@dimen/toolbar_height</item>
         <item name="actionBarSize">@dimen/toolbar_height</item>
         <item name="actionModeStyle">@style/Widget.Aard2.ActionMode</item>
