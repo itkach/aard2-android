@@ -25,6 +25,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.SearchView;
 
 import java.util.ArrayList;
@@ -125,7 +126,7 @@ abstract class BlobDescriptorListFragment extends BaseListFragment {
         listAdapter = new BlobDescriptorListAdapter(descriptorList);
 
         final FragmentActivity activity = getActivity();
-        icFilter = IconMaker.actionBar(activity, IconMaker.IC_FILTER);
+        icFilter = IconMaker.actionBarOutline(activity, IconMaker.IC_FILTER, 20);
         icClock =  IconMaker.actionBar(activity, IconMaker.IC_CLOCK);
         icList = IconMaker.actionBar(activity, IconMaker.IC_LIST);
         icArrowUp = IconMaker.actionBar(activity, IconMaker.IC_SORT_ASC);
@@ -425,6 +426,19 @@ abstract class BlobDescriptorListFragment extends BaseListFragment {
         View filterActionView = miFilter.getActionView();
         SearchView searchView = (SearchView) filterActionView
                 .findViewById(R.id.fldFilter);
+        // Swap the framework SearchView's leading glass for the filter funnel, so
+        // the expanded field's icon matches the funnel action button it came from
+        // (and reads as "filter", not "search"). The glass is an internal view
+        // with no public setter, reached by its framework id; guarded so a future
+        // platform that renames or drops it just falls back to the glass.
+        int magIconId = getResources().getIdentifier("search_mag_icon", "id", "android");
+        if (magIconId != 0) {
+            ImageView magIcon = searchView.findViewById(magIconId);
+            if (magIcon != null) {
+                magIcon.setImageDrawable(
+                        IconMaker.actionBarOutline(getActivity(), IconMaker.IC_FILTER, 20));
+            }
+        }
         searchView.setQueryHint(miFilter.getTitle());
         searchView.setQuery(list.getFilter(), true);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {

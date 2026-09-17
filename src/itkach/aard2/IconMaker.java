@@ -142,12 +142,32 @@ class IconMaker {
     // read as a washed-out, disabled-looking grey once that stopped
     // coincidentally matching.
     static FontDrawable actionBar(Context context, Glyph g) {
-        int color = resolveThemeColor(context, com.google.android.material.R.attr.colorOnPrimary, 0xff000000);
         // 20dp (not the framework action icon's nominal 24dp): Font Awesome
         // glyphs carry almost no built-in padding, unlike Material's icons, so
         // they read larger at equal size - 20dp brings the bookmark glyph into
         // line with the framework overflow "⋮" it sits next to.
-        return make(context, g, 20, color);
+        return actionBar(context, g, 20);
+    }
+
+    // Same colorOnPrimary tint as the standard app-bar icon, at a caller-chosen
+    // size - the find bar's up/down arrows use a slightly smaller glyph so the
+    // solid Font Awesome chevrons don't read as heavy next to the find field.
+    static FontDrawable actionBar(Context context, Glyph g, int sizeDp) {
+        int color = resolveThemeColor(context, com.google.android.material.R.attr.colorOnPrimary, 0xff000000);
+        return make(context, g, sizeDp, color);
+    }
+
+    // Outline (stroked) app-bar icon, for a glyph the Font Awesome Free set only
+    // ships filled - the filter funnel, whose solid form reads too heavy for a
+    // search field's leading icon. A little padding leaves room for the stroke.
+    static FontDrawable actionBarOutline(Context context, Glyph g, int sizeDp) {
+        int color = resolveThemeColor(context, com.google.android.material.R.attr.colorOnPrimary, 0xff000000);
+        return new FontDrawable.Builder(context, g.code, g.font)
+                .setSizeDp(sizeDp)
+                .setPaddingDp(2)
+                .setColor(color)
+                .setStrokeWidthDp(1.6f)
+                .build();
     }
 
     // Contextual-action-bar (multi-select) icons. Unlike the main Toolbar, the

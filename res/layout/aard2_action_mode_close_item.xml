@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Close ("done") button for the find-in-page ActionMode bar, wired in via
+     closeItemLayout in Widget.Aard2.ActionMode. A trimmed copy of AppCompat's
+     abc_action_mode_close_item_material: that default reserves a lot of leading
+     space before the bar's custom view - a 56dp min-width button, a 12dp start
+     padding and a 16dp end margin - which made the find field start noticeably
+     further right than the Filter/Lookup fields. Tightening those lines the
+     search glass up with where Filter's leading icon sits. The id must stay
+     action_mode_close_button (AppCompat's ActionBarContextView finds the button
+     by that id) and srcCompat/style/contentDescription mirror the original. -->
+<ImageView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@id/action_mode_close_button"
+    style="?attr/actionModeCloseButtonStyle"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent"
+    android:layout_marginEnd="4dp"
+    android:layout_marginRight="4dp"
+    android:clickable="true"
+    android:contentDescription="?attr/actionModeCloseContentDescription"
+    android:focusable="true"
+    android:paddingStart="8dp"
+    android:paddingLeft="8dp"
+    app:srcCompat="?attr/actionModeCloseDrawable" />

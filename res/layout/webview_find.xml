@@ -1,19 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<!-- The find-in-page field. A SearchView (not a bare EditText) so it matches the
+     Lookup and Filter search fields exactly: leading search glass to the left
+     (iconifiedByDefault=false keeps it always expanded), a clear "X" once there's
+     text, and the same thin underline. It's hosted as an ActionMode custom view
+     and themed to the colorPrimary bar via ThemeOverlay.Aard2.Toolbar in
+     FindActionModeCallback.
+
+     wrap_content + a little vertical padding (not match_parent) so the field
+     centres in the bar with its underline off the bottom edge, matching Lookup
+     and Filter - the ActionMode stretches the custom view to the full bar height,
+     so match_parent would push the underline flush against the bottom. Separate
+     top/bottom padding (not paddingVertical, API 26+) for minSdk. -->
+<SearchView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/find_search"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    >
-    <EditText android:id="@+id/edit"
-        android:importantForAutofill="no"
-        android:layout_width="0dip"
-        android:layout_weight="1"
-        android:layout_height="wrap_content"
-        android:scrollHorizontally="true"
-        android:inputType="text"
-        android:hint="@string/find_hint"
-        android:imeOptions="actionDone|flagNoExtractUi|flagNoFullscreen"
-        android:layout_marginEnd="10dip"
-        android:layout_marginRight="10dip"
-        />
-</LinearLayout>
+    android:paddingTop="4dp"
+    android:paddingBottom="4dp"
+    android:iconifiedByDefault="false"
+    android:queryHint="@string/find_hint"
+    android:imeOptions="actionDone|flagNoExtractUi|flagNoFullscreen" />

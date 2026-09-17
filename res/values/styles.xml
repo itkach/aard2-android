@@ -51,6 +51,18 @@
         <item name="windowActionModeOverlay">true</item>
         <item name="android:actionBarSize">@dimen/toolbar_height</item>
         <item name="actionBarSize">@dimen/toolbar_height</item>
+        <!-- Give the find-in-page contextual bar (an AppCompat-wrapped
+             ActionMode, since this is an AppCompatActivity) the main Toolbar's
+             colorPrimary background instead of Material3's default dark surface,
+             so the bar it overlays matches the app bar. Material3's ActionMode
+             style hardcodes its own background, so overriding the
+             actionModeBackground attr alone is ignored - the style has to be
+             replaced. The custom find view's EditText and arrow icons are tinted
+             to colorOnPrimary in FindActionModeCallback, and the close button via
+             actionModeCloseButtonStyle. All AppCompat (unprefixed) attributes, so
+             MainActivity's framework ActionModes are unaffected. -->
+        <item name="actionModeStyle">@style/Widget.Aard2.ActionMode</item>
+        <item name="actionModeCloseButtonStyle">@style/Widget.Aard2.ActionButton.CloseMode</item>
         <item name="android:statusBarColor">@color/status_bar_scrim</item>
         <item name="android:windowLightStatusBar">@bool/status_bar_light_appearance</item>
         <!-- Give the API 31+ system splash its own icon (a high-res, padded logo
@@ -66,6 +78,8 @@
         <item name="windowActionModeOverlay">true</item>
         <item name="android:actionBarSize">@dimen/toolbar_height</item>
         <item name="actionBarSize">@dimen/toolbar_height</item>
+        <item name="actionModeStyle">@style/Widget.Aard2.ActionMode</item>
+        <item name="actionModeCloseButtonStyle">@style/Widget.Aard2.ActionButton.CloseMode</item>
         <item name="android:statusBarColor">@color/status_bar_scrim</item>
         <item name="android:windowLightStatusBar">@bool/status_bar_light_appearance</item>
         <item name="android:windowSplashScreenAnimatedIcon">@drawable/ic_splash</item>
@@ -84,6 +98,26 @@
          resolves through to whichever is active. No parent: an
          android:theme overlay merges on top of the ambient theme, so
          anything not listed here still falls through unchanged. -->
+    <!-- Find-in-page contextual bar, styled to match the Toolbar it overlays:
+         colorPrimary background (replacing Material3's hardcoded dark surface)
+         and a colorOnPrimary close button. The bar's other content - the find
+         field and the up/down arrows - is themed in FindActionModeCallback. -->
+    <style name="Widget.Aard2.ActionMode" parent="@style/Widget.Material3.ActionMode">
+        <item name="background">?attr/colorPrimary</item>
+        <item name="backgroundSplit">?attr/colorPrimary</item>
+        <!-- Slimmer close button so the find field doesn't start far right of
+             where the Filter/Lookup fields do - see the layout. -->
+        <item name="closeItemLayout">@layout/aard2_action_mode_close_item</item>
+    </style>
+
+    <style name="Widget.Aard2.ActionButton.CloseMode" parent="@style/Widget.AppCompat.ActionButton.CloseMode">
+        <item name="tint">?attr/colorOnPrimary</item>
+        <item name="android:tint">?attr/colorOnPrimary</item>
+        <!-- Down from AppCompat's 56dp, which padded the icon out and widened the
+             leading gap before the find field. -->
+        <item name="android:minWidth">40dp</item>
+    </style>
+
     <style name="ThemeOverlay.Aard2.Toolbar" parent="@android:style/ThemeOverlay">
         <item name="colorControlNormal">?attr/colorOnPrimary</item>
         <item name="colorControlActivated">?attr/colorOnPrimary</item>

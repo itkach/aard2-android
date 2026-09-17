@@ -3,7 +3,15 @@
      height), so its underline would sit flush against the toolbar's bottom. The
      vertical padding insets the search field within that stretched height so it
      centres with a little breathing room below the underline, matching Lookup.
-     Separate top/bottom (not paddingVertical, which is API 26+) for minSdk. -->
+     Separate top/bottom (not paddingVertical, which is API 26+) for minSdk.
+
+     iconifiedByDefault=false gives the same always-expanded look as Lookup and
+     find-in-page: the leading icon sits to the left, outside the underline,
+     rather than inside the hint where it vanishes on typing. That leading glyph
+     is swapped from the default search glass to the filter funnel in
+     BlobDescriptorListFragment. Collapsing back to the toolbar's funnel action
+     button is still driven by the menu item's collapseActionView, independent
+     of this. -->
 <SearchView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/fldFilter"
     android:layout_width="match_parent"
@@ -11,6 +19,6 @@
     android:paddingTop="4dp"
     android:paddingBottom="4dp"
     android:actionViewClass="android.widget.SearchView"
-    android:iconifiedByDefault="true"
+    android:iconifiedByDefault="false"
     android:queryHint="Filter"
     android:showAsAction="always" />
