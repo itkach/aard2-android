@@ -37,7 +37,7 @@ abstract class BlobDescriptorListFragment extends BaseListFragment {
 
     private Drawable icFilter;
     private Drawable icClock;
-    private Drawable icList;
+    private Drawable icName;
     private Drawable icArrowUp;
     private Drawable icArrowDown;
 
@@ -126,9 +126,9 @@ abstract class BlobDescriptorListFragment extends BaseListFragment {
         listAdapter = new BlobDescriptorListAdapter(descriptorList);
 
         final FragmentActivity activity = getActivity();
-        icFilter = IconMaker.actionBarOutline(activity, IconMaker.IC_FILTER, 20);
+        icFilter = IconMaker.actionBar(activity, IconMaker.IC_FILTER);
         icClock =  IconMaker.actionBar(activity, IconMaker.IC_CLOCK);
-        icList = IconMaker.actionBar(activity, IconMaker.IC_LIST);
+        icName = IconMaker.actionBar(activity, IconMaker.IC_SORT_NAME);
         icArrowUp = IconMaker.actionBar(activity, IconMaker.IC_SORT_ASC);
         icArrowDown = IconMaker.actionBar(activity, IconMaker.IC_SORT_DESC);
 
@@ -436,7 +436,7 @@ abstract class BlobDescriptorListFragment extends BaseListFragment {
             ImageView magIcon = searchView.findViewById(magIconId);
             if (magIcon != null) {
                 magIcon.setImageDrawable(
-                        IconMaker.actionBarOutline(getActivity(), IconMaker.IC_FILTER, 20));
+                        IconMaker.actionBar(getActivity(), IconMaker.IC_FILTER));
             }
         }
         searchView.setQueryHint(miFilter.getTitle());
@@ -469,7 +469,7 @@ abstract class BlobDescriptorListFragment extends BaseListFragment {
             icon = icClock;
             textRes = R.string.action_sort_by_time;
         } else {
-            icon = icList;
+            icon = icName;
             textRes = R.string.action_sort_by_title;
         }
         mi.setIcon(icon);

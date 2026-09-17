@@ -191,7 +191,7 @@ public class MainActivity extends AppCompatActivity {
     private void updateNavIcons() {
         Menu m = bottomNav.getMenu();
         m.findItem(R.id.nav_lookup).setIcon(IconMaker.tab(this, IconMaker.IC_SEARCH, selectedPosition == 0));
-        m.findItem(R.id.nav_bookmarks).setIcon(IconMaker.tab(this, IconMaker.IC_BOOKMARK, selectedPosition == 1));
+        m.findItem(R.id.nav_bookmarks).setIcon(IconMaker.tab(this, IconMaker.IC_BOOKMARK_O, selectedPosition == 1));
         m.findItem(R.id.nav_history).setIcon(IconMaker.tab(this, IconMaker.IC_HISTORY, selectedPosition == 2));
         m.findItem(R.id.nav_dictionaries).setIcon(IconMaker.tab(this, IconMaker.IC_DICTIONARY, selectedPosition == 3));
         m.findItem(R.id.nav_settings).setIcon(IconMaker.tab(this, IconMaker.IC_SETTINGS, selectedPosition == 4));
@@ -387,7 +387,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         IconMaker.Glyph getEmptyIcon() {
-            return IconMaker.IC_BOOKMARK;
+            return IconMaker.IC_BOOKMARK_O;
         }
 
         @Override

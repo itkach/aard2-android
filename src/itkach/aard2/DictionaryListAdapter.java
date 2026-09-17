@@ -268,7 +268,7 @@ public class DictionaryListAdapter extends RecyclerView.Adapter<DictionaryListAd
         View pathRow = view.findViewById(R.id.dictionary_path_row);
 
         ImageView pathIcon = (ImageView) view.findViewById(R.id.dictionary_path_icon);
-        pathIcon.setImageDrawable(IconMaker.text(context, IconMaker.IC_FILE_ARCHIVE));
+        pathIcon.setImageDrawable(IconMaker.text(context, IconMaker.IC_FILE));
 
         TextView pathView = (TextView) view.findViewById(R.id.dictionary_path);
         pathView.setText(path);

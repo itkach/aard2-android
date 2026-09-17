@@ -37,15 +37,6 @@ public class FontDrawable extends Drawable {
         this.paint.setColor(builder.color);
         this.size = builder.size;
         this.padding = builder.padding;
-        // A positive stroke width renders the glyph's outline instead of filling
-        // it - the way to get an outline icon from a font that only ships the
-        // filled ("solid") glyph. Rounded join/cap keep the corners clean.
-        if (builder.strokeWidthPx > 0f) {
-            this.paint.setStyle(Paint.Style.STROKE);
-            this.paint.setStrokeWidth(builder.strokeWidthPx);
-            this.paint.setStrokeJoin(Paint.Join.ROUND);
-            this.paint.setStrokeCap(Paint.Cap.ROUND);
-        }
     }
 
     protected FontDrawable(char fontCode, Paint paint, int size, int padding) {
@@ -157,8 +148,6 @@ public class FontDrawable extends Drawable {
 
         private int color = Color.BLACK;
 
-        private float strokeWidthPx = 0f;
-
         public Builder(Context context, char fontCode, String customFontPath) {
             this(context, fontCode, Typeface.createFromAsset(context.getAssets(), customFontPath));
         }
@@ -197,13 +186,6 @@ public class FontDrawable extends Drawable {
 
         public Builder setColor(@ColorInt int color) {
             this.color = color;
-            return this;
-        }
-
-        // Draw the glyph as an outline of this stroke width rather than filled.
-        public Builder setStrokeWidthDp(float dp) {
-            this.strokeWidthPx = applyDimension(COMPLEX_UNIT_DIP, dp,
-                    context.getResources().getDisplayMetrics());
             return this;
         }
 

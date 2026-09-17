@@ -1,0 +1,68 @@
+#!/usr/bin/env bash
+#
+# Regenerate the subset Phosphor OTF/TTFs in assets/ so they contain ONLY the
+# glyphs IconMaker.java actually uses. The full Phosphor fonts are ~1MB+ each
+# (2000+ icons); these subsets are a couple KB.
+#
+# Run this whenever an icon is added to / removed from IconMaker.java - update
+# the REG_CODES / FILL_CODES lists below to match its glyphs, then run:
+#
+#     ./mk-phosphor-subset [PHOSPHOR_DIR]
+#
+# PHOSPHOR_DIR defaults to ~/Downloads/phosphor-icons (the download from
+# phosphoricons.com, which ships Fonts/<weight>/*.ttf plus a style.css mapping
+# each icon name to a private-use codepoint). It needs fonttools' pyftsubset; if
+# that isn't on PATH a throwaway venv is created under build/ (git-ignored).
+#
+# Everything uses the "regular" weight (outline) except the filled bookmark that
+# marks a bookmarked article, which uses "fill". Codepoints correspond to
+# IconMaker.java's Glyph constants (look a name up in Fonts/regular/style.css):
+#
+#   regular() -> Phosphor.ttf (outline)
+#     e3d4 plus                 e136 caret-down          e13c caret-up
+#     e3de prohibit             e0ea bookmark-simple     e186 check-square
+#     e19a clock                e4f6 x                   e1ce corners-in
+#     e54a copyright            e0e2 book                eae2 dots-six-vertical
+#     e4e0 warning              e1d0 corners-out         e5de arrow-square-out
+#     e230 file                 e266 funnel              e256 folder-open
+#     e1a0 clock-counter-clockwise                       e0b4 bank
+#     e6ee text-aa               e1ee dice-five           e30c magnifying-glass
+#     e270 gear                 e444 sort-ascending      e446 sort-descending
+#     e45e square               e4a6 trash
+#
+#   fill()    -> Phosphor-Fill.ttf (filled)
+#     e0ea bookmark-simple (same codepoint as the outline one, different font file)
+#
+set -euo pipefail
+cd "$(dirname "$0")"
+
+REG_CODES="e3d4,e136,e13c,e3de,e0ea,e186,e19a,e4f6,e1ce,e54a,e0e2,eae2,e4e0,e1d0,e5de,e230,e266,e256,e1a0,e0b4,e6ee,e1ee,e30c,e270,e444,e446,e45e,e4a6"
+FILL_CODES="e0ea"
+
+PH_DIR="${1:-$HOME/Downloads/phosphor-icons}"
+REG_SRC="$PH_DIR/Fonts/regular/Phosphor.ttf"
+FILL_SRC="$PH_DIR/Fonts/fill/Phosphor-Fill.ttf"
+for f in "$REG_SRC" "$FILL_SRC"; do
+    [ -f "$f" ] || { echo "Source font not found: $f" >&2
+        echo "Pass the Phosphor download dir as the first argument." >&2; exit 1; }
+done
+
+PYFTSUBSET="$(command -v pyftsubset || true)"
+if [ -z "$PYFTSUBSET" ]; then
+    VENV="build/fonttools-venv"
+    if [ ! -x "$VENV/bin/pyftsubset" ]; then
+        echo "pyftsubset not on PATH; bootstrapping $VENV ..."
+        python3 -m venv "$VENV"
+        "$VENV/bin/pip" install -q fonttools
+    fi
+    PYFTSUBSET="$VENV/bin/pyftsubset"
+fi
+
+subset() { # <src> <unicodes> <out>
+    "$PYFTSUBSET" "$1" --unicodes="$2" --output-file="$3" \
+        --no-hinting --desubroutinize --layout-features='' --glyph-names
+    echo "wrote $3 ($(wc -c < "$3") bytes)"
+}
+
+subset "$REG_SRC" "$REG_CODES" assets/phosphor-regular.ttf
+subset "$FILL_SRC" "$FILL_CODES" assets/phosphor-fill.ttf
