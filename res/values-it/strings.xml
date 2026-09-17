@@ -77,6 +77,7 @@ is missing a quantity used in that language, otherwise the app will crash
 <string name="setting_ui_theme_dark">Scuro</string>
 <string name="action_load_remote_content">Carica contenuto remoto</string>
 <string name="setting_use_volume_for_nav">Usare i tasti del volume per la navigazione</string>
+<string name="setting_auto_fullscreen_landscape">Passare automaticamente a schermo intero in orizzontale</string>
 <string name="find_hint">Trova nella pagina</string>
 <string name="find_next">Successivo</string>
 <string name="find_previous">Precedente</string>

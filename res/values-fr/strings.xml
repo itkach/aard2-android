@@ -81,6 +81,7 @@
     <string name="action_load_remote_content">Charger le contenu extérieur</string>
     <string name="auto_style_title">Auto</string>
     <string name="setting_use_volume_for_nav">Utiliser les boutons du volume +/- pour haut/bas</string>
+    <string name="setting_auto_fullscreen_landscape">Passer automatiquement en plein écran en mode paysage</string>
     <string name="find_hint">Rechercher sur la page</string>
     <string name="find_next">Suivant</string>
     <string name="find_previous">Précédent</string>

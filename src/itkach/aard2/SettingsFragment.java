@@ -70,6 +70,8 @@ public class SettingsFragment extends Fragment {
                 app.isOnlyFavDictsForRandomLookup(), app::setOnlyFavDictsForRandomLookup);
         setupSwitch(view, R.id.setting_use_volume_for_nav,
                 app.useVolumeForNav(), app::setUseVolumeForNav);
+        setupSwitch(view, R.id.setting_auto_fullscreen_landscape,
+                app.autoFullscreenLandscape(), app::setAutoFullscreenLandscape);
         setupSwitch(view, R.id.setting_auto_paste,
                 app.autoPaste(), app::setAutoPaste);
         setupRecordHistory(view);

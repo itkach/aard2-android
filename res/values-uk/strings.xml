@@ -72,6 +72,7 @@
     <string name="article_collection_invalid_link">Некоректне посилання</string>
     <string name="action_load_remote_content">Завантажити віддалений контент</string>
     <string name="setting_use_volume_for_nav">Використовувати кнопки гучності для навігації</string>
+    <string name="setting_auto_fullscreen_landscape">Автоматично переходити в повноекранний режим в альбомній орієнтації</string>
     <string name="setting_auto_paste">Авто-вставка з буфіру обміну</string>
 
 

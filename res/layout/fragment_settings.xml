@@ -53,6 +53,8 @@
                     layout="@layout/settings_fav_random_search" />
                 <include android:id="@+id/card_volume_nav"
                     layout="@layout/settings_use_volume_for_nav" />
+                <include android:id="@+id/card_auto_fullscreen_landscape"
+                    layout="@layout/settings_auto_fullscreen_landscape" />
                 <include android:id="@+id/card_auto_paste"
                     layout="@layout/settings_auto_paste" />
                 <include android:id="@+id/card_record_history"

@@ -257,6 +257,16 @@ public class ArticleCollectionActivity extends AppCompatActivity {
                 == Configuration.ORIENTATION_LANDSCAPE;
     }
 
+    // Whether full-screen should be on right now: either the user turned it on
+    // explicitly (persists across rotations), or we're in landscape and the
+    // auto-full-screen-in-landscape setting is on (default; can be turned off for
+    // devices where it's unwanted, e.g. tablets - see Settings).
+    private boolean shouldBeFullScreen() {
+        return getExplicitFullScreenPref()
+                || (isLandscape()
+                        && ((Application) getApplication()).autoFullscreenLandscape());
+    }
+
     // Enter from the toolbar action: an explicit, persisted choice that stays on
     // across orientation changes until the user exits.
     void enterFullScreen() {
@@ -327,7 +337,7 @@ public class ArticleCollectionActivity extends AppCompatActivity {
         super.onConfigurationChanged(newConfig);
         // Landscape auto-enters full-screen; portrait leaves it - unless the user
         // turned it on explicitly, in which case it stays until they exit.
-        applyFullScreen(getExplicitFullScreenPref() || isLandscape());
+        applyFullScreen(shouldBeFullScreen());
         rebuildToolbarForWidth();
     }
 
@@ -488,7 +498,7 @@ public class ArticleCollectionActivity extends AppCompatActivity {
         // Apply full-screen from the first frame (covers the loading screen too,
         // so opening an article in full-screen doesn't flash the toolbar): on if
         // the user turned it on explicitly, or if we're in landscape.
-        applyFullScreen(getExplicitFullScreenPref() || isLandscape());
+        applyFullScreen(shouldBeFullScreen());
         // Debounced, so it doesn't even appear on fast lookups. Tinted to the
         // article's text color (the same measured pair that colors the window),
         // so it reads against the loading background rather than showing the

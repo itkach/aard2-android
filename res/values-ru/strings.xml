@@ -67,6 +67,7 @@
     <string name="article_collection_invalid_link">Некорректная ссылка</string>
     <string name="action_load_remote_content">Загрузить удалённый контент</string>
     <string name="setting_use_volume_for_nav">Использовать кнопки громкости для навигации</string>
+    <string name="setting_auto_fullscreen_landscape">Автоматически переходить в полноэкранный режим в альбомной ориентации</string>
     <string name="find_hint">Поиск на странице</string>
     <string name="setting_auto_paste">Авто-вставка из буфера обмена</string>
     <string name="setting_user_styles_add">Добавить</string>

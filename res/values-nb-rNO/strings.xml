@@ -82,6 +82,7 @@
     <string name="action_load_remote_content">Last inn innhold fra annensteds hen</string>
     <string name="auto_style_title">Auto</string>
     <string name="setting_use_volume_for_nav">Bruk lydstyrkeknapper for navigasjon</string>
+    <string name="setting_auto_fullscreen_landscape">Gå automatisk til fullskjerm i liggende modus</string>
 
     <string name="setting_user_styles_add">Legg til</string>
     <string name="dictionary_marked_for_random_content_desc">%s, merket for tilfeldig oppslag</string>

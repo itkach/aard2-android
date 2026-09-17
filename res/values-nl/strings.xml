@@ -81,6 +81,7 @@
     <string name="action_load_remote_content">Externe inhoud laden</string>
     <string name="auto_style_title">Automatisch</string>
     <string name="setting_use_volume_for_nav">Volumeknoppen gebruiken voor navigatie</string>
+    <string name="setting_auto_fullscreen_landscape">Automatisch naar volledig scherm in liggende modus</string>
 
     <string name="setting_user_styles_add">Toevoegen</string>
     <string name="dictionary_marked_for_random_content_desc">%s, gemarkeerd voor willekeurig opzoeken</string>

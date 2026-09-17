@@ -72,6 +72,7 @@
     <string name="action_load_remote_content">Załaduj zdalną zawartość</string>
     <string name="auto_style_title">Automatyczny</string>
     <string name="setting_use_volume_for_nav">Używaj przyciski głośności do nawigacji</string>
+    <string name="setting_auto_fullscreen_landscape">Automatycznie przełączaj na pełny ekran w trybie poziomym</string>
     <string name="find_hint">Znajdź na stronie</string>
     <string name="find_next">Następne</string>
     <string name="find_previous">Poprzednie</string>

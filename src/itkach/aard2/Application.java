@@ -96,6 +96,7 @@ public class Application extends android.app.Application {
     static final String PREF_USE_VOLUME_FOR_NAV         = "useVolumeForNav";
     static final String PREF_AUTO_PASTE                 = "autoPaste";
     static final String PREF_RECORD_HISTORY             = "recordHistory";
+    static final String PREF_AUTO_FULLSCREEN_LANDSCAPE  = "autoFullscreenLandscape";
 
     private static final String TAG = Application.class.getSimpleName();
 
@@ -455,6 +456,17 @@ public class Application extends android.app.Application {
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean(Application.PREF_RECORD_HISTORY, value);
         editor.apply();
+    }
+
+    // Whether rotating an article to landscape auto-enters full-screen reading
+    // mode (and portrait leaves it). On by default - handy on a phone - but
+    // toggleable off for devices where it's unwanted, e.g. tablets.
+    boolean autoFullscreenLandscape() {
+        return prefs().getBoolean(Application.PREF_AUTO_FULLSCREEN_LANDSCAPE, true);
+    }
+
+    void setAutoFullscreenLandscape(boolean value) {
+        prefs().edit().putBoolean(Application.PREF_AUTO_FULLSCREEN_LANDSCAPE, value).apply();
     }
 
 
