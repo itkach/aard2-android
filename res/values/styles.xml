@@ -48,7 +48,7 @@
          device dark mode disagree. Same values in both themes on purpose: the
          starting window is device-driven, not app-theme-driven. -->
     <style name="Theme.Aard2" parent="@style/Theme.Material3.DynamicColors.Light.NoActionBar">
-        <item name="android:windowActionModeOverlay">true</item>
+        <item name="windowActionModeOverlay">true</item>
         <item name="android:actionBarSize">@dimen/toolbar_height</item>
         <item name="actionBarSize">@dimen/toolbar_height</item>
         <item name="android:statusBarColor">@color/status_bar_scrim</item>
@@ -63,7 +63,7 @@
     </style>
 
     <style name="Theme.Aard2.Dark" parent="@style/Theme.Material3.DynamicColors.Dark.NoActionBar">
-        <item name="android:windowActionModeOverlay">true</item>
+        <item name="windowActionModeOverlay">true</item>
         <item name="android:actionBarSize">@dimen/toolbar_height</item>
         <item name="actionBarSize">@dimen/toolbar_height</item>
         <item name="android:statusBarColor">@color/status_bar_scrim</item>

@@ -1,34 +1,46 @@
-<menu xmlns:android="http://schemas.android.com/apk/res/android" >
-    <item android:id="@+id/action_bookmark_article"
-          android:title="@string/action_bookmark_article"
-          android:checkable="true"
-          android:checked="false"
-          android:showAsAction="always"
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto" >
+    <!-- Priority order full-screen > find > bookmark. Full-screen is always a
+         toolbar icon (it's the one action still reachable once its own mode
+         hides the overflow). Find and bookmark are ifRoom: AppCompat's
+         ActionMenuPresenter recomputes how many fit on every configuration
+         change, so they promote into the bar in landscape and fall back to the
+         overflow when narrow - the responsive behavior the framework Toolbar
+         couldn't do (it cached the count at creation). The rest stay in the
+         overflow. -->
+    <item android:id="@+id/action_full_screen"
+          android:title="@string/action_full_screen"
+          app:showAsAction="always"
         />
 
     <item android:id="@+id/action_find_in_page"
           android:title="@string/action_find_in_page"
-          android:showAsAction="never" 
+          app:showAsAction="ifRoom"
           />
+
+    <!-- Checkable: when this lands in the overflow (no icon shown there) the
+         checkbox carries the bookmarked state; when it's promoted to a toolbar
+         icon, the filled-vs-outline icon carries it instead (see
+         displayBookmarked). -->
+    <item android:id="@+id/action_bookmark_article"
+          android:title="@string/action_bookmark_article"
+          android:checkable="true"
+          app:showAsAction="ifRoom"
+        />
 
     <item android:id="@+id/action_load_remote_content"
         android:title="@string/action_load_remote_content"
-        android:showAsAction="never"
+        app:showAsAction="never"
         />
 
     <item android:id="@+id/action_text_size"
           android:title="@string/action_text_size"
-          android:showAsAction="never"
+          app:showAsAction="never"
         />
 
     <item android:id="@+id/action_select_style"
           android:title="@string/action_select_style"
-          android:showAsAction="never"
-        />
-
-    <item android:id="@+id/action_full_screen"
-          android:title="@string/action_full_screen"
-          android:showAsAction="ifRoom"
+          app:showAsAction="never"
         />
 
 </menu>

@@ -1,6 +1,5 @@
 package itkach.aard2;
 
-import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.app.SearchManager;
 import android.content.ComponentName;
@@ -27,13 +26,15 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.core.view.WindowInsetsControllerCompat;
 import androidx.core.widget.ContentLoadingProgressBar;
-import androidx.fragment.app.FragmentActivity;
 import androidx.core.app.NavUtils;
 import androidx.core.app.TaskStackBuilder;
 import androidx.viewpager.widget.PagerAdapter;
@@ -54,7 +55,6 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.PopupWindow;
 import android.widget.Toast;
-import android.widget.Toolbar;
 import com.google.android.material.button.MaterialButton;
 
 import java.util.Iterator;
@@ -63,40 +63,16 @@ import java.util.List;
 import itkach.slob.Slob;
 import itkach.slob.Slob.Blob;
 
-public class ArticleCollectionActivity extends FragmentActivity {
+public class ArticleCollectionActivity extends AppCompatActivity {
 
     private static final String TAG = ArticleCollectionActivity.class.getSimpleName();
 
-    // ToolbarActionBar (the wrapper Activity.setActionBar(Toolbar) installs)
-    // renders a primary ActionMode's contextual bar as a separate view
-    // instead of replacing our Toolbar's own content - because our Toolbar
-    // lives inside AppBarLayout rather than the standard decor slot
-    // ToolbarActionBar expects, the two end up stacked rather than one
-    // swapping for the other. Hiding the Toolbar for the duration achieves
-    // the intended "replace, not overlap" look with no fragile assumptions
-    // about ToolbarActionBar's internals. Only TYPE_PRIMARY (find-in-page)
-    // needs this - TYPE_FLOATING is the text-selection popup a long-press in
-    // the WebView triggers, which is a small overlay near the selection, not
-    // something that replaces the Toolbar.
-    @Override
-    public void onActionModeStarted(android.view.ActionMode mode) {
-        super.onActionModeStarted(mode);
-        // INVISIBLE, not GONE: with windowActionModeOverlay the find-in-page
-        // bar (started via the host Activity - see SearchableWebView) overlays
-        // this Toolbar's spot, so keeping its layout space avoids a reflow as
-        // the bar animates in and out. Same as MainActivity's multi-select CAB.
-        if (mode.getType() == android.view.ActionMode.TYPE_PRIMARY) {
-            getToolbar().setVisibility(View.INVISIBLE);
-        }
-    }
-
-    @Override
-    public void onActionModeFinished(android.view.ActionMode mode) {
-        super.onActionModeFinished(mode);
-        if (mode.getType() == android.view.ActionMode.TYPE_PRIMARY) {
-            getToolbar().setVisibility(View.VISIBLE);
-        }
-    }
+    // The find-in-page contextual bar is handled by the theme's
+    // windowActionModeOverlay: AppCompat draws the ActionMode's (opaque)
+    // ActionBarContextView directly over the Toolbar's slot, so it covers the
+    // Toolbar while active and reveals it again on exit - a clean "replace" with
+    // no manual show/hide (which flashed both bars together during the CAB's
+    // fade-out) and no reserved-space grey band. Nothing to override here.
 
     ArticleCollectionPagerAdapter articleCollectionPagerAdapter;
     ViewPager viewPager;
@@ -352,6 +328,43 @@ public class ArticleCollectionActivity extends FragmentActivity {
         // Landscape auto-enters full-screen; portrait leaves it - unless the user
         // turned it on explicitly, in which case it stays until they exit.
         applyFullScreen(getExplicitFullScreenPref() || isLandscape());
+        rebuildToolbarForWidth();
+    }
+
+    // Make ifRoom items (find/bookmark) promote into the wider landscape bar and
+    // fall back to the overflow in portrait. A Toolbar-backed support ActionBar
+    // computes how many action items fit exactly once - when its
+    // ActionMenuPresenter is first built - from the display width at that moment,
+    // and never recomputes: nothing forwards a config change to that presenter,
+    // and we handle rotation ourselves (configChanges) so the Activity is never
+    // recreated. Re-setting the support ActionBar doesn't help either - the
+    // presenter and its MenuBuilder live on the Toolbar view and are reused, so
+    // Toolbar.setMenu short-circuits and no fresh presenter is installed. The one
+    // public-API way to get a presenter that re-measures for the new orientation
+    // is a brand-new Toolbar view, so swap one in (re-inflated from
+    // article_toolbar.xml, keeping styling identical) and re-attach the ActionBar
+    // to it. The navigation icon is set per-Toolbar (setupUpNavigation); the
+    // title lives on the old ActionBar, so carry it across.
+    private void rebuildToolbarForWidth() {
+        AppBarLayout appBar = findViewById(R.id.appbar);
+        Toolbar old = getToolbar();
+        if (appBar == null || old == null) {
+            return;
+        }
+        ActionBar current = getSupportActionBar();
+        CharSequence title = current == null ? null : current.getTitle();
+        int index = appBar.indexOfChild(old);
+        appBar.removeViewAt(index);
+        Toolbar fresh = (Toolbar) getLayoutInflater()
+                .inflate(R.layout.article_toolbar, appBar, false);
+        appBar.addView(fresh, index);
+        setSupportActionBar(fresh);
+        setupUpNavigation(fresh);
+        ActionBar rebuilt = getSupportActionBar();
+        if (rebuilt != null && title != null) {
+            rebuilt.setTitle(title);
+        }
+        invalidateOptionsMenu();
     }
 
     // Re-assert the hidden bars after regaining focus (returning from a dialog,
@@ -443,13 +456,13 @@ public class ArticleCollectionActivity extends FragmentActivity {
         // No setContentView swap means nothing flashes through the open transition.
         setContentView(R.layout.activity_article_collection);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setActionBar(toolbar);
+        setSupportActionBar(toolbar);
         // Paint the status bar with the AppBarLayout's neutral scrim from the
         // first frame, so it never shows the toolbar colour up there.
         ((Application) getApplication()).applyStatusBarAppearance(
                 this, (AppBarLayout) findViewById(R.id.appbar));
         app.push(this);
-        final ActionBar actionBar = getActionBar();
+        final ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle("...");
         setupUpNavigation(toolbar);
         scrollTopFab = findViewById(R.id.scroll_top_fab);
@@ -797,7 +810,7 @@ public class ArticleCollectionActivity extends FragmentActivity {
         Log.d("updateTitle", ""+position + " count: " + articleCollectionPagerAdapter.getCount());
         Slob.Blob blob = articleCollectionPagerAdapter.get(position);
         Log.d("updateTitle", ""+blob);
-        ActionBar actionBar = getActionBar();
+        ActionBar actionBar = getSupportActionBar();
         if (blob != null) {
             String dictLabel = blob.owner.getTags().get("label");
             actionBar.setTitle(dictLabel);
@@ -922,11 +935,13 @@ public class ArticleCollectionActivity extends FragmentActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.article, menu);
         miBookmark = menu.findItem(R.id.action_bookmark_article);
-        Context themed = getActionBar().getThemedContext();
+        Context themed = getSupportActionBar().getThemedContext();
         if (icBookmark == null) {
             icBookmark = IconMaker.actionBar(themed, IconMaker.IC_BOOKMARK);
             icBookmarkO = IconMaker.actionBar(themed, IconMaker.IC_BOOKMARK_O);
         }
+        menu.findItem(R.id.action_find_in_page)
+                .setIcon(IconMaker.actionBar(themed, IconMaker.IC_SEARCH));
         menu.findItem(R.id.action_full_screen)
                 .setIcon(IconMaker.actionBar(themed, IconMaker.IC_EXPAND));
         return true;
@@ -963,8 +978,14 @@ public class ArticleCollectionActivity extends FragmentActivity {
         if (miBookmark == null) {
             return;
         }
-        miBookmark.setChecked(value);
+        // Two presentations for the same state, since ifRoom can put this item
+        // in either place: as a toolbar icon the filled-vs-outline glyph shows
+        // it; in the overflow (no icon there) the checkbox does. Set both so the
+        // state is right wherever the item currently lives. Title stays a plain
+        // "Bookmark" - the checkbox already conveys on/off, so a "Remove
+        // bookmark" relabel would be redundant next to a ticked box.
         miBookmark.setIcon(value ? icBookmark : icBookmarkO);
+        miBookmark.setChecked(value);
     }
 
     // The current page's WebView / url, or null while the loading screen is up.
@@ -1006,7 +1027,7 @@ public class ArticleCollectionActivity extends FragmentActivity {
             String url = currentUrl();
             if (url != null) {
                 Application app = (Application) getApplication();
-                if (item.isChecked()) {
+                if (app.isBookmarked(url)) {
                     app.removeBookmark(url);
                     displayBookmarked(false);
                 } else {

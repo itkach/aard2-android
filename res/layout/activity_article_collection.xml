@@ -22,15 +22,10 @@
         android:layout_height="wrap_content"
         android:fitsSystemWindows="true">
 
-        <android.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/toolbar_height"
-            android:background="?attr/colorPrimary"
-            android:titleTextColor="?attr/colorOnPrimary"
-            android:subtitleTextColor="?attr/colorOnPrimary"
-            android:theme="@style/ThemeOverlay.Aard2.Toolbar"
-            android:popupTheme="@style/ThemeOverlay.Aard2.ToolbarPopup" />
+        <!-- In its own file so it can be re-inflated on rotation to rebuild the
+             action menu for the new width - see article_toolbar.xml and
+             ArticleCollectionActivity.rebuildToolbarForWidth(). -->
+        <include layout="@layout/article_toolbar" />
 
     </com.google.android.material.appbar.AppBarLayout>
 

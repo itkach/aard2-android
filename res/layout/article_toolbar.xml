@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The article Toolbar, in its own file so it can be re-inflated on rotation.
+     A Toolbar-backed support ActionBar computes how many ifRoom items fit once,
+     when its ActionMenuPresenter is first built, and never again (nothing
+     forwards a config change to that presenter, and the Activity handles
+     rotation itself via configChanges so it is never recreated). Swapping in a
+     fresh Toolbar is the only public-API way to get a fresh presenter that
+     re-measures against the current orientation - see
+     ArticleCollectionActivity.rebuildToolbarForWidth(). Keeping the styling here
+     (rather than rebuilding it in Java) means the re-inflated Toolbar is
+     byte-for-byte identical to the original. -->
+<androidx.appcompat.widget.Toolbar
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/toolbar"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/toolbar_height"
+    android:background="?attr/colorPrimary"
+    app:titleTextColor="?attr/colorOnPrimary"
+    app:subtitleTextColor="?attr/colorOnPrimary"
+    android:theme="@style/ThemeOverlay.Aard2.Toolbar"
+    app:popupTheme="@style/ThemeOverlay.Aard2.ToolbarPopup" />
