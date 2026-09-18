@@ -25,8 +25,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.ImageView;
-import android.widget.SearchView;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -57,6 +55,13 @@ abstract class BlobDescriptorListFragment extends BaseListFragment {
     private final static String PREF_SORT_DIRECTION = "sortDir";
 
     private MenuItem miFilter = null;
+
+    // The filter is applied to the list only while the field is open. Collapsing
+    // unapplies it - so a collapsed field always means an unfiltered list - but
+    // remembers the text (filterText); reopening re-applies it. This mirrors
+    // find-in-page, which remembers its last query and re-runs it on reopen.
+    private String filterText = "";
+    private boolean filterExpanded = false;
 
     // "Back collapses an open filter" lives here (not MainActivity.onBackPressed)
     // so it participates in predictive back: the callback advertises whether it
@@ -405,55 +410,68 @@ abstract class BlobDescriptorListFragment extends BaseListFragment {
 
         miFilter = menu.findItem(R.id.action_filter);
         miFilter.setIcon(icFilter);
+        // Keep filterExpanded in sync with the actual state when the menu is
+        // (re)prepared - e.g. after a config change that recreates this view.
+        filterExpanded = miFilter.isActionViewExpanded();
         // The expand/collapse transition tells us the new state directly (unlike
         // isActionViewExpanded(), which still reads the old state inside these
         // callbacks). onHiddenChanged/syncFilterBackEnabled handle the rest.
         miFilter.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
             @Override
             public boolean onMenuItemActionExpand(MenuItem item) {
+                filterExpanded = true;
                 filterBackCallback.setEnabled(!isHidden());
+                // Re-apply the remembered query (collapse unapplied it). The field
+                // still shows filterText; only the list was left unfiltered.
+                getDescriptorList().setFilter(filterText);
+                // SearchView focused itself and raised the keyboard on expand; our
+                // SearchField is a plain view, so do it here (posted, since the
+                // action view isn't attached/measured yet at this point).
+                SearchField field = item.getActionView().findViewById(R.id.fldFilter);
+                field.post(field::showKeyboard);
                 return true;
             }
 
             @Override
             public boolean onMenuItemActionCollapse(MenuItem item) {
+                filterExpanded = false;
                 filterBackCallback.setEnabled(false);
+                // Unapply the filter on collapse so a collapsed field always means
+                // an unfiltered list - but keep filterText so reopening re-applies
+                // it, the way find-in-page remembers its last query.
+                getDescriptorList().setFilter("");
+                // SearchView lowered its keyboard on collapse; SearchField won't
+                // unless told to.
+                ((SearchField) item.getActionView().findViewById(R.id.fldFilter))
+                        .hideKeyboard();
                 return true;
             }
         });
         syncFilterBackEnabled();
 
-        View filterActionView = miFilter.getActionView();
-        SearchView searchView = (SearchView) filterActionView
+        SearchField filterField = (SearchField) miFilter.getActionView()
                 .findViewById(R.id.fldFilter);
-        // Swap the framework SearchView's leading glass for the filter funnel, so
-        // the expanded field's icon matches the funnel action button it came from
-        // (and reads as "filter", not "search"). The glass is an internal view
-        // with no public setter, reached by its framework id; guarded so a future
-        // platform that renames or drops it just falls back to the glass.
-        int magIconId = getResources().getIdentifier("search_mag_icon", "id", "android");
-        if (magIconId != 0) {
-            ImageView magIcon = searchView.findViewById(magIconId);
-            if (magIcon != null) {
-                magIcon.setImageDrawable(
-                        IconMaker.actionBar(getActivity(), IconMaker.IC_FILTER));
-            }
-        }
-        searchView.setQueryHint(miFilter.getTitle());
-        searchView.setQuery(list.getFilter(), true);
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+        // The funnel matches the action button the field expands from (and reads
+        // as "filter", not "search") - just an icon now, no reaching into a
+        // SearchView's internals.
+        filterField.setIcon(IconMaker.actionBar(getActivity(), IconMaker.IC_FILTER));
+        filterField.setQueryHint(miFilter.getTitle());
+        // Restore the remembered text (not list.getFilter(), which is "" whenever
+        // the field is collapsed). The change listener applies it only if the
+        // field is currently open.
+        filterField.setQuery(filterText, false);
+        filterField.setOnQueryTextListener(new SearchField.OnQueryTextListener() {
             @Override
-            public boolean onQueryTextSubmit(String query) {
-                return true;
-            }
+            public void onQueryTextSubmit(String query) {}
 
             @Override
-            public boolean onQueryTextChange(String newText) {
-                BlobDescriptorList list = getDescriptorList();
-                if (!newText.equals(list.getFilter())) {
+            public void onQueryTextChange(String newText) {
+                filterText = newText;
+                // Apply live only while the field is open; a change fired while
+                // collapsed (e.g. the restore above) just updates the memory.
+                if (filterExpanded && !newText.equals(getDescriptorList().getFilter())) {
                     getDescriptorList().setFilter(newText);
                 }
-                return true;
             }
         });
         setSortOrder(menu.findItem(R.id.action_sort_order), list.getSortOrder());

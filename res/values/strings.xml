@@ -110,6 +110,7 @@
     <string name="setting_record_history_off_title">Turn off history?</string>
     <string name="setting_record_history_off_message">Your recorded history will be deleted.</string>
     <string name="setting_record_history_off_confirm">Turn off</string>
+    <string name="action_clear_query">Clear</string>
     <string name="find_hint">Find in page</string>
     <string name="find_next">Next</string>
     <string name="find_previous">Previous</string>

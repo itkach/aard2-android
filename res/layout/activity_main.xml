@@ -72,19 +72,18 @@
                 android:padding="12dp"
                 android:visibility="gone" />
 
-            <!-- Fixed 40dp (not wrap_content, which the framework SearchView
-                 measures to a taller ~48dp min, leaving the query text floating
-                 well above its underline and forcing a taller Toolbar). At 40dp,
-                 centred in the 48dp Toolbar, the box is compact and the
-                 text-to-underline gap tightens. -->
-            <SearchView
+            <!-- Fixed 40dp, centred in the 48dp Toolbar, for a compact box. Icon
+                 and hint are set in MainActivity; visibility is toggled per tab
+                 (shown only for Lookup). paddingStart insets the glass from the
+                 screen edge (contentInsetStart is 0 so the box spans full width);
+                 the Filter/find fields don't need it since they follow a back
+                 button. -->
+            <itkach.aard2.SearchField
                 android:id="@+id/fldLookup"
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
                 android:layout_gravity="center_vertical|start"
-                android:iconifiedByDefault="false"
-                android:queryHint="@string/action_lookup"
-                android:imeOptions="flagNoExtractUi"
+                android:paddingStart="12dp"
                 android:visibility="gone" />
 
         </androidx.appcompat.widget.Toolbar>

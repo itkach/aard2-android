@@ -12,31 +12,31 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.SearchView;
 
 class FindActionModeCallback implements ActionMode.Callback,
-        SearchView.OnQueryTextListener {
+        SearchField.OnQueryTextListener {
 
-    private final SearchView searchView;
+    private final SearchField searchField;
     private final SearchableWebView webview;
     private final InputMethodManager imManager;
 
     FindActionModeCallback(Context context, SearchableWebView webview) {
         this.webview = webview;
-        // Theme the field to match the Toolbar the find bar overlays: the same
-        // overlay the Toolbar's own SearchView-style hint/icons use paints this
-        // SearchView's text, hint, search glass and clear button in
-        // colorOnPrimary against the colorPrimary bar (actionModeStyle).
+        // Theme the field to match the Toolbar the find bar overlays: the overlay
+        // paints the field's text, hint, glass and clear button in colorOnPrimary
+        // against the colorPrimary bar (actionModeStyle).
         Context themed = new ContextThemeWrapper(context, R.style.ThemeOverlay_Aard2_Toolbar);
-        searchView = (SearchView) LayoutInflater.from(themed).inflate(R.layout.webview_find, null);
-        searchView.setOnQueryTextListener(this);
+        searchField = (SearchField) LayoutInflater.from(themed).inflate(R.layout.webview_find, null);
+        searchField.setIcon(IconMaker.actionBar(themed, IconMaker.IC_SEARCH));
+        searchField.setQueryHint(context.getString(R.string.find_hint));
+        searchField.setOnQueryTextListener(this);
         imManager = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
     }
 
     /* Place text in the field so it can be searched for. Setting the query fires
      * onQueryTextChange, which runs the find, so callers needn't also call it. */
     void setText(String text) {
-        searchView.setQuery(text, false);
+        searchField.setQuery(text, false);
     }
 
     /*
@@ -50,31 +50,34 @@ class FindActionModeCallback implements ActionMode.Callback,
 
     /* Highlight all instances of the current query in the webview. */
     void findAll() {
-        webview.findAllAsync(searchView.getQuery().toString());
+        webview.findAllAsync(searchField.getQuery().toString());
     }
 
     void showSoftInput() {
-        // imManager.showSoftInputMethod doesn't work
-        imManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+        // Focus the field and raise the keyboard via the field itself (targets its
+        // inner EditText, the IME's served view). Posted because this is called
+        // right after the ActionMode is created, before its bar is laid out - the
+        // same reason the Filter defers its showKeyboard.
+        searchField.post(searchField::showKeyboard);
     }
 
     // ActionMode.Callback implementation
     @Override
     public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-        mode.setCustomView(searchView);
+        mode.setCustomView(searchField);
         mode.getMenuInflater().inflate(R.menu.webview_find, menu);
 
         // Match the previous/next arrows to the Toolbar's own action icons: the
-        // same IconMaker.actionBar() glyphs (angle-up = previous, angle-down =
+        // same IconMaker.actionBar() glyphs (caret-up = previous, caret-down =
         // next), colorOnPrimary against the colorPrimary bar, replacing the
         // fixed-size AOSP ic_find_*_mtrl bitmaps the menu declares. A touch
-        // smaller than a standard app-bar icon so the solid chevrons don't read
-        // as heavy next to the field.
+        // smaller than a standard app-bar icon so they don't read as heavy next
+        // to the field.
         Context ctx = webview.getContext();
         menu.findItem(R.id.find_prev).setIcon(IconMaker.actionBar(ctx, IconMaker.IC_ANGLE_UP, 18));
         menu.findItem(R.id.find_next).setIcon(IconMaker.actionBar(ctx, IconMaker.IC_ANGLE_DOWN, 18));
 
-        searchView.requestFocus();
+        searchField.requestFocus();
         return true;
     }
 
@@ -82,7 +85,7 @@ class FindActionModeCallback implements ActionMode.Callback,
     public void onDestroyActionMode(ActionMode mode) {
         webview.clearMatches();
         imManager.hideSoftInputFromWindow(webview.getWindowToken(), 0);
-        webview.setLastFind(searchView.getQuery().toString());
+        webview.setLastFind(searchField.getQuery().toString());
     }
 
     @Override
@@ -104,17 +107,15 @@ class FindActionModeCallback implements ActionMode.Callback,
         return true;
     }
 
-    // SearchView.OnQueryTextListener implementation
+    // SearchField.OnQueryTextListener implementation
     @Override
-    public boolean onQueryTextChange(String newText) {
+    public void onQueryTextChange(String newText) {
         findAll();
-        return true;
     }
 
     @Override
-    public boolean onQueryTextSubmit(String query) {
+    public void onQueryTextSubmit(String query) {
         imManager.hideSoftInputFromWindow(webview.getWindowToken(), 0);
         findNext(true);
-        return true;
     }
 }

@@ -17,7 +17,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageButton;
-import android.widget.SearchView;
 import android.widget.Toast;
 
 import com.google.android.material.appbar.AppBarLayout;
@@ -53,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String PREF_LAST_SECTION = "lastSection";
 
     private BottomNavigationView bottomNav;
-    private SearchView searchView;
+    private SearchField searchView;
     private View btnRandomArticle;
     private Timer lookupTimer;
     private String[] titles;
@@ -79,20 +78,19 @@ public class MainActivity extends AppCompatActivity {
 
         lookupTimer = new Timer();
         searchView = toolbar.findViewById(R.id.fldLookup);
-        searchView.setSubmitButtonEnabled(false);
-        searchView.setOnCloseListener(() -> true);
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+        searchView.setIcon(IconMaker.actionBar(this, IconMaker.IC_SEARCH));
+        searchView.setQueryHint(getString(R.string.action_lookup));
+        searchView.setOnQueryTextListener(new SearchField.OnQueryTextListener() {
 
             TimerTask scheduledLookup = null;
 
             @Override
-            public boolean onQueryTextSubmit(String query) {
+            public void onQueryTextSubmit(String query) {
                 onQueryTextChange(query);
-                return true;
             }
 
             @Override
-            public boolean onQueryTextChange(String newText) {
+            public void onQueryTextChange(String newText) {
                 TimerTask doLookup = new TimerTask() {
                     @Override
                     public void run() {
@@ -112,7 +110,6 @@ public class MainActivity extends AppCompatActivity {
                     scheduledLookup = doLookup;
                     lookupTimer.schedule(doLookup, 600);
                 }
-                return true;
             }
         });
 
@@ -331,9 +328,18 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         searchView.setQuery(app.getLookupQuery(), true);
-        if (app.lastResult.getItemCount() > 0) {
-            searchView.clearFocus();
-        }
+        // Focus the Lookup box whenever the section becomes visible (app start or
+        // tab switch). With results already showing, just place the caret so they
+        // stay fully visible; with nothing to show yet, raise the keyboard too so
+        // the user can type straight away. Posted because on first show the box
+        // isn't laid out/attached yet (same reason the Filter defers its keyboard).
+        searchView.post(() -> {
+            if (app.lastResult.getItemCount() > 0) {
+                searchView.requestFocus();
+            } else {
+                searchView.showKeyboard();
+            }
+        });
     }
 
     // The multi-select CAB (Bookmarks/History) is themed and positioned entirely
@@ -355,6 +361,19 @@ public class MainActivity extends AppCompatActivity {
     protected void onDestroy() {
         lookupTimer.cancel();
         super.onDestroy();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Coming back to the app on the Lookup section - e.g. Back from an article
+        // opened via the dice - re-runs the reveal so the box is focused and the
+        // keyboard returns when there are no results (onPause hid it). On a tab
+        // switch this is driven by onPrepareOptionsMenu instead, which doesn't
+        // re-fire on a plain resume.
+        if (selectedPosition == LOOKUP) {
+            revealLookup();
+        }
     }
 
     @Override

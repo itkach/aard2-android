@@ -1,24 +1,16 @@
-<!-- The toolbar force-stretches a menu action view to the full action-bar
-     height (unlike the Lookup box, a raw Toolbar child that honours its own
-     height), so its underline would sit flush against the toolbar's bottom. The
-     vertical padding insets the search field within that stretched height so it
-     centres with a little breathing room below the underline, matching Lookup.
-     Separate top/bottom (not paddingVertical, which is API 26+) for minSdk.
-
-     iconifiedByDefault=false gives the same always-expanded look as Lookup and
-     find-in-page: the leading icon sits to the left, outside the underline,
-     rather than inside the hint where it vanishes on typing. That leading glyph
-     is swapped from the default search glass to the filter funnel in
-     BlobDescriptorListFragment. Collapsing back to the toolbar's funnel action
-     button is still driven by the menu item's collapseActionView, independent
-     of this. -->
-<SearchView xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The Bookmarks/History filter field, hosted as the action_filter menu item's
+     collapsible action view. Our SearchField (icon + text + clear, thin
+     underline) rather than a SearchView, so the funnel icon and the spacing are
+     plain layout instead of reach-into-internals hacks. The toolbar stretches an
+     action view to the full bar height, so a little vertical padding insets the
+     field to centre it with the underline off the bottom edge, matching Lookup
+     and find-in-page. Separate top/bottom (not paddingVertical, API 26+) for
+     minSdk. -->
+<itkach.aard2.SearchField
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/fldFilter"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:paddingTop="4dp"
-    android:paddingBottom="4dp"
-    android:actionViewClass="android.widget.SearchView"
-    android:iconifiedByDefault="false"
-    android:queryHint="Filter"
-    android:showAsAction="always" />
+    android:paddingBottom="4dp" />

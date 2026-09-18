@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Contents of the SearchField compound view (merged into its LinearLayout):
+     a leading icon outside the underline, then an edit "plate" carrying the thin
+     underline (search_field_underline) with the text field and a clear button.
+     Mirrors the platform SearchView layout we're replacing - icon-outside, thin
+     underline under the text/clear only - but with spacing we control directly
+     instead of reaching into SearchView internals. Colors come from the ambient
+     ThemeOverlay.Aard2.Toolbar (colorOnPrimary text/hint/cursor). -->
+<merge xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <ImageView
+        android:id="@+id/search_field_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:scaleType="center"
+        android:importantForAccessibility="no" />
+
+    <LinearLayout
+        android:id="@+id/search_field_plate"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="14dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:background="@drawable/search_field_underline">
+
+        <EditText
+            android:id="@+id/search_field_edit"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@null"
+            android:paddingTop="2dp"
+            android:paddingBottom="2dp"
+            android:inputType="text"
+            android:imeOptions="actionSearch|flagNoExtractUi|flagNoFullscreen"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:textSize="18sp"
+            android:importantForAutofill="no" />
+
+        <ImageButton
+            android:id="@+id/search_field_clear"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:paddingStart="6dp"
+            android:paddingEnd="6dp"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/action_clear_query"
+            android:visibility="gone" />
+
+    </LinearLayout>
+
+</merge>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- A thin bottom-only line, used as the search field's edit-plate background so
+     it reads like the platform SearchView's underline (which is what we're
+     replacing) rather than the chunky default EditText box. Only the bottom of
+     the stroke shows: the other three sides are pushed just outside the drawable
+     bounds by the negative insets. colorOnPrimary so it sits on the colorPrimary
+     toolbar. -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:top="-2dp" android:left="-2dp" android:right="-2dp">
+        <shape android:shape="rectangle">
+            <solid android:color="@android:color/transparent" />
+            <stroke android:width="1dp" android:color="?attr/colorOnPrimary" />
+        </shape>
+    </item>
+</layer-list>

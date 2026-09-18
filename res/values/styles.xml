@@ -122,9 +122,13 @@
     <style name="Widget.Aard2.ActionButton.CloseMode" parent="@style/Widget.AppCompat.ActionButton.CloseMode">
         <item name="tint">?attr/colorOnPrimary</item>
         <item name="android:tint">?attr/colorOnPrimary</item>
-        <!-- Down from AppCompat's 56dp, which padded the icon out and widened the
-             leading gap before the find field. -->
-        <item name="android:minWidth">40dp</item>
+        <!-- 56dp, identical to the Toolbar's navigation button, so the centred
+             back arrow lands exactly where the Toolbar's up arrow does and never
+             shifts when find toggles in/out. The gap before the field is handled
+             separately by pulling in the SearchView's glass inset (see
+             FindActionModeCallback), not by shrinking this button - a narrower
+             button moves the arrow off the Toolbar's position. -->
+        <item name="android:minWidth">56dp</item>
     </style>
 
     <style name="ThemeOverlay.Aard2.Toolbar" parent="@android:style/ThemeOverlay">
