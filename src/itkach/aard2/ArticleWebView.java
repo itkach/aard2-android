@@ -9,7 +9,6 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.net.Uri;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -307,14 +306,13 @@ public class ArticleWebView extends SearchableWebView {
             return false;
         }
         if (prefValue.equals(PREF_REMOTE_CONTENT_WIFI)) {
-            NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
-            if (networkInfo != null) {
-                int networkType = networkInfo.getType();
-                if (networkType == ConnectivityManager.TYPE_WIFI ||
-                        networkType == ConnectivityManager.TYPE_ETHERNET) {
-                    return true;
-                }
-            }
+            // The "When on Wi-Fi" option is really about not paying for data, and
+            // Wi-Fi is only a proxy for that - a phone on a mobile hotspot is on
+            // Wi-Fi but still metered. So implement it as "when unmetered", which
+            // is what the user means: it skips a metered hotspot (correctly, even
+            // though that's Wi-Fi) and honours any network the user has manually
+            // marked metered in system settings.
+            return !connectivityManager.isActiveNetworkMetered();
         }
         return false;
     }
