@@ -96,6 +96,15 @@ abstract class BlobDescriptorListFragment extends BaseListFragment {
 
     abstract BlobDescriptorList getDescriptorList();
 
+    // Show the spinner while the descriptor list is still loading from disk (see
+    // BlobDescriptorList.loadAsync). Its load-finished notifyDataSetChanged reaches
+    // the adapter observer, which re-runs updateEmptyViewVisibility to reveal the
+    // list.
+    @Override
+    protected boolean isListLoading() {
+        return getDescriptorList().isLoading();
+    }
+
     abstract String getItemClickAction();
 
     abstract int getDeleteConfirmationItemCountResId();

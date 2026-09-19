@@ -182,8 +182,11 @@ public class Application extends android.app.Application {
 
         dictionaries.load();
         lookup(initialQuery, false);
-        bookmarks.load();
-        history.load();
+        // Off the main thread: with history at up to 1000 entries this was a
+        // noticeable chunk of cold start. The Bookmarks/History fragments show a
+        // spinner (see BlobDescriptorList.isLoading) until it finishes.
+        bookmarks.loadAsync();
+        history.loadAsync();
     }
 
     static String readTextFile(InputStream is, int maxSize) throws IOException, FileTooBigException {

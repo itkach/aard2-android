@@ -113,13 +113,19 @@ public abstract class BaseListFragment extends SimpleListFragment {
         super.onDestroyView();
     }
 
+    // Lists whose data loads asynchronously (bookmarks/history) override this so
+    // the spinner keeps showing until the load finishes, even though the list is
+    // nominally "shown". Default: not loading.
+    protected boolean isListLoading() {
+        return false;
+    }
+
     // Coordinates the three states (loading spinner / empty view / list) in
     // one place, since RecyclerView has neither setListShown nor setEmptyView
     // of its own and the two would otherwise fight over the list's visibility.
     @Override
     public void setListShown(boolean shown) {
         listShown = shown;
-        setProgressVisible(!shown);
         updateEmptyViewVisibility();
     }
 
@@ -128,7 +134,9 @@ public abstract class BaseListFragment extends SimpleListFragment {
         if (recyclerView == null) {
             return;
         }
-        if (!listShown) {
+        boolean spinner = !listShown || isListLoading();
+        setProgressVisible(spinner);
+        if (spinner) {
             // Loading: only the spinner shows.
             recyclerView.setVisibility(View.GONE);
             if (emptyView != null) {

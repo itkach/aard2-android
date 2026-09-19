@@ -48,6 +48,9 @@ final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
     private int                             maxSize;
     private RuleBasedCollator               filterCollator;
     private Handler                         handler;
+    // True from loadAsync() until its results are merged in on the main thread.
+    // Read on the main thread only (set false there too), so no synchronization.
+    private boolean                         loading;
 
     BlobDescriptorList(Application app, DescriptorStore<BlobDescriptor> store) {
         this(app, store, 1000);
@@ -146,9 +149,25 @@ final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
         this.dataSetObservable.notifyInvalidated();
     }
 
-    void load() {
-        this.list.addAll(this.store.load(BlobDescriptor.class));
+    boolean isLoading() {
+        return loading;
+    }
+
+    // Load descriptors off the main thread. Reading and deserializing them from
+    // disk can be slow (history fills to maxSize = 1000 entries) and doing it in
+    // Application.onCreate dragged out cold start. isLoading() stays true from
+    // here until the results are merged in on the main thread; observers are
+    // notified at both ends, so a list fragment can show its spinner meanwhile.
+    // notifyDataSetChanged rebuilds and re-sorts the filtered view, so the merged
+    // items land in the fragment's current sort order.
+    void loadAsync() {
+        loading = true;
         notifyDataSetChanged();
+        Util.runAsync(() -> store.load(BlobDescriptor.class), loaded -> {
+            list.addAll(loaded);
+            loading = false;
+            notifyDataSetChanged();
+        });
     }
 
     private void doUpdateLastAccess(BlobDescriptor bd) {
