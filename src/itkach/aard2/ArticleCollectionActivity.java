@@ -14,7 +14,6 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.SystemClock;
@@ -510,44 +509,40 @@ public class ArticleCollectionActivity extends AppCompatActivity {
         final Intent intent = getIntent();
         final int position = intent.getIntExtra("position", 0);
 
-        AsyncTask<Void, Void, ArticleCollectionPagerAdapter> createAdapterTask = new AsyncTask<Void, Void, ArticleCollectionPagerAdapter>(){
-
-            Exception exception;
-
-            @Override
-            protected ArticleCollectionPagerAdapter doInBackground(Void ... params) {
-                ArticleCollectionPagerAdapter result = null;
-                Uri articleUrl = intent.getData();
-                try {
-                    if (articleUrl != null) {
-                        result = createFromUri(app, articleUrl);
+        // Holds an exception raised while building the adapter off the main
+        // thread, so the main-thread callback can surface it (the background work
+        // can't touch the UI). Single-element array = a mutable final capture.
+        final Exception[] exception = { null };
+        Util.runAsync(() -> {
+            ArticleCollectionPagerAdapter result = null;
+            Uri articleUrl = intent.getData();
+            try {
+                if (articleUrl != null) {
+                    result = createFromUri(app, articleUrl);
+                } else {
+                    String action = intent.getAction();
+                    if (action == null) {
+                        result = createFromLastResult(app);
+                    } else if (action.equals("showBookmarks")) {
+                        result = createFromBookmarks(app);
+                    } else if (action.equals("showHistory")) {
+                        result = createFromHistory(app);
                     } else {
-                        String action = intent.getAction();
-                        if (action == null) {
-                            result = createFromLastResult(app);
-                        } else if (action.equals("showBookmarks")) {
-                            result = createFromBookmarks(app);
-                        } else if (action.equals("showHistory")) {
-                            result = createFromHistory(app);
-                        } else {
-                            result = createFromIntent(app, intent);
-                        }
+                        result = createFromIntent(app, intent);
                     }
                 }
-                catch (Exception e) {
-                    this.exception = e;
-                }
-                return result;
             }
-
-            @Override
-            protected void onPostExecute(ArticleCollectionPagerAdapter adapter) {
+            catch (Exception e) {
+                exception[0] = e;
+            }
+            return result;
+        }, adapter -> {
                 if (isFinishing() || onDestroyCalled) {
                     return;
                 }
-                if (this.exception != null) {
+                if (exception[0] != null) {
                     Toast.makeText(ArticleCollectionActivity.this,
-                            this.exception.getLocalizedMessage(),
+                            exception[0].getLocalizedMessage(),
                             Toast.LENGTH_SHORT).show();
                     finish();
                     return;
@@ -642,10 +637,7 @@ public class ArticleCollectionActivity extends AppCompatActivity {
                 // Content ready: hide the spinner and reveal the pager in place.
                 ((ContentLoadingProgressBar) findViewById(R.id.loading_progress)).hide();
                 viewPager.setVisibility(View.VISIBLE);
-            }
-        };
-
-        createAdapterTask.execute();
+        });
 
     }
 

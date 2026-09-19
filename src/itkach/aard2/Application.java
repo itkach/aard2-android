@@ -10,7 +10,6 @@ import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.database.DataSetObserver;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
@@ -38,6 +37,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+import java.util.concurrent.Future;
 
 import itkach.slob.Slob;
 import itkach.slob.Slob.Blob;
@@ -172,7 +172,7 @@ public class Application extends android.app.Application {
                 }
                 slobber.setSlobs(slobs);
 
-                new EnableLinkHandling().execute(getActiveSlobs());
+                enableLinkHandling(getActiveSlobs());
 
                 lookup(lookupQuery);
                 bookmarks.notifyDataSetChanged();
@@ -379,7 +379,7 @@ public class Application extends android.app.Application {
     // this instead: refresh just what the active set feeds - the current lookup
     // and link handling - without touching a single file.
     void onActiveDictionariesChanged() {
-        new EnableLinkHandling().execute(getActiveSlobs());
+        enableLinkHandling(getActiveSlobs());
         lookup(lookupQuery);
     }
 
@@ -759,7 +759,12 @@ public class Application extends android.app.Application {
         return lookupQuery;
     }
 
-    private AsyncTask<Void, Void, Iterator<Blob>> currentLookupTask;
+    private Future<?> currentLookupTask;
+    // Bumped on every lookup so a result arriving from a superseded background
+    // find is discarded (the AsyncTask version relied on isCancelled() for this).
+    // Only touched on the main thread - lookup() and the delivered result both
+    // run there - so it needs no synchronization.
+    private int lookupGeneration;
 
     void lookup(String query) {
         this.lookup(query, true);
@@ -779,24 +784,15 @@ public class Application extends android.app.Application {
         }
 
         if (async) {
-            currentLookupTask = new AsyncTask<Void, Void, Iterator<Blob>>() {
-
-                @Override
-                protected Iterator<Blob> doInBackground(Void... params) {
-                    return find(query);
+            final int generation = ++lookupGeneration;
+            currentLookupTask = Util.runAsync(() -> find(query), result -> {
+                if (generation != lookupGeneration) {
+                    return;
                 }
-
-                @Override
-                protected void onPostExecute(Iterator<Blob> result) {
-                    if (!isCancelled()) {
-                        setLookupResult(query, result);
-                        notifyLookupFinished(query);
-                        currentLookupTask = null;
-                    }
-                }
-
-            };
-            currentLookupTask.execute();
+                setLookupResult(query, result);
+                notifyLookupFinished(query);
+                currentLookupTask = null;
+            });
         }
         else {
             setLookupResult(query, find(query));
@@ -837,10 +833,11 @@ public class Application extends android.app.Application {
     }
 
 
-    private class EnableLinkHandling extends AsyncTask<Slob, Void, Void> {
-
-        @Override
-        protected Void doInBackground(Slob[] slobs) {
+    // Fire-and-forget: toggle this app's per-host link-handling activities to
+    // match the active dictionaries' "uri" hosts. Runs off the main thread (it
+    // queries and edits PackageManager component state); nothing waits on it.
+    private void enableLinkHandling(Slob[] slobs) {
+        Util.runAsync(() -> {
             Set<String> hosts = new HashSet<String>();
             for (Slob slob : slobs) {
                 try {
@@ -865,7 +862,6 @@ public class Application extends android.app.Application {
                 Log.d(TAG, "Done getting available activities in " + (System.currentTimeMillis() - t0));
                 t0 = System.currentTimeMillis();
                 for (ActivityInfo activityInfo : p.activities) {
-                    if (isCancelled()) break;
                     if (activityInfo.targetActivity != null) {
                         boolean enabled = hosts.contains(activityInfo.name);
                         if (enabled) {
@@ -880,7 +876,6 @@ public class Application extends android.app.Application {
                 Log.w(TAG, e);
             }
             Log.d(TAG, "Done enabling activities in " + (System.currentTimeMillis() - t0));
-            return null;
-        }
+        });
     }
 }

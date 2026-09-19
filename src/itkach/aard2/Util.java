@@ -1,18 +1,57 @@
 package itkach.aard2;
 
 import android.net.Uri;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.Spanned;
 import android.util.Log;
 
 import androidx.core.text.HtmlCompat;
+import androidx.core.util.Consumer;
 
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 class Util {
 
     static final String TAG = Util.class.getSimpleName();
+
+    // Background-then-main-thread execution: the java.util.concurrent replacement
+    // for AsyncTask (deprecated in API 30). There is no AndroidX drop-in class,
+    // and coroutines are Kotlin-only, so Google's own guidance is an Executor
+    // plus a main-thread Handler - this just wires those together once, with the
+    // stock Callable/Consumer interfaces, rather than repeating the plumbing at
+    // every call site.
+    private static final ExecutorService BACKGROUND = Executors.newCachedThreadPool();
+    private static final Handler MAIN = new Handler(Looper.getMainLooper());
+
+    // Run work off the main thread; deliver its result to onResult back on the
+    // main thread. The returned Future lets a caller cancel work not yet started
+    // (a result that still arrives can be ignored by the caller). work should
+    // handle its own exceptions if the result must be meaningful; anything that
+    // escapes is logged and delivered as null.
+    static <T> Future<?> runAsync(Callable<T> work, Consumer<T> onResult) {
+        return BACKGROUND.submit(() -> {
+            T result = null;
+            try {
+                result = work.call();
+            } catch (Exception e) {
+                Log.w(TAG, "Background task failed", e);
+            }
+            final T delivered = result;
+            MAIN.post(() -> onResult.accept(delivered));
+        });
+    }
+
+    // Fire-and-forget background work with no result to deliver.
+    static void runAsync(Runnable work) {
+        BACKGROUND.execute(work);
+    }
 
     static int compare(long l1, long l2) {
         return l1 < l2 ? -1 : (l1 == l2 ? 0 : 1);
