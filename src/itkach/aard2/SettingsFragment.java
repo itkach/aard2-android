@@ -1,5 +1,7 @@
 package itkach.aard2;
 
+import static itkach.aard2.Util.fromHtml;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
@@ -10,7 +12,6 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -253,7 +254,7 @@ public class SettingsFragment extends Fragment {
         TextView licenseView = view.findViewById(R.id.application_license);
         licenseView.setOnClickListener(v ->
                 startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(licenseUrl))));
-        licenseView.setText(Html.fromHtml(license.trim()));
+        licenseView.setText(fromHtml(license.trim()));
 
         String versionName;
         try {
@@ -263,7 +264,7 @@ public class SettingsFragment extends Fragment {
             versionName = "?";
         }
         ((TextView) view.findViewById(R.id.application_version))
-                .setText(Html.fromHtml(getString(R.string.application_version, versionName)));
+                .setText(fromHtml(getString(R.string.application_version, versionName)));
     }
 
     private void onCssSelected(int resultCode, Intent data) {

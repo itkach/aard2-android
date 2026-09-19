@@ -1,5 +1,7 @@
 package itkach.aard2;
 
+import static itkach.aard2.Util.fromHtml;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
@@ -13,7 +15,6 @@ import androidx.annotation.NonNull;
 import androidx.documentfile.provider.DocumentFile;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
-import android.text.Html;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.style.ImageSpan;
@@ -321,7 +322,7 @@ public class DictionaryListAdapter extends RecyclerView.Adapter<DictionaryListAd
 
         TextView sourceView = (TextView) view.findViewById(R.id.dictionary_source);
         String source = desc.tags.get("source");
-        CharSequence sourceHtml = Html.fromHtml(String.format(hrefTemplate, source, source));
+        CharSequence sourceHtml = fromHtml(String.format(hrefTemplate, source, source));
         sourceView.setText(sourceHtml);
         sourceView.setTag(source);
 
@@ -351,7 +352,7 @@ public class DictionaryListAdapter extends RecyclerView.Adapter<DictionaryListAd
             if (Util.isBlank(licenseName)) {
                 licenseName = licenseUrl;
             }
-            license = Html.fromHtml(String.format(hrefTemplate, licenseUrl, licenseName));
+            license = fromHtml(String.format(hrefTemplate, licenseUrl, licenseName));
         }
         licenseView.setText(license);
         licenseView.setTag(licenseUrl);

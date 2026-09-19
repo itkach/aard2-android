@@ -1,7 +1,10 @@
 package itkach.aard2;
 
 import android.net.Uri;
+import android.text.Spanned;
 import android.util.Log;
+
+import androidx.core.text.HtmlCompat;
 
 import java.util.Collections;
 import java.util.Comparator;
@@ -13,6 +16,14 @@ class Util {
 
     static int compare(long l1, long l2) {
         return l1 < l2 ? -1 : (l1 == l2 ? 0 : 1);
+    }
+
+    // Stand-in for the single-argument Html.fromHtml, deprecated in API 24 in
+    // favour of a two-argument form that takes a flag - a flag whose only
+    // legacy-behaviour value reproduces exactly what the old method did. Rather
+    // than spell that out at every call site, wrap it once.
+    static Spanned fromHtml(String source) {
+        return HtmlCompat.fromHtml(source, HtmlCompat.FROM_HTML_MODE_LEGACY);
     }
 
     static <T extends Comparable<? super T>> void sort(List<T> list) {

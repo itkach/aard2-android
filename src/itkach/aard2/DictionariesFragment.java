@@ -1,6 +1,7 @@
 package itkach.aard2;
 
 import static android.view.View.OnClickListener;
+import static itkach.aard2.Util.fromHtml;
 
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
@@ -14,7 +15,6 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
-import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -44,7 +44,7 @@ public class DictionariesFragment extends BaseListFragment {
     }
 
     protected CharSequence getEmptyText() {
-        return Html.fromHtml(getString(R.string.main_empty_dictionaries));
+        return fromHtml(getString(R.string.main_empty_dictionaries));
     }
 
     @Override
