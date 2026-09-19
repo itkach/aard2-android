@@ -13,7 +13,6 @@ import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
-import android.webkit.WebView;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsControllerCompat;
@@ -103,7 +102,6 @@ public class Application extends android.app.Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        WebView.setWebContentsDebuggingEnabled(true);
         articleActivities = Collections.synchronizedList(new ArrayList<Activity>());
 
         mapper = new ObjectMapper();
