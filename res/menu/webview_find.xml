@@ -1,15 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <!-- Icons are set programmatically in
-         FindActionModeCallback.onCreateActionMode via IconMaker (angle-up =
-         previous, angle-down = next) so they match every other action-bar
-         icon; hence no android:icon here. -->
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <!-- Icons are set programmatically in FindActionModeCallback via IconMaker,
+         so there's no android:icon here. -->
     <item android:id="@+id/find_prev"
-        android:showAsAction="always"
+        app:showAsAction="always"
         android:title="@string/find_previous"
         />
     <item android:id="@+id/find_next"
-        android:showAsAction="always"
+        app:showAsAction="always"
         android:title="@string/find_next"
         />
 </menu>
