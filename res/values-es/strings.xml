@@ -75,7 +75,7 @@
     <string name="msg_no_activity_to_get_content">Sin actividad disponible para abrir el archivo</string>
     <string name="setting_fav_random_search">Usar únicamente diccionarios favoritos para búsquedas aleatorias</string>
     <string name="article_collection_invalid_link">Enlace inválido</string>
-    <string name="setting_ui_theme">Estilo de Interfaz de usuario Interface Style</string>
+    <string name="setting_ui_theme">Estilo de interfaz de usuario</string>
     <string name="setting_ui_theme_light">Claro</string>
     <string name="setting_ui_theme_dark">Oscuro</string>
     <string name="action_load_remote_content">Load Remote Content</string>
