@@ -169,4 +169,12 @@
         <item name="android:textColor">?attr/colorOnSurfaceVariant</item>
     </style>
 
+    <!-- Circular floating action buttons - the article view's scroll-to-top and
+         exit-full-screen buttons - overriding Material3's default rounded-square
+         FAB shape. -->
+    <style name="ShapeAppearanceOverlay.Aard2.Fab" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%</item>
+    </style>
+
 </resources>

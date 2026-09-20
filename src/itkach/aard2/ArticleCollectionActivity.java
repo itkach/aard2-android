@@ -99,7 +99,7 @@ public class ArticleCollectionActivity extends AppCompatActivity {
     private static final long HIDE_DELAY_MS = 1200;
     private static final long ACTIVE_WINDOW_MS = 150;
     private static final int MIN_SCROLL_RUN = 3;   // events to count as a real scroll
-    private static final float FAB_ALPHA = 0.65f;
+    private static final float FAB_ALPHA = 0.7f;
 
     private FloatingActionButton scrollTopFab;
     private long lastScrollAt;
@@ -479,7 +479,7 @@ public class ArticleCollectionActivity extends AppCompatActivity {
         // the up-chevron is drawn in the on-container role against the FAB's
         // container background.
         scrollTopFab.setImageTintList(null);
-        scrollTopFab.setImageDrawable(IconMaker.make(this, IconMaker.IC_ANGLE_UP, 22,
+        scrollTopFab.setImageDrawable(IconMaker.make(this, IconMaker.IC_ANGLE_UP, 20,
                 themeColor(com.google.android.material.R.attr.colorOnPrimaryContainer)));
         scrollTopFab.setOnClickListener(v -> {
             ArticleWebView webView = articleCollectionPagerAdapter == null ? null
