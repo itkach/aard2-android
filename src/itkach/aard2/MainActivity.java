@@ -52,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String PREF_LAST_SECTION = "lastSection";
 
     private BottomNavigationView bottomNav;
-    private SearchField searchView;
+    private SearchField lookupField;
     private View btnRandomArticle;
     private Timer lookupTimer;
     private String[] titles;
@@ -77,10 +77,10 @@ public class MainActivity extends AppCompatActivity {
         actionBar.setDisplayHomeAsUpEnabled(false);
 
         lookupTimer = new Timer();
-        searchView = toolbar.findViewById(R.id.fldLookup);
-        searchView.setIcon(IconMaker.actionBar(this, IconMaker.IC_SEARCH));
-        searchView.setQueryHint(getString(R.string.action_lookup));
-        searchView.setOnQueryTextListener(new SearchField.OnQueryTextListener() {
+        lookupField = toolbar.findViewById(R.id.fldLookup);
+        lookupField.setIcon(IconMaker.actionBar(this, IconMaker.IC_SEARCH));
+        lookupField.setQueryHint(getString(R.string.action_lookup));
+        lookupField.setOnQueryTextListener(new SearchField.OnQueryTextListener() {
 
             TimerTask scheduledLookup = null;
 
@@ -94,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
                 TimerTask doLookup = new TimerTask() {
                     @Override
                     public void run() {
-                        final String query = searchView.getQuery().toString();
+                        final String query = lookupField.getQuery().toString();
                         if (app.getLookupQuery().equals(query)) {
                             return;
                         }
@@ -102,7 +102,7 @@ public class MainActivity extends AppCompatActivity {
                         scheduledLookup = null;
                     }
                 };
-                final String query = searchView.getQuery().toString();
+                final String query = lookupField.getQuery().toString();
                 if (!app.getLookupQuery().equals(query)) {
                     if (scheduledLookup != null) {
                         scheduledLookup.cancel();
@@ -308,7 +308,7 @@ public class MainActivity extends AppCompatActivity {
         boolean result = super.onPrepareOptionsMenu(menu);
         boolean isLookup = selectedPosition == LOOKUP;
         getSupportActionBar().setTitle(titles[selectedPosition]);
-        searchView.setVisibility(isLookup ? View.VISIBLE : View.GONE);
+        lookupField.setVisibility(isLookup ? View.VISIBLE : View.GONE);
         btnRandomArticle.setVisibility(isLookup ? View.VISIBLE : View.GONE);
         if (isLookup) {
             revealLookup();
@@ -327,17 +327,17 @@ public class MainActivity extends AppCompatActivity {
                 app.lookup(clipboard.toString(), false);
             }
         }
-        searchView.setQuery(app.getLookupQuery(), true);
+        lookupField.setQuery(app.getLookupQuery(), true);
         // Focus the Lookup box whenever the section becomes visible (app start or
         // tab switch). With results already showing, just place the caret so they
         // stay fully visible; with nothing to show yet, raise the keyboard too so
         // the user can type straight away. Posted because on first show the box
         // isn't laid out/attached yet (same reason the Filter defers its keyboard).
-        searchView.post(() -> {
+        lookupField.post(() -> {
             if (app.lastResult.getItemCount() > 0) {
-                searchView.requestFocus();
+                lookupField.requestFocus();
             } else {
-                searchView.showKeyboard();
+                lookupField.showKeyboard();
             }
         });
     }
