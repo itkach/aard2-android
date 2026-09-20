@@ -1,7 +1,7 @@
 <activity-alias
     android:enabled="false"
     android:name="{lang}.{project}.org"
-    android:targetActivity=".ArticleCollectionActivity"
+    android:targetActivity=".ExternalArticleActivity"
     android:exported="true"
     >
 

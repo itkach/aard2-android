@@ -36,8 +36,21 @@
             </intent-filter>
         </activity>
 
+        <!-- In-app article view: default task affinity, so an article opened from
+             within the app stays on top of the main task and is restored when the
+             app is relaunched from the launcher. Started only by explicit intent
+             from within the app, hence not exported and no intent filters. -->
         <activity
             android:name=".ArticleCollectionActivity"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
+            android:exported="false" />
+
+        <!-- External article entry (shared text, colordict/aard2 lookup, and the
+             per-wiki link aliases below): its own empty taskAffinity plus
+             excludeFromRecents put an article opened from another app in an
+             isolated, recents-hidden task, separate from the app's main task. -->
+        <activity
+            android:name=".ExternalArticleActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
             android:excludeFromRecents="true"
             android:taskAffinity=""
@@ -69,7 +82,7 @@
         <activity-alias
     android:enabled="false"
     android:name="ar.wikipedia.org"
-    android:targetActivity=".ArticleCollectionActivity"
+    android:targetActivity=".ExternalArticleActivity"
     android:exported="true"
     >
 
@@ -91,7 +104,7 @@
 <activity-alias
     android:enabled="false"
     android:name="ar.wiktionary.org"
-    android:targetActivity=".ArticleCollectionActivity"
+    android:targetActivity=".ExternalArticleActivity"
     android:exported="true"
     >
 
@@ -113,7 +126,7 @@
 <activity-alias
     android:enabled="false"
     android:name="de.wikipedia.org"
-    android:targetActivity=".ArticleCollectionActivity"
+    android:targetActivity=".ExternalArticleActivity"
     android:exported="true"
     >
 
@@ -135,7 +148,7 @@
 <activity-alias
     android:enabled="false"
     android:name="de.wiktionary.org"
-    android:targetActivity=".ArticleCollectionActivity"
+    android:targetActivity=".ExternalArticleActivity"
     android:exported="true"
     >
 
@@ -157,7 +170,7 @@
 <activity-alias
     android:enabled="false"
     android:name="en.wikipedia.org"
-    android:targetActivity=".ArticleCollectionActivity"
+    android:targetActivity=".ExternalArticleActivity"
     android:exported="true"
     >
 
@@ -179,7 +192,7 @@
 <activity-alias
     android:enabled="false"
     android:name="en.wiktionary.org"
-    android:targetActivity=".ArticleCollectionActivity"
+    android:targetActivity=".ExternalArticleActivity"
     android:exported="true"
     >
 
@@ -201,7 +214,7 @@
 <activity-alias
     android:enabled="false"
     android:name="es.wikipedia.org"
-    android:targetActivity=".ArticleCollectionActivity"
+    android:targetActivity=".ExternalArticleActivity"
     android:exported="true"
     >
 
@@ -223,7 +236,7 @@
 <activity-alias
     android:enabled="false"
     android:name="es.wiktionary.org"
-    android:targetActivity=".ArticleCollectionActivity"
+    android:targetActivity=".ExternalArticleActivity"
     android:exported="true"
     >
 
@@ -245,7 +258,7 @@
 <activity-alias
     android:enabled="false"
     android:name="fa.wikipedia.org"
-    android:targetActivity=".ArticleCollectionActivity"
+    android:targetActivity=".ExternalArticleActivity"
     android:exported="true"
     >
 
@@ -267,7 +280,7 @@
 <activity-alias
     android:enabled="false"
     android:name="fa.wiktionary.org"
-    android:targetActivity=".ArticleCollectionActivity"
+    android:targetActivity=".ExternalArticleActivity"
     android:exported="true"
     >
 
@@ -289,7 +302,7 @@
 <activity-alias
     android:enabled="false"
     android:name="fr.wikipedia.org"
-    android:targetActivity=".ArticleCollectionActivity"
+    android:targetActivity=".ExternalArticleActivity"
     android:exported="true"
     >
 
@@ -311,7 +324,7 @@
 <activity-alias
     android:enabled="false"
     android:name="fr.wiktionary.org"
-    android:targetActivity=".ArticleCollectionActivity"
+    android:targetActivity=".ExternalArticleActivity"
     android:exported="true"
     >
 
@@ -333,7 +346,7 @@
 <activity-alias
     android:enabled="false"
     android:name="it.wikipedia.org"
-    android:targetActivity=".ArticleCollectionActivity"
+    android:targetActivity=".ExternalArticleActivity"
     android:exported="true"
     >
 
@@ -355,7 +368,7 @@
 <activity-alias
     android:enabled="false"
     android:name="it.wiktionary.org"
-    android:targetActivity=".ArticleCollectionActivity"
+    android:targetActivity=".ExternalArticleActivity"
     android:exported="true"
     >
 
@@ -377,7 +390,7 @@
 <activity-alias
     android:enabled="false"
     android:name="ja.wikipedia.org"
-    android:targetActivity=".ArticleCollectionActivity"
+    android:targetActivity=".ExternalArticleActivity"
     android:exported="true"
     >
 
@@ -399,7 +412,7 @@
 <activity-alias
     android:enabled="false"
     android:name="ja.wiktionary.org"
-    android:targetActivity=".ArticleCollectionActivity"
+    android:targetActivity=".ExternalArticleActivity"
     android:exported="true"
     >
 
@@ -421,7 +434,7 @@
 <activity-alias
     android:enabled="false"
     android:name="nl.wikipedia.org"
-    android:targetActivity=".ArticleCollectionActivity"
+    android:targetActivity=".ExternalArticleActivity"
     android:exported="true"
     >
 
@@ -443,7 +456,7 @@
 <activity-alias
     android:enabled="false"
     android:name="nl.wiktionary.org"
-    android:targetActivity=".ArticleCollectionActivity"
+    android:targetActivity=".ExternalArticleActivity"
     android:exported="true"
     >
 
@@ -465,7 +478,7 @@
 <activity-alias
     android:enabled="false"
     android:name="pl.wikipedia.org"
-    android:targetActivity=".ArticleCollectionActivity"
+    android:targetActivity=".ExternalArticleActivity"
     android:exported="true"
     >
 
@@ -487,7 +500,7 @@
 <activity-alias
     android:enabled="false"
     android:name="pl.wiktionary.org"
-    android:targetActivity=".ArticleCollectionActivity"
+    android:targetActivity=".ExternalArticleActivity"
     android:exported="true"
     >
 
@@ -509,7 +522,7 @@
 <activity-alias
     android:enabled="false"
     android:name="pt.wikipedia.org"
-    android:targetActivity=".ArticleCollectionActivity"
+    android:targetActivity=".ExternalArticleActivity"
     android:exported="true"
     >
 
@@ -531,7 +544,7 @@
 <activity-alias
     android:enabled="false"
     android:name="pt.wiktionary.org"
-    android:targetActivity=".ArticleCollectionActivity"
+    android:targetActivity=".ExternalArticleActivity"
     android:exported="true"
     >
 
@@ -553,7 +566,7 @@
 <activity-alias
     android:enabled="false"
     android:name="ru.wikipedia.org"
-    android:targetActivity=".ArticleCollectionActivity"
+    android:targetActivity=".ExternalArticleActivity"
     android:exported="true"
     >
 
@@ -575,7 +588,7 @@
 <activity-alias
     android:enabled="false"
     android:name="ru.wiktionary.org"
-    android:targetActivity=".ArticleCollectionActivity"
+    android:targetActivity=".ExternalArticleActivity"
     android:exported="true"
     >
 
@@ -597,7 +610,7 @@
 <activity-alias
     android:enabled="false"
     android:name="uk.wikipedia.org"
-    android:targetActivity=".ArticleCollectionActivity"
+    android:targetActivity=".ExternalArticleActivity"
     android:exported="true"
     >
 
@@ -619,7 +632,7 @@
 <activity-alias
     android:enabled="false"
     android:name="uk.wiktionary.org"
-    android:targetActivity=".ArticleCollectionActivity"
+    android:targetActivity=".ExternalArticleActivity"
     android:exported="true"
     >
 
@@ -641,7 +654,7 @@
 <activity-alias
     android:enabled="false"
     android:name="zh.wikipedia.org"
-    android:targetActivity=".ArticleCollectionActivity"
+    android:targetActivity=".ExternalArticleActivity"
     android:exported="true"
     >
 
@@ -663,7 +676,7 @@
 <activity-alias
     android:enabled="false"
     android:name="zh.wiktionary.org"
-    android:targetActivity=".ArticleCollectionActivity"
+    android:targetActivity=".ExternalArticleActivity"
     android:exported="true"
     >
 
