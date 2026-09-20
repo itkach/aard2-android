@@ -131,7 +131,6 @@
             android:text="100,000 items"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
             android:layout_marginBottom="6dp"
             />
 
@@ -158,7 +157,6 @@
                 android:text="2014 Wikipedia editors and contributors"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
                 />
 
         </LinearLayout>
@@ -213,7 +211,6 @@
                 android:text="http://en.wikipedia.org"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
                 />
 
         </LinearLayout>

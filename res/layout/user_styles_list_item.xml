@@ -30,8 +30,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/user_styles_list_btn_delete"
             android:layout_gravity="right|center_vertical"
-            android:padding="10dp"
-            android:layout_alignParentRight="true"/>
+            android:padding="10dp"/>
     </LinearLayout>
 
 </LinearLayout>

@@ -35,7 +35,6 @@
                 style="@style/TextAppearance.Aard2.ListSubtitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
                 android:layout_weight="1"
                 android:text="WordNet" />
 
@@ -44,7 +43,6 @@
                 style="@style/TextAppearance.Aard2.ListCaption"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
                 android:paddingLeft="6dp"
                 android:text="1 day ago"
                 android:textStyle="italic" />
