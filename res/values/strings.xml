@@ -43,7 +43,7 @@
     <string name="application_home_url" translatable="false">http://aarddict.org</string>
     <string name="application_copyright" translatable="false">Igor Tkach</string>
     <string name="application_license_name">GNU General Public License v3</string>
-    <string name="application_license_url">https://gnu.org/licenses/gpl.html</string>
+    <string name="application_license_url" translatable="false">https://gnu.org/licenses/gpl.html</string>
     <string name="application_license" translatable="false">
         <![CDATA[
             <a href="%1$s">%2$s</a>

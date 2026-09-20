@@ -38,7 +38,6 @@
     <string name="setting_remote_content">Last inn innhold fra annensteds hen</string>
     <string name="setting_about_section">Om</string>
     <string name="application_license_name">GNU General Public Lisens v3</string>
-    <string name="application_license_url">https://gnu.org/licenses/gpl.html</string>
 
     <string name="application_version">Versjon %1$s</string>
     <string name="article_collection_nothing_found">Fant ikke noe</string>

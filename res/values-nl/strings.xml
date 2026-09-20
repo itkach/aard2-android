@@ -38,7 +38,6 @@
     <string name="setting_remote_content">Externe inhoud laden</string>
     <string name="setting_about_section">Over</string>
     <string name="application_license_name">GNU General Public License v3</string>
-    <string name="application_license_url">https://gnu.org/licenses/gpl.html</string>
     <string name="application_version">Versie %1$s</string>
     <string name="article_collection_nothing_found">Niks gevonden</string>
     <string name="article_collection_selected_not_available">Het geselecteerde artikel is niet beschikbaar.</string>

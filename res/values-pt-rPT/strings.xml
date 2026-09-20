@@ -38,7 +38,6 @@
     <string name="setting_remote_content">Carregar conteúdo da web</string>
     <string name="setting_about_section">Sobre</string>
     <string name="application_license_name">GNU General Public License v3</string>
-    <string name="application_license_url">https://gnu.org/licenses/gpl.html</string>
     <string name="application_version">Versão %1$s</string>
     <string name="article_collection_nothing_found">Sem resultados</string>
     <string name="article_collection_selected_not_available">O artigo selecionado não está disponível</string>
