@@ -16,9 +16,11 @@ import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 import itkach.slob.Slob;
 
@@ -164,7 +166,26 @@ final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
         loading = true;
         notifyDataSetChanged();
         Util.runAsync(() -> store.load(BlobDescriptor.class), loaded -> {
-            list.addAll(loaded);
+            // Merge rather than addAll. An entry the user created while this was
+            // loading - e.g. opening or bookmarking an article reached straight
+            // from a link before the load finished - is already in the list, and
+            // add() couldn't dedupe against it (it wasn't loaded yet), so it also
+            // wrote its own store file. Keep that fresh copy and drop the stale
+            // duplicate now read from disk. equals()/hashCode() are by article
+            // identity, not the per-entry store id, so the set matches across the
+            // two files (and catches any pre-existing duplicate files too).
+            // Membership is via a HashSet: with up to maxSize entries a contains()
+            // scan per loaded item would be quadratic. All of this runs on the
+            // main thread, as do all list mutations, so the list is never touched
+            // concurrently - the background task only reads the store.
+            Set<BlobDescriptor> seen = new HashSet<>(list);
+            for (BlobDescriptor bd : loaded) {
+                if (seen.add(bd)) {
+                    list.add(bd);
+                } else {
+                    store.delete(bd.id);
+                }
+            }
             loading = false;
             notifyDataSetChanged();
         });
