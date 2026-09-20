@@ -84,4 +84,19 @@
     <string name="setting_record_history_off_title">Wyłączyć historię?</string>
     <string name="setting_record_history_off_message">Zapisana historia zostanie usunięta.</string>
     <string name="setting_record_history_off_confirm">Wyłącz</string>
+    <string name="action_clear_query">Wyczyść</string>
+    <string name="action_download_dictionaries">Pobierz</string>
+    <string name="action_open_dictionaries">Otwórz</string>
+    <string name="action_full_screen">Pełny ekran</string>
+    <string name="action_full_screen_exit">Wyjdź z pełnego ekranu</string>
+    <string name="action_random_article">Losowy artykuł</string>
+    <string name="action_reset">Resetuj</string>
+    <string name="action_text_size">Rozmiar tekstu</string>
+    <string name="action_undo">Cofnij</string>
+    <string name="blob_descriptor_removed">Usunięto „%1$s”</string>
+    <string name="dictionaries_closed">Zamknięto „%1$s”</string>
+    <string name="dictionary_drag_handle">Przeciągnij, aby zmienić kolejność</string>
+    <string name="dictionary_use_for_random">Używaj do losowego wyszukiwania</string>
+    <string name="scroll_to_top">Przewiń do góry</string>
+    <string name="setting_auto_paste">Automatycznie wklejaj ze schowka</string>
 </resources>

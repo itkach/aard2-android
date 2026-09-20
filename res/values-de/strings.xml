@@ -84,4 +84,22 @@
     <string name="setting_record_history_off_title">Verlauf deaktivieren?</string>
     <string name="setting_record_history_off_message">Ihr aufgezeichneter Verlauf wird gelöscht.</string>
     <string name="setting_record_history_off_confirm">Deaktivieren</string>
+    <string name="action_clear_query">Löschen</string>
+    <string name="action_download_dictionaries">Herunterladen</string>
+    <string name="action_open_dictionaries">Öffnen</string>
+    <string name="action_full_screen">Vollbild</string>
+    <string name="action_full_screen_exit">Vollbild beenden</string>
+    <string name="action_random_article">Zufälliger Artikel</string>
+    <string name="action_reset">Zurücksetzen</string>
+    <string name="action_text_size">Textgröße</string>
+    <string name="action_undo">Rückgängig</string>
+    <string name="auto_style_title">Auto</string>
+    <string name="blob_descriptor_removed">„%1$s“ entfernt</string>
+    <string name="dictionaries_closed">„%1$s“ geschlossen</string>
+    <string name="dictionary_drag_handle">Zum Neuordnen ziehen</string>
+    <string name="dictionary_use_for_random">Für zufällige Suche verwenden</string>
+    <string name="find_next">Nächstes</string>
+    <string name="find_previous">Vorheriges</string>
+    <string name="scroll_to_top">Nach oben scrollen</string>
+    <string name="setting_auto_paste">Automatisch aus Zwischenablage einfügen</string>
 </resources>

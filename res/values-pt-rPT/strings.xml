@@ -88,4 +88,22 @@
     <string name="setting_record_history_off_title">Desativar histórico?</string>
     <string name="setting_record_history_off_message">O seu histórico registado será eliminado.</string>
     <string name="setting_record_history_off_confirm">Desativar</string>
+    <string name="action_clear_query">Limpar</string>
+    <string name="action_download_dictionaries">Transferir</string>
+    <string name="action_open_dictionaries">Abrir</string>
+    <string name="action_full_screen">Ecrã inteiro</string>
+    <string name="action_full_screen_exit">Sair do ecrã inteiro</string>
+    <string name="action_random_article">Artigo aleatório</string>
+    <string name="action_reset">Repor</string>
+    <string name="action_text_size">Tamanho do texto</string>
+    <string name="action_undo">Anular</string>
+    <string name="blob_descriptor_removed">«%1$s» removido</string>
+    <string name="dictionaries_closed">«%1$s» fechado</string>
+    <string name="dictionary_drag_handle">Arraste para reordenar</string>
+    <string name="dictionary_use_for_random">Usar para pesquisa aleatória</string>
+    <string name="find_hint">Localizar na página</string>
+    <string name="find_next">Seguinte</string>
+    <string name="find_previous">Anterior</string>
+    <string name="scroll_to_top">Deslocar para o topo</string>
+    <string name="setting_auto_paste">Colar automaticamente da área de transferência</string>
 </resources>

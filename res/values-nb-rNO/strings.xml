@@ -89,4 +89,22 @@
     <string name="setting_record_history_off_title">Slå av historikk?</string>
     <string name="setting_record_history_off_message">Den registrerte historikken din blir slettet.</string>
     <string name="setting_record_history_off_confirm">Slå av</string>
+    <string name="action_clear_query">Tøm</string>
+    <string name="action_download_dictionaries">Last ned</string>
+    <string name="action_open_dictionaries">Åpne</string>
+    <string name="action_full_screen">Fullskjerm</string>
+    <string name="action_full_screen_exit">Avslutt fullskjerm</string>
+    <string name="action_random_article">Tilfeldig artikkel</string>
+    <string name="action_reset">Tilbakestill</string>
+    <string name="action_text_size">Tekststørrelse</string>
+    <string name="action_undo">Angre</string>
+    <string name="blob_descriptor_removed">«%1$s» fjernet</string>
+    <string name="dictionaries_closed">«%1$s» lukket</string>
+    <string name="dictionary_drag_handle">Dra for å endre rekkefølge</string>
+    <string name="dictionary_use_for_random">Bruk til tilfeldig oppslag</string>
+    <string name="find_hint">Søk på siden</string>
+    <string name="find_next">Neste</string>
+    <string name="find_previous">Forrige</string>
+    <string name="scroll_to_top">Rull til toppen</string>
+    <string name="setting_auto_paste">Lim inn automatisk fra utklippstavlen</string>
 </resources>

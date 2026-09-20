@@ -87,4 +87,21 @@ is missing a quantity used in that language, otherwise the app will crash
     <string name="setting_record_history_off_title">Disattivare la cronologia?</string>
     <string name="setting_record_history_off_message">La cronologia registrata verrà eliminata.</string>
     <string name="setting_record_history_off_confirm">Disattiva</string>
+    <string name="action_clear_query">Cancella</string>
+    <string name="action_download_dictionaries">Scarica</string>
+    <string name="action_open_dictionaries">Apri</string>
+    <string name="action_full_screen">Schermo intero</string>
+    <string name="action_full_screen_exit">Esci da schermo intero</string>
+    <string name="action_random_article">Articolo casuale</string>
+    <string name="action_reset">Reimposta</string>
+    <string name="action_text_size">Dimensione del testo</string>
+    <string name="action_undo">Annulla</string>
+    <string name="application_version">Versione %1$s</string>
+    <string name="auto_style_title">Auto</string>
+    <string name="blob_descriptor_removed">«%1$s» rimosso</string>
+    <string name="dictionaries_closed">«%1$s» chiuso</string>
+    <string name="dictionary_drag_handle">Trascina per riordinare</string>
+    <string name="dictionary_use_for_random">Usa per la ricerca casuale</string>
+    <string name="scroll_to_top">Scorri in cima</string>
+    <string name="setting_auto_paste">Incolla automaticamente dagli appunti</string>
 </resources>

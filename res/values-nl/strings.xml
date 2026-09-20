@@ -88,4 +88,22 @@
     <string name="setting_record_history_off_title">Geschiedenis uitschakelen?</string>
     <string name="setting_record_history_off_message">Je opgeslagen geschiedenis wordt verwijderd.</string>
     <string name="setting_record_history_off_confirm">Uitschakelen</string>
+    <string name="action_clear_query">Wissen</string>
+    <string name="action_download_dictionaries">Downloaden</string>
+    <string name="action_open_dictionaries">Openen</string>
+    <string name="action_full_screen">Volledig scherm</string>
+    <string name="action_full_screen_exit">Volledig scherm afsluiten</string>
+    <string name="action_random_article">Willekeurig artikel</string>
+    <string name="action_reset">Herstellen</string>
+    <string name="action_text_size">Tekstgrootte</string>
+    <string name="action_undo">Ongedaan maken</string>
+    <string name="blob_descriptor_removed">„%1$s“ verwijderd</string>
+    <string name="dictionaries_closed">„%1$s“ gesloten</string>
+    <string name="dictionary_drag_handle">Sleep om te herordenen</string>
+    <string name="dictionary_use_for_random">Gebruiken voor willekeurig opzoeken</string>
+    <string name="find_hint">Zoeken op pagina</string>
+    <string name="find_next">Volgende</string>
+    <string name="find_previous">Vorige</string>
+    <string name="scroll_to_top">Naar boven scrollen</string>
+    <string name="setting_auto_paste">Automatisch plakken vanaf klembord</string>
 </resources>

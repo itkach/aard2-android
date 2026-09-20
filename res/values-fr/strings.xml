@@ -91,4 +91,19 @@
     <string name="setting_record_history_off_title">Désactiver l\'historique ?</string>
     <string name="setting_record_history_off_message">Votre historique enregistré sera supprimé.</string>
     <string name="setting_record_history_off_confirm">Désactiver</string>
+    <string name="action_clear_query">Effacer</string>
+    <string name="action_download_dictionaries">Télécharger</string>
+    <string name="action_open_dictionaries">Ouvrir</string>
+    <string name="action_full_screen">Plein écran</string>
+    <string name="action_full_screen_exit">Quitter le plein écran</string>
+    <string name="action_random_article">Article aléatoire</string>
+    <string name="action_reset">Réinitialiser</string>
+    <string name="action_text_size">Taille du texte</string>
+    <string name="action_undo">Annuler</string>
+    <string name="blob_descriptor_removed">« %1$s » supprimé</string>
+    <string name="dictionaries_closed">« %1$s » fermé</string>
+    <string name="dictionary_drag_handle">Faire glisser pour réorganiser</string>
+    <string name="dictionary_use_for_random">Utiliser pour la recherche aléatoire</string>
+    <string name="scroll_to_top">Faire défiler vers le haut</string>
+    <string name="setting_auto_paste">Coller automatiquement depuis le presse-papiers</string>
 </resources>

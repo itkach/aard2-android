@@ -82,4 +82,22 @@
     <string name="setting_record_history_off_title">Вимкнути історію?</string>
     <string name="setting_record_history_off_message">Записану історію буде видалено.</string>
     <string name="setting_record_history_off_confirm">Вимкнути</string>
+    <string name="action_clear_query">Очистити</string>
+    <string name="action_download_dictionaries">Завантажити</string>
+    <string name="action_open_dictionaries">Відкрити</string>
+    <string name="action_full_screen">Повноекранний режим</string>
+    <string name="action_full_screen_exit">Вийти з повноекранного режиму</string>
+    <string name="action_random_article">Випадкова стаття</string>
+    <string name="action_reset">Скинути</string>
+    <string name="action_text_size">Розмір тексту</string>
+    <string name="action_undo">Скасувати</string>
+    <string name="auto_style_title">Авто</string>
+    <string name="blob_descriptor_removed">Вилучено «%1$s»</string>
+    <string name="dictionaries_closed">Закрито «%1$s»</string>
+    <string name="dictionary_drag_handle">Перетягніть, щоб змінити порядок</string>
+    <string name="dictionary_use_for_random">Використовувати для випадкового пошуку</string>
+    <string name="find_hint">Знайти на сторінці</string>
+    <string name="find_next">Наступне</string>
+    <string name="find_previous">Попереднє</string>
+    <string name="scroll_to_top">Прокрутити вгору</string>
 </resources>

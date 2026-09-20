@@ -76,4 +76,21 @@
     <string name="setting_record_history_off_title">Отключить историю?</string>
     <string name="setting_record_history_off_message">Записанная история будет удалена.</string>
     <string name="setting_record_history_off_confirm">Отключить</string>
+    <string name="action_clear_query">Очистить</string>
+    <string name="action_download_dictionaries">Скачать</string>
+    <string name="action_open_dictionaries">Открыть</string>
+    <string name="action_full_screen">Полноэкранный режим</string>
+    <string name="action_full_screen_exit">Выйти из полноэкранного режима</string>
+    <string name="action_random_article">Случайная статья</string>
+    <string name="action_reset">Сбросить</string>
+    <string name="action_text_size">Размер текста</string>
+    <string name="action_undo">Отменить</string>
+    <string name="auto_style_title">Авто</string>
+    <string name="blob_descriptor_removed">Удалено «%1$s»</string>
+    <string name="dictionaries_closed">Закрыто «%1$s»</string>
+    <string name="dictionary_drag_handle">Перетащите для изменения порядка</string>
+    <string name="dictionary_use_for_random">Использовать для случайного поиска</string>
+    <string name="find_next">Следующее</string>
+    <string name="find_previous">Предыдущее</string>
+    <string name="scroll_to_top">Прокрутить вверх</string>
 </resources>
