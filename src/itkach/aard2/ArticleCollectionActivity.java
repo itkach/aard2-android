@@ -1138,6 +1138,14 @@ public class ArticleCollectionActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        // Full screen is a sticky, app-wide mode. If it was toggled from another
+        // article - e.g. one opened by following a link - while this one sat in
+        // the back stack, that stale window state would otherwise persist here;
+        // bring this activity in line with the current setting on return.
+        boolean desiredFullScreen = shouldBeFullScreen();
+        if (desiredFullScreen != fullScreen) {
+            applyFullScreen(desiredFullScreen);
+        }
         // Pick up any zoom/style preference changed elsewhere (e.g. Settings)
         // on the visible page; other cached pages get it on page-select.
         ArticleWebView webView = currentWebView();
