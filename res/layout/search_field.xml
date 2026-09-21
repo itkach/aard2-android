@@ -34,7 +34,7 @@
             android:background="@null"
             android:paddingTop="2dp"
             android:paddingBottom="2dp"
-            android:inputType="text"
+            android:inputType="text|textNoSuggestions"
             android:imeOptions="actionSearch|flagNoExtractUi|flagNoFullscreen"
             android:maxLines="1"
             android:singleLine="true"
