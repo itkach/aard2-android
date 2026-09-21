@@ -240,8 +240,17 @@ abstract class BlobDescriptorListFragment extends BaseListFragment {
                 // Show the row checkboxes. Posted, not synchronous: this fires
                 // mid-gesture during the tracker's own long-press handling, and
                 // refreshing rows inline would reset their binding positions
-                // and crash the tracker.
-                getRecyclerView().post(() -> listAdapter.setSelectionModeActive(true));
+                // and crash the tracker. Re-check actionMode when it runs: a
+                // selection torn down before the post executes (quick deselect,
+                // tab switch) already set the flag false in onDestroyActionMode,
+                // and without this guard the deferred true would land after it and
+                // stick - leaving every row tap toggling selection instead of
+                // opening the article.
+                getRecyclerView().post(() -> {
+                    if (actionMode != null) {
+                        listAdapter.setSelectionModeActive(true);
+                    }
+                });
             }
             if (actionMode != null) {
                 actionMode.setTitle(String.valueOf(selectionTracker.getSelection().size()));
