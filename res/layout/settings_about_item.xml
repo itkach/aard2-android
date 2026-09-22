@@ -9,7 +9,7 @@
     android:clickable="false"
     >
 
-    <!-- Section header, matching the other Settings sections (Clear Cache etc.). -->
+    <!-- Section header, styled to match the other Settings sections. -->
     <TextView
         android:id="@+id/setting_about"
         style="@style/TextAppearance.Aard2.ListTitle"

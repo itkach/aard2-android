@@ -1,6 +1,5 @@
 package itkach.aard2;
 
-import android.app.AlertDialog;
 import android.app.SearchManager;
 import android.content.ComponentName;
 import android.content.Context;
@@ -41,6 +40,7 @@ import androidx.viewpager.widget.ViewPager;
 import androidx.viewpager.widget.ViewPager.OnPageChangeListener;
 import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.appbar.AppBarLayout;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import android.util.Log;
 import android.view.Gravity;
@@ -1058,7 +1058,7 @@ public class ArticleCollectionActivity extends AppCompatActivity {
                         ? styleTitles[i].substring(0, styleTitles[i].length() - 4)
                         : styleTitles[i];
             }
-            new AlertDialog.Builder(this)
+            new MaterialAlertDialogBuilder(this)
                     .setTitle(R.string.select_style)
                     .setItems(labels, (dialog, which) -> {
                         webView.saveStylePref(styleTitles[which]);

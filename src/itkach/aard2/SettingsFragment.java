@@ -3,7 +3,6 @@ package itkach.aard2;
 import static itkach.aard2.Util.fromHtml;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
@@ -31,6 +30,7 @@ import androidx.documentfile.provider.DocumentFile;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -159,7 +159,7 @@ public class SettingsFragment extends Fragment {
                 app.setRecordHistory(false);
                 ((MainActivity) requireActivity()).setHistoryVisible(false);
             } else {
-                new AlertDialog.Builder(requireActivity())
+                new MaterialAlertDialogBuilder(requireActivity())
                         .setTitle(R.string.setting_record_history_off_title)
                         .setMessage(R.string.setting_record_history_off_message)
                         .setPositiveButton(R.string.setting_record_history_off_confirm,
@@ -227,7 +227,7 @@ public class SettingsFragment extends Fragment {
     private void confirmDeleteUserStyle(final String name) {
         String message = getString(R.string.setting_user_style_confirm_forget,
                 displayStyleName(name));
-        new AlertDialog.Builder(requireActivity())
+        new MaterialAlertDialogBuilder(requireActivity())
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setTitle("")
                 .setMessage(message)

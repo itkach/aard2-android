@@ -1,7 +1,6 @@
 package itkach.aard2;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -10,6 +9,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.selection.ItemDetailsLookup;
 import androidx.recyclerview.selection.ItemKeyProvider;
@@ -19,6 +19,7 @@ import androidx.recyclerview.selection.SelectionTracker;
 import androidx.recyclerview.selection.StorageStrategy;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import android.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -330,7 +331,7 @@ abstract class BlobDescriptorListFragment extends BaseListFragment {
         int count = selectionTracker.getSelection().size();
         String countStr = getResources().getQuantityString(getDeleteConfirmationItemCountResId(), count, count);
         String message = getString(R.string.blob_descriptor_confirm_delete, countStr);
-        deleteConfirmationDialog = new AlertDialog.Builder(getActivity())
+        deleteConfirmationDialog = new MaterialAlertDialogBuilder(getActivity())
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setTitle("")
                 .setMessage(message)
