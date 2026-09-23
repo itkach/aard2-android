@@ -52,6 +52,16 @@ public class BlobListAdapter extends RecyclerView.Adapter<BlobListAdapter.ViewHo
         this.itemClickListener = listener;
     }
 
+    // Clear the listener only if it's still the given one. This adapter is
+    // app-scoped and shared, while the listener is owned by a LookupFragment's
+    // view: when a stale fragment (e.g. a stopped MainActivity being reclaimed)
+    // tears its view down, it must not clobber a newer fragment's listener.
+    void removeOnItemClickListener(OnItemClickListener listener) {
+        if (this.itemClickListener == listener) {
+            this.itemClickListener = null;
+        }
+    }
+
     void setData(Iterator<Slob.Blob> lookupResultsIter) {
         mainHandler.post(new Runnable() {
             @Override
