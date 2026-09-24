@@ -1,8 +1,6 @@
 package itkach.aard2;
 
-import android.content.Context;
-import android.os.Handler;
-import android.util.Log;
+import android.database.DataSetObserver;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,111 +9,45 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
 import itkach.slob.Slob;
 
+// View-scoped RecyclerView adapter over an app-scoped BlobList. One is created
+// per consumer (the Lookup list, each article pager), each with its own click
+// listener, so the listener lives and dies with the view that owns it. Mirrors
+// BlobDescriptorListAdapter's relationship to BlobDescriptorList.
 public class BlobListAdapter extends RecyclerView.Adapter<BlobListAdapter.ViewHolder>
         implements BlobSource {
 
-    private static final String TAG = BlobListAdapter.class.getSimpleName();
+    private final BlobList            list;
+    private final OnItemClickListener itemClickListener;
+    private final DataSetObserver     observer;
 
-    Handler             mainHandler;
-    List<Slob.Blob>     list;
-    Iterator<Slob.Blob> iter;
-    ExecutorService     executor;
-
-    private final int   chunkSize;
-    private final int   loadMoreThreashold;
-    int                 MAX_SIZE   = 10000;
-
-    private OnItemClickListener itemClickListener;
-
-    public BlobListAdapter(Context context) {
-        this(context, 20, 10);
+    BlobListAdapter(BlobList list) {
+        this(list, null);
     }
 
-    public BlobListAdapter(Context context, int chunkSize, int loadMoreThreashold) {
-        this.mainHandler = new Handler(context.getMainLooper());
-        this.executor = Executors.newSingleThreadExecutor();
-        this.list = new ArrayList<Slob.Blob>(chunkSize);
-        this.chunkSize = chunkSize;
-        this.loadMoreThreashold = loadMoreThreashold;
-    }
-
-    void setOnItemClickListener(OnItemClickListener listener) {
-        this.itemClickListener = listener;
-    }
-
-    // Clear the listener only if it's still the given one. This adapter is
-    // app-scoped and shared, while the listener is owned by a LookupFragment's
-    // view: when a stale fragment (e.g. a stopped MainActivity being reclaimed)
-    // tears its view down, it must not clobber a newer fragment's listener.
-    void removeOnItemClickListener(OnItemClickListener listener) {
-        if (this.itemClickListener == listener) {
-            this.itemClickListener = null;
-        }
-    }
-
-    void setData(Iterator<Slob.Blob> lookupResultsIter) {
-        mainHandler.post(new Runnable() {
+    BlobListAdapter(BlobList list, OnItemClickListener itemClickListener) {
+        this.list = list;
+        this.itemClickListener = itemClickListener;
+        this.observer = new DataSetObserver() {
             @Override
-            public void run() {
-                list.clear();
+            public void onChanged() {
                 notifyDataSetChanged();
             }
-        });
-        this.iter = lookupResultsIter;
-        loadChunkSync();
-    }
 
-    private void loadChunkSync() {
-        long t0 = System.currentTimeMillis();
-        int count = 0;
-        final List<Slob.Blob> chunkList = new LinkedList<>();
-
-        while (iter.hasNext() && count < chunkSize
-                && list.size() <= MAX_SIZE) {
-            count++;
-            Slob.Blob b = iter.next();
-            chunkList.add(b);
-        }
-
-        mainHandler.post(new Runnable() {
             @Override
-            public void run() {
-                int start = list.size();
-                list.addAll(chunkList);
-                notifyItemRangeInserted(start, chunkList.size());
+            public void onInvalidated() {
+                notifyDataSetChanged();
             }
-        });
-
-        Log.d(TAG,
-                String.format("Loaded chunk of %d (adapter size %d) in %d ms",
-                        count, list.size(), (System.currentTimeMillis() - t0)));
+        };
+        this.list.registerDataSetObserver(observer);
     }
 
-    private void loadChunk() {
-        if (iter == null || !iter.hasNext()) {
-            return;
-        }
-        executor.execute(new Runnable() {
-            @Override
-            public void run() {
-                loadChunkSync();
-            }
-        });
-    }
-
-    private void maybeLoadMore(int position) {
-        if (position >= list.size() - loadMoreThreashold) {
-            loadChunk();
-        }
+    // Detaches from the underlying BlobList. Call when the owning view goes away
+    // (e.g. LookupFragment.onDestroyView) so the app-scoped list stops holding
+    // this adapter - and, through its click listener, the Activity.
+    void close() {
+        list.unregisterDataSetObserver(observer);
     }
 
     @NonNull
@@ -141,17 +73,17 @@ public class BlobListAdapter extends RecyclerView.Adapter<BlobListAdapter.ViewHo
         holder.source.setText(slob == null ? "???" : slob.getTags().get("label"));
         holder.timestamp.setText("");
         holder.timestamp.setVisibility(View.GONE);
-        maybeLoadMore(position);
+        list.maybeLoadMore(position);
     }
 
     @Override
     public int getItemCount() {
-        return list == null ? 0 : list.size();
+        return list.size();
     }
 
     @Override
     public int getBlobCount() {
-        return getItemCount();
+        return list.size();
     }
 
     @Override
@@ -171,5 +103,4 @@ public class BlobListAdapter extends RecyclerView.Adapter<BlobListAdapter.ViewHo
             timestamp = (TextView) itemView.findViewById(R.id.blob_descriptor_timestamp);
         }
     }
-
 }

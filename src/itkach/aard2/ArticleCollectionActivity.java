@@ -707,16 +707,16 @@ public class ArticleCollectionActivity extends AppCompatActivity {
             return null;
         }
         Iterator<Slob.Blob> result = app.find(bd.key, bd.slobId);
-        BlobListAdapter data = new BlobListAdapter(this, 20, 1);
+        BlobList data = new BlobList(this, 20, 1);
         data.setData(result);
         boolean hasFragment = !Util.isBlank(bd.fragment);
         return new ArticleCollectionPagerAdapter(
-                app, data, hasFragment ? new ToBlobWithFragment(bd.fragment) : blobToBlob);
+                app, new BlobListAdapter(data), hasFragment ? new ToBlobWithFragment(bd.fragment) : blobToBlob);
     };
 
     private ArticleCollectionPagerAdapter createFromLastResult(Application app) {
         return new ArticleCollectionPagerAdapter(
-                app, app.lastResult, blobToBlob);
+                app, new BlobListAdapter(app.lastResult), blobToBlob);
     }
 
     private ArticleCollectionPagerAdapter createFromBookmarks(final Application app) {
@@ -769,7 +769,7 @@ public class ArticleCollectionActivity extends AppCompatActivity {
                 }
             }
         }
-        BlobListAdapter data = new BlobListAdapter(this, 20, 1);
+        BlobList data = new BlobList(this, 20, 1);
         if (lookupKey == null || lookupKey.length() == 0) {
             String msg = getString(R.string.article_collection_nothing_to_lookup);
             throw new RuntimeException(msg);
@@ -779,7 +779,7 @@ public class ArticleCollectionActivity extends AppCompatActivity {
             data.setData(result);
         }
         return new ArticleCollectionPagerAdapter(
-                app, data, blobToBlob);
+                app, new BlobListAdapter(data), blobToBlob);
     }
 
     private Iterator<Blob> stemLookup(Application app, String lookupKey) {
@@ -1284,6 +1284,11 @@ public class ArticleCollectionActivity extends AppCompatActivity {
 
         void destroy() {
             data.unregisterAdapterDataObserver(observer);
+            // For lookup results the data adapter wraps the app-scoped BlobList;
+            // detach it so that list doesn't retain this pager's adapter.
+            if (data instanceof BlobListAdapter) {
+                ((BlobListAdapter) data).close();
+            }
             data = null;
             app = null;
         }

@@ -8,7 +8,7 @@ import android.widget.TextView;
 public class LookupFragment extends BaseListFragment implements LookupListener {
 
     private Application app;
-    private OnItemClickListener itemClickListener;
+    private BlobListAdapter listAdapter;
 
     @Override
     IconMaker.Glyph getEmptyIcon() {
@@ -31,22 +31,18 @@ public class LookupFragment extends BaseListFragment implements LookupListener {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         setBusy(false);
-        itemClickListener = position -> {
+        listAdapter = new BlobListAdapter(app.lastResult, position -> {
             Intent intent = new Intent(getActivity(),
                     ArticleCollectionActivity.class);
             intent.putExtra("position", position);
             startActivity(intent);
-        };
-        app.lastResult.setOnItemClickListener(itemClickListener);
-        setListAdapter(app.lastResult);
+        });
+        setListAdapter(listAdapter);
     }
 
     @Override
     public void onDestroyView() {
-        // lastResult is app-scoped and shared: only relinquish the listener if
-        // it's still ours, so a stale instance being torn down (e.g. an older
-        // MainActivity the system is reclaiming) can't clear the live one's.
-        app.lastResult.removeOnItemClickListener(itemClickListener);
+        listAdapter.close();
         super.onDestroyView();
     }
 

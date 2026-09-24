@@ -334,7 +334,7 @@ public class MainActivity extends AppCompatActivity {
         // the user can type straight away. Posted because on first show the box
         // isn't laid out/attached yet (same reason the Filter defers its keyboard).
         lookupField.post(() -> {
-            if (app.lastResult.getItemCount() > 0) {
+            if (app.lastResult.size() > 0) {
                 lookupField.requestFocus();
             } else {
                 lookupField.showKeyboard();

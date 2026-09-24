@@ -23,10 +23,15 @@
         android:enableOnBackInvokedCallback="false"
         android:theme="@style/Theme.Aard2" >
 
+        <!-- alwaysRetainTaskState keeps an open article (ArticleCollectionActivity,
+             which shares this task) on top when the app is relaunched from the
+             launcher, instead of letting FLAG_ACTIVITY_RESET_TASK_IF_NEEDED reset
+             the task to this root activity. -->
         <activity
             android:name=".MainActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
             android:windowSoftInputMode="stateHidden|adjustNothing"
+            android:alwaysRetainTaskState="true"
             android:exported="true"
         >
             <intent-filter>

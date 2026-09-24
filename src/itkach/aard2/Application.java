@@ -58,7 +58,7 @@ public class Application extends android.app.Application {
     private static int                      PREFERRED_PORT = 8013;
     private int                             port = -1;
 
-    BlobListAdapter                         lastResult;
+    BlobList                                lastResult;
 
     private DescriptorStore<BlobDescriptor> bookmarkStore;
     private DescriptorStore<BlobDescriptor> historyStore;
@@ -141,7 +141,7 @@ public class Application extends android.app.Application {
 
         String initialQuery = prefs().getString("query", "");
 
-        lastResult = new BlobListAdapter(this);
+        lastResult = new BlobList(this);
 
         dictionaries = new SlobDescriptorList(this, dictStore);
         bookmarks = new BlobDescriptorList(this, bookmarkStore);
