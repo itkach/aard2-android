@@ -1,4 +1,11 @@
 #!/usr/bin/env sh
+# Convert the screenshots in images/ to lossless WebP, which is far smaller
+# than PNG with no quality loss, for embedding in README.md. Run this after
+# dropping new PNG screenshots into images/; the PNG sources can then be
+# removed (the WebP files are what README.md references).
 cd images
-for i in `ls *.png | grep -v sm-`; do convert $i -resize 33% sm-$i; done
+for i in *.png; do
+  [ -e "$i" ] || continue
+  cwebp -quiet -lossless "$i" -o "${i%.png}.webp"
+done
 cd ..
