@@ -34,14 +34,16 @@
 #     e0ea bookmark-simple (same codepoint as the outline one, different font file)
 #
 set -euo pipefail
-# Run from the repo root (this script lives in scripts/); paths below are
-# relative to it (assets/, build/).
+# Resolve the Phosphor download dir against the caller's cwd BEFORE cd'ing to the
+# repo root (this script lives in scripts/), so a relative PHOSPHOR_DIR argument
+# works. The remaining paths (assets/, build/) are relative to the repo root.
+PH_DIR="${1:-$HOME/Downloads/phosphor-icons}"
+case "$PH_DIR" in /*) ;; *) PH_DIR="$PWD/$PH_DIR" ;; esac
 cd "$(dirname "$0")/.."
 
 REG_CODES="e3d4,e136,e13c,e3de,e0ea,e186,e19a,e4f6,e1ce,e54a,e0e2,eae2,e4e0,e1d0,e5de,e230,e266,e256,e1a0,e0b4,e6ee,e1ee,e30c,e270,e444,e446,e45e,e4a6"
 FILL_CODES="e0ea"
 
-PH_DIR="${1:-$HOME/Downloads/phosphor-icons}"
 REG_SRC="$PH_DIR/Fonts/regular/Phosphor.ttf"
 FILL_SRC="$PH_DIR/Fonts/fill/Phosphor-Fill.ttf"
 for f in "$REG_SRC" "$FILL_SRC"; do
