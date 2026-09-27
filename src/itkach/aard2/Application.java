@@ -29,6 +29,7 @@ import java.io.InputStreamReader;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -523,21 +524,25 @@ public class Application extends android.app.Application {
     }
 
     // One-time move of user styles from the old SharedPreferences store (style
-    // name -> CSS text, with newlines escaped as "\n" for the JavaScript that
-    // used to inject them) into the flat <name>.css files Slobber now serves.
-    // Runs on every start but is a no-op once the old prefs have been cleared.
+    // name -> CSS text, with newlines escaped as "\n") into the flat <name>.css
+    // files Slobber now serves. Runs on every start but is a no-op once the old
+    // prefs have been cleared.
     private void migrateUserStylesToFiles() {
         SharedPreferences prefs = getSharedPreferences("userStyles", MODE_PRIVATE);
         Map<String, ?> stored = prefs.getAll();
         if (stored.isEmpty()) {
             return;
         }
+        // Old selection title -> new .css filename, used below to fix up the
+        // per-dictionary selections that named these styles.
+        Map<String, String> renamed = new HashMap<>();
         for (Map.Entry<String, ?> entry : stored.entrySet()) {
             if (!(entry.getValue() instanceof String)) {
                 continue;
             }
             String name = entry.getKey().endsWith(".css")
                     ? entry.getKey() : entry.getKey() + ".css";
+            renamed.put(entry.getKey(), name);
             if (new File(userStyleDir, name).exists()) {
                 continue;
             }
@@ -547,6 +552,27 @@ public class Application extends android.app.Application {
             } catch (IOException e) {
                 Log.w(TAG, "Failed to migrate user style " + entry.getKey(), e);
             }
+        }
+        // Rewrite each dictionary's selected style (style.<uri>, but not the
+        // style.available.<uri> sets) that named a migrated user style, so it
+        // resolves to the renamed <name>.css instead of silently falling back to
+        // the default look.
+        SharedPreferences articleView = getSharedPreferences(ARTICLE_VIEW_PREF, MODE_PRIVATE);
+        SharedPreferences.Editor edit = articleView.edit();
+        boolean changed = false;
+        for (Map.Entry<String, ?> entry : articleView.getAll().entrySet()) {
+            String key = entry.getKey();
+            if (!key.startsWith(PREF_STYLE) || key.startsWith(PREF_STYLE_AVAILABLE)) {
+                continue;
+            }
+            Object value = entry.getValue();
+            if (value instanceof String && renamed.containsKey(value)) {
+                edit.putString(key, renamed.get((String) value));
+                changed = true;
+            }
+        }
+        if (changed) {
+            edit.apply();
         }
         prefs.edit().clear().apply();
     }
