@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+# Snapshot the exact revisions of the source dependencies (slobj, slobber -
+# built from sibling checkouts via includeFlat) into source-deps.json, so each
+# commit records what it was built against. Output is deterministic (fixed field
+# order, no timestamp) so unchanged deps produce a byte-identical file.
+#
+# No-ops (leaving any existing file untouched) when a sibling isn't present -
+# e.g. a fresh clone, CI, or a packager's machine - so it never blocks a commit.
+set -euo pipefail
+
+root=$(git -C "$(dirname "$0")" rev-parse --show-toplevel)
+out="$root/source-deps.json"
+
+# Leaf first: slobj, then slobber (which depends on it).
+deps="slobj slobber"
+
+for name in $deps; do
+    [ -d "$root/../$name/.git" ] || {
+        echo "record-deps: ../$name not found, leaving $out untouched" >&2
+        exit 0
+    }
+done
+
+{
+    echo "["
+    first=1
+    for name in $deps; do
+        dir="$root/../$name"
+        sha=$(git -C "$dir" rev-parse HEAD)
+        describe=$(git -C "$dir" describe --tags --always --dirty 2>/dev/null || true)
+        repo=$(git -C "$dir" remote get-url origin 2>/dev/null || true)
+        [ $first -eq 1 ] && first=0 || echo ","
+        printf '  { "name": "%s", "repo": "%s", "sha": "%s", "describe": "%s" }' \
+            "$name" "$repo" "$sha" "$describe"
+    done
+    echo
+    echo "]"
+} > "$out"

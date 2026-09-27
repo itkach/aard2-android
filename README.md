@@ -194,6 +194,25 @@ To install the APK:
 adb install -r build/outputs/apk/aard2-android-debug.apk
 ```
 
+### Developer helpers
+
+Common maintenance tasks are wrapped in a small `./d` front door; run `./d` with
+no arguments to list them. After cloning, run once per machine:
+
+```sh
+./d setup            # enable the git hooks and install ./d shell completion
+```
+
+Other commands include `./d mk-release [version]` (bump the version, regenerate
+the manifest, record dependency revisions, and create the release commit and
+tag), and the regenerators `./d mk-manifest`, `./d mk-webp`, `./d mk-phosphor`.
+
+Because `slobj` and `slobber` are built from the sibling checkouts above, their
+exact revisions aren't captured by the build itself. `source-deps.json` records
+them, and the pre-commit hook enabled by `./d setup` keeps it current on every
+commit — so run `./d setup` before committing, or your commits won't record the
+dependency revisions they were built against.
+
 ## Launching from Other Applications
 
 Aard 2 lookup can be initiated from other applications, either through standard

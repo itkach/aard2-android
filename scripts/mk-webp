@@ -3,6 +3,7 @@
 # than PNG with no quality loss, for embedding in README.md. Run this after
 # dropping new PNG screenshots into images/; the PNG sources can then be
 # removed (the WebP files are what README.md references).
+cd "$(dirname "$0")/.."   # repo root (this script lives in scripts/)
 cd images
 for i in *.png; do
   [ -e "$i" ] || continue

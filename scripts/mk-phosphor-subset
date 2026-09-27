@@ -7,7 +7,7 @@
 # Run this whenever an icon is added to / removed from IconMaker.java - update
 # the REG_CODES / FILL_CODES lists below to match its glyphs, then run:
 #
-#     ./mk-phosphor-subset [PHOSPHOR_DIR]
+#     ./d mk-phosphor [PHOSPHOR_DIR]
 #
 # PHOSPHOR_DIR defaults to ~/Downloads/phosphor-icons (the download from
 # phosphoricons.com, which ships Fonts/<weight>/*.ttf plus a style.css mapping
@@ -34,7 +34,9 @@
 #     e0ea bookmark-simple (same codepoint as the outline one, different font file)
 #
 set -euo pipefail
-cd "$(dirname "$0")"
+# Run from the repo root (this script lives in scripts/); paths below are
+# relative to it (assets/, build/).
+cd "$(dirname "$0")/.."
 
 REG_CODES="e3d4,e136,e13c,e3de,e0ea,e186,e19a,e4f6,e1ce,e54a,e0e2,eae2,e4e0,e1d0,e5de,e230,e266,e256,e1a0,e0b4,e6ee,e1ee,e30c,e270,e444,e446,e45e,e4a6"
 FILL_CODES="e0ea"

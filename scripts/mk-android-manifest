@@ -42,6 +42,11 @@ LANGUAGES = [
 
 def main():
 
+    # This script lives in scripts/; the templates and output manifest are at
+    # the repo root, so work from there regardless of where it's invoked.
+    import os
+    os.chdir(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
+
     with open('./AndroidManifest.template.xml') as f:
         manifest_template = f.read()
 

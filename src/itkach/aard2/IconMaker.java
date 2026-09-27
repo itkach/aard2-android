@@ -16,7 +16,7 @@ class IconMaker {
     // bookmarked article uses fill. Each asset is a subset built with fonttools
     // (pyftsubset) holding just the glyphs used below, not Phosphor's full
     // ~2000-icon set (that's why phosphor-regular.ttf is ~7KB and
-    // phosphor-fill.ttf under 1KB) - regenerate with ./mk-phosphor-subset, which
+    // phosphor-fill.ttf under 1KB) - regenerate with ./d mk-phosphor, which
     // documents the name-to-codepoint mapping. Codepoints are in Phosphor's
     // private-use range (U+E000+), written as unicode char escapes since the
     // glyphs don't render as source text.
