@@ -511,12 +511,22 @@ public class Application extends android.app.Application {
     }
 
     void saveUserStyle(String name, String css) throws IOException {
-        FileOutputStream out = new FileOutputStream(new File(userStyleDir, name));
+        FileOutputStream out = new FileOutputStream(
+                new File(userStyleDir, canonicalStyleFileName(name)));
         try {
             out.write(css.getBytes("UTF-8"));
         } finally {
             out.close();
         }
+    }
+
+    // A user style's stored filename always ends in a lowercase ".css", so the
+    // case-sensitive readers (userStyleNames, isUserStyle, the picker labels)
+    // match it regardless of how the extension was cased on upload.
+    private static String canonicalStyleFileName(String name) {
+        String base = name.toLowerCase(Locale.ROOT).endsWith(".css")
+                ? name.substring(0, name.length() - 4) : name;
+        return base + ".css";
     }
 
     void deleteUserStyle(String name) {
