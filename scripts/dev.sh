@@ -38,6 +38,15 @@ mk-release() {  ## bump version, regen manifest, record deps, commit + tag [vers
     # don't want versionCode to skip.
     (
         cd "$ROOT" || exit 1
+        # A release commit must contain only the version bump, regenerated
+        # manifest and source-deps.json - so refuse if aard2-android itself has
+        # staged or unstaged changes to tracked files: they'd otherwise be swept
+        # into the release commit and tag, or (if unstaged) built into the APK but
+        # left out of the tag. Untracked files are fine - nothing here stages them.
+        if [ -n "$(git status --porcelain --untracked-files=no)" ]; then
+            echo "mk-release: aard2-android has uncommitted changes; commit or stash first" >&2
+            exit 1
+        fi
         tmpl="AndroidManifest.template.xml"
         [ -f "$tmpl" ] || { echo "mk-release: $tmpl not found" >&2; exit 1; }
         cur_code=$(grep -oE 'android:versionCode="[0-9]+"' "$tmpl" | grep -oE '[0-9]+')
@@ -59,10 +68,11 @@ mk-release() {  ## bump version, regen manifest, record deps, commit + tag [vers
             echo "mk-release: tag $new_name already exists" >&2
             exit 1
         fi
-        # Pre-flight the same dependency-cleanliness check the pre-commit hook
-        # enforces (and record source-deps.json now), so we bail here rather than
-        # aborting at git commit and leaving a half-applied version bump behind.
-        record-deps --require-clean || exit 1
+        # Pre-flight dependency checks (and record source-deps.json now) so we
+        # bail here rather than aborting at git commit with a half-applied bump.
+        # A release additionally requires the deps be pushed, so the revisions it
+        # records are fetchable by whoever builds the release.
+        record-deps --require-clean --require-pushed || exit 1
         echo "version: $cur_name ($cur_code) -> $new_name ($new_code)"
 
         # Edit the template with Python (targeted - no risk of mangling XML). The
