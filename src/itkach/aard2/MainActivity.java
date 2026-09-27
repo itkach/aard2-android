@@ -491,6 +491,23 @@ public class MainActivity extends AppCompatActivity {
     // so pressing responds immediately and a stray key-up arriving from an article
     // that just finished can't trigger an unexpected tab switch. Only the initial
     // press (repeatCount 0) switches tabs; auto-repeats and key-up are swallowed.
+    // Next section in the given direction (+1 down, -1 up), wrapping and skipping
+    // entries whose bottom-nav item is hidden (History when "Record history" is
+    // off). setSelectedItemId only checks isEnabled(), not isVisible(), so without
+    // this, volume cycling would select the hidden History section. Returns the
+    // starting position if nothing else is visible.
+    private int nextVisiblePosition(int from, int dir) {
+        int n = SECTION_TAGS.length;
+        Menu menu = bottomNav.getMenu();
+        for (int i = 1; i <= n; i++) {
+            int pos = ((from + dir * i) % n + n) % n;
+            if (menu.findItem(itemIdForPosition(pos)).isVisible()) {
+                return pos;
+            }
+        }
+        return from;
+    }
+
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_VOLUME_UP || keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
@@ -498,16 +515,11 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             }
             if (event.getRepeatCount() == 0) {
-                int next;
-                if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
-                    next = selectedPosition > 0
-                            ? selectedPosition - 1 : SECTION_TAGS.length - 1;
+                int dir = keyCode == KeyEvent.KEYCODE_VOLUME_UP ? -1 : 1;
+                int next = nextVisiblePosition(selectedPosition, dir);
+                if (next != selectedPosition) {
+                    bottomNav.setSelectedItemId(itemIdForPosition(next));
                 }
-                else {
-                    next = selectedPosition < SECTION_TAGS.length - 1
-                            ? selectedPosition + 1 : 0;
-                }
-                bottomNav.setSelectedItemId(itemIdForPosition(next));
             }
             return true;
         }
