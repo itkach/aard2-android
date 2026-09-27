@@ -32,12 +32,14 @@ import java.util.Locale;
 
 import static java.lang.String.format;
 
-public class DictionaryListAdapter extends RecyclerView.Adapter<DictionaryListAdapter.ViewHolder> {
+public class DictionaryListAdapter extends RecyclerView.Adapter<DictionaryListAdapter.ViewHolder>
+        implements ReleasableAdapter {
 
     private final static String TAG = DictionaryListAdapter.class.getName();
 
     private final SlobDescriptorList    data;
     private final Activity              context;
+    private final DataSetObserver       observer;
     private ItemTouchHelper             itemTouchHelper;
 
     void setItemTouchHelper(ItemTouchHelper helper) {
@@ -60,7 +62,7 @@ public class DictionaryListAdapter extends RecyclerView.Adapter<DictionaryListAd
     DictionaryListAdapter(SlobDescriptorList data, Activity context) {
         this.data = data;
         this.context = context;
-        DataSetObserver observer = new DataSetObserver() {
+        this.observer = new DataSetObserver() {
             @Override
             public void onChanged() {
                 notifyDataSetChanged();
@@ -72,6 +74,14 @@ public class DictionaryListAdapter extends RecyclerView.Adapter<DictionaryListAd
             }
         };
         this.data.registerDataSetObserver(observer);
+    }
+
+    // Detaches from the app-scoped dictionary list. Call when the owning view goes
+    // away (DictionariesFragment.onDestroyView) so the list stops holding this
+    // adapter - and, through its captured Activity, the whole view tree.
+    @Override
+    public void release() {
+        data.unregisterDataSetObserver(observer);
     }
 
     private final View.OnClickListener openUrlOnClick = new View.OnClickListener() {

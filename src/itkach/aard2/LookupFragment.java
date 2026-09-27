@@ -42,7 +42,7 @@ public class LookupFragment extends BaseListFragment implements LookupListener {
 
     @Override
     public void onDestroyView() {
-        listAdapter.close();
+        listAdapter.release();
         super.onDestroyView();
     }
 

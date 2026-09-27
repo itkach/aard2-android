@@ -16,7 +16,7 @@ import itkach.slob.Slob;
 // listener, so the listener lives and dies with the view that owns it. Mirrors
 // BlobDescriptorListAdapter's relationship to BlobDescriptorList.
 public class BlobListAdapter extends RecyclerView.Adapter<BlobListAdapter.ViewHolder>
-        implements BlobSource {
+        implements BlobSource, ReleasableAdapter {
 
     private final BlobList            list;
     private final OnItemClickListener itemClickListener;
@@ -46,7 +46,8 @@ public class BlobListAdapter extends RecyclerView.Adapter<BlobListAdapter.ViewHo
     // Detaches from the underlying BlobList. Call when the owning view goes away
     // (e.g. LookupFragment.onDestroyView) so the app-scoped list stops holding
     // this adapter - and, through its click listener, the Activity.
-    void close() {
+    @Override
+    public void release() {
         list.unregisterDataSetObserver(observer);
     }
 

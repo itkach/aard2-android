@@ -20,7 +20,7 @@ import itkach.slob.Slob;
 
 public class BlobDescriptorListAdapter
         extends RecyclerView.Adapter<BlobDescriptorListAdapter.ViewHolder>
-        implements BlobSource {
+        implements BlobSource, ReleasableAdapter {
 
     BlobDescriptorList      list;
     DateFormat              dateFormat;
@@ -47,6 +47,15 @@ public class BlobDescriptorListAdapter
             }
         };
         this.list.registerDataSetObserver(observer);
+    }
+
+    // Detaches from the app-scoped list. Call when the owning view goes away
+    // (BlobDescriptorListFragment.onDestroyView, or the article pager's destroy())
+    // so the list stops holding this adapter - and, via its click listener, the
+    // Activity.
+    @Override
+    public void release() {
+        list.unregisterDataSetObserver(observer);
     }
 
     void setOnItemClickListener(OnItemClickListener listener) {

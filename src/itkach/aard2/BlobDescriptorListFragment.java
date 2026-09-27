@@ -203,6 +203,12 @@ abstract class BlobDescriptorListFragment extends BaseListFragment {
         swipeHelper.attachToRecyclerView(recyclerView);
     }
 
+    @Override
+    public void onDestroyView() {
+        listAdapter.release();
+        super.onDestroyView();
+    }
+
     // Removal here is a real delete, so the swipe reveals the trashcan (matching
     // the bulk-delete action), not the dictionaries list's "close" X.
     @Override

@@ -100,6 +100,12 @@ public class DictionariesFragment extends BaseListFragment {
         listAdapter.setItemTouchHelper(helper);
     }
 
+    @Override
+    public void onDestroyView() {
+        listAdapter.release();
+        super.onDestroyView();
+    }
+
     // Close the swiped dictionary and offer Undo. Closing only removes it from
     // the app's list (the .slob file is untouched), so Undo can re-add it at the
     // same spot.

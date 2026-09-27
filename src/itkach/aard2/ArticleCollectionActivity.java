@@ -1284,10 +1284,11 @@ public class ArticleCollectionActivity extends AppCompatActivity {
 
         void destroy() {
             data.unregisterAdapterDataObserver(observer);
-            // For lookup results the data adapter wraps the app-scoped BlobList;
-            // detach it so that list doesn't retain this pager's adapter.
-            if (data instanceof BlobListAdapter) {
-                ((BlobListAdapter) data).close();
+            // The data adapter observes an app-scoped list (lookup results,
+            // bookmarks or history); detach it so that list doesn't retain this
+            // pager's adapter, and through it this Activity.
+            if (data instanceof ReleasableAdapter) {
+                ((ReleasableAdapter) data).release();
             }
             data = null;
             app = null;
