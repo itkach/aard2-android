@@ -149,8 +149,11 @@ EOF
     fi
 
     # Idempotent + path-independent: strip any prior block, then append fresh.
+    # Write back through the file (cat >), not mv, so a symlinked rc (a dotfiles
+    # repo, say) keeps its symlink and permissions instead of being replaced by a
+    # plain file.
     if [ -f "$rc" ] && grep -q ">>> $marker >>>" "$rc"; then
-        sed "/>>> $marker >>>/,/<<< $marker <<</d" "$rc" > "$rc.tmp" && mv "$rc.tmp" "$rc"
+        sed "/>>> $marker >>>/,/<<< $marker <<</d" "$rc" > "$rc.tmp" && cat "$rc.tmp" > "$rc" && rm -f "$rc.tmp"
     fi
     printf '\n%s\n' "$block" >> "$rc"
     echo "added ./d completion to $rc - run: exec $shell"
