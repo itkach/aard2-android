@@ -1,24 +1,27 @@
 #!/usr/bin/env bash
 # Snapshot the exact revisions of the source dependencies (slobj, slobber -
 # built from sibling checkouts via includeFlat) into source-deps.json, so each
-# commit records what it was built against. Output is deterministic (fixed field
-# order, no timestamp) so unchanged deps produce a byte-identical file.
+# commit records what it was built against. The JSON is built with Python (proper
+# escaping) and written atomically, and is deterministic (fixed order, no
+# timestamp) so unchanged deps produce a byte-identical file.
 #
-# No-ops (leaving any existing file untouched) unless every dependency is present
-# - e.g. a fresh clone, CI, or a packager's machine - so it never blocks there.
+# No-ops (leaving any existing file untouched) unless every dependency is a git
+# checkout - e.g. a fresh clone, CI, or a packager's machine - so it never blocks
+# there.
 #
-# With --require-clean it first verifies every present dependency has no
-# uncommitted changes to tracked files (its recorded HEAD would otherwise not
-# reflect what's built) and exits nonzero if any does. The pre-commit hook and
-# mk-release both use this, so the dependency list and the dirty check live here
-# in one place.
+# Options (the pre-commit hook and mk-release use these, so the dependency list
+# and the checks live here in one place):
+#   --require-clean   fail if any dependency has uncommitted or untracked changes
+#                     (its recorded HEAD wouldn't reflect what's actually built)
+#   --require-pushed  fail if any dependency's HEAD isn't on a remote (the
+#                     recorded revision wouldn't be fetchable by anyone else)
 set -euo pipefail
 
 # The pre-commit hook exports GIT_INDEX_FILE (the commit's index); inherited, it
 # would make the `git -C <dep> ...` calls below operate on aard2-android's index
-# instead of each sibling's own, so update-index/diff-index would report every
-# clean sibling as dirty. Drop it so each repo uses its default index. (This is a
-# child process, so the hook's own staging still sees GIT_INDEX_FILE.)
+# instead of each sibling's own, so the checks would report every clean sibling
+# as dirty. Drop it so each repo uses its default index. (This is a child
+# process, so the hook's own staging still sees GIT_INDEX_FILE.)
 unset GIT_INDEX_FILE
 
 root=$(git -C "$(dirname "$0")" rev-parse --show-toplevel)
@@ -28,18 +31,26 @@ out="$root/source-deps.json"
 deps="slobj slobber"
 
 require_clean=0
-[ "${1:-}" = "--require-clean" ] && require_clean=1
+require_pushed=0
+for arg in "$@"; do
+    case "$arg" in
+        --require-clean)  require_clean=1 ;;
+        --require-pushed) require_pushed=1 ;;
+        *) echo "record-deps: unknown option $arg" >&2; exit 2 ;;
+    esac
+done
 
+# Detect each dependency via git itself, so a worktree or submodule (whose .git
+# is a file, not a directory) is recognized rather than silently skipped.
 for name in $deps; do
-    [ -d "$root/../$name/.git" ] || {
-        echo "record-deps: ../$name not found, leaving $out untouched" >&2
+    git -C "$root/../$name" rev-parse --is-inside-work-tree >/dev/null 2>&1 || {
+        echo "record-deps: ../$name is not a git checkout, leaving $out untouched" >&2
         exit 0
     }
 done
 
 # Refresh cached stat info first, so a tracked file whose mtime changed but whose
-# content didn't (a checkout round-trip, a no-op save) isn't misreported as a
-# change by diff-index / describe --dirty below.
+# content didn't (a checkout round-trip, a no-op save) isn't misreported below.
 for name in $deps; do
     git -C "$root/../$name" update-index -q --refresh >/dev/null 2>&1 || true
 done
@@ -47,39 +58,61 @@ done
 if [ "$require_clean" -eq 1 ]; then
     dirty=""
     for name in $deps; do
-        if git -C "$root/../$name" diff-index --quiet HEAD --; then
-            :  # clean
-        else
-            # 1 = has changes; anything else = a real git error (unreadable repo,
-            # no HEAD, ...), which must not masquerade as "uncommitted changes".
-            rc=$?
-            if [ "$rc" -eq 1 ]; then
-                dirty="$dirty $name"
-            else
-                echo "record-deps: could not check $name for changes (git exited $rc)" >&2
-                exit 1
-            fi
+        # --porcelain covers staged, unstaged and untracked-but-not-ignored files
+        # - the last matters because Gradle compiles a new, un-added source too.
+        if ! status=$(git -C "$root/../$name" status --porcelain 2>/dev/null); then
+            echo "record-deps: could not check $name for changes (is ../$name a healthy repo?)" >&2
+            exit 1
         fi
+        [ -n "$status" ] && dirty="$dirty $name"
     done
     if [ -n "$dirty" ]; then
-        echo "record-deps: uncommitted changes to tracked files in dependency:$dirty" >&2
+        echo "record-deps: uncommitted or untracked changes in dependency:$dirty" >&2
         echo "  commit or stash them first, or bypass the pre-commit hook with: git commit --no-verify" >&2
         exit 1
     fi
 fi
 
-{
-    echo "["
-    first=1
+if [ "$require_pushed" -eq 1 ]; then
+    unpushed=""
     for name in $deps; do
-        dir="$root/../$name"
-        sha=$(git -C "$dir" rev-parse HEAD)
-        describe=$(git -C "$dir" describe --tags --always --dirty 2>/dev/null || true)
-        repo=$(git -C "$dir" remote get-url origin 2>/dev/null || true)
-        [ $first -eq 1 ] && first=0 || echo ","
-        printf '  { "name": "%s", "repo": "%s", "sha": "%s", "describe": "%s" }' \
-            "$name" "$repo" "$sha" "$describe"
+        head=$(git -C "$root/../$name" rev-parse HEAD)
+        # Pushed == reachable from some remote-tracking ref (reflects the last
+        # fetch/push from this checkout).
+        [ -n "$(git -C "$root/../$name" branch -r --contains "$head" 2>/dev/null)" ] \
+            || unpushed="$unpushed $name"
     done
-    echo
-    echo "]"
-} > "$out"
+    if [ -n "$unpushed" ]; then
+        echo "record-deps: HEAD is not on any remote (unpushed) in dependency:$unpushed" >&2
+        echo "  push it so the recorded revision is fetchable by others" >&2
+        exit 1
+    fi
+fi
+
+# Gather (name, repo, sha, describe) and let Python emit valid, escaped JSON to a
+# temp file, then atomically replace - so a git failure partway can't leave a
+# truncated source-deps.json, and odd characters in a URL can't break the format.
+fields=("$out")
+for name in $deps; do
+    dir="$root/../$name"
+    fields+=(
+        "$name"
+        "$(git -C "$dir" remote get-url origin 2>/dev/null || true)"
+        "$(git -C "$dir" rev-parse HEAD)"
+        "$(git -C "$dir" describe --tags --always --dirty 2>/dev/null || true)"
+    )
+done
+
+python3 - "${fields[@]}" <<'PY'
+import json, os, sys
+out, rest = sys.argv[1], sys.argv[2:]
+deps = [
+    {"name": rest[i], "repo": rest[i + 1], "sha": rest[i + 2], "describe": rest[i + 3]}
+    for i in range(0, len(rest), 4)
+]
+tmp = out + ".tmp"
+with open(tmp, "w") as f:
+    json.dump(deps, f, indent=2)
+    f.write("\n")
+os.replace(tmp, out)
+PY
