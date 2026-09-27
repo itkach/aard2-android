@@ -64,8 +64,11 @@ class BlobList implements BlobSource {
         loadChunkSync();
     }
 
-    // Pulls the next chunk once a bound row nears the end of what's loaded.
-    void maybeLoadMore(int position) {
+    // Pulls the next chunk once an accessed position nears the end of what's
+    // loaded. Called from the item accessors so every reader - the Lookup
+    // RecyclerView and the article pager alike - keeps the list growing, not just
+    // whichever view binds rows.
+    private void maybeLoadMore(int position) {
         if (position >= list.size() - loadMoreThreshold) {
             loadChunk();
         }
@@ -98,6 +101,7 @@ class BlobList implements BlobSource {
     }
 
     Slob.Blob get(int position) {
+        maybeLoadMore(position);
         return list.get(position);
     }
 
@@ -112,6 +116,6 @@ class BlobList implements BlobSource {
 
     @Override
     public Object getBlobItem(int position) {
-        return list.get(position);
+        return get(position);
     }
 }

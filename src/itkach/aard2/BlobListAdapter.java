@@ -73,7 +73,6 @@ public class BlobListAdapter extends RecyclerView.Adapter<BlobListAdapter.ViewHo
         holder.source.setText(slob == null ? "???" : slob.getTags().get("label"));
         holder.timestamp.setText("");
         holder.timestamp.setVisibility(View.GONE);
-        list.maybeLoadMore(position);
     }
 
     @Override
