@@ -761,10 +761,9 @@ public class Application extends android.app.Application {
     }
 
     private Future<?> currentLookupTask;
-    // Bumped on every lookup so a result arriving from a superseded background
-    // find is discarded (the AsyncTask version relied on isCancelled() for this).
-    // Only touched on the main thread - lookup() and the delivered result both
-    // run there - so it needs no synchronization.
+    // Bumped at the start of every lookup so a result arriving from a superseded
+    // background find is discarded. Only touched on the main thread - lookup()
+    // and the delivered result both run there - so it needs no synchronization.
     private int lookupGeneration;
 
     void lookup(String query) {
@@ -772,6 +771,11 @@ public class Application extends android.app.Application {
     }
 
     void lookup(final String query, boolean async) {
+        // Invalidate any in-flight find on every path (empty, sync and async),
+        // not just async: a running task can't be stopped by cancel(false) and
+        // posts its result unconditionally, so a superseded result is discarded
+        // by the generation mismatch check below.
+        final int generation = ++lookupGeneration;
         if (currentLookupTask != null) {
             currentLookupTask.cancel(false);
             notifyLookupCanceled(query);
@@ -785,7 +789,6 @@ public class Application extends android.app.Application {
         }
 
         if (async) {
-            final int generation = ++lookupGeneration;
             currentLookupTask = Util.runAsync(() -> find(query), result -> {
                 if (generation != lookupGeneration) {
                     return;
