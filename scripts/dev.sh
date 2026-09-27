@@ -14,7 +14,7 @@
 ROOT=$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")/.." && pwd)
 
 record-deps() {  ## snapshot slobj/slobber revisions into source-deps.json
-    "$ROOT/scripts/record-deps"
+    "$ROOT/scripts/record-deps" "$@"
 }
 
 mk-manifest() {  ## regenerate AndroidManifest.xml from the templates
@@ -59,6 +59,10 @@ mk-release() {  ## bump version, regen manifest, record deps, commit + tag [vers
             echo "mk-release: tag $new_name already exists" >&2
             exit 1
         fi
+        # Pre-flight the same dependency-cleanliness check the pre-commit hook
+        # enforces (and record source-deps.json now), so we bail here rather than
+        # aborting at git commit and leaving a half-applied version bump behind.
+        record-deps --require-clean || exit 1
         echo "version: $cur_name ($cur_code) -> $new_name ($new_code)"
 
         # Edit the template with Python (targeted - no risk of mangling XML). The
@@ -77,7 +81,6 @@ open(path, "w").write(s)
 PY
 
         mk-manifest || exit 1
-        record-deps || exit 1
         git add "$tmpl" AndroidManifest.xml source-deps.json || exit 1
         git commit -m "$new_name" || exit 1
         git tag -a "$new_name" -m "Aard 2 $new_name" || exit 1

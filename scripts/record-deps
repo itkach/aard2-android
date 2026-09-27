@@ -4,15 +4,31 @@
 # commit records what it was built against. Output is deterministic (fixed field
 # order, no timestamp) so unchanged deps produce a byte-identical file.
 #
-# No-ops (leaving any existing file untouched) when a sibling isn't present -
-# e.g. a fresh clone, CI, or a packager's machine - so it never blocks a commit.
+# No-ops (leaving any existing file untouched) unless every dependency is present
+# - e.g. a fresh clone, CI, or a packager's machine - so it never blocks there.
+#
+# With --require-clean it first verifies every present dependency has no
+# uncommitted changes to tracked files (its recorded HEAD would otherwise not
+# reflect what's built) and exits nonzero if any does. The pre-commit hook and
+# mk-release both use this, so the dependency list and the dirty check live here
+# in one place.
 set -euo pipefail
+
+# The pre-commit hook exports GIT_INDEX_FILE (the commit's index); inherited, it
+# would make the `git -C <dep> ...` calls below operate on aard2-android's index
+# instead of each sibling's own, so update-index/diff-index would report every
+# clean sibling as dirty. Drop it so each repo uses its default index. (This is a
+# child process, so the hook's own staging still sees GIT_INDEX_FILE.)
+unset GIT_INDEX_FILE
 
 root=$(git -C "$(dirname "$0")" rev-parse --show-toplevel)
 out="$root/source-deps.json"
 
-# Leaf first: slobj, then slobber (which depends on it).
+# The source dependencies, leaf first (slobj, then slobber which depends on it).
 deps="slobj slobber"
+
+require_clean=0
+[ "${1:-}" = "--require-clean" ] && require_clean=1
 
 for name in $deps; do
     [ -d "$root/../$name/.git" ] || {
@@ -20,6 +36,37 @@ for name in $deps; do
         exit 0
     }
 done
+
+# Refresh cached stat info first, so a tracked file whose mtime changed but whose
+# content didn't (a checkout round-trip, a no-op save) isn't misreported as a
+# change by diff-index / describe --dirty below.
+for name in $deps; do
+    git -C "$root/../$name" update-index -q --refresh >/dev/null 2>&1 || true
+done
+
+if [ "$require_clean" -eq 1 ]; then
+    dirty=""
+    for name in $deps; do
+        if git -C "$root/../$name" diff-index --quiet HEAD --; then
+            :  # clean
+        else
+            # 1 = has changes; anything else = a real git error (unreadable repo,
+            # no HEAD, ...), which must not masquerade as "uncommitted changes".
+            rc=$?
+            if [ "$rc" -eq 1 ]; then
+                dirty="$dirty $name"
+            else
+                echo "record-deps: could not check $name for changes (git exited $rc)" >&2
+                exit 1
+            fi
+        fi
+    done
+    if [ -n "$dirty" ]; then
+        echo "record-deps: uncommitted changes to tracked files in dependency:$dirty" >&2
+        echo "  commit or stash them first, or bypass the pre-commit hook with: git commit --no-verify" >&2
+        exit 1
+    fi
+fi
 
 {
     echo "["

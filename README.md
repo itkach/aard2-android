@@ -211,7 +211,10 @@ Because `slobj` and `slobber` are built from the sibling checkouts above, their
 exact revisions aren't captured by the build itself. `source-deps.json` records
 them, and the pre-commit hook enabled by `./d setup` keeps it current on every
 commit — so run `./d setup` before committing, or your commits won't record the
-dependency revisions they were built against.
+dependency revisions they were built against. That hook also refuses to commit
+while `slobj` or `slobber` has uncommitted changes to tracked files, since the
+recorded revision wouldn't then match what was built (bypass with `git commit
+--no-verify`).
 
 ## Launching from Other Applications
 
