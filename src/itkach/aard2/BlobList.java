@@ -61,8 +61,10 @@ class BlobList implements BlobSource {
 
     void setData(Iterator<Slob.Blob> lookupResultsIter) {
         this.iter = lookupResultsIter;
-        // Fresh result set: don't let an in-flight guard from the previous one
-        // block loading more of this one.
+        // Fresh result set: release the in-flight guard from the previous one. A
+        // chunk still loading for it reads its own captured iterator (not this new
+        // one) and, seeing iter has since been swapped, discards its result - so it
+        // can neither advance this iterator concurrently nor merge into this list.
         loadingChunk = false;
         // Replace the previous results with the first chunk of the new ones in a
         // single update: clearing under its own notification would expose an empty
@@ -72,7 +74,7 @@ class BlobList implements BlobSource {
         // returns rather than only once the message queue drains - otherwise a
         // reader that samples it in between (e.g. an article restored on relaunch)
         // sees it empty.
-        final List<Slob.Blob> chunkList = readChunk();
+        final List<Slob.Blob> chunkList = readChunk(iter);
         runOnMain(() -> {
             list.clear();
             list.addAll(chunkList);
@@ -99,9 +101,18 @@ class BlobList implements BlobSource {
             return;
         }
         loadingChunk = true;
+        // Capture the iterator this load is for: setData can swap iter to a new
+        // query's while this runs, and reading the shared field on the executor
+        // would then advance the new iterator from two threads at once. If it was
+        // swapped, discard this result rather than merge the old query's items into
+        // the new list (and leave loadingChunk to setData, which already cleared it).
+        final Iterator<Slob.Blob> taskIter = iter;
         executor.execute(() -> {
-            final List<Slob.Blob> chunkList = readChunk();
+            final List<Slob.Blob> chunkList = readChunk(taskIter);
             runOnMain(() -> {
+                if (taskIter != iter) {
+                    return;
+                }
                 list.addAll(chunkList);
                 loadingChunk = false;
                 dataSetObservable.notifyChanged();
@@ -109,13 +120,16 @@ class BlobList implements BlobSource {
         });
     }
 
-    // Drains up to chunkSize more items from the current result iterator.
-    private List<Slob.Blob> readChunk() {
+    // Drains up to chunkSize more items from the given result iterator. Takes the
+    // iterator as an argument rather than reading the field, so a background load
+    // keeps advancing the iterator it was started for even if setData swaps in a
+    // new query's iterator meanwhile.
+    private List<Slob.Blob> readChunk(Iterator<Slob.Blob> it) {
         long t0 = System.currentTimeMillis();
         final List<Slob.Blob> chunkList = new LinkedList<>();
-        while (iter != null && iter.hasNext() && chunkList.size() < chunkSize
+        while (it != null && it.hasNext() && chunkList.size() < chunkSize
                 && list.size() <= maxSize) {
-            chunkList.add(iter.next());
+            chunkList.add(it.next());
         }
         Log.d(TAG, String.format("Read chunk of %d in %d ms",
                 chunkList.size(), (System.currentTimeMillis() - t0)));
