@@ -115,9 +115,9 @@ install-completion() {  ## add ./d shell completion to your shell rc [--print]
 _d_completion() {
     local root devsh
     root=$(git rev-parse --show-toplevel 2>/dev/null) || return
-    for devsh in "$root/scripts/dev.sh" "$root/dev.sh"; do
-        [ -f "$devsh" ] && { compadd ${(f)"$(grep -oE '^[a-z0-9_-]+\(\)' "$devsh" | sed 's/()//')"}; return; }
-    done
+    devsh="$root/scripts/dev.sh"
+    [ -f "$devsh" ] || return
+    compadd ${(f)"$(grep -oE '^[a-z0-9_-]+\(\)' "$devsh" | sed 's/()//')"}
 }
 compdef _d_completion d
 # <<< aard2 d completion <<<
@@ -129,12 +129,10 @@ EOF
 _d_completion() {
     local root devsh cmds
     root=$(git rev-parse --show-toplevel 2>/dev/null) || return
-    for devsh in "$root/scripts/dev.sh" "$root/dev.sh"; do
-        [ -f "$devsh" ] || continue
-        cmds=$(grep -oE '^[a-z0-9_-]+\(\)' "$devsh" | sed 's/()//')
-        COMPREPLY=( $(compgen -W "$cmds" -- "${COMP_WORDS[COMP_CWORD]}") )
-        return
-    done
+    devsh="$root/scripts/dev.sh"
+    [ -f "$devsh" ] || return
+    cmds=$(grep -oE '^[a-z0-9_-]+\(\)' "$devsh" | sed 's/()//')
+    COMPREPLY=( $(compgen -W "$cmds" -- "${COMP_WORDS[COMP_CWORD]}") )
 }
 complete -F _d_completion d ./d
 # <<< aard2 d completion <<<
