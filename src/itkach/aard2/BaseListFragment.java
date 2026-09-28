@@ -25,12 +25,12 @@ public abstract class BaseListFragment extends SimpleListFragment {
     // neither the list nor the empty view is shown, only the spinner.
     private boolean listShown = true;
 
-    // The adapter emptyObserver is currently registered on, so registration can
-    // be paired with an unregister. This fragment is retained across
-    // configuration changes (setRetainInstance) and some adapters are
-    // application-scoped (e.g. Lookup's app.lastResult), so without unregistering
-    // when the view goes away, the recreate after a theme switch would re-register
-    // the same observer on the same adapter - which throws "already registered".
+    // The adapter emptyObserver is registered on, so setListAdapter's registration
+    // can be paired with an unregister. The fragment instance outlives its view -
+    // MainActivity keeps the five section fragments and show/hides them, recreating
+    // their views on a configuration change - so emptyObserver, a fragment field,
+    // must be detached from the destroyed view's adapter in onDestroyView rather
+    // than left attached to it.
     private RecyclerView.Adapter<? extends RecyclerView.ViewHolder> observedAdapter;
 
     // Toggles the empty view in/out as the adapter's contents change -
@@ -62,10 +62,10 @@ public abstract class BaseListFragment extends SimpleListFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        // No setRetainInstance(true): these fragments are hosted in a
-        // ViewPager2 FragmentStateAdapter, which manages (and forbids retaining)
-        // its fragments' instance state itself. App-scoped data (lookup results,
-        // bookmarks, etc.) lives in Application and survives recreation anyway.
+        // No setRetainInstance(true): MainActivity adds the five section fragments
+        // once and show/hides them, and their data (lookup results, bookmarks,
+        // etc.) lives in Application and survives recreation, so there's nothing
+        // per-fragment worth retaining across a configuration change.
     }
 
     @Override
