@@ -325,7 +325,7 @@ public class DictionaryListAdapter extends RecyclerView.Adapter<DictionaryListAd
     }
 
     private void setupSourceView(SlobDescriptor desc, boolean available, View view) {
-        View sourceRow = view.findViewById(R.id.dictionary_license_row);
+        View sourceRow = view.findViewById(R.id.dictionary_source_row);
 
         ImageView sourceIcon = (ImageView) view.findViewById(R.id.dictionary_source_icon);
         sourceIcon.setImageDrawable(IconMaker.text(context, IconMaker.IC_EXTERNAL_LINK));
@@ -336,12 +336,7 @@ public class DictionaryListAdapter extends RecyclerView.Adapter<DictionaryListAd
         sourceView.setText(sourceHtml);
         sourceView.setTag(source);
 
-        int visibility = Util.isBlank(source) ? View.GONE : View.VISIBLE;
-        //Setting visibility on layout seems to have no effect
-        //if one of the children is a link
-        sourceIcon.setVisibility(visibility);
-        sourceView.setVisibility(visibility);
-        sourceRow.setVisibility(visibility);
+        sourceRow.setVisibility(Util.isBlank(source) ? View.GONE : View.VISIBLE);
         sourceRow.setEnabled(available);
     }
 
@@ -367,10 +362,8 @@ public class DictionaryListAdapter extends RecyclerView.Adapter<DictionaryListAd
         licenseView.setText(license);
         licenseView.setTag(licenseUrl);
 
-        int visibility = (Util.isBlank(licenseName) && Util.isBlank(licenseUrl)) ? View.GONE : View.VISIBLE;
-        licenseIcon.setVisibility(visibility);
-        licenseView.setVisibility(visibility);
-        licenseRow.setVisibility(visibility);
+        licenseRow.setVisibility(
+                (Util.isBlank(licenseName) && Util.isBlank(licenseUrl)) ? View.GONE : View.VISIBLE);
         licenseRow.setEnabled(available);
     }
 
