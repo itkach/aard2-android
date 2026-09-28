@@ -80,6 +80,10 @@ public class ArticleWebView extends SearchableWebView {
 
     private String              currentSlobId;
     private String              currentSlobUri;
+    // The style resolved for the page as it was loaded (baked into its request
+    // URL server-side). Used to tell whether learning the page's declared styles
+    // changes the resolution - see setStyleTitles. Main thread only.
+    private String              appliedStyleTitle;
     private ConnectivityManager connectivityManager;
 
     boolean forceLoadRemoteContent;
@@ -94,6 +98,21 @@ public class ArticleWebView extends SearchableWebView {
         if (!this.styleTitles.equals(newStyleTitlesSet)) {
             this.styleTitles = newStyleTitlesSet;
             saveAvailableStylesPref(this.styleTitles);
+            // The first article from a dictionary is served in the style resolved
+            // against an empty available-styles set (this is what populates it), so
+            // an "Auto" page in the dark UI comes up in Default rather than the
+            // dictionary's night style. Now that the styles are known, re-resolve
+            // and re-apply if that changed the answer. Gated on an actual change so
+            // the common case - and every load where the set was already known -
+            // doesn't reflow (see onPageStarted). Posted: this runs off the UI
+            // thread (a JavaScript bridge callback).
+            post(() -> {
+                String resolved = getPreferredStyle();
+                if (!resolved.equals(appliedStyleTitle)) {
+                    appliedStyleTitle = resolved;
+                    setStyle(resolved);
+                }
+            });
         }
 
         if (Log.isLoggable(TAG, Log.DEBUG)) {
@@ -498,6 +517,7 @@ public class ArticleWebView extends SearchableWebView {
     // replaces with the real color for next time.
     private void updateBackgrounColor() {
         String preferredStyle = getPreferredStyle();
+        appliedStyleTitle = preferredStyle;
         int[] cached = getApplication().getStyleColors(currentSlobUri, preferredStyle);
         int color = cached != null ? cached[0]
                 : (Application.isDarkStyleTitle(preferredStyle) ? Color.BLACK : Color.WHITE);
