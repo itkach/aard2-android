@@ -495,10 +495,6 @@ public class MainActivity extends AppCompatActivity {
         return app.autoPaste();
     }
 
-    // Volume-key tab navigation acts on key-down (matching ArticleCollectionActivity)
-    // so pressing responds immediately and a stray key-up arriving from an article
-    // that just finished can't trigger an unexpected tab switch. Only the initial
-    // press (repeatCount 0) switches tabs; auto-repeats and key-up are swallowed.
     // Next section in the given direction (+1 down, -1 up), wrapping and skipping
     // entries whose bottom-nav item is hidden (History when "Record history" is
     // off). setSelectedItemId only checks isEnabled(), not isVisible(), so without
@@ -516,6 +512,10 @@ public class MainActivity extends AppCompatActivity {
         return from;
     }
 
+    // Volume-key tab navigation acts on key-down (matching ArticleCollectionActivity)
+    // so pressing responds immediately and a stray key-up arriving from an article
+    // that just finished can't trigger an unexpected tab switch. Only the initial
+    // press (repeatCount 0) switches tabs; auto-repeats and key-up are swallowed.
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_VOLUME_UP || keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
