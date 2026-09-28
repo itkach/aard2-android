@@ -462,32 +462,6 @@ public class ArticleWebView extends SearchableWebView {
         saveTextZoomPref();
     }
 
-    boolean textZoomIn() {
-        WebSettings settings = getSettings();
-        int newZoom = settings.getTextZoom() + 20;
-        if (newZoom <= 200) {
-            settings.setTextZoom(newZoom);
-            saveTextZoomPref();
-            return true;
-        }
-        else {
-            return false;
-        }
-    }
-
-    boolean textZoomOut() {
-        WebSettings settings = getSettings();
-        int newZoom = settings.getTextZoom() - 20;
-        if (newZoom >= 40) {
-            settings.setTextZoom(newZoom);
-            saveTextZoomPref();
-            return true;
-        }
-        else {
-            return false;
-        }
-    }
-
     void resetTextZoom() {
         getSettings().setTextZoom(100);
         saveTextZoomPref();
