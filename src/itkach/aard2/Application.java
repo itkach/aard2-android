@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -521,7 +522,7 @@ public class Application extends android.app.Application {
 
     void saveUserStyle(String name, String css) throws IOException {
         FileOutputStream out = new FileOutputStream(
-                new File(userStyleDir, canonicalStyleFileName(name)));
+                new File(userStyleDir, userStyleFileName(name)));
         try {
             out.write(css.getBytes("UTF-8"));
         } finally {
@@ -529,12 +530,28 @@ public class Application extends android.app.Application {
         }
     }
 
-    // A user style's stored filename always ends in a lowercase ".css", so the
-    // case-sensitive readers (userStyleNames, isUserStyle, the picker labels)
-    // match it regardless of how the extension was cased on upload.
-    private static String canonicalStyleFileName(String name) {
-        String base = name.toLowerCase(Locale.ROOT).endsWith(".css")
-                ? name.substring(0, name.length() - 4) : name;
+    // Cap on a user style's base filename in UTF-8 bytes (before ".css"), under the
+    // common 255-byte per-name filesystem limit so a name can't make the write
+    // fail. Bytes, not chars: a filename is byte-limited, and one char can be
+    // several UTF-8 bytes.
+    private static final int USER_STYLE_NAME_MAX_BYTES = 240;
+
+    // The on-disk filename for a user style, from an arbitrary name: path
+    // separators replaced, byte length capped, and always ending in a lowercase
+    // ".css" - so the write can't fail on the name, and the case-sensitive readers
+    // (userStyleNames, isUserStyle, the picker labels) match regardless of how the
+    // extension was cased. Applied both on upload (via saveUserStyle) and by the
+    // migration below, so the two agree on the resulting file.
+    private static String userStyleFileName(String name) {
+        String base = name.replaceAll("[/\\\\]", "_");
+        if (base.toLowerCase(Locale.ROOT).endsWith(".css")) {
+            base = base.substring(0, base.length() - 4);
+        }
+        // Trim whole characters off the end until it fits, so a multi-byte
+        // character is never split into invalid bytes.
+        while (base.getBytes(StandardCharsets.UTF_8).length > USER_STYLE_NAME_MAX_BYTES) {
+            base = base.substring(0, base.length() - 1);
+        }
         return base + ".css";
     }
 
@@ -553,24 +570,28 @@ public class Application extends android.app.Application {
             return;
         }
         // Old selection title -> new .css filename, used below to fix up the
-        // per-dictionary selections that named these styles.
+        // per-dictionary selections that named these styles. Only entries whose
+        // CSS is on disk (already there, or written here) go in - and only those
+        // are dropped from the old store below, so an entry that fails to write
+        // keeps its CSS for the next start to retry rather than losing it.
         Map<String, String> renamed = new HashMap<>();
+        SharedPreferences.Editor migrated = prefs.edit();
         for (Map.Entry<String, ?> entry : stored.entrySet()) {
             if (!(entry.getValue() instanceof String)) {
                 continue;
             }
-            String name = entry.getKey().endsWith(".css")
-                    ? entry.getKey() : entry.getKey() + ".css";
+            String name = userStyleFileName(entry.getKey());
+            if (!new File(userStyleDir, name).exists()) {
+                String css = ((String) entry.getValue()).replace("\\n", "\n");
+                try {
+                    saveUserStyle(name, css);
+                } catch (IOException e) {
+                    Log.w(TAG, "Failed to migrate user style " + entry.getKey(), e);
+                    continue;
+                }
+            }
             renamed.put(entry.getKey(), name);
-            if (new File(userStyleDir, name).exists()) {
-                continue;
-            }
-            String css = ((String) entry.getValue()).replace("\\n", "\n");
-            try {
-                saveUserStyle(name, css);
-            } catch (IOException e) {
-                Log.w(TAG, "Failed to migrate user style " + entry.getKey(), e);
-            }
+            migrated.remove(entry.getKey());
         }
         // Rewrite each dictionary's selected style (style.<uri>, but not the
         // style.available.<uri> sets) that named a migrated user style, so it
@@ -593,7 +614,9 @@ public class Application extends android.app.Application {
         if (changed) {
             edit.apply();
         }
-        prefs.edit().clear().apply();
+        // Drop only the entries whose CSS is now on disk; any that failed to write
+        // stay so the next start retries them.
+        migrated.apply();
     }
 
     /**

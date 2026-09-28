@@ -37,7 +37,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 /**
  * The Settings screen. A fixed set of sections laid out in a plain ScrollView
@@ -301,14 +300,11 @@ public class SettingsFragment extends Fragment {
                 String fileName = documentFile.getName();
                 Application app = (Application)getActivity().getApplication();
                 String userCss = app.readTextFile(is, 256 * 1024);
-                // The file name (with a .css extension) is the style identifier
-                // and, sanitized of path separators, the file Slobber serves.
+                // The file name is the style identifier; saveUserStyle sanitizes it
+                // (path separators, length, lowercase .css) into the file Slobber
+                // serves.
                 if (fileName == null || fileName.isEmpty()) {
                     fileName = "user";
-                }
-                fileName = fileName.replaceAll("[/\\\\]", "_");
-                if (!fileName.toLowerCase(Locale.ROOT).endsWith(".css")) {
-                    fileName = fileName + ".css";
                 }
                 try {
                     app.saveUserStyle(fileName, userCss);
