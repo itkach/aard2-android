@@ -11,6 +11,14 @@
   // doesn't reliably materialize a dynamically added stylesheet.
   var href = '%s',
       existing = document.querySelectorAll('link[href^="/user-styles/"]');
+  // applyStylePref() re-runs on every resume and page change. If the wanted
+  // style is already the linked one, leave it: removing and re-adding an
+  // identical <link> would drop the sheet and reload it asynchronously (a
+  // script-inserted stylesheet isn't render-blocking, and /user-styles is
+  // no-cache), flashing the article unstyled.
+  if (href && existing.length === 1 && existing[0].getAttribute('href') === href) {
+    return;
+  }
   for (var i = 0; i < existing.length; i++) {
     existing[i].parentNode.removeChild(existing[i]);
   }
