@@ -119,7 +119,9 @@ _d_completion() {
     [ -f "$devsh" ] || return
     compadd ${(f)"$(grep -oE '^[a-z0-9_-]+\(\)' "$devsh" | sed 's/()//')"}
 }
-compdef _d_completion d
+# Guard compdef: without compinit loaded it's undefined and would error at every
+# shell start. Register both d and ./d (./d is how the launcher is usually run).
+(( $+functions[compdef] )) && compdef _d_completion d ./d
 # <<< aard2 d completion <<<
 EOF
 ) ;;
