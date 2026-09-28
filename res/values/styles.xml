@@ -20,12 +20,7 @@
          wallpaper, the same colors every other app on the device picks up),
          and on older versions by falling back to Material 3's own baseline
          palette - both via a plain theme-parent switch, no color values of
-         our own needed at all. This replaces an earlier version of this
-         theme that hand-generated a full color scheme from a single seed
-         color and listed every role explicitly (see git history) - a
-         reasonable approach in isolation, but unnecessary work once a
-         system-provided equivalent exists, and one that would never have
-         matched the system's own theme the way this now does. -->
+         our own needed at all. -->
     <!-- windowActionModeOverlay=true draws a contextual ActionMode (multi-select
          bar, find-in-page) OVER the content's top instead of inserting it and
          pushing everything down. Without it the app had to hide its own Toolbar

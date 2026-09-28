@@ -387,8 +387,7 @@ public class ArticleCollectionActivity extends AppCompatActivity {
         }
     }
 
-    // The article menu (bookmark/find/zoom/style/remote) lives on the Activity
-    // now that pages are raw ArticleWebViews rather than ArticleFragments; it
+    // The article menu (bookmark/find/zoom/style/remote) lives on the Activity and
     // acts on the current page's WebView.
     private MenuItem miBookmark;
     private Drawable icBookmark;
@@ -1071,11 +1070,10 @@ public class ArticleCollectionActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    // One "Text size" control replacing the old three zoom menu rows: a
-    // lightweight floating bar (not a modal dialog) centered in the lower part of
-    // the screen, like a browser's zoom widget. The slider adjusts the page live;
-    // it dismisses on an outside tap or after an idle timeout re-armed on each
-    // change.
+    // The "Text size" control: a lightweight floating bar (not a modal dialog)
+    // centered in the lower part of the screen, like a browser's zoom widget. The
+    // slider adjusts the page live; it dismisses on an outside tap or after an idle
+    // timeout re-armed on each change.
     private static final long TEXT_SIZE_POPUP_TIMEOUT_MS = 6000;
     private static final long TEXT_SIZE_APPLY_DEBOUNCE_MS = 120;
 

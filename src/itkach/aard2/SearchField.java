@@ -22,12 +22,10 @@ import androidx.core.view.WindowInsetsControllerCompat;
 /**
  * The app's search/filter/find input: a leading icon, a text field with a thin
  * underline, and a clear button that appears once there's text. A small,
- * fully-controlled stand-in for android.widget.SearchView, which we used to use
- * for these three fields (Lookup, Filter, find-in-page) but which offered no
- * public way to set its leading icon or tighten its spacing - forcing
- * reach-into-internals hacks. Here icon and spacing are plain layout, so those
- * hacks are gone. The listener mirrors SearchView.OnQueryTextListener so the
- * call sites read the same.
+ * fully-controlled stand-in for android.widget.SearchView, which offers no public
+ * way to set its leading icon or tighten its spacing; here icon and spacing are
+ * plain layout. Used for the Lookup, Filter and find-in-page fields. The listener
+ * mirrors SearchView.OnQueryTextListener so the call sites read the same.
  */
 public class SearchField extends LinearLayout {
 

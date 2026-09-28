@@ -132,10 +132,8 @@ class IconMaker {
 
     // These icons are drawn directly in a Toolbar (bookmark toggle, etc.), so
     // they need to contrast with colorPrimary the same way the Toolbar's own
-    // title text does - resolving @android:color/secondary_text_dark
-    // unconditionally (as this used to) ignored the active theme entirely and
-    // read as a washed-out, disabled-looking grey once that stopped
-    // coincidentally matching.
+    // title text does - hence the theme's colorOnPrimary (below), not a fixed
+    // colour.
     static FontDrawable actionBar(Context context, Glyph g) {
         // 20dp (not the framework action icon's nominal 24dp): the glyphs carry
         // little built-in padding, so they read larger at equal size - 20dp
@@ -167,9 +165,8 @@ class IconMaker {
         return make(context, g, 16, color);
     }
 
-    // colorError is Material's own dynamic-color-aware error role, replacing
-    // a fixed android.R.color.holo_red_dark this used to resolve to
-    // regardless of theme.
+    // colorError is Material's own dynamic-color-aware error role, so the icon
+    // tracks the active theme.
     static FontDrawable errorText(Context context, Glyph g) {
         int color = resolveThemeColor(context, androidx.appcompat.R.attr.colorError, 0xffcc0000);
         return make(context, g, 16, color);

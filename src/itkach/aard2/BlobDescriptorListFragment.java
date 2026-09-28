@@ -231,11 +231,9 @@ abstract class BlobDescriptorListFragment extends BaseListFragment {
                 () -> list.restore(removed)).show();
     }
 
-    // Drives the contextual ActionMode off the selection state, replacing
-    // ListView's built-in CHOICE_MODE_MULTIPLE_MODAL. The bar opens on the
-    // first (long-press) selection and stays open - like the old ListView
-    // CAB - until the user backs out or deletes; emptying the selection by
-    // deselecting the last row does NOT close it.
+    // Drives the contextual ActionMode off the selection state. The bar opens on
+    // the first (long-press) selection and stays open until the user backs out or
+    // deletes; emptying the selection by deselecting the last row does NOT close it.
     private class SelectionObserver extends SelectionTracker.SelectionObserver<Long> {
         @Override
         public void onSelectionChanged() {
@@ -385,8 +383,8 @@ abstract class BlobDescriptorListFragment extends BaseListFragment {
         return false;
     }
 
-    // Position-keyed selection (matching the old getCheckedItemPositions
-    // behaviour): key == position, so the trivial two-way mapping is always
+    // Position-keyed selection: key == position, so the trivial two-way mapping
+    // is always
     // available.
     private static class PositionKeyProvider extends ItemKeyProvider<Long> {
         PositionKeyProvider() {

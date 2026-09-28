@@ -37,13 +37,11 @@ import java.util.TreeSet;
 
 public class ArticleWebView extends SearchableWebView {
 
-    // Set once, when the first article WebView is built. Enabling chrome://inspect
-    // debugging used to live in Application.onCreate, but calling it there eagerly
-    // initialised the WebView provider (~100ms on the main thread) on every cold
-    // start even though the main screen has no WebView. Doing it here defers that
-    // to the first article open, which pays WebView init anyway behind its
-    // loading spinner. The WebView constructor already requires the main thread,
-    // so this call is safely on it.
+    // Enabled here, on first article WebView creation, rather than at app start:
+    // the call initializes the WebView provider (~100ms on the main thread), which
+    // the main screen doesn't otherwise need. The first article open pays WebView
+    // init anyway, behind its loading spinner. The WebView constructor already
+    // requires the main thread, so this call is safely on it.
     private static boolean webContentsDebuggingEnabled;
 
     public static final String LOCALHOST = Application.LOCALHOST;

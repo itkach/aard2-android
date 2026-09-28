@@ -343,13 +343,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // The multi-select CAB (Bookmarks/History) is themed and positioned entirely
-    // by the theme's windowActionModeOverlay + actionModeStyle now that this is an
-    // AppCompatActivity: AppCompat wraps the native ActionMode, draws its
-    // (opaque, colorPrimary) bar over this Toolbar's spot, and reveals the Toolbar
-    // again on exit - no manual hide/show needed (which flashed both bars during
-    // the exit animation). The text-selection popup a long-press in the Lookup
-    // field triggers is a framework floating mode AppCompat leaves alone, so it
-    // doesn't interfere either.
+    // by the theme's windowActionModeOverlay + actionModeStyle: AppCompat wraps the
+    // native ActionMode, draws its (opaque, colorPrimary) bar over this Toolbar's
+    // spot, and reveals the Toolbar again on exit. The text-selection popup a
+    // long-press in the Lookup field triggers is a framework floating mode
+    // AppCompat leaves alone, so it doesn't interfere either.
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
