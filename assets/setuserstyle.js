@@ -1,4 +1,4 @@
-(function(){
+(function(href){
   // Applies a user style in place, the client-side twin of the <link> Slobber
   // injects server-side for the initial load. Slobber serves user styles under
   // its /user-styles/ route, so the currently-applied one is identified by that
@@ -8,9 +8,10 @@
   // Slobber). Pair with setcannedstyle.js (setStyle('')) to drop the document's
   // built-in alternate stylesheets while a user style is active. Injected via
   // WebView.evaluateJavascript, not loadUrl("javascript:...") - the latter
-  // doesn't reliably materialize a dynamically added stylesheet.
-  var href = '%s',
-      existing = document.querySelectorAll('link[href^="/user-styles/"]');
+  // doesn't reliably materialize a dynamically added stylesheet. href is passed
+  // in (JSON-quoted by the caller), so a name with special characters can't break
+  // out of the string literal.
+  var existing = document.querySelectorAll('link[href^="/user-styles/"]');
   // applyStylePref() re-runs on every resume and page change. If the wanted
   // style is already the linked one, leave it: removing and re-adding an
   // identical <link> would drop the sheet and reload it asynchronously (a
@@ -28,4 +29,4 @@
     link.href = href;
     document.head.appendChild(link);
   }
-})();
+})

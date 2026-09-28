@@ -21,6 +21,7 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
+import org.json.JSONObject;
 
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
@@ -370,8 +371,14 @@ public class ArticleWebView extends SearchableWebView {
         boolean userStyle = getApplication().isUserStyle(styleTitle);
         String userHref = userStyle ? "/user-styles/" + Uri.encode(styleTitle) : "";
         String cannedTitle = userStyle ? "" : styleTitle;
-        String js = String.format(Application.jsSetUserStyle, userHref)
-                + String.format(Application.jsSetCannedStyle, cannedTitle);
+        // Each script is a function expression; invoke it with its value as a
+        // JSON-quoted argument, so a style name with an apostrophe or other
+        // special character (e.g. a user file "Bob's.css") can't break the injected
+        // JS. Both run in one evaluateJavascript, so a syntax error would drop the
+        // whole switch.
+        String js = String.format("%s(%s);%s(%s);",
+                Application.jsSetUserStyle, JSONObject.quote(userHref),
+                Application.jsSetCannedStyle, JSONObject.quote(cannedTitle));
         if (Log.isLoggable(TAG, Log.DEBUG)) {
             Log.d(TAG, js);
         }
