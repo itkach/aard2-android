@@ -26,11 +26,9 @@ public abstract class BaseListFragment extends SimpleListFragment {
     private boolean listShown = true;
 
     // The adapter emptyObserver is registered on, so setListAdapter's registration
-    // can be paired with an unregister. The fragment instance outlives its view -
-    // MainActivity keeps the five section fragments and show/hides them, recreating
-    // their views on a configuration change - so emptyObserver, a fragment field,
-    // must be detached from the destroyed view's adapter in onDestroyView rather
-    // than left attached to it.
+    // can be paired with an unregister. emptyObserver is a fragment field bound to
+    // the current view's adapter, so it's detached in onDestroyView when that view
+    // goes.
     private RecyclerView.Adapter<? extends RecyclerView.ViewHolder> observedAdapter;
 
     // Toggles the empty view in/out as the adapter's contents change -

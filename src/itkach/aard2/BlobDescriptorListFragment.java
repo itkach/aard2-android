@@ -384,8 +384,7 @@ abstract class BlobDescriptorListFragment extends BaseListFragment {
     }
 
     // Position-keyed selection: key == position, so the trivial two-way mapping
-    // is always
-    // available.
+    // is always available.
     private static class PositionKeyProvider extends ItemKeyProvider<Long> {
         PositionKeyProvider() {
             super(SCOPE_MAPPED);
