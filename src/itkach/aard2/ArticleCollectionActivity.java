@@ -512,14 +512,14 @@ public class ArticleCollectionActivity extends AppCompatActivity {
         // thread, so the main-thread callback can surface it (the background work
         // can't touch the UI). Single-element array = a mutable final capture.
         final Exception[] exception = { null };
-        Util.runAsync(() -> {
+        final Uri articleUrl = intent.getData();
+        final String action = intent.getAction();
+        Runnable buildPager = () -> Util.runAsync(() -> {
             ArticleCollectionPagerAdapter result = null;
-            Uri articleUrl = intent.getData();
             try {
                 if (articleUrl != null) {
                     result = createFromUri(app, articleUrl);
                 } else {
-                    String action = intent.getAction();
                     if (action == null) {
                         result = createFromLastResult(app);
                     } else if (action.equals("showBookmarks")) {
@@ -638,6 +638,27 @@ public class ArticleCollectionActivity extends AppCompatActivity {
                 viewPager.setVisibility(View.VISIBLE);
         });
 
+        // Bookmarks and history load their entries asynchronously at startup, so
+        // on a cold start - e.g. process death restoring an article that was
+        // opened from one of them - the list can still be empty here. Wait until
+        // it's populated, or the pager would be built from an empty list and
+        // immediately dismissed as "nothing found".
+        if (articleUrl == null && "showBookmarks".equals(action)) {
+            app.bookmarks.whenLoaded(buildPager);
+        } else if (articleUrl == null && "showHistory".equals(action)) {
+            app.history.whenLoaded(buildPager);
+        } else {
+            buildPager.run();
+        }
+
+        // The bookmark toggle's state comes from app.bookmarks; until that
+        // finishes loading contains() sees an empty list, so the icon would show
+        // any article as un-bookmarked. Refresh it once the bookmarks are in.
+        app.bookmarks.whenLoaded(() -> {
+            if (!isFinishing() && !onDestroyCalled) {
+                invalidateOptionsMenu();
+            }
+        });
     }
 
     // The {background, foreground} to paint the loading screen with while the

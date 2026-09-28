@@ -53,6 +53,9 @@ final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
     // True from loadAsync() until its results are merged in on the main thread.
     // Read on the main thread only (set false there too), so no synchronization.
     private boolean                         loading;
+    // Actions waiting for the async load to finish (see whenLoaded). Main thread
+    // only, like loading itself.
+    private final List<Runnable>            loadedCallbacks = new ArrayList<>();
 
     BlobDescriptorList(Application app, DescriptorStore<BlobDescriptor> store) {
         this(app, store, 1000);
@@ -155,6 +158,19 @@ final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
         return loading;
     }
 
+    // Run action once this list's entries are available: immediately if the
+    // async load has already finished (or was never started), otherwise right
+    // after loadAsync merges them in. Lets a caller that needs a populated list
+    // - opening a bookmarks/history article, resolving the bookmark icon - avoid
+    // acting on the still-empty list during a cold start. Main thread only.
+    void whenLoaded(Runnable action) {
+        if (loading) {
+            loadedCallbacks.add(action);
+        } else {
+            action.run();
+        }
+    }
+
     // Load descriptors off the main thread. Reading and deserializing them from
     // disk can be slow (history fills to maxSize = 1000 entries) and doing it in
     // Application.onCreate dragged out cold start. isLoading() stays true from
@@ -188,6 +204,14 @@ final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
             }
             loading = false;
             notifyDataSetChanged();
+            // Drain a copy: a callback may itself call whenLoaded, and with
+            // loading now false that reentrant one runs immediately rather than
+            // re-queuing, so this list won't be mutated mid-iteration.
+            List<Runnable> callbacks = new ArrayList<>(loadedCallbacks);
+            loadedCallbacks.clear();
+            for (Runnable action : callbacks) {
+                action.run();
+            }
         });
     }
 
