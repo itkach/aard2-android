@@ -538,6 +538,14 @@ public class ArticleCollectionActivity extends AppCompatActivity {
             return result;
         }, adapter -> {
                 if (isFinishing() || onDestroyCalled) {
+                    // The adapter finished building after this Activity began going
+                    // away (Back during the spinner, or push() finishing it). It has
+                    // already registered observers on the app-scoped list it wraps;
+                    // onDestroy can't release it (the field below was never assigned),
+                    // so release it here or it leaks for the life of the process.
+                    if (adapter != null) {
+                        adapter.destroy();
+                    }
                     return;
                 }
                 if (exception[0] != null) {
