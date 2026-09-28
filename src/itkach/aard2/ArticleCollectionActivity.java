@@ -58,6 +58,7 @@ import com.google.android.material.button.MaterialButton;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 
 import itkach.slob.Slob;
 import itkach.slob.Slob.Blob;
@@ -1262,6 +1263,9 @@ public class ArticleCollectionActivity extends AppCompatActivity {
         // The instantiated page views by position, so the Activity can reach the
         // current page's ArticleWebView (menu, back/volume nav, zoom/style).
         private final SparseArray<View> pages = new SparseArray<>();
+        // The source item each instantiated page was built from, by position, so
+        // getItemPosition can tell whether a page's item is still at its slot.
+        private final SparseArray<Object> pageItems = new SparseArray<>();
         private int primaryPosition = -1;
 
         // Attached to every page's WebView so the Activity is told when the
@@ -1322,7 +1326,9 @@ public class ArticleCollectionActivity extends AppCompatActivity {
         @Override
         public Object instantiateItem(@NonNull ViewGroup container, int position) {
             LayoutInflater inflater = LayoutInflater.from(container.getContext());
-            Slob.Blob blob = get(position);
+            Object item = position >= 0 && position < source.getBlobCount()
+                    ? source.getBlobItem(position) : null;
+            Slob.Blob blob = item == null ? null : toBlob.convert(item);
             View pageView;
             if (blob == null) {
                 pageView = inflater.inflate(R.layout.empty_view, container, false);
@@ -1361,6 +1367,7 @@ public class ArticleCollectionActivity extends AppCompatActivity {
             }
             container.addView(pageView);
             pages.put(position, pageView);
+            pageItems.put(position, item);
             return pageView;
         }
 
@@ -1374,6 +1381,7 @@ public class ArticleCollectionActivity extends AppCompatActivity {
             container.removeView(pageView);
             if (pages.get(position) == pageView) {
                 pages.remove(position);
+                pageItems.remove(position);
             }
         }
 
@@ -1421,11 +1429,23 @@ public class ArticleCollectionActivity extends AppCompatActivity {
             return "???";
         }
 
-        //this is needed so that the page is properly updated
-        //if underlying data changes (such as on unbookmark)
-        //https://code.google.com/p/android/issues/detail?id=19001
+        // A page keeps its slot as long as the same item is still at that position.
+        // Appended result chunks don't move existing items, so the article being
+        // read isn't torn down and reloaded when more results arrive. An item that
+        // changed or was removed (e.g. unbookmark shifts the rest down) no longer
+        // matches and is rebuilt - the reason a blanket POSITION_NONE was needed
+        // before (https://code.google.com/p/android/issues/detail?id=19001).
         @Override
         public int getItemPosition(@NonNull Object object) {
+            int idx = pages.indexOfValue((View) object);
+            if (idx < 0) {
+                return POSITION_NONE;
+            }
+            int position = pages.keyAt(idx);
+            if (position < source.getBlobCount()
+                    && Objects.equals(pageItems.get(position), source.getBlobItem(position))) {
+                return POSITION_UNCHANGED;
+            }
             return POSITION_NONE;
         }
     }

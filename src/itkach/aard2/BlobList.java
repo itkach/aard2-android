@@ -31,6 +31,9 @@ class BlobList implements BlobSource {
     private final DataSetObservable dataSetObservable = new DataSetObservable();
 
     private Iterator<Slob.Blob> iter;
+    // Whether a chunk load is in flight. Main thread only (set true when a load is
+    // scheduled, false when its results are merged in), so no synchronization.
+    private boolean loadingChunk;
 
     private final int chunkSize;
     private final int loadMoreThreshold;
@@ -58,6 +61,9 @@ class BlobList implements BlobSource {
 
     void setData(Iterator<Slob.Blob> lookupResultsIter) {
         this.iter = lookupResultsIter;
+        // Fresh result set: don't let an in-flight guard from the previous one
+        // block loading more of this one.
+        loadingChunk = false;
         // Replace the previous results with the first chunk of the new ones in a
         // single update: clearing under its own notification would expose an empty
         // list to observers, and an open article's pager treats an empty result as
@@ -85,13 +91,19 @@ class BlobList implements BlobSource {
     }
 
     private void loadChunk() {
-        if (iter == null || !iter.hasNext()) {
+        // One chunk in flight at a time: the several get() calls around a single
+        // swipe near the end would otherwise each queue a chunk, and every chunk's
+        // notification rebuilds the observing views. Cleared before notifying, so a
+        // reader still short of the end can pull the next chunk right after.
+        if (loadingChunk || iter == null || !iter.hasNext()) {
             return;
         }
+        loadingChunk = true;
         executor.execute(() -> {
             final List<Slob.Blob> chunkList = readChunk();
             runOnMain(() -> {
                 list.addAll(chunkList);
+                loadingChunk = false;
                 dataSetObservable.notifyChanged();
             });
         });
