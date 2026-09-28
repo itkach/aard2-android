@@ -4,6 +4,7 @@ import android.content.Context;
 import android.database.DataSetObservable;
 import android.database.DataSetObserver;
 import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -56,12 +57,21 @@ class BlobList implements BlobSource {
     }
 
     void setData(Iterator<Slob.Blob> lookupResultsIter) {
-        mainHandler.post(() -> {
+        this.iter = lookupResultsIter;
+        // Replace the previous results with the first chunk of the new ones in a
+        // single update: clearing under its own notification would expose an empty
+        // list to observers, and an open article's pager treats an empty result as
+        // "closed" and finishes itself. Run synchronously when already on the main
+        // thread (a lookup is), so lastResult reflects the results before setData
+        // returns rather than only once the message queue drains - otherwise a
+        // reader that samples it in between (e.g. an article restored on relaunch)
+        // sees it empty.
+        final List<Slob.Blob> chunkList = readChunk();
+        runOnMain(() -> {
             list.clear();
+            list.addAll(chunkList);
             dataSetObservable.notifyChanged();
         });
-        this.iter = lookupResultsIter;
-        loadChunkSync();
     }
 
     // Pulls the next chunk once an accessed position nears the end of what's
@@ -78,26 +88,36 @@ class BlobList implements BlobSource {
         if (iter == null || !iter.hasNext()) {
             return;
         }
-        executor.execute(this::loadChunkSync);
+        executor.execute(() -> {
+            final List<Slob.Blob> chunkList = readChunk();
+            runOnMain(() -> {
+                list.addAll(chunkList);
+                dataSetObservable.notifyChanged();
+            });
+        });
     }
 
-    private void loadChunkSync() {
+    // Drains up to chunkSize more items from the current result iterator.
+    private List<Slob.Blob> readChunk() {
         long t0 = System.currentTimeMillis();
-        int count = 0;
         final List<Slob.Blob> chunkList = new LinkedList<>();
-
-        while (iter.hasNext() && count < chunkSize && list.size() <= maxSize) {
-            count++;
+        while (iter != null && iter.hasNext() && chunkList.size() < chunkSize
+                && list.size() <= maxSize) {
             chunkList.add(iter.next());
         }
+        Log.d(TAG, String.format("Read chunk of %d in %d ms",
+                chunkList.size(), (System.currentTimeMillis() - t0)));
+        return chunkList;
+    }
 
-        mainHandler.post(() -> {
-            list.addAll(chunkList);
-            dataSetObservable.notifyChanged();
-        });
-
-        Log.d(TAG, String.format("Loaded chunk of %d (list size %d) in %d ms",
-                count, list.size(), (System.currentTimeMillis() - t0)));
+    // Runs r on the main thread: inline when already there (so a lookup on the
+    // main thread updates the list before it returns), otherwise posted.
+    private void runOnMain(Runnable r) {
+        if (Looper.myLooper() == Looper.getMainLooper()) {
+            r.run();
+        } else {
+            mainHandler.post(r);
+        }
     }
 
     Slob.Blob get(int position) {
