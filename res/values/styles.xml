@@ -23,13 +23,12 @@
          our own needed at all. -->
     <!-- windowActionModeOverlay=true draws a contextual ActionMode (multi-select
          bar, find-in-page) OVER the content's top instead of inserting it and
-         pushing everything down. Without it the app had to hide its own Toolbar
-         for the ActionMode's duration to avoid a stacked double bar, and that
-         hide/show desynced from the ActionMode's own enter/exit animation,
-         causing a visible layout shift. With the overlay the Toolbar stays put
-         (covered by the bar) and nothing reflows. The unprefixed AppCompat
-         attribute is what both activities read now that they're both
-         AppCompatActivity and their ActionModes are AppCompat-wrapped. -->
+         pushing everything down. That lets the Toolbar stay put, covered by the
+         bar, rather than being hidden for the ActionMode's duration to avoid a
+         stacked double bar - a hide/show that would desync from the ActionMode's
+         own enter/exit animation and shift the layout. Both activities are
+         AppCompatActivity and their ActionModes are AppCompat-wrapped, so they
+         read the unprefixed AppCompat attribute. -->
     <!-- actionBarSize drives the contextual ActionMode bars' height (multi-select
          and find-in-page). The main Toolbar sets its own @dimen/toolbar_height and
          so ignores this, but the ActionMode bars don't - point both at the same
@@ -86,8 +85,8 @@
          (titleTextColor/subtitleTextColor); this covers everything else
          hosted in the Toolbar that derives its color from these framework/
          MDC attributes instead - the overflow "⋮" icon and the up chevron
-         (colorControlNormal), and a SearchView action view's hint text and
-         clear icon (textColorSecondary/textColorHint/colorControlNormal) -
+         (colorControlNormal), and the search field's hint text and clear icon
+         (textColorSecondary/textColorHint/colorControlNormal) -
          none of which otherwise have any reason to contrast with
          colorPrimary. Uses ?attr/colorOnPrimary (not a literal color) so
          one overlay works for both Theme.Aard2 and Theme.Aard2.Dark - it
@@ -119,10 +118,8 @@
         <item name="android:tint">?attr/colorOnPrimary</item>
         <!-- 56dp, identical to the Toolbar's navigation button, so the centred
              back arrow lands exactly where the Toolbar's up arrow does and never
-             shifts when find toggles in/out. The gap before the field is handled
-             separately by pulling in the SearchView's glass inset (see
-             FindActionModeCallback), not by shrinking this button - a narrower
-             button moves the arrow off the Toolbar's position. -->
+             shifts when find toggles in/out - not shrunk to tighten the gap before
+             the field, which would move the arrow off the Toolbar's position. -->
         <item name="android:minWidth">56dp</item>
     </style>
 
@@ -145,15 +142,11 @@
         <item name="android:textColorSecondary">?attr/colorOnSurface</item>
     </style>
 
-    <!-- List-item text roles, replacing the layouts' old
-         @android:style/TextAppearance.Holo.* references. Parented on the
-         Material 3 type scale so size/weight/letter-spacing follow the active
-         theme (and its dynamic color) rather than Holo. Titles inherit the
-         type scale's own on-surface colour; the muted subtitle/caption roles
-         use colorOnSurfaceVariant, M3's role for de-emphasised secondary text
-         (the modern stand-in for the old textColorSecondary the Holo subtitle
-         styles carried). Applied via style="..." exactly as the Holo ones
-         were. -->
+    <!-- List-item text roles, on the Material 3 type scale so
+         size/weight/letter-spacing follow the active theme (and its dynamic
+         color). Titles inherit the type scale's own on-surface colour; the muted
+         subtitle/caption roles use colorOnSurfaceVariant, M3's role for
+         de-emphasised secondary text. Applied via style="...". -->
     <style name="TextAppearance.Aard2.ListTitle" parent="@style/TextAppearance.Material3.TitleMedium" />
 
     <style name="TextAppearance.Aard2.ListSubtitle" parent="@style/TextAppearance.Material3.BodyMedium">

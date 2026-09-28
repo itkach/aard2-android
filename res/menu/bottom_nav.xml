@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Bottom navigation destinations. Icons are set programmatically from
-     IconMaker (Font Awesome) in MainActivity, same as the old tab icons; the
-     titles are here for accessibility (content description / long-press
-     tooltip) even though the bar itself is icon-only (labelVisibilityMode
-     unlabeled). Order matches the previous tab order. -->
+     IconMaker (Phosphor) in MainActivity; the titles are here for accessibility
+     (content description / long-press tooltip) even though the bar itself is
+     icon-only (labelVisibilityMode unlabeled). -->
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/nav_lookup"

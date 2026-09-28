@@ -172,10 +172,10 @@ final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
     }
 
     // Load descriptors off the main thread. Reading and deserializing them from
-    // disk can be slow (history fills to maxSize = 1000 entries) and doing it in
-    // Application.onCreate dragged out cold start. isLoading() stays true from
-    // here until the results are merged in on the main thread; observers are
-    // notified at both ends, so a list fragment can show its spinner meanwhile.
+    // disk can be slow (history fills to maxSize = 1000 entries), enough to drag
+    // out cold start if done on it. isLoading() stays true from here until the
+    // results are merged in on the main thread; observers are notified at both
+    // ends, so a list fragment can show its spinner meanwhile.
     // notifyDataSetChanged rebuilds and re-sorts the filtered view, so the merged
     // items land in the fragment's current sort order.
     void loadAsync() {

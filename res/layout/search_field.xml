@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Contents of the SearchField compound view (merged into its LinearLayout):
      a leading icon outside the underline, then an edit "plate" carrying the thin
-     underline (search_field_underline) with the text field and a clear button.
-     Mirrors the platform SearchView layout we're replacing - icon-outside, thin
-     underline under the text/clear only - but with spacing we control directly
-     instead of reaching into SearchView internals. Colors come from the ambient
+     underline (search_field_underline) with the text field and a clear button -
+     icon-outside, thin underline under the text/clear only, with spacing
+     controlled directly here. Colors come from the ambient
      ThemeOverlay.Aard2.Toolbar (colorOnPrimary text/hint/cursor). -->
 <merge xmlns:android="http://schemas.android.com/apk/res/android">
 

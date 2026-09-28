@@ -10,8 +10,8 @@ public class SlobDescriptorList extends BaseDescriptorList<SlobDescriptor> {
 
     private final Application            app;
 
-    // The list is ordered solely by the user-arranged `order` field now
-    // (drag to reorder); it is an explicit, persisted index.
+    // The list is ordered solely by the user-arranged `order` field (drag to
+    // reorder): an explicit, persisted index.
     private final Comparator<SlobDescriptor> byOrder = new Comparator<SlobDescriptor>() {
         @Override
         public int compare(SlobDescriptor d1, SlobDescriptor d2) {

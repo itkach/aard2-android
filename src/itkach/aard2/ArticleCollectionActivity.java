@@ -70,9 +70,8 @@ public class ArticleCollectionActivity extends AppCompatActivity {
     // The find-in-page contextual bar is handled by the theme's
     // windowActionModeOverlay: AppCompat draws the ActionMode's (opaque)
     // ActionBarContextView directly over the Toolbar's slot, so it covers the
-    // Toolbar while active and reveals it again on exit - a clean "replace" with
-    // no manual show/hide (which flashed both bars together during the CAB's
-    // fade-out) and no reserved-space grey band. Nothing to override here.
+    // Toolbar while active and reveals it again on exit, with no reserved-space
+    // grey band. Nothing to override here.
 
     ArticleCollectionPagerAdapter articleCollectionPagerAdapter;
     ViewPager viewPager;
@@ -112,9 +111,9 @@ public class ArticleCollectionActivity extends AppCompatActivity {
 
     // Full-screen reading mode: hides the toolbar and the system bars for a
     // chrome-free article. It's a persisted mode (see ARTICLE_VIEW_PREF /
-    // PREF_FULLSCREEN) applied to every article until switched off, mirroring the
-    // old version. Because the toolbar - and thus the overflow menu - is hidden
-    // while active, exit is via the floating button (exitFullScreenFab); not via a
+    // PREF_FULLSCREEN) applied to every article until switched off. Because the
+    // toolbar - and thus the overflow menu - is hidden while active, exit is via
+    // the floating button (exitFullScreenFab); not via a
     // swipe, which would clash with the notification shade, and not via Back, which
     // keeps its normal navigation function.
     private static final String PREF_FULLSCREEN = "fullscreen";
@@ -1270,11 +1269,9 @@ public class ArticleCollectionActivity extends AppCompatActivity {
         Slob.Blob convert(Object item);
     }
 
-    // A plain (non-deprecated) PagerAdapter paging raw ArticleWebViews rather
-    // than the deprecated FragmentStatePagerAdapter over ArticleFragments. Pages
-    // are instantiated/destroyed on demand as they scroll into/out of view (the
-    // old adapter did the same), so a long collection still loads its articles
-    // lazily. PagerTitleStrip works unchanged via getPageTitle.
+    // A PagerAdapter paging raw ArticleWebViews. Pages are instantiated/destroyed
+    // on demand as they scroll into/out of view, so a long collection loads its
+    // articles lazily. PagerTitleStrip is driven by getPageTitle.
     public static class ArticleCollectionPagerAdapter extends PagerAdapter {
 
         private Application app;

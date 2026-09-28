@@ -149,7 +149,7 @@ class IconMaker {
         return make(context, g, sizeDp, color);
     }
 
-    // Contextual-action-bar (multi-select) icons. The CAB now carries the same
+    // Contextual-action-bar (multi-select) icons. The CAB carries the same
     // colorPrimary background as the Toolbar (see Widget.Aard2.ActionMode), so its
     // icons take the Toolbar's colorOnPrimary tint too - matching the CAB's own
     // title and close-button colour on the blue bar.

@@ -1,7 +1,7 @@
 <resources>
 
     <!-- Fixed-header Toolbar height for both activities - more compact than the
-         platform's 56dp ?android:attr/actionBarSize. The Lookup SearchView is
+         platform's 56dp ?android:attr/actionBarSize. The Lookup search field is
          given an explicit 40dp height (see activity_main.xml) so it centres in
          this with breathing room rather than filling it and pushing its
          underline flush against the bottom edge. -->

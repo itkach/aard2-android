@@ -181,9 +181,10 @@ public class Application extends android.app.Application {
 
         dictionaries.load();
         lookup(initialQuery, false);
-        // Off the main thread: with history at up to 1000 entries this was a
-        // noticeable chunk of cold start. The Bookmarks/History fragments show a
-        // spinner (see BlobDescriptorList.isLoading) until it finishes.
+        // Off the main thread: with history at up to 1000 entries, reading and
+        // deserializing it is a noticeable chunk of cold start. The
+        // Bookmarks/History fragments show a spinner (see
+        // BlobDescriptorList.isLoading) until it finishes.
         bookmarks.loadAsync();
         history.loadAsync();
     }
@@ -287,34 +288,21 @@ public class Application extends android.app.Application {
         return nightMode == Configuration.UI_MODE_NIGHT_YES;
     }
 
-    // Paints appBar's status bar area (via AppBarLayout's own built-in
-    // statusBarForeground mechanism - see ArticleCollectionActivity for
-    // how that stays pinned to the true top of the window regardless of
-    // the bar's own scroll offset) and sets the system status bar icons'
-    // appearance to match - both driven by isDeviceDark(), not by this
-    // activity's own applied theme, for the reason above. Also sets the
-    // legacy Window.setStatusBarColor() to the same color: on a device
-    // that isn't actually running edge-to-edge (confirmed on a Samsung
-    // running Android 12 - our own targetSdkVersion enforces edge-to-edge
-    // on newer OS versions, but that enforcement lives in the OS itself,
-    // so an older device never learns about it regardless of what we
-    // target), the system reserves the status bar's space BEFORE
-    // dispatching insets to our content at all, so
-    // WindowInsetsCompat.Type.statusBars() is always zero there and
-    // AppBarLayout's own getTopInset() never sees a reason to draw its
-    // scrim - confirmed empirically: the status bar kept the theme's own
-    // colorPrimary-derived color regardless of anything set here. That
-    // older, deprecated API is what actually paints it there instead;
-    // it's a no-op on a real edge-to-edge device (deprecated exactly
-    // because the OS ignores it once edge-to-edge is enforced), so
-    // setting both unconditionally covers either case correctly.
-    // Sets the system status bar icons' appearance and the legacy window
-    // status bar color to the device-dark-aware backdrop color, and returns
-    // that color so the caller can paint its own status bar scrim/foreground
-    // to match. Callers apply the returned color to whatever actually covers
-    // the status bar area (MainActivity: AppBarLayout.setStatusBarForeground;
-    // ArticleCollectionActivity: a plain scrim View, since its header is slid
-    // by translationY and can't use AppBarLayout's foreground).
+    // Sets the system status bar icons' appearance and the legacy
+    // Window.setStatusBarColor() to the device-dark-aware backdrop color, and
+    // returns that color. Driven by isDeviceDark(), not by this activity's own
+    // applied theme, for the reason above.
+    //
+    // The legacy setStatusBarColor() is set because on a device that isn't
+    // actually running edge-to-edge (confirmed on a Samsung running Android 12 -
+    // our targetSdkVersion enforces edge-to-edge only on newer OS versions, and
+    // that enforcement lives in the OS itself), the system reserves the status
+    // bar's space BEFORE dispatching insets to our content, so
+    // WindowInsetsCompat.Type.statusBars() is always zero there and AppBarLayout's
+    // getTopInset() never draws its scrim - the deprecated API is what paints the
+    // bar there. It's a no-op on a real edge-to-edge device (deprecated exactly
+    // because the OS ignores it once edge-to-edge is enforced), so setting it
+    // unconditionally covers either case.
     @SuppressWarnings("deprecation")
     int applyStatusBarAppearance(Activity activity) {
         boolean deviceDark = isDeviceDark();
@@ -327,6 +315,11 @@ public class Application extends android.app.Application {
         return scrimColor;
     }
 
+    // Applies the above and additionally tints appBar's status bar foreground to
+    // the returned backdrop color, via AppBarLayout's own statusBarForeground
+    // mechanism (see ArticleCollectionActivity for how that foreground stays
+    // pinned to the true top of the window regardless of the bar's own scroll
+    // offset). Both MainActivity and ArticleCollectionActivity use this overload.
     void applyStatusBarAppearance(Activity activity, AppBarLayout appBar) {
         appBar.setStatusBarForegroundColor(applyStatusBarAppearance(activity));
     }

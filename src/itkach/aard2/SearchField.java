@@ -123,8 +123,8 @@ public class SearchField extends LinearLayout {
         this.listener = l;
     }
 
-    // Route focus requests to the text field so the caret and keyboard land
-    // there (callers say requestFocus()/clearFocus() as they did on the SearchView).
+    // Route focus requests to the inner text field, so the caret and keyboard
+    // land there when a caller focuses the field as a whole.
     @Override
     public boolean requestFocus(int direction, Rect previouslyFocusedRect) {
         return edit.requestFocus(direction, previouslyFocusedRect);
@@ -137,8 +137,7 @@ public class SearchField extends LinearLayout {
     }
 
     // Focus the text field and raise the soft keyboard, targeting the inner
-    // EditText (the IME's served view). SearchView did this itself when its
-    // action view expanded; callers that expand a SearchField do it via this.
+    // EditText (the IME's served view). Called to reveal the field for input.
     public void showKeyboard() {
         edit.requestFocus();
         // Ask two ways, because neither alone covers every programmatic reveal:
@@ -160,8 +159,7 @@ public class SearchField extends LinearLayout {
         }
     }
 
-    // Drop focus and lower the soft keyboard. SearchView did this itself when its
-    // action view collapsed; callers that collapse a SearchField do it via this.
+    // Drop focus and lower the soft keyboard. Called to dismiss the field.
     public void hideKeyboard() {
         InputMethodManager imm =
                 (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);

@@ -22,14 +22,12 @@
          own, AppBarLayout reserves that space in its own measurement
          automatically, leaving a plain gap above the Toolbar (painted by
          statusBarForeground) instead of growing the Toolbar's own
-         visibly-colored area - confirmed empirically after an earlier
-         version of MainActivity ALSO padded the AppBarLayout manually by
-         the same inset, which doubled it, since AppBarLayout was already
-         reserving that space on its own. ArticleCollectionActivity's
-         Toolbar deliberately does the opposite (fitsSystemWindows on the
-         Toolbar itself, growing it to include the inset) for a reason
-         specific to its collapsing behavior that doesn't apply here - see
-         there. -->
+         visibly-colored area. Padding the AppBarLayout by the status bar
+         inset here as well would double it, since AppBarLayout is already
+         reserving that space. ArticleCollectionActivity's Toolbar
+         deliberately does the opposite (fitsSystemWindows on the Toolbar
+         itself, growing it to include the inset) for a reason specific to
+         its collapsing behavior that doesn't apply here - see there. -->
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appbar"
         android:layout_width="match_parent"
@@ -91,10 +89,9 @@
     </com.google.android.material.appbar.AppBarLayout>
 
     <!-- Hosts the selected section's fragment; MainActivity adds all five once
-         and show/hide-s them so each keeps its state (like the old pager's
-         keep-all behaviour), and because hidden fragments don't contribute
-         options-menu items, only the visible one's menu reaches the Toolbar -
-         no manual menu-visibility juggling needed. -->
+         and show/hide-s them so each keeps its state, and because hidden fragments
+         don't contribute options-menu items, only the visible one's menu reaches
+         the Toolbar - no manual menu-visibility juggling needed. -->
     <FrameLayout
         android:id="@+id/content"
         android:layout_width="match_parent"

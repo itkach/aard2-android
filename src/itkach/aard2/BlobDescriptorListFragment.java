@@ -436,9 +436,9 @@ abstract class BlobDescriptorListFragment extends BaseListFragment {
         // Keep filterExpanded in sync with the actual state when the menu is
         // (re)prepared - e.g. after a config change that recreates this view.
         filterExpanded = miFilter.isActionViewExpanded();
-        // The expand/collapse transition tells us the new state directly (unlike
-        // isActionViewExpanded(), which still reads the old state inside these
-        // callbacks). onHiddenChanged/syncFilterBackEnabled handle the rest.
+        // The expand/collapse transition tells us the new state directly
+        // (isActionViewExpanded() still returns the pre-transition value inside
+        // these callbacks). onHiddenChanged/syncFilterBackEnabled handle the rest.
         miFilter.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
             @Override
             public boolean onMenuItemActionExpand(MenuItem item) {
@@ -447,9 +447,9 @@ abstract class BlobDescriptorListFragment extends BaseListFragment {
                 // Re-apply the remembered query (collapse unapplied it). The field
                 // still shows filterText; only the list was left unfiltered.
                 getDescriptorList().setFilter(filterText);
-                // SearchView focused itself and raised the keyboard on expand; our
-                // SearchField is a plain view, so do it here (posted, since the
-                // action view isn't attached/measured yet at this point).
+                // The field isn't focused automatically on expand, so focus it and
+                // raise the keyboard here (posted, since the action view isn't
+                // attached/measured yet at this point).
                 SearchField field = item.getActionView().findViewById(R.id.fldFilter);
                 field.post(field::showKeyboard);
                 return true;
@@ -463,8 +463,7 @@ abstract class BlobDescriptorListFragment extends BaseListFragment {
                 // an unfiltered list - but keep filterText so reopening re-applies
                 // it, the way find-in-page remembers its last query.
                 getDescriptorList().setFilter("");
-                // SearchView lowered its keyboard on collapse; SearchField won't
-                // unless told to.
+                // Lower the keyboard on collapse; the field doesn't on its own.
                 ((SearchField) item.getActionView().findViewById(R.id.fldFilter))
                         .hideKeyboard();
                 return true;
@@ -474,9 +473,8 @@ abstract class BlobDescriptorListFragment extends BaseListFragment {
 
         SearchField filterField = (SearchField) miFilter.getActionView()
                 .findViewById(R.id.fldFilter);
-        // The funnel matches the action button the field expands from (and reads
-        // as "filter", not "search") - just an icon now, no reaching into a
-        // SearchView's internals.
+        // The funnel matches the action button the field expands from, and reads
+        // as "filter" rather than "search".
         filterField.setIcon(IconMaker.actionBar(getActivity(), IconMaker.IC_FILTER));
         filterField.setQueryHint(miFilter.getTitle());
         // Restore the remembered text (not list.getFilter(), which is "" whenever

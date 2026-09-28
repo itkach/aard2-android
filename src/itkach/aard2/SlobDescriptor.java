@@ -30,8 +30,7 @@ public class SlobDescriptor extends BaseDescriptor {
     // Explicit, user-arranged position in the list (drag to reorder). -1 marks
     // a descriptor that predates this field and still needs migrating.
     public int order = -1;
-    // Whether this dictionary participates in random-article lookup (the
-    // single-purpose successor to the old "favourite" marker).
+    // Whether this dictionary participates in random-article lookup.
     public boolean useForRandomLookup = false;
     public long blobCount;
     public String error;
