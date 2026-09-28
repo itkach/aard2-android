@@ -262,9 +262,13 @@ public class ArticleCollectionActivity extends AppCompatActivity {
     // auto-full-screen-in-landscape setting is on (default; can be turned off for
     // devices where it's unwanted, e.g. tablets - see Settings).
     private boolean shouldBeFullScreen() {
-        return getExplicitFullScreenPref()
-                || (isLandscape()
-                        && ((Application) getApplication()).autoFullscreenLandscape());
+        if (getExplicitFullScreenPref()) {
+            return true;
+        }
+        Application app = (Application) getApplication();
+        return isLandscape()
+                && app.autoFullscreenLandscape()
+                && !app.isAutoFullscreenDismissed();
     }
 
     // Enter from the toolbar action: an explicit, persisted choice that stays on
@@ -275,10 +279,15 @@ public class ArticleCollectionActivity extends AppCompatActivity {
     }
 
     // Exit from the corner button: clears the explicit choice and drops
-    // full-screen now. The orientation rule is re-evaluated on the next rotation,
-    // so landscape auto-enters again then.
+    // full-screen now. In landscape that isn't enough on its own - the landscape
+    // rule would re-enter on the next resume or config change - so also suppress
+    // that rule until the orientation changes (see onConfigurationChanged), when
+    // landscape auto-enters again.
     void exitFullScreen() {
         setExplicitFullScreenPref(false);
+        if (isLandscape()) {
+            ((Application) getApplication()).setAutoFullscreenDismissed(true);
+        }
         applyFullScreen(false);
     }
 
@@ -335,6 +344,13 @@ public class ArticleCollectionActivity extends AppCompatActivity {
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
+        // A real rotation re-arms landscape auto-full-screen that the user had
+        // dismissed; a non-rotation change (hardware keyboard, split-screen resize)
+        // leaves the dismissal in place. Keyed on leaving landscape, so it clears
+        // going to portrait and is already clear coming back to landscape.
+        if (newConfig.orientation != Configuration.ORIENTATION_LANDSCAPE) {
+            ((Application) getApplication()).setAutoFullscreenDismissed(false);
+        }
         // Landscape auto-enters full-screen; portrait leaves it - unless the user
         // turned it on explicitly, in which case it stays until they exit.
         applyFullScreen(shouldBeFullScreen());

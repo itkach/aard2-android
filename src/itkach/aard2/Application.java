@@ -471,6 +471,22 @@ public class Application extends android.app.Application {
         prefs().edit().putBoolean(Application.PREF_AUTO_FULLSCREEN_LANDSCAPE, value).apply();
     }
 
+    // Whether the user dismissed the auto-full-screen-in-landscape while in
+    // landscape. Suppresses the landscape rule (so it doesn't re-enter on resume
+    // or a non-rotation config change) until the orientation actually changes.
+    // Transient and app-scoped, so the dismissal holds across an article's resumes
+    // and across following a link into another article, but re-arms on rotation
+    // and on a fresh process.
+    private boolean autoFullscreenDismissed;
+
+    boolean isAutoFullscreenDismissed() {
+        return autoFullscreenDismissed;
+    }
+
+    void setAutoFullscreenDismissed(boolean value) {
+        autoFullscreenDismissed = value;
+    }
+
 
     String getUrl(Blob blob) {
         String path = Slobber.mkContentURL(blob);
