@@ -84,9 +84,19 @@ public class MainActivity extends AppCompatActivity {
 
             TimerTask scheduledLookup = null;
 
+            // Submit - the keyboard's search action and every programmatic
+            // setQuery (restoring the last query, clipboard auto-paste) - looks up
+            // immediately; the debounce in onQueryTextChange is only to avoid a
+            // find on every keystroke while the user is typing.
             @Override
             public void onQueryTextSubmit(String query) {
-                onQueryTextChange(query);
+                if (scheduledLookup != null) {
+                    scheduledLookup.cancel();
+                    scheduledLookup = null;
+                }
+                if (!app.getLookupQuery().equals(query)) {
+                    app.lookup(query);
+                }
             }
 
             @Override
