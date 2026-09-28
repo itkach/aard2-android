@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.database.DataSetObserver;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -49,6 +50,7 @@ public class SettingsFragment extends Fragment {
 
     private Application app;
     private View rootView;
+    private DataSetObserver historyLoadObserver;
 
     private final ActivityResultLauncher<Intent> cssPicker = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
@@ -78,6 +80,15 @@ public class SettingsFragment extends Fragment {
         setupRecordHistory(view);
         setupUserStyles(view);
         setupAbout(view);
+    }
+
+    @Override
+    public void onDestroyView() {
+        if (historyLoadObserver != null) {
+            app.history.unregisterDataSetObserver(historyLoadObserver);
+            historyLoadObserver = null;
+        }
+        super.onDestroyView();
     }
 
     // The user-styles list mirrors the .css files in the user style directory;
@@ -151,6 +162,19 @@ public class SettingsFragment extends Fragment {
     private void setupRecordHistory(View view) {
         CompoundButton toggle = view.findViewById(R.id.setting_record_history);
         toggle.setChecked(app.recordHistory());
+        // History loads asynchronously; until it finishes the in-memory list is
+        // incomplete, so turning recording off then would confirm against (and
+        // clear) only part of it, and the rest would reappear when the load lands.
+        // Disable the toggle until the load completes - the list notifies at both
+        // ends of the load.
+        toggle.setEnabled(!app.history.isLoading());
+        historyLoadObserver = new DataSetObserver() {
+            @Override
+            public void onChanged() {
+                toggle.setEnabled(!app.history.isLoading());
+            }
+        };
+        app.history.registerDataSetObserver(historyLoadObserver);
         toggle.setOnClickListener(v -> {
             if (toggle.isChecked()) {
                 app.setRecordHistory(true);
