@@ -7,10 +7,4 @@
          underline flush against the bottom edge. -->
     <dimen name="toolbar_height">48dp</dimen>
 
-    <!-- Default sizes for Samsung multiwindow. -->
-    <dimen name="app_defaultsize_w">632.0dip</dimen>
-    <dimen name="app_defaultsize_h">598.0dip</dimen>
-    <dimen name="app_minimumsize_w">632.0dip</dimen>
-    <dimen name="app_minimumsize_h">598.0dip</dimen>
-
 </resources>
