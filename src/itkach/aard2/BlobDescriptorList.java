@@ -202,6 +202,10 @@ final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
                     store.delete(bd.id);
                 }
             }
+            // The disk load plus any entries added while it was in flight can put
+            // the list over the cap; trim back rather than leaving it to grow by
+            // one on every such cold start.
+            enforceMaxSize();
             loading = false;
             notifyDataSetChanged();
             // Drain a copy: a callback may itself call whenLoaded, and with
@@ -300,13 +304,24 @@ final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
         }
         this.list.add(bd);
         store.save(bd);
-        if (this.list.size() > this.maxSize) {
-            Util.sort(this.list, lastAccessComparator);
+        enforceMaxSize();
+        notifyDataSetChanged();
+        return bd;
+    }
+
+    // Evict least-recently-accessed entries until the list is back within maxSize.
+    // add() overshoots by one at a time; a merge (loadAsync) can overshoot by many
+    // when entries were added while the disk load was in flight - so loop, sorting
+    // once, rather than dropping a single entry.
+    private void enforceMaxSize() {
+        if (this.list.size() <= this.maxSize) {
+            return;
+        }
+        Util.sort(this.list, lastAccessComparator);
+        while (this.list.size() > this.maxSize) {
             BlobDescriptor lru = this.list.remove(this.list.size() - 1);
             store.delete(lru.id);
         }
-        notifyDataSetChanged();
-        return bd;
     }
 
     public BlobDescriptor remove(String contentUrl) {
