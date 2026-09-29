@@ -280,8 +280,8 @@ public class ArticleCollectionActivity extends AppCompatActivity {
     // Exit from the corner button: clears the explicit choice and drops
     // full-screen now. In landscape that isn't enough on its own - the landscape
     // rule would re-enter on the next resume or config change - so also suppress
-    // that rule until the orientation changes (see onConfigurationChanged), when
-    // landscape auto-enters again.
+    // that rule (Application.autoFullscreenDismissed) until the orientation
+    // changes, when Application.onConfigurationChanged re-arms it.
     void exitFullScreen() {
         setExplicitFullScreenPref(false);
         if (isLandscape()) {
@@ -343,15 +343,11 @@ public class ArticleCollectionActivity extends AppCompatActivity {
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        // A real rotation re-arms landscape auto-full-screen that the user had
-        // dismissed; a non-rotation change (hardware keyboard, split-screen resize)
-        // leaves the dismissal in place. Keyed on leaving landscape, so it clears
-        // going to portrait and is already clear coming back to landscape.
-        if (newConfig.orientation != Configuration.ORIENTATION_LANDSCAPE) {
-            ((Application) getApplication()).setAutoFullscreenDismissed(false);
-        }
         // Landscape auto-enters full-screen; portrait leaves it - unless the user
-        // turned it on explicitly, in which case it stays until they exit.
+        // turned it on explicitly, in which case it stays until they exit. A
+        // dismissal of the landscape auto-full-screen is re-armed on leaving
+        // landscape by Application.onConfigurationChanged, which sees every rotation
+        // (including ones made while no article is in the foreground).
         applyFullScreen(shouldBeFullScreen());
         rebuildToolbarForWidth();
     }

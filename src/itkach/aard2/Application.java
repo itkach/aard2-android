@@ -481,6 +481,18 @@ public class Application extends android.app.Application {
         autoFullscreenDismissed = value;
     }
 
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        // Re-arm auto-full-screen-in-landscape when the device leaves landscape.
+        // Done here rather than only in ArticleCollectionActivity because the
+        // Application sees every rotation, including ones made with no article in
+        // the foreground (e.g. on the main screen).
+        if (newConfig.orientation != Configuration.ORIENTATION_LANDSCAPE) {
+            autoFullscreenDismissed = false;
+        }
+    }
+
 
     String getUrl(Blob blob) {
         String path = Slobber.mkContentURL(blob);
