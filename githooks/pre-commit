@@ -8,10 +8,10 @@ root=$(git rev-parse --show-toplevel)
 "$root/scripts/record-deps" --require-clean || exit 1
 
 # Stage the regenerated file into the commit - except during a partial commit
-# (git commit -- <paths>, --only, -p, -i), where git builds a temporary index
-# named next-index-<pid>; staging into that would sneak source-deps.json into a
-# commit the user deliberately scoped. Whole-index commits (plain, -a, --include)
-# use index / index.lock and are staged normally.
+# (git commit -- <paths>, --only), where git builds a temporary index named
+# next-index-<pid>; staging into that would sneak source-deps.json into a commit
+# the user deliberately scoped. Whole-index commits (plain, -a, --include) use
+# index / index.lock and are staged normally.
 case "$(basename "${GIT_INDEX_FILE:-index}")" in
     next-index-*) exit 0 ;;
 esac
