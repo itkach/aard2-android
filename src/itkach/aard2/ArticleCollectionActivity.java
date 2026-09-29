@@ -76,6 +76,7 @@ public class ArticleCollectionActivity extends AppCompatActivity {
     ArticleCollectionPagerAdapter articleCollectionPagerAdapter;
     ViewPager viewPager;
 
+
     // Scroll-to-top button. The button is only worth offering when a jump to the
     // top is actually useful, so it appears in two cases, and in both only when
     // there is more than one screen between the current position and the top
@@ -628,20 +629,6 @@ public class ArticleCollectionActivity extends AppCompatActivity {
                     }});
                 viewPager.setCurrentItem(position);
 
-                // Now that the target blob is resolved, repaint the window with
-                // its dictionary's actual article background - this is what covers
-                // the paths onCreate couldn't resolve up front (bookmarks and
-                // history resolve their blobs lazily), and refines the rest. The
-                // per-page WebView placeholder takes over painting from here.
-                Slob.Blob primary = articleCollectionPagerAdapter.get(position);
-                if (primary != null && primary.owner != null) {
-                    String slobUri = app.getSlobURI(primary.owner.getId().toString());
-                    if (slobUri != null) {
-                        getWindow().setBackgroundDrawable(
-                                new ColorDrawable(articleColors(app, slobUri)[0]));
-                    }
-                }
-
                 updateTitle(position);
                 invalidateOptionsMenu();
                 articleCollectionPagerAdapter.registerDataSetObserver(new DataSetObserver() {
@@ -896,10 +883,19 @@ public class ArticleCollectionActivity extends AppCompatActivity {
         if (appBar == null || viewPager == null) {
             return;
         }
-        ((Application) getApplication()).applyStatusBarAppearance(this, appBar);
+        // Status bar keeps its neutral device-dark scrim (top). The navigation bar
+        // stays transparent: the pages fill to the screen bottom and each article's
+        // background shows behind the gesture area and slides with the pages (see
+        // ArticleCollectionPagerAdapter.setContentBottomInset). The gesture handle's
+        // appearance is left to the system, which contrasts it against the article
+        // now visible behind the transparent bar.
+        Application app = (Application) getApplication();
+        appBar.setStatusBarForegroundColor(app.applyStatusBarAppearance(this));
         ViewCompat.setOnApplyWindowInsetsListener(viewPager, (v, windowInsets) -> {
             Insets bars = windowInsets.getInsets(WindowInsetsCompat.Type.navigationBars());
-            v.setPadding(0, 0, 0, bars.bottom);
+            if (articleCollectionPagerAdapter != null) {
+                articleCollectionPagerAdapter.setContentBottomInset(bars.bottom);
+            }
             return windowInsets;
         });
     }
@@ -1290,8 +1286,28 @@ public class ArticleCollectionActivity extends AppCompatActivity {
         // adapter is handed to the ViewPager, so it's in place for every page.
         private View.OnScrollChangeListener scrollListener;
 
+        // The navigation-bar inset, applied as each WebView's bottom content
+        // padding: the pages fill to the screen bottom behind the transparent
+        // navigation bar (so the article's own background shows there and slides
+        // with the pages), while the text still clears the gesture area.
+        private int contentBottomInset;
+
         void setOnWebViewScrollListener(View.OnScrollChangeListener l) {
             this.scrollListener = l;
+        }
+
+        void setContentBottomInset(int px) {
+            contentBottomInset = px;
+            for (int i = 0; i < pages.size(); i++) {
+                applyContentBottomInset(pages.valueAt(i));
+            }
+        }
+
+        private void applyContentBottomInset(View pageView) {
+            ArticleWebView webView = pageView.findViewById(R.id.webView);
+            if (webView != null) {
+                webView.setPadding(0, 0, 0, contentBottomInset);
+            }
         }
 
         public ArticleCollectionPagerAdapter(Application app, RecyclerView.Adapter<?> data, ToBlob toBlob) {
@@ -1382,6 +1398,7 @@ public class ArticleCollectionActivity extends AppCompatActivity {
                 // arbitrary - black under the bar for one dictionary, grey for
                 // the next - with no background there that it needs to contrast.
             }
+            applyContentBottomInset(pageView);
             container.addView(pageView);
             pages.put(position, pageView);
             pageItems.put(position, item);
