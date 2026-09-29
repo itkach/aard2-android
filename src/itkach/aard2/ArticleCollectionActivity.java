@@ -1241,7 +1241,7 @@ public class ArticleCollectionActivity extends AppCompatActivity {
 
     // Volume-down past the last page moves to the next article; volume-up past the
     // top moves to the previous one, or exits when already on the first article's
-    // top (matching the previous behaviour).
+    // top.
     private void goToAdjacentArticle(boolean forward) {
         if (articleCollectionPagerAdapter == null) {
             return;
