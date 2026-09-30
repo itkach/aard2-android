@@ -1,8 +1,6 @@
 package itkach.aard2;
 
 import android.content.Context;
-import android.database.DataSetObservable;
-import android.database.DataSetObserver;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
@@ -25,10 +23,21 @@ class BlobList implements BlobSource {
 
     private static final String TAG = BlobList.class.getSimpleName();
 
+    // Distinguishes a full reset (a new query's results) from an append (a chunk
+    // loaded onto the current results), so the adapter can do an incremental
+    // RecyclerView update for appends instead of rebinding everything - the latter
+    // stutters the list when chunks load mid-scroll.
+    interface Listener {
+        void onReset();
+        void onInserted(int positionStart, int itemCount);
+    }
+
     private final Handler           mainHandler;
     private final ExecutorService   executor;
     private final List<Slob.Blob>   list;
-    private final DataSetObservable dataSetObservable = new DataSetObservable();
+    // Main thread only, so a plain list; snapshot on notify to tolerate a listener
+    // unregistering itself while being notified.
+    private final List<Listener>    listeners = new ArrayList<>();
 
     private Iterator<Slob.Blob> iter;
     // Whether a chunk load is in flight. Main thread only (set true when a load is
@@ -51,12 +60,27 @@ class BlobList implements BlobSource {
         this.loadMoreThreshold = loadMoreThreshold;
     }
 
-    void registerDataSetObserver(DataSetObserver observer) {
-        dataSetObservable.registerObserver(observer);
+    void registerListener(Listener l) {
+        listeners.add(l);
     }
 
-    void unregisterDataSetObserver(DataSetObserver observer) {
-        dataSetObservable.unregisterObserver(observer);
+    void unregisterListener(Listener l) {
+        listeners.remove(l);
+    }
+
+    private void notifyReset() {
+        for (Listener l : new ArrayList<>(listeners)) {
+            l.onReset();
+        }
+    }
+
+    private void notifyInserted(int positionStart, int itemCount) {
+        if (itemCount <= 0) {
+            return;
+        }
+        for (Listener l : new ArrayList<>(listeners)) {
+            l.onInserted(positionStart, itemCount);
+        }
     }
 
     void setData(Iterator<Slob.Blob> lookupResultsIter) {
@@ -78,7 +102,7 @@ class BlobList implements BlobSource {
         runOnMain(() -> {
             list.clear();
             list.addAll(chunkList);
-            dataSetObservable.notifyChanged();
+            notifyReset();
         });
     }
 
@@ -113,9 +137,10 @@ class BlobList implements BlobSource {
                 if (taskIter != iter) {
                     return;
                 }
+                int start = list.size();
                 list.addAll(chunkList);
                 loadingChunk = false;
-                dataSetObservable.notifyChanged();
+                notifyInserted(start, chunkList.size());
             });
         });
     }

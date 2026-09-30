@@ -1,6 +1,5 @@
 package itkach.aard2;
 
-import android.database.DataSetObserver;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,7 +19,7 @@ public class BlobListAdapter extends RecyclerView.Adapter<BlobListAdapter.ViewHo
 
     private final BlobList            list;
     private final OnItemClickListener itemClickListener;
-    private final DataSetObserver     observer;
+    private final BlobList.Listener   listener;
 
     BlobListAdapter(BlobList list) {
         this(list, null);
@@ -29,18 +28,20 @@ public class BlobListAdapter extends RecyclerView.Adapter<BlobListAdapter.ViewHo
     BlobListAdapter(BlobList list, OnItemClickListener itemClickListener) {
         this.list = list;
         this.itemClickListener = itemClickListener;
-        this.observer = new DataSetObserver() {
+        this.listener = new BlobList.Listener() {
             @Override
-            public void onChanged() {
+            public void onReset() {
                 notifyDataSetChanged();
             }
 
             @Override
-            public void onInvalidated() {
-                notifyDataSetChanged();
+            public void onInserted(int positionStart, int itemCount) {
+                // Incremental, so a chunk loading mid-scroll appends rows without
+                // rebinding the visible ones (which stutters the list).
+                notifyItemRangeInserted(positionStart, itemCount);
             }
         };
-        this.list.registerDataSetObserver(observer);
+        this.list.registerListener(listener);
     }
 
     // Detaches from the underlying BlobList. Call when the owning view goes away
@@ -48,7 +49,7 @@ public class BlobListAdapter extends RecyclerView.Adapter<BlobListAdapter.ViewHo
     // this adapter - and, through its click listener, the Activity.
     @Override
     public void release() {
-        list.unregisterDataSetObserver(observer);
+        list.unregisterListener(listener);
     }
 
     @NonNull
