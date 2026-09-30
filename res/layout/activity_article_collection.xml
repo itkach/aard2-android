@@ -123,4 +123,14 @@
 
     </FrameLayout>
 
+    <!-- Bottom-edge strip filling the navigation-bar inset (height set at runtime
+         in applyContentInsets). Painted with the same neutral status-bar scrim as
+         the top, once - so the two system-bar edges match and nothing changes
+         during a swipe. A dedicated view rather than padding the WebView into the
+         inset, which janks WebView scrolling on some builds. -->
+    <View
+        android:id="@+id/bottom_edge"
+        android:layout_width="match_parent"
+        android:layout_height="0dp" />
+
 </LinearLayout>
