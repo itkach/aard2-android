@@ -38,13 +38,6 @@ import java.util.TreeSet;
 
 public class ArticleWebView extends SearchableWebView {
 
-    // Enabled here, on first article WebView creation, rather than at app start:
-    // the call initializes the WebView provider (~100ms on the main thread), which
-    // the main screen doesn't otherwise need. The first article open pays WebView
-    // init anyway, behind its loading spinner. The WebView constructor already
-    // requires the main thread, so this call is safely on it.
-    private static boolean webContentsDebuggingEnabled;
-
     public static final String LOCALHOST = Application.LOCALHOST;
     private final String styleSwitcherJs;
     private final String defaultStyleTitle;
@@ -130,10 +123,9 @@ public class ArticleWebView extends SearchableWebView {
     public ArticleWebView(Context context, AttributeSet attrs) {
         super(context, attrs);
 
-        if (!webContentsDebuggingEnabled) {
-            WebView.setWebContentsDebuggingEnabled(true);
-            webContentsDebuggingEnabled = true;
-        }
+        // No setWebContentsDebuggingEnabled: WebView already turns web contents
+        // debugging on for debuggable (debug) builds, and a release build has no
+        // business exposing DevTools.
 
         connectivityManager = (ConnectivityManager) context
                 .getSystemService(Context.CONNECTIVITY_SERVICE);
