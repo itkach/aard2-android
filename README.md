@@ -200,7 +200,7 @@ Common maintenance tasks are wrapped in a small `./d` front door; run `./d` with
 no arguments to list them. After cloning, run once per machine:
 
 ```sh
-./d setup            # enable the git hooks and install ./d shell completion
+./d enable-hooks     # point git at the tracked hooks in githooks/
 ```
 
 Other commands include `./d mk-release [version]` (bump the version, regenerate
@@ -209,11 +209,11 @@ tag), and the regenerators `./d mk-manifest`, `./d mk-webp`, `./d mk-phosphor`.
 
 Because `slobj` and `slobber` are built from the sibling checkouts above, their
 exact revisions aren't captured by the build itself. `source-deps.json` records
-them, and the pre-commit hook enabled by `./d setup` keeps it current on every
-commit — so run `./d setup` before committing, or your commits won't record the
-dependency revisions they were built against. That hook also refuses to commit
-while `slobj` or `slobber` has uncommitted or untracked changes, since the
-recorded revision wouldn't then match what was built (bypass with `git commit
+them, and the pre-commit hook enabled by `./d enable-hooks` keeps it current on
+every commit — so run `./d enable-hooks` before committing, or your commits won't
+record the dependency revisions they were built against. That hook also refuses
+to commit while `slobj` or `slobber` has uncommitted or untracked changes, since
+the recorded revision wouldn't then match what was built (bypass with `git commit
 --no-verify`).
 
 ## Launching from Other Applications

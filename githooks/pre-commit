@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 # Record which slobj/slobber revisions this commit was built against, and refuse
-# the commit if either has uncommitted changes to tracked files (the recorded
-# HEAD would otherwise not reflect what's built). The dependency list, the dirty
-# check, and the recording all live in record-deps; this hook is just the trigger
+# the commit if either has uncommitted or untracked changes (the recorded HEAD
+# would otherwise not reflect what's built). The dependency list, the dirty check,
+# and the recording all live in `./d record-deps`; this hook is just the trigger
 # and the staging. Bypass with `git commit --no-verify`.
 root=$(git rev-parse --show-toplevel)
-"$root/scripts/record-deps" --require-clean || exit 1
+"$root/d" record-deps --require-clean || exit 1
 
 # Stage the regenerated file into the commit - except during a partial commit
 # (git commit -- <paths>, --only), where git builds a temporary index named
