@@ -164,17 +164,6 @@ def record_deps(
     return 0
 
 
-def mk_manifest() -> int:
-    """Regenerate AndroidManifest.xml from the templates.
-
-    Delegates to scripts/mk-android-manifest, which holds the language/project
-    lists and chdirs to the repo root itself.
-    """
-    return subprocess.run(
-        [sys.executable, str(SCRIPTS / "mk-android-manifest")]
-    ).returncode
-
-
 def mk_webp() -> int:
     """Convert the screenshots in images/ to lossless WebP for README.md.
 
@@ -197,33 +186,29 @@ def mk_phosphor(phosphor_dir: str | None) -> int:
 
 
 def mk_release(version: str | None) -> int:
-    """Bump the version, regen the manifest, record deps, then commit and tag.
+    """Bump the version in the manifest, record deps, then commit and tag.
 
-    Each step is gated so a failure never leaves a release commit/tag whose
-    manifest doesn't match its template. On failure the (uncommitted) template
-    edit, if already made, remains in the working tree for inspection - re-running
-    then reads the already-bumped value and bumps again, so revert it first if you
-    don't want versionCode to skip.
+    The checks all run before the manifest is touched. If the commit or tag fails
+    after that, the (uncommitted) version bump remains in the working tree for
+    inspection - re-running then reads the already-bumped value and bumps again,
+    so revert it first if you don't want versionCode to skip.
     """
-    # A release commit must contain only the version bump, regenerated manifest
-    # and source-deps.json - so refuse if aard2-android itself has staged or
-    # unstaged changes to tracked files: they'd otherwise be swept into the
-    # release commit and tag, or (if unstaged) built into the APK but left out of
-    # the tag. Untracked files are fine - nothing here stages them.
+    # A release commit must contain only the version bump and source-deps.json -
+    # so refuse if aard2-android itself has staged or unstaged changes to tracked
+    # files: they'd otherwise be swept into the release commit and tag, or (if
+    # unstaged) built into the APK but left out of the tag. Untracked files are
+    # fine - nothing here stages them.
     if git(["status", "--porcelain", "--untracked-files=no"], cwd=ROOT).stdout.strip():
         sys.exit("mk-release: aard2-android has uncommitted changes; commit or stash first")
 
-    tmpl = ROOT / "AndroidManifest.template.xml"
-    if not tmpl.is_file():
-        sys.exit(f"mk-release: {tmpl.name} not found")
-
-    text = tmpl.read_text()
+    manifest = ROOT / "AndroidManifest.xml"
+    text = manifest.read_text()
     codes = re.findall(r'android:versionCode="(\d+)"', text)
     names = re.findall(r'android:versionName="([^"]+)"', text)
     # Bail unless each parsed to a single clean value: a missing or duplicated
     # versionCode/versionName would otherwise make the bump bogus.
     if len(codes) != 1 or len(names) != 1:
-        sys.exit(f"mk-release: cannot parse a single versionCode/versionName from {tmpl.name}")
+        sys.exit(f"mk-release: cannot parse a single versionCode/versionName from {manifest.name}")
     cur_code, cur_name = codes[0], names[0]
 
     # versionCode must always increase; versionName defaults to 0.<code>, or the
@@ -257,12 +242,10 @@ def mk_release(version: str | None) -> int:
         or bumped.count(f'android:versionCode="{new_code}"') != 1
         or bumped.count(f'android:versionName="{new_name}"') != 1
     ):
-        sys.exit(f"mk-release: version bump did not apply cleanly to {tmpl.name}")
-    tmpl.write_text(bumped)
+        sys.exit(f"mk-release: version bump did not apply cleanly to {manifest.name}")
+    manifest.write_text(bumped)
 
-    if mk_manifest() != 0:
-        sys.exit("mk-release: manifest regeneration failed")
-    git(["add", tmpl.name, "AndroidManifest.xml", "source-deps.json"], cwd=ROOT)
+    git(["add", manifest.name, "source-deps.json"], cwd=ROOT)
     git(["commit", "-m", new_name], cwd=ROOT)
     git(["tag", new_name], cwd=ROOT)
     # A lightweight tag isn't carried by `git push --follow-tags` (annotated only),
@@ -307,10 +290,6 @@ def build_parser() -> argparse.ArgumentParser:
     p.set_defaults(run=record_deps)
 
     sub.add_parser(
-        "mk-manifest", help="regenerate AndroidManifest.xml from templates"
-    ).set_defaults(run=mk_manifest)
-
-    sub.add_parser(
         "mk-webp", help="convert screenshots in images/ to lossless webp"
     ).set_defaults(run=mk_webp)
 
@@ -326,7 +305,7 @@ def build_parser() -> argparse.ArgumentParser:
     p.set_defaults(run=mk_phosphor)
 
     p = sub.add_parser(
-        "mk-release", help="bump version, regen manifest, record deps, commit + tag"
+        "mk-release", help="bump version, record deps, commit + tag"
     )
     p.add_argument(
         "version", nargs="?", help="version name (default 0.<new versionCode>)"

@@ -203,9 +203,9 @@ no arguments to list them. After cloning, run once per machine:
 ./d enable-hooks     # point git at the tracked hooks in githooks/
 ```
 
-Other commands include `./d mk-release [version]` (bump the version, regenerate
-the manifest, record dependency revisions, and create the release commit and
-tag), and the regenerators `./d mk-manifest`, `./d mk-webp`, `./d mk-phosphor`.
+Other commands include `./d mk-release [version]` (bump the version, record
+dependency revisions, and create the release commit and tag), and the
+regenerators `./d mk-webp` and `./d mk-phosphor`.
 
 Because `slobj` and `slobber` are built from the sibling checkouts above, their
 exact revisions aren't captured by the build itself. `source-deps.json` records

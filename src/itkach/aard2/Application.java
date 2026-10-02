@@ -1,12 +1,8 @@
 package itkach.aard2;
 
 import android.app.Activity;
-import android.content.ComponentName;
 import android.content.SharedPreferences;
 import android.graphics.Color;
-import android.content.pm.ActivityInfo;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.database.DataSetObserver;
 import android.net.Uri;
@@ -171,8 +167,6 @@ public class Application extends android.app.Application {
                     }
                 }
                 slobber.setSlobs(slobs);
-
-                enableLinkHandling(getActiveSlobs());
 
                 lookup(lookupQuery);
                 bookmarks.notifyDataSetChanged();
@@ -372,10 +366,9 @@ public class Application extends android.app.Application {
     // filters the open set by the live flag). The dictionaries observer reopens
     // every dictionary file on any change, which is needless here and gets
     // slower the more dictionaries are installed, so the active toggle calls
-    // this instead: refresh just what the active set feeds - the current lookup
-    // and link handling - without touching a single file.
+    // this instead: refresh just what the active set feeds - the current lookup -
+    // without touching a single file.
     void onActiveDictionariesChanged() {
-        enableLinkHandling(getActiveSlobs());
         lookup(lookupQuery);
     }
 
@@ -914,52 +907,5 @@ public class Application extends android.app.Application {
 
 
     static class FileTooBigException extends IOException {
-    }
-
-
-    // Fire-and-forget: toggle this app's per-host link-handling activities to
-    // match the active dictionaries' "uri" hosts. Runs off the main thread (it
-    // queries and edits PackageManager component state); nothing waits on it.
-    private void enableLinkHandling(Slob[] slobs) {
-        Util.runAsync(() -> {
-            Set<String> hosts = new HashSet<String>();
-            for (Slob slob : slobs) {
-                try {
-                    String uriValue = slob.getTags().get("uri");
-                    Uri uri = Uri.parse(uriValue);
-                    String host = uri.getHost();
-                    if (host != null) {
-                        hosts.add(host.toLowerCase(Locale.ROOT));
-                    }
-                }
-                catch (Exception ex) {
-                    Log.w(TAG, String.format("Dictionary %s (%s) has no uri tag", slob.getId(), slob.getTags()), ex);
-                }
-            }
-
-            long t0 = System.currentTimeMillis();
-            String packageName = getPackageName();
-            try {
-                PackageManager pm = getPackageManager();
-                PackageInfo p = pm.getPackageInfo(packageName,
-                        PackageManager.GET_ACTIVITIES | PackageManager.GET_DISABLED_COMPONENTS);
-                Log.d(TAG, "Done getting available activities in " + (System.currentTimeMillis() - t0));
-                t0 = System.currentTimeMillis();
-                for (ActivityInfo activityInfo : p.activities) {
-                    if (activityInfo.targetActivity != null) {
-                        boolean enabled = hosts.contains(activityInfo.name);
-                        if (enabled) {
-                            Log.d(TAG, "Enabling links handling for " + activityInfo.name);
-                        }
-                        int setting = enabled ? PackageManager.COMPONENT_ENABLED_STATE_ENABLED : PackageManager.COMPONENT_ENABLED_STATE_DISABLED;
-                        pm.setComponentEnabledSetting(new ComponentName(getApplicationContext(), activityInfo.name),
-                                setting, PackageManager.DONT_KILL_APP);
-                    }
-                }
-            } catch (PackageManager.NameNotFoundException e) {
-                Log.w(TAG, e);
-            }
-            Log.d(TAG, "Done enabling activities in " + (System.currentTimeMillis() - t0));
-        });
     }
 }

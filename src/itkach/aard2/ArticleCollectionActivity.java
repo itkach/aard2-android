@@ -57,7 +57,6 @@ import android.widget.Toast;
 import com.google.android.material.button.MaterialButton;
 
 import java.util.Iterator;
-import java.util.List;
 import java.util.Objects;
 
 import itkach.slob.Slob;
@@ -733,7 +732,7 @@ public class ArticleCollectionActivity extends AppCompatActivity {
     private ArticleCollectionPagerAdapter createFromUri(Application app, Uri articleUrl) {
         String host = articleUrl.getHost();
         if (!(host.equals("localhost") || host.matches("127.\\d{1,3}.\\d{1,3}.\\d{1,3}"))) {
-            return createFromIntent(app, getIntent());
+            return null;
         }
         BlobDescriptor bd = BlobDescriptor.fromUri(articleUrl);
         if (bd == null) {
@@ -784,31 +783,13 @@ public class ArticleCollectionActivity extends AppCompatActivity {
         if (lookupKey == null) {
             lookupKey = intent.getStringExtra("EXTRA_QUERY");
         }
-        String preferredSlobId = null;
-        if (lookupKey == null) {
-            Uri uri = intent.getData();
-            List<String> segments = uri.getPathSegments();
-            int length = segments.size();
-            if (length > 0) {
-                lookupKey = segments.get(length - 1);
-            }
-            String slobUri = Util.wikipediaToSlobUri(uri);
-            Log.d(TAG, String.format("Converted URI %s to slob URI %s", uri, slobUri));
-            if (slobUri != null) {
-                Slob slob = app.findSlob(slobUri);
-                if (slob != null) {
-                    preferredSlobId = slob.getId().toString();
-                    Log.d(TAG, String.format("Found slob %s for slob URI %s", preferredSlobId, slobUri));
-                }
-            }
-        }
         BlobList data = new BlobList(this, 20, 1);
         if (lookupKey == null || lookupKey.length() == 0) {
             String msg = getString(R.string.article_collection_nothing_to_lookup);
             throw new RuntimeException(msg);
         }
         else {
-            Iterator<Blob> result = stemLookup(app, lookupKey, preferredSlobId);
+            Iterator<Blob> result = stemLookup(app, lookupKey);
             data.setData(result);
         }
         return new ArticleCollectionPagerAdapter(
@@ -816,16 +797,12 @@ public class ArticleCollectionActivity extends AppCompatActivity {
     }
 
     private Iterator<Blob> stemLookup(Application app, String lookupKey) {
-        return this.stemLookup(app, lookupKey, null);
-    }
-
-    private Iterator<Blob> stemLookup(Application app, String lookupKey, String preferredSlobId) {
         Slob.PeekableIterator<Blob> result;
         final int length = lookupKey.length();
         String currentLookupKey = lookupKey;
         int currentLength = currentLookupKey.length();
         do {
-            result = app.find(currentLookupKey, preferredSlobId, true);
+            result = app.find(currentLookupKey, null, true);
             if (result.hasNext()) {
                 Blob b = result.peek();
                 if (b.key.length() - length > 3) {
