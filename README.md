@@ -222,6 +222,10 @@ Aard 2 lookup can be initiated from other applications, either through standard
 _Share_ action or directly, if application implemented an action to start Aard 2
 with lookup intent.
 
+Sharing a Wikipedia, Wiktionary or other MediaWiki article link (for example,
+from a browser while offline) opens that article, preferring the dictionary made
+from the same site and scrolling to the linked section, if any.
+
 Applications can launch Aard 2 lookup by starting activity with intent
 `aard2.lookup` with text to look up passed as an extra string parameter
 [SearchManager.QUERY](http://developer.android.com/reference/android/app/SearchManager.html#QUERY).

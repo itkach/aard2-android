@@ -783,26 +783,50 @@ public class ArticleCollectionActivity extends AppCompatActivity {
         if (lookupKey == null) {
             lookupKey = intent.getStringExtra("EXTRA_QUERY");
         }
+        // A shared wiki article link (say, one the browser can't load offline):
+        // look up its title rather than the URL text, preferring the dictionary
+        // made from that site, and open at the linked section.
+        String preferredSlobId = null;
+        ToBlob toBlob = blobToBlob;
+        WikiArticleUrl link = WikiArticleUrl.parse(lookupKey);
+        if (link != null) {
+            lookupKey = link.title;
+            preferredSlobId = findSlobIdForSite(app.getActiveSlobs(), link.host);
+            if (link.fragment != null) {
+                toBlob = new ToBlobWithFragment(link.fragment);
+            }
+        }
         BlobList data = new BlobList(this, 20, 1);
         if (lookupKey == null || lookupKey.length() == 0) {
             String msg = getString(R.string.article_collection_nothing_to_lookup);
             throw new RuntimeException(msg);
         }
         else {
-            Iterator<Blob> result = stemLookup(app, lookupKey);
+            Iterator<Blob> result = stemLookup(app, lookupKey, preferredSlobId);
             data.setData(result);
         }
         return new ArticleCollectionPagerAdapter(
-                app, new BlobListAdapter(data), blobToBlob);
+                app, new BlobListAdapter(data), toBlob);
     }
 
-    private Iterator<Blob> stemLookup(Application app, String lookupKey) {
+    // The id of the first of slobs made from the wiki at host (per its uri tag),
+    // or null if none is.
+    private static String findSlobIdForSite(Slob[] slobs, String host) {
+        for (Slob slob : slobs) {
+            if (host.equals(WikiArticleUrl.siteHost(slob.getURI()))) {
+                return slob.getId().toString();
+            }
+        }
+        return null;
+    }
+
+    private Iterator<Blob> stemLookup(Application app, String lookupKey, String preferredSlobId) {
         Slob.PeekableIterator<Blob> result;
         final int length = lookupKey.length();
         String currentLookupKey = lookupKey;
         int currentLength = currentLookupKey.length();
         do {
-            result = app.find(currentLookupKey, null, true);
+            result = app.find(currentLookupKey, preferredSlobId, true);
             if (result.hasNext()) {
                 Blob b = result.peek();
                 if (b.key.length() - length > 3) {
