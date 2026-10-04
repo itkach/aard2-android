@@ -1,0 +1,31 @@
+/*
+ * Example user style for Aard 2: a dark version of any dictionary's articles,
+ * for dictionaries that don't come with a dark style of their own.
+ *
+ * Add it in Aard 2 for Android with Settings → User Styles → Add, or put it in
+ * the directory given to Aard 2 for Web as slobber.styleDir. It then shows up
+ * in the article style picker as "dark".
+ *
+ * It inverts the page's lightness while keeping hues roughly the same, then
+ * inverts images and video back so photos look normal. Colors are therefore
+ * approximate, and drawings that are dark lines on a transparent background
+ * stay dark, so they can be hard to see.
+ */
+
+/* The filter is on body, with html given the resulting dark color directly:
+   a filter doesn't change an element's reported background color, and
+   Aard 2 for Android paints the space for an article that's still loading
+   with the reported one. */
+html {
+    background-color: #1a1a1a !important;
+}
+
+body {
+    filter: invert(0.9) hue-rotate(180deg);
+    background: transparent !important;
+}
+
+img,
+video {
+    filter: invert(1) hue-rotate(180deg);
+}

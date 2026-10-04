@@ -1,0 +1,79 @@
+/*
+ * Example user style for Aard 2: dark brown text on a beige background, for
+ * dictionaries made from MediaWiki sites (Wikipedia, Wiktionary etc.).
+ *
+ * Add it in Aard 2 for Android with Settings → User Styles → Add, or put it in
+ * the directory given to Aard 2 for Web as slobber.styleDir. It then shows up
+ * in the article style picker as "beige".
+ */
+
+body {
+    background-color: beige;
+    color: #3b1414;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+a.new {
+    color: teal !important;
+}
+
+/* Formulas rendered by MathJax. */
+.mjx-svg-mrow {
+    fill: #3b1414;
+    stroke: #3b1414;
+}
+
+img {
+    background-color: tan;
+}
+
+table {
+    background-color: beige !important;
+    color: black !important;
+}
+
+.wikitable th {
+    background-color: wheat !important;
+}
+
+div.thumbinner {
+    background-color: wheat !important;
+}
+
+div.thumb {
+    border-color: goldenrod !important;
+    background-color: peachpuff !important;
+}
+
+.gallerybox {
+    border: none !important;
+}
+
+a {
+    color: brown;
+}
+
+a:visited {
+    color: #7a3f6a;
+}
+
+#toc,
+.toc {
+    background-color: peachpuff !important;
+}
+
+.cquote {
+    font-style: italic;
+    font-family: serif;
+}
+
+abbr,
+acronym,
+.explain {
+    color: darkred !important;
+}

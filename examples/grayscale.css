@@ -1,0 +1,12 @@
+/*
+ * Example user style for Aard 2: shows articles of any dictionary in shades
+ * of gray, images included.
+ *
+ * Add it in Aard 2 for Android with Settings → User Styles → Add, or put it in
+ * the directory given to Aard 2 for Web as slobber.styleDir. It then shows up
+ * in the article style picker as "grayscale".
+ */
+
+html {
+    filter: grayscale(1);
+}

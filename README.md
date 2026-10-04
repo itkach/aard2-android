@@ -63,6 +63,18 @@ Dictionaries may include alternate style sheets. Custom style sheets can also be
 added via the Settings tab. The article menu's "Style..." entry lists the
 dictionary's built-in styles alongside any user styles.
 
+Some example user styles to use or start from:
+
+- [examples/dark.css](examples/dark.css): a dark version of any dictionary,
+  for dictionaries without a dark style of their own
+- [examples/grayscale.css](examples/grayscale.css): any dictionary in shades of
+  gray
+- [examples/beige.css](examples/beige.css): dark brown text on a beige
+  background, for Wikipedia, Wiktionary and other MediaWiki-based dictionaries
+
+Download one and add it with Settings → User Styles → Add. A user style is
+named after its file, without the `.css` extension.
+
 <a href="images/article_menu.webp"><img src="images/article_menu.webp" width="220" height="468" alt="Article menu"></a>
 <a href="images/select_style_dialog.webp"><img src="images/select_style_dialog.webp" width="220" height="468" alt="Select style"></a>
 
