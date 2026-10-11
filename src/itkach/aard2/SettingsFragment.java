@@ -51,9 +51,16 @@ public class SettingsFragment extends Fragment {
     private View rootView;
     private DataSetObserver historyLoadObserver;
 
+    // Set while the chooser is open, so a quick second tap on Add doesn't open
+    // another one. The result callback runs on both pick and cancel.
+    private boolean cssPickerOpen;
+
     private final ActivityResultLauncher<Intent> cssPicker = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
-            result -> onCssSelected(result.getResultCode(), result.getData()));
+            result -> {
+                cssPickerOpen = false;
+                onCssSelected(result.getResultCode(), result.getData());
+            });
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -216,11 +223,15 @@ public class SettingsFragment extends Fragment {
                         androidx.appcompat.R.attr.colorPrimary, 0xff0099cc)));
         btnAdd.setIconTint(null);
         btnAdd.setOnClickListener(v -> {
+            if (cssPickerOpen) {
+                return;
+            }
             Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
             intent.setType("text/*");
             Intent chooser = Intent.createChooser(intent, "Select CSS file");
             try {
                 cssPicker.launch(chooser);
+                cssPickerOpen = true;
             } catch (ActivityNotFoundException e) {
                 Log.d(TAG, "No activity to get content", e);
                 Toast.makeText(getContext(), R.string.msg_no_activity_to_get_content,

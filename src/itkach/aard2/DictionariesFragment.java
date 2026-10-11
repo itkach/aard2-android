@@ -35,9 +35,16 @@ public class DictionariesFragment extends BaseListFragment {
 
     private DictionaryListAdapter listAdapter;
 
+    // Set while the file chooser is open, so a quick second tap on Open doesn't
+    // open another one. The result callback runs on both pick and cancel.
+    private boolean filePickerOpen;
+
     private final ActivityResultLauncher<Intent> filePicker = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
-            result -> onFilesSelected(result.getResultCode(), result.getData()));
+            result -> {
+                filePickerOpen = false;
+                onFilesSelected(result.getResultCode(), result.getData());
+            });
 
     protected IconMaker.Glyph getEmptyIcon() {
         return IconMaker.IC_DICTIONARY;
@@ -200,6 +207,9 @@ public class DictionariesFragment extends BaseListFragment {
     }
 
     private void selectDictionaryFiles() {
+        if (filePickerOpen) {
+            return;
+        }
         Intent intent = new Intent();
         intent.setAction(Intent.ACTION_OPEN_DOCUMENT);
         intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
@@ -208,6 +218,7 @@ public class DictionariesFragment extends BaseListFragment {
         intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
         try {
             filePicker.launch(intent);
+            filePickerOpen = true;
         }
         catch (ActivityNotFoundException e){
             Log.d(TAG, "Not activity to get content", e);
