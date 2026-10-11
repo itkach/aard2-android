@@ -78,6 +78,7 @@
     <string name="setting_ui_theme">Brukergrensesnittstil</string>
     <string name="setting_ui_theme_light">Lys</string>
     <string name="setting_ui_theme_dark">Mørk</string>
+    <string name="setting_ui_theme_system">Som enheten</string>
     <string name="action_load_remote_content">Last inn innhold fra annensteds hen</string>
     <string name="auto_style_title">Auto</string>
     <string name="setting_use_volume_for_nav">Bruk lydstyrkeknapper for navigasjon</string>

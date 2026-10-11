@@ -90,6 +90,7 @@ public class Application extends android.app.Application {
     static final String PREF_UI_THEME                   = "UITheme";
     static final String PREF_UI_THEME_LIGHT             = "light";
     static final String PREF_UI_THEME_DARK              = "dark";
+    static final String PREF_UI_THEME_SYSTEM            = "system";
     static final String PREF_USE_VOLUME_FOR_NAV         = "useVolumeForNav";
     static final String PREF_AUTO_PASTE                 = "autoPaste";
     static final String PREF_RECORD_HISTORY             = "recordHistory";
@@ -250,24 +251,26 @@ public class Application extends android.app.Application {
 
     String getPreferredTheme() {
         return prefs().getString(Application.PREF_UI_THEME,
-                Application.PREF_UI_THEME_LIGHT);
+                Application.PREF_UI_THEME_SYSTEM);
     }
 
+    // "system" follows the device's dark mode. Activities don't handle uiMode
+    // changes themselves (see configChanges in the manifest), so switching the
+    // device between light and dark recreates them and installTheme() picks
+    // the matching theme again.
     boolean isUIDark() {
-        return getPreferredTheme().equals(PREF_UI_THEME_DARK);
+        String theme = getPreferredTheme();
+        if (theme.equals(PREF_UI_THEME_SYSTEM)) {
+            return isDeviceDark();
+        }
+        return theme.equals(PREF_UI_THEME_DARK);
     }
 
     void installTheme(Activity activity) {
-        String theme = getPreferredTheme();
-        if (theme.equals(PREF_UI_THEME_DARK)) {
-            activity.setTheme(R.style.Theme_Aard2_Dark);
-        }
-        else {
-            activity.setTheme(R.style.Theme_Aard2);
-        }
+        activity.setTheme(isUIDark() ? R.style.Theme_Aard2_Dark : R.style.Theme_Aard2);
     }
 
-    // The app's own light/dark preference (above) is independent of the
+    // The app's own light/dark preference (above) can differ from the
     // device's system dark mode setting - a user can pick "dark" for this
     // app while their device is in light mode, or vice versa. Status bar
     // icons (clock, battery, signal), though, are drawn by the system and

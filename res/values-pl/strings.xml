@@ -71,6 +71,7 @@
     <string name="setting_ui_theme">Styl interfejsu użytkownika</string>
     <string name="setting_ui_theme_light">Jasny</string>
     <string name="setting_ui_theme_dark">Ciemny</string>
+    <string name="setting_ui_theme_system">Jak w urządzeniu</string>
     <string name="action_load_remote_content">Załaduj zdalną zawartość</string>
     <string name="auto_style_title">Automatyczny</string>
     <string name="setting_use_volume_for_nav">Używaj przyciski głośności do nawigacji</string>

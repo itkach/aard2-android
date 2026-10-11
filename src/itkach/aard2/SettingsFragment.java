@@ -101,18 +101,26 @@ public class SettingsFragment extends Fragment {
     private void setupUiTheme(View view) {
         RadioButton light = view.findViewById(R.id.setting_ui_theme_light);
         RadioButton dark = view.findViewById(R.id.setting_ui_theme_dark);
+        RadioButton system = view.findViewById(R.id.setting_ui_theme_system);
         View.OnClickListener clickListener = v -> {
-            String value = v.getId() == R.id.setting_ui_theme_dark
-                    ? Application.PREF_UI_THEME_DARK : Application.PREF_UI_THEME_LIGHT;
+            String value;
+            if (v.getId() == R.id.setting_ui_theme_dark) {
+                value = Application.PREF_UI_THEME_DARK;
+            } else if (v.getId() == R.id.setting_ui_theme_system) {
+                value = Application.PREF_UI_THEME_SYSTEM;
+            } else {
+                value = Application.PREF_UI_THEME_LIGHT;
+            }
             app.prefs().edit().putString(Application.PREF_UI_THEME, value).apply();
             requireActivity().recreate();
         };
         light.setOnClickListener(clickListener);
         dark.setOnClickListener(clickListener);
-        String current = app.prefs().getString(Application.PREF_UI_THEME,
-                Application.PREF_UI_THEME_LIGHT);
+        system.setOnClickListener(clickListener);
+        String current = app.getPreferredTheme();
         light.setChecked(current.equals(Application.PREF_UI_THEME_LIGHT));
         dark.setChecked(current.equals(Application.PREF_UI_THEME_DARK));
+        system.setChecked(current.equals(Application.PREF_UI_THEME_SYSTEM));
     }
 
     private void setupRemoteContent(View view) {

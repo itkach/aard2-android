@@ -68,6 +68,7 @@
     <string name="setting_fav_random_search">Використовувати тільки обрані словники для випадкового пошуку</string>
     <string name="setting_ui_theme">Інтерфейс</string>
     <string name="setting_ui_theme_dark">Темний</string>
+    <string name="setting_ui_theme_system">Як на пристрої</string>
     <string name="setting_ui_theme_light">Світлий</string>
     <string name="article_collection_invalid_link">Некоректне посилання</string>
     <string name="action_load_remote_content">Завантажити віддалений контент</string>

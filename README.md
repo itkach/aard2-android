@@ -151,10 +151,11 @@ browser first.
 
 ### Settings
 
-The Settings tab collects the application's options: interface style (light or
-dark), when to load remote content, whether to use only dictionaries marked for
-random lookup, volume-button navigation, automatic full screen in landscape,
-clipboard auto-paste, history recording, and user style sheets.
+The Settings tab collects the application's options: interface style (light,
+dark, or same as the device), when to load remote content, whether to use only
+dictionaries marked for random lookup, volume-button navigation, automatic full
+screen in landscape, clipboard auto-paste, history recording, and user style
+sheets.
 
 <a href="images/settings.webp"><img src="images/settings.webp" width="220" height="468" alt="Settings"></a>
 

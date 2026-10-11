@@ -77,6 +77,7 @@
     <string name="setting_ui_theme">Interface utilisateur</string>
     <string name="setting_ui_theme_light">Clair</string>
     <string name="setting_ui_theme_dark">Sombre</string>
+    <string name="setting_ui_theme_system">Comme l\'appareil</string>
     <string name="action_load_remote_content">Charger le contenu extérieur</string>
     <string name="auto_style_title">Auto</string>
     <string name="setting_use_volume_for_nav">Utiliser les boutons du volume +/- pour haut/bas</string>

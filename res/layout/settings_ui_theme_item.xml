@@ -41,6 +41,14 @@
                 android:textAppearance="?attr/textAppearanceBodyLarge"
                 android:layout_marginBottom="5dip"
                 />
+            <RadioButton
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/setting_ui_theme_system"
+                android:text="@string/setting_ui_theme_system"
+                android:textAppearance="?attr/textAppearanceBodyLarge"
+                android:layout_marginBottom="5dip"
+                />
 
         </RadioGroup>
 

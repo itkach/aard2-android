@@ -101,6 +101,7 @@
     <string name="setting_ui_theme">User Interface Style</string>
     <string name="setting_ui_theme_light">Light</string>
     <string name="setting_ui_theme_dark">Dark</string>
+    <string name="setting_ui_theme_system">Same as device</string>
     <string name="action_load_remote_content">Load Remote Content</string>
     <string name="auto_style_title">Auto</string>
     <string name="setting_use_volume_for_nav">Use volume buttons for navigation</string>
