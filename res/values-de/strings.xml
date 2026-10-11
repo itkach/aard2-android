@@ -69,6 +69,7 @@
     <string name="msg_failed_to_store_user_style">Kann Stil nicht speichern</string>
     <string name="setting_user_style_confirm_forget">Vergesse %1$s?</string>
     <string name="msg_no_activity_to_get_content">Kann Datei nicht öffnen</string>
+    <string name="msg_no_activity_to_open_link">Keine installierte App kann diesen Link öffnen</string>
     <string name="setting_fav_random_search">Für zufällige Suche nur favorisierte Wörterbücher verwenden</string>
     <string name="article_collection_invalid_link">Ungültiger Link</string>
     <string name="setting_ui_theme">Benutzeroberfläche</string>

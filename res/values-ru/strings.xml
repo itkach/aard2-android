@@ -59,6 +59,7 @@
     <string name="msg_failed_to_store_user_style">Не удалось сохранить пользовательский стиль</string>
     <string name="msg_file_too_big">Слишком большой файл</string>
     <string name="msg_no_activity_to_get_content">Нечем открыть файл</string>
+    <string name="msg_no_activity_to_open_link">Нет установленного приложения, которое может открыть эту ссылку</string>
     <string name="setting_user_styles">Стили пользователя</string>
     <string name="setting_fav_random_search">Использовать только избранные словари для случайного поиска</string>
     <string name="setting_ui_theme">Интерфейс</string>

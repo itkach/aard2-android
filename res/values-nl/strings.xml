@@ -72,6 +72,7 @@
     <string name="msg_failed_to_store_user_style">Opslaan van gebruikersstijl mislukt</string>
     <string name="setting_user_style_confirm_forget">%1$s vergeten?</string>
     <string name="msg_no_activity_to_get_content">Geen activiteit beschikbaar om bestand te openen</string>
+    <string name="msg_no_activity_to_open_link">Geen geïnstalleerde app kan deze link openen</string>
     <string name="setting_fav_random_search">Alleen favoriete woordenboeken gebruiken voor willekeurig opzoeken</string>
     <string name="article_collection_invalid_link">Ongeldige link</string>
     <string name="setting_ui_theme">Uiterlijk</string>

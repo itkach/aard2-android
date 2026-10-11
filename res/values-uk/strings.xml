@@ -23,6 +23,7 @@
     <string name="article_collection_selected_not_available">Вибрана стаття недоступна</string>
     <string name="msg_file_too_big">Файл занадто великий</string>
     <string name="msg_no_activity_to_get_content">Немає чим відкрити файл</string>
+    <string name="msg_no_activity_to_open_link">Немає встановленого застосунку, який може відкрити це посилання</string>
     <string name="select_style">Вибрати стиль</string>
     <string name="subtitle_lookup">Пошук</string>
     <string name="subtitle_history">Історія</string>

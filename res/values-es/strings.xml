@@ -72,6 +72,7 @@
     <string name="msg_failed_to_store_user_style">Error al guardar tema de usuario</string>
     <string name="setting_user_style_confirm_forget">¿Olvidar %1$s?</string>
     <string name="msg_no_activity_to_get_content">Sin actividad disponible para abrir el archivo</string>
+    <string name="msg_no_activity_to_open_link">Ninguna aplicación instalada puede abrir este enlace</string>
     <string name="setting_fav_random_search">Usar únicamente diccionarios favoritos para búsquedas aleatorias</string>
     <string name="article_collection_invalid_link">Enlace inválido</string>
     <string name="setting_ui_theme">Estilo de interfaz de usuario</string>

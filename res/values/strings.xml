@@ -90,6 +90,7 @@
     <string name="msg_failed_to_store_user_style">Failed to store user style</string>
     <string name="setting_user_style_confirm_forget">Forget %1$s?</string>
     <string name="msg_no_activity_to_get_content">No activity is available to open file</string>
+    <string name="msg_no_activity_to_open_link">No installed app can open this link</string>
     <string name="action_open_dictionaries">Open</string>
     <string name="action_download_dictionaries">Download</string>
     <string name="dictionaries_download_url" translatable="false">https://aarddict.org/dictionaries</string>
