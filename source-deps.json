@@ -2,8 +2,8 @@
   {
     "name": "slobj",
     "repo": "git@github.com:itkach/slobj.git",
-    "sha": "941e817e4edb031149a1fb375d60cfa8a5681b52",
-    "describe": "0.13"
+    "sha": "d68d7f9d7af1886e39ecaa4841015f902c45ab55",
+    "describe": "0.13-1-gd68d7f9"
   },
   {
     "name": "slobber",
