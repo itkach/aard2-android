@@ -178,7 +178,7 @@ public class ArticleWebView extends SearchableWebView {
                     // rendered correctly - which is visible as a jump in
                     // the surrounding native UI (the action bar), not just
                     // inside the WebView's own content.
-                    view.loadUrl("javascript:" + styleSwitcherJs);
+                    view.evaluateJavascript(styleSwitcherJs, null);
                 }
 
             }
@@ -208,8 +208,8 @@ public class ArticleWebView extends SearchableWebView {
                 // Application.getUrl(Blob) / StylePreference / /user-styles). So
                 // nothing needs to be (re-)applied here; this only discovers the
                 // page's declared style titles for the picker dialog.
-                view.loadUrl("javascript:" + styleSwitcherJs +
-                        ";$SLOB.setStyleTitles($styleSwitcher.getTitles())");
+                view.evaluateJavascript(styleSwitcherJs +
+                        ";$SLOB.setStyleTitles($styleSwitcher.getTitles())", null);
             }
 
             @Override
