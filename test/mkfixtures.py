@@ -1,0 +1,52 @@
+# Writes the test dictionaries in test/resources. Needs the slob package
+# (https://github.com/itkach/slob); run from this directory.
+
+import unicodedata
+
+import slob
+
+HTML = 'text/html; charset=utf-8'
+
+
+def nfc(s):
+    return unicodedata.normalize('NFC', s)
+
+
+def nfd(s):
+    return unicodedata.normalize('NFD', s)
+
+
+# Three versions of one dictionary (same uri) and an unrelated one. Keys
+# differing only in Unicode normalization are equal at every collation
+# strength below identical, so they match each other on lookup.
+DICTIONARIES = {
+    'movetest-v1.slob': ('test:movetest', [
+        ('apple', 'Apple A (v1)'),
+        ('apple', 'Apple B (v1)'),
+        ('banana', 'Banana (v1)'),
+        ('cherry', 'Cherry (v1)'),
+        (nfc('café'), 'Café (v1)'),
+        (nfc('naïve'), 'Naïve (v1)'),
+    ]),
+    'movetest-v2.slob': ('test:movetest', [
+        ('apple', 'Apple (v2)'),
+        ('banana', 'Banana (v2)'),
+        (nfd('café'), 'Café, decomposed (v2)'),
+        (nfd('naïve'), 'Naïve, decomposed (v2)'),
+        (nfc('naïve'), 'Naïve (v2)'),
+    ]),
+    'movetest-v3.slob': ('test:movetest', [
+        ('apple', 'Apple (v3)'),
+        ('banana', 'Banana (v3)'),
+    ]),
+    'other.slob': ('test:other', [
+        ('apple', 'Apple (other)'),
+    ]),
+}
+
+for name, (uri, articles) in DICTIONARIES.items():
+    with slob.create(f'resources/{name}') as w:
+        w.tag('label', name)
+        w.tag('uri', uri)
+        for key, text in articles:
+            w.add(f'<h1>{text}</h1>'.encode('utf-8'), key, content_type=HTML)

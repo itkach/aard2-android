@@ -34,7 +34,20 @@ final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
     static enum SortOrder {
         TIME, NAME;
     }
-    private Application                     app;
+
+    // The dictionaries entries point into.
+    interface Dictionaries {
+        // The loaded dictionary file with this id, or null.
+        Slob getSlob(String slobId);
+        // The first loaded dictionary file with this uri, in list order, or
+        // null.
+        Slob findSlobByURI(String uri);
+        // Ids of the files in the dictionary list, including ones that failed
+        // to load.
+        Set<String> getListedIds();
+    }
+
+    private Dictionaries                    dictionaries;
 
     private DescriptorStore<BlobDescriptor> store;
     private List<BlobDescriptor>            list;
@@ -65,12 +78,12 @@ final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
     // like loading itself.
     private final List<Runnable>            loadedCallbacks = new ArrayList<>();
 
-    BlobDescriptorList(Application app, DescriptorStore<BlobDescriptor> store) {
-        this(app, store, 1000);
+    BlobDescriptorList(Dictionaries dictionaries, DescriptorStore<BlobDescriptor> store) {
+        this(dictionaries, store, 1000);
     }
 
-    BlobDescriptorList(Application app, DescriptorStore<BlobDescriptor> store, int maxSize) {
-        this.app = app;
+    BlobDescriptorList(Dictionaries dictionaries, DescriptorStore<BlobDescriptor> store, int maxSize) {
+        this.dictionaries = dictionaries;
         this.store = store;
         this.maxSize = maxSize;
         this.list = new ArrayList<BlobDescriptor>();
@@ -268,18 +281,13 @@ final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
 
     private void startMoving() {
         moveAgain = false;
-        Set<String> listed = new HashSet<>();
-        for (SlobDescriptor sd : app.dictionaries) {
-            if (sd.id != null) {
-                listed.add(sd.id);
-            }
-        }
+        Set<String> listed = dictionaries.getListedIds();
         List<Move> moves = new ArrayList<>();
         for (BlobDescriptor bd : this.list) {
             if (listed.contains(bd.slobId) || bd.slobUri == null) {
                 continue;
             }
-            Slob slob = app.findSlob(bd.slobUri);
+            Slob slob = dictionaries.findSlobByURI(bd.slobUri);
             if (slob != null && !slob.getId().toString().equals(bd.notFoundIn)) {
                 moves.add(new Move(bd, slob));
             }
@@ -347,7 +355,7 @@ final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
             String toId = m.to.getId().toString();
             // Skip entries removed while the lookups ran, and targets closed
             // meanwhile: that change runs the pass again.
-            if (m.failed || !current.contains(bd) || app.getSlob(toId) == null) {
+            if (m.failed || !current.contains(bd) || dictionaries.getSlob(toId) == null) {
                 continue;
             }
             if (m.found == null) {
@@ -439,7 +447,7 @@ final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
 
     // The entry's dictionary, or null if its file isn't loaded.
     Slob resolveOwner(BlobDescriptor bd) {
-        return app.getSlob(bd.slobId);
+        return dictionaries.getSlob(bd.slobId);
     }
 
     // The entry's article, or null if its dictionary file isn't loaded. Entries
@@ -459,7 +467,7 @@ final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
         Uri uri = Uri.parse(contentUrl);
         BlobDescriptor bd = BlobDescriptor.fromUri(uri);
         if (bd != null) {
-            String slobUri = app.getSlobURI(bd.slobId);
+            String slobUri = dictionaries.getSlob(bd.slobId).getURI();
             Log.d(TAG, "Found slob uri for: " + bd.slobId + " " + slobUri);
             bd.slobUri = slobUri;
         }

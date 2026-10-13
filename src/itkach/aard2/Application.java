@@ -143,8 +143,30 @@ public class Application extends android.app.Application {
         lastResult = new BlobList(this);
 
         dictionaries = new SlobDescriptorList(this, dictStore);
-        bookmarks = new BlobDescriptorList(this, bookmarkStore);
-        history = new BlobDescriptorList(this, historyStore);
+        BlobDescriptorList.Dictionaries loaded = new BlobDescriptorList.Dictionaries() {
+            @Override
+            public Slob getSlob(String slobId) {
+                return slobber.getSlob(slobId);
+            }
+
+            @Override
+            public Slob findSlobByURI(String uri) {
+                return slobber.findSlobByURI(uri);
+            }
+
+            @Override
+            public Set<String> getListedIds() {
+                Set<String> ids = new HashSet<>();
+                for (SlobDescriptor sd : dictionaries) {
+                    if (sd.id != null) {
+                        ids.add(sd.id);
+                    }
+                }
+                return ids;
+            }
+        };
+        bookmarks = new BlobDescriptorList(loaded, bookmarkStore);
+        history = new BlobDescriptorList(loaded, historyStore);
 
         dictionaries.registerDataSetObserver(new DataSetObserver() {
             @Override

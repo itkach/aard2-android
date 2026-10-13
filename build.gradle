@@ -36,6 +36,10 @@ android {
             res.srcDirs = ['res']
             assets.srcDirs = ['assets']
         }
+        test {
+            java.srcDirs = ['test/java']
+            resources.srcDirs = ['test/resources']
+        }
     }
 
     if (System.getenv("KEYSTORE") != null) {
@@ -81,4 +85,7 @@ dependencies {
     api 'com.fasterxml.jackson.core:jackson-annotations:2.22'
     api project(':slobj')
     api project(':slobber')
+
+    testImplementation 'junit:junit:4.13.2'
+    testImplementation 'org.robolectric:robolectric:4.17'
 }
