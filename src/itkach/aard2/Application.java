@@ -827,10 +827,6 @@ public class Application extends android.app.Application {
     }
 
 
-    Slob findSlob(String slobOrUri) {
-        return slobber.findSlob(slobOrUri);
-    }
-
     String getSlobURI(String slobId) {
         return  slobber.getSlobURI(slobId);
     }

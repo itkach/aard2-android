@@ -346,6 +346,18 @@ public class BlobDescriptorListTest {
     }
 
     @Test
+    public void ignoresArticlesOfDictionariesThatAreNotLoaded() throws Exception {
+        load(v1);
+        BlobDescriptorList list = start();
+        String url = url(v1, "apple");
+        dictionaries.loaded.remove(v1);
+        assertNull(list.add(url));
+        assertFalse(list.contains(url));
+        assertTrue(list.isEmpty());
+        assertTrue(stored().isEmpty());
+    }
+
+    @Test
     public void doesNotSaveARemovedEntryBack() throws Exception {
         load(v1);
         BlobDescriptorList list = start();

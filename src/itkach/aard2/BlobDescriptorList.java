@@ -462,20 +462,32 @@ final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
         return new Slob.Blob(slob, bd.blobId, bd.key, bd.fragment);
     }
 
+    // The entry for the article at contentUrl, or null if the url isn't an
+    // article's or its dictionary file isn't loaded (e.g. an article left open
+    // in another window while its dictionary was closed).
     public BlobDescriptor createDescriptor(String contentUrl) {
         Log.d(TAG, "Create descriptor from content url: " + contentUrl);
         Uri uri = Uri.parse(contentUrl);
         BlobDescriptor bd = BlobDescriptor.fromUri(uri);
-        if (bd != null) {
-            String slobUri = dictionaries.getSlob(bd.slobId).getURI();
-            Log.d(TAG, "Found slob uri for: " + bd.slobId + " " + slobUri);
-            bd.slobUri = slobUri;
+        if (bd == null) {
+            return null;
         }
+        Slob slob = dictionaries.getSlob(bd.slobId);
+        if (slob == null) {
+            return null;
+        }
+        bd.slobUri = slob.getURI();
         return bd;
     }
 
+    // Add an entry for the article at contentUrl, or return the existing one.
+    // Returns null, adding nothing, when there can't be an entry for it (see
+    // createDescriptor).
     public BlobDescriptor add(String contentUrl) {
         BlobDescriptor bd = createDescriptor(contentUrl);
+        if (bd == null) {
+            return null;
+        }
         int index = this.list.indexOf(bd);
         if (index > -1) {
             return this.list.get(index);
