@@ -47,6 +47,10 @@ public class BlobDescriptor extends BaseDescriptor {
     public String blobId;
     public String key;
     public String fragment;
+    // Id of a dictionary file this entry's key wasn't found in when moving the
+    // entry to it (see BlobDescriptorList.moveToLoadedDictionaries), so the
+    // lookup isn't repeated.
+    public String notFoundIn;
 
     static BlobDescriptor fromUri(Uri uri) {
         BlobDescriptor bd = new BlobDescriptor();

@@ -172,6 +172,8 @@ public class Application extends android.app.Application {
                 lookup(lookupQuery);
                 bookmarks.notifyDataSetChanged();
                 history.notifyDataSetChanged();
+                bookmarks.moveToLoadedDictionaries();
+                history.moveToLoadedDictionaries();
             }
         });
 

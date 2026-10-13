@@ -16,10 +16,13 @@ import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.IdentityHashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 
 import itkach.slob.Slob;
@@ -50,11 +53,16 @@ final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
     private int                             maxSize;
     private RuleBasedCollator               filterCollator;
     private Handler                         handler;
-    // True from loadAsync() until its results are merged in on the main thread.
-    // Read on the main thread only (set false there too), so no synchronization.
+    // True from loadAsync() until its results are merged in on the main thread
+    // and entries are moved, and while a later move pass runs (see
+    // moveToLoadedDictionaries). Read on the main thread only (set false there
+    // too), so no synchronization.
     private boolean                         loading;
-    // Actions waiting for the async load to finish (see whenLoaded). Main thread
-    // only, like loading itself.
+    // Set when dictionaries change while loading, so a move pass runs (again)
+    // once that's done. Main thread only.
+    private boolean                         moveAgain;
+    // Actions waiting for loading to finish (see whenLoaded). Main thread only,
+    // like loading itself.
     private final List<Runnable>            loadedCallbacks = new ArrayList<>();
 
     BlobDescriptorList(Application app, DescriptorStore<BlobDescriptor> store) {
@@ -159,10 +167,11 @@ final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
     }
 
     // Run action once this list's entries are available: immediately if the
-    // async load has already finished (or was never started), otherwise right
-    // after loadAsync merges them in. Lets a caller that needs a populated list
-    // - opening a bookmarks/history article, resolving the bookmark icon - avoid
-    // acting on the still-empty list during a cold start. Main thread only.
+    // async load and any move pass have already finished (or were never
+    // started), otherwise right after. Lets a caller that needs a populated,
+    // up-to-date list - opening a bookmarks/history article, resolving the
+    // bookmark icon - avoid acting on the still-empty list during a cold start,
+    // or on entries about to be moved. Main thread only.
     void whenLoaded(Runnable action) {
         if (loading) {
             loadedCallbacks.add(action);
@@ -174,8 +183,9 @@ final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
     // Load descriptors off the main thread. Reading and deserializing them from
     // disk can be slow (history fills to maxSize = 1000 entries), enough to drag
     // out cold start if done on it. isLoading() stays true from here until the
-    // results are merged in on the main thread; observers are notified at both
-    // ends, so a list fragment can show its spinner meanwhile.
+    // results are merged in on the main thread and entries are moved (see
+    // moveToLoadedDictionaries); observers are notified at both ends, so a list
+    // fragment can show its spinner meanwhile.
     // notifyDataSetChanged rebuilds and re-sorts the filtered view, so the merged
     // items land in the fragment's current sort order.
     void loadAsync() {
@@ -206,20 +216,189 @@ final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
             // the list over the cap; trim back rather than leaving it to grow by
             // one on every such cold start.
             enforceMaxSize();
-            loading = false;
+            startMoving();
+        });
+    }
+
+    private void finishLoading() {
+        loading = false;
+        notifyDataSetChanged();
+        // Drain a copy: a callback may itself call whenLoaded, and with
+        // loading now false that reentrant one runs immediately rather than
+        // re-queuing, so this list won't be mutated mid-iteration.
+        List<Runnable> callbacks = new ArrayList<>(loadedCallbacks);
+        loadedCallbacks.clear();
+        for (Runnable action : callbacks) {
+            action.run();
+        }
+    }
+
+    // An entry to move to another dictionary file, and what looking its key up
+    // there found.
+    private static final class Move {
+        final BlobDescriptor bd;
+        final Slob to;
+        Slob.Blob found;
+        boolean failed;
+
+        Move(BlobDescriptor bd, Slob to) {
+            this.bd = bd;
+            this.to = to;
+        }
+    }
+
+    // Move entries whose dictionary file has been closed or replaced to a loaded
+    // dictionary with the same uri - a newer version of it: the key is looked up
+    // there and the entry saved pointing at the article found. Entries whose key
+    // isn't found keep pointing at the old file, and record that, so the lookup
+    // isn't repeated; a lookup that fails (a read error) isn't recorded, so it's
+    // retried on the next change or startup. An entry whose file is still in
+    // the dictionary list but fails to load (e.g. on storage that's currently
+    // unavailable) isn't moved, so it isn't bound to another file for good.
+    // Called whenever the set of loaded dictionaries changes; the lookups run in
+    // the background, with the list counting as loading meanwhile, and a change
+    // during a load or pass makes it run again once that's done.
+    void moveToLoadedDictionaries() {
+        if (loading) {
+            moveAgain = true;
+            return;
+        }
+        startMoving();
+    }
+
+    private void startMoving() {
+        moveAgain = false;
+        Set<String> listed = new HashSet<>();
+        for (SlobDescriptor sd : app.dictionaries) {
+            if (sd.id != null) {
+                listed.add(sd.id);
+            }
+        }
+        List<Move> moves = new ArrayList<>();
+        for (BlobDescriptor bd : this.list) {
+            if (listed.contains(bd.slobId) || bd.slobUri == null) {
+                continue;
+            }
+            Slob slob = app.findSlob(bd.slobUri);
+            if (slob != null && !slob.getId().toString().equals(bd.notFoundIn)) {
+                moves.add(new Move(bd, slob));
+            }
+        }
+        if (moves.isEmpty()) {
+            if (loading) {
+                finishLoading();
+            }
+            return;
+        }
+        if (!loading) {
+            loading = true;
             notifyDataSetChanged();
-            // Drain a copy: a callback may itself call whenLoaded, and with
-            // loading now false that reentrant one runs immediately rather than
-            // re-queuing, so this list won't be mutated mid-iteration.
-            List<Runnable> callbacks = new ArrayList<>(loadedCallbacks);
-            loadedCallbacks.clear();
-            for (Runnable action : callbacks) {
-                action.run();
+        }
+        Util.runAsync(() -> lookUp(moves), found -> {
+            if (found != null) {
+                applyMoves(found);
+            }
+            if (moveAgain) {
+                startMoving();
+            } else {
+                finishLoading();
             }
         });
     }
 
+    private List<Move> lookUp(List<Move> moves) {
+        for (Move m : moves) {
+            try {
+                m.found = findBlob(m.to, m.bd.key);
+            }
+            catch (Exception ex) {
+                m.failed = true;
+                Log.w(TAG, String.format("Failed to look up %s in %s (%s)",
+                        m.bd.key, m.to.getId(), m.to.fileURI), ex);
+            }
+        }
+        return moves;
+    }
+
+    // The article for key: the one with exactly that key if there is one, else
+    // the first match. Matches are keys equal to it at quaternary strength (not
+    // a prefix search), so there are only ever a few.
+    private static Slob.Blob findBlob(Slob slob, String key) {
+        Iterator<Slob.Blob> result = slob.find(key, Slob.Strength.QUATERNARY);
+        Slob.Blob first = null;
+        while (result.hasNext()) {
+            Slob.Blob blob = result.next();
+            if (blob.key.equals(key)) {
+                return blob;
+            }
+            if (first == null) {
+                first = blob;
+            }
+        }
+        return first;
+    }
+
+    private void applyMoves(List<Move> moves) {
+        Set<BlobDescriptor> current = Collections.newSetFromMap(new IdentityHashMap<>());
+        current.addAll(this.list);
+        Set<BlobDescriptor> moved = Collections.newSetFromMap(new IdentityHashMap<>());
+        for (Move m : moves) {
+            BlobDescriptor bd = m.bd;
+            String toId = m.to.getId().toString();
+            // Skip entries removed while the lookups ran, and targets closed
+            // meanwhile: that change runs the pass again.
+            if (m.failed || !current.contains(bd) || app.getSlob(toId) == null) {
+                continue;
+            }
+            if (m.found == null) {
+                bd.notFoundIn = toId;
+                store.save(bd);
+                continue;
+            }
+            bd.slobId = toId;
+            bd.slobUri = m.to.getURI();
+            bd.blobId = m.found.id;
+            bd.key = m.found.key;
+            bd.notFoundIn = null;
+            moved.add(bd);
+        }
+        if (moved.isEmpty()) {
+            return;
+        }
+        // A moved entry can now be equal to one already in the list (the same
+        // article bookmarked again in the new version) or to another moved one.
+        // Keep the one already there, with the earlier creation time (shown, and
+        // sorted on) and the later access time (decides what's evicted first).
+        Map<BlobDescriptor, BlobDescriptor> kept = new HashMap<>();
+        for (BlobDescriptor bd : this.list) {
+            if (!moved.contains(bd)) {
+                kept.putIfAbsent(bd, bd);
+            }
+        }
+        Set<BlobDescriptor> dropped = Collections.newSetFromMap(new IdentityHashMap<>());
+        for (BlobDescriptor bd : moved) {
+            BlobDescriptor existing = kept.putIfAbsent(bd, bd);
+            if (existing == null) {
+                store.save(bd);
+                continue;
+            }
+            existing.createdAt = Math.min(existing.createdAt, bd.createdAt);
+            existing.lastAccess = Math.max(existing.lastAccess, bd.lastAccess);
+            store.save(existing);
+            store.delete(bd.id);
+            dropped.add(bd);
+        }
+        this.list.removeIf(dropped::contains);
+        Log.d(TAG, String.format("Moved %d entries, dropped %d duplicates",
+                moved.size(), dropped.size()));
+    }
+
     private void doUpdateLastAccess(BlobDescriptor bd) {
+        // A pager can still show an entry that has since been removed; saving
+        // it would bring it back.
+        if (!isListed(bd)) {
+            return;
+        }
         long t = System.currentTimeMillis();
         long dt = t - bd.lastAccess;
         if (dt < 2000) {
@@ -227,6 +406,21 @@ final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
         }
         bd.lastAccess = t;
         store.save(bd);
+    }
+
+    private boolean isListed(BlobDescriptor bd) {
+        return indexOfListed(bd) > -1;
+    }
+
+    // Index of this very entry, not of one equal to it: the filtered view can
+    // briefly hold an entry a move pass has merged into another, equal one.
+    private int indexOfListed(BlobDescriptor bd) {
+        for (int i = 0; i < this.list.size(); i++) {
+            if (this.list.get(i) == bd) {
+                return i;
+            }
+        }
+        return -1;
     }
 
     void updateLastAccess(final BlobDescriptor bd) {
@@ -243,45 +437,21 @@ final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
         }
     }
 
+    // The entry's dictionary, or null if its file isn't loaded.
     Slob resolveOwner(BlobDescriptor bd) {
-        Slob slob = app.getSlob(bd.slobId);
-//        if (slob == null || !slob.file.exists()) {
-        if (slob == null) {
-            slob = app.findSlob(bd.slobUri);
-        }
-        return slob;
+        return app.getSlob(bd.slobId);
     }
 
+    // The entry's article, or null if its dictionary file isn't loaded. Entries
+    // are moved to newer versions of their dictionary before the list counts as
+    // loaded (see moveToLoadedDictionaries), so there's nothing to look up here.
     Slob.Blob resolve(BlobDescriptor bd) {
         Slob slob = resolveOwner(bd);
-        Slob.Blob blob = null;
         if (slob == null) {
             return null;
         }
-        String slobId = slob.getId().toString();
-        if (slobId.equals(bd.slobId)) {
-            blob = new Slob.Blob(slob, bd.blobId, bd.key, bd.fragment);
-        } else {
-            try {
-                Iterator<Slob.Blob> result = slob.find(bd.key,
-                        Slob.Strength.QUATERNARY);
-                if (result.hasNext()) {
-                    blob = result.next();
-                    bd.slobId = slobId;
-                    bd.blobId = blob.id;
-                }
-            }
-            catch (Exception ex) {
-                Log.w(TAG,
-                      String.format("Failed to resolve descriptor %s (%s) in %s (%s)",
-                              bd.blobId, bd.key, slob.getId(), slob.fileURI), ex);
-                blob = null;
-            }
-        }
-        if (blob != null) {
-            updateLastAccess(bd);
-        }
-        return blob;
+        updateLastAccess(bd);
+        return new Slob.Blob(slob, bd.blobId, bd.key, bd.fragment);
     }
 
     public BlobDescriptor createDescriptor(String contentUrl) {
@@ -333,9 +503,7 @@ final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
     }
 
     public BlobDescriptor remove(int index) {
-        //FIXME find exact item by uuid or using sorted<->unsorted mapping
-        BlobDescriptor bd = this.filteredList.get(index);
-        int realIndex = this.list.indexOf(bd);
+        int realIndex = indexOfListed(this.filteredList.get(index));
         if (realIndex > -1) {
             return removeByIndex(realIndex);
         }
@@ -381,19 +549,7 @@ final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
     }
 
     public boolean contains(String contentUrl) {
-        BlobDescriptor toFind = createDescriptor(contentUrl);
-        for (BlobDescriptor bd : this.list) {
-            if (bd.equals(toFind)) {
-                Log.d(TAG, "Found exact match, bookmarked");
-                return true;
-            }
-            if (bd.key.equals(toFind.key) && bd.slobUri.equals(toFind.slobUri)) {
-                Log.d(TAG, "Found approximate match, bookmarked");
-                return true;
-            }
-        }
-        Log.d(TAG, "not bookmarked");
-        return false;
+        return this.list.contains(createDescriptor(contentUrl));
     }
 
     public void setFilter(String filter) {
