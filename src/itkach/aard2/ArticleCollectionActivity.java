@@ -1079,11 +1079,12 @@ public class ArticleCollectionActivity extends AppCompatActivity {
                 Application app = (Application) getApplication();
                 if (app.isBookmarked(url)) {
                     app.removeBookmark(url);
-                    displayBookmarked(false);
                 } else {
                     app.addBookmark(url);
-                    displayBookmarked(true);
                 }
+                // Not simply the opposite of before: no bookmark is added for
+                // an article whose dictionary isn't loaded any more.
+                displayBookmarked(app.isBookmarked(url));
             }
             return true;
         }
