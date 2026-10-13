@@ -827,8 +827,12 @@ public class Application extends android.app.Application {
     }
 
 
+    // The uri of the loaded dictionary file with this id, or null if it isn't
+    // loaded (e.g. an article left open in another window while its dictionary
+    // was closed).
     String getSlobURI(String slobId) {
-        return  slobber.getSlobURI(slobId);
+        Slob slob = slobber.getSlob(slobId);
+        return slob == null ? null : slob.getURI();
     }
 
 

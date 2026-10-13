@@ -413,6 +413,10 @@ public class ArticleWebView extends SearchableWebView {
     }
 
     private void saveAvailableStylesPref(Set<String> styleTitles) {
+        if (currentSlobUri == null) {
+            Log.w(TAG, "Can't save article view available styles pref - slob uri is null");
+            return;
+        }
         SharedPreferences prefs = prefs();
         SharedPreferences.Editor editor = prefs.edit();
         editor.putStringSet(Application.PREF_STYLE_AVAILABLE + currentSlobUri, styleTitles);
