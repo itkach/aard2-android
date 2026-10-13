@@ -2,6 +2,7 @@ package itkach.aard2;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
@@ -28,7 +29,9 @@ import java.nio.file.Paths;
 import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.IdentityHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import itkach.slob.Slob;
@@ -43,7 +46,7 @@ public class BlobDescriptorListTest {
     @Rule
     public TemporaryFolder tmp = new TemporaryFolder();
 
-    private final List<FileChannel> channels = new ArrayList<>();
+    private final Map<Slob, FileChannel> channels = new IdentityHashMap<>();
     private TestDictionaries dictionaries;
     private DescriptorStore<BlobDescriptor> store;
     private Slob v1;
@@ -101,7 +104,7 @@ public class BlobDescriptorListTest {
 
     @After
     public void tearDown() throws Exception {
-        for (FileChannel channel : channels) {
+        for (FileChannel channel : channels.values()) {
             channel.close();
         }
     }
@@ -109,8 +112,9 @@ public class BlobDescriptorListTest {
     private Slob open(String name) throws Exception {
         File file = Paths.get(getClass().getResource("/" + name).toURI()).toFile();
         FileChannel channel = FileChannel.open(file.toPath());
-        channels.add(channel);
-        return new Slob(channel, file.toURI().toString());
+        Slob slob = new Slob(channel, file.toURI().toString());
+        channels.put(slob, channel);
+        return slob;
     }
 
     private static String id(Slob slob) {
@@ -197,6 +201,12 @@ public class BlobDescriptorListTest {
         assertEquals(blob.key, bd.key);
     }
 
+    // The list shows no dictionary for the entry, and it opens nothing.
+    private static void assertOrphaned(BlobDescriptorList list, BlobDescriptor bd) {
+        assertNull(list.resolveOwner(bd));
+        assertNull(list.resolve(bd));
+    }
+
     @Test
     public void articlesWithTheSameKeyAreSeparateEntries() throws Exception {
         load(v1);
@@ -227,6 +237,10 @@ public class BlobDescriptorListTest {
         close(list, v1);
         assertTrue(list.contains(url(v2, "apple")));
         assertTrue(list.contains(url(v2, "banana", "later")));
+        for (BlobDescriptor bd : list) {
+            assertSame(v2, list.resolveOwner(bd));
+            assertNotNull(list.resolve(bd));
+        }
         List<BlobDescriptor> stored = stored();
         assertEquals(2, stored.size());
         for (BlobDescriptor bd : stored) {
@@ -299,8 +313,7 @@ public class BlobDescriptorListTest {
         assertPointsAt(blob(v1, "cherry"), bd);
         assertEquals(id(v2), bd.notFoundIn);
         assertEquals(id(v2), stored().get(0).notFoundIn);
-        assertNull(list.resolveOwner(bd));
-        assertNull(list.resolve(bd));
+        assertOrphaned(list, bd);
         // Nothing left to look up, so the pass doesn't even start.
         list.moveToLoadedDictionaries();
         assertFalse(list.isLoading());
@@ -314,6 +327,7 @@ public class BlobDescriptorListTest {
         dictionaries.unloadable.add(id(v1));
         close(list, v1);
         assertPointsAt(blob(v1, "apple"), list.get(0));
+        assertOrphaned(list, list.get(0));
         dictionaries.unloadable.remove(id(v1));
         list.moveToLoadedDictionaries();
         awaitLoaded(list);
@@ -329,6 +343,26 @@ public class BlobDescriptorListTest {
         BlobDescriptor bd = list.get(0);
         assertPointsAt(blob(v1, "apple"), bd);
         assertNull(bd.notFoundIn);
+        assertOrphaned(list, bd);
+    }
+
+    @Test
+    public void retriesALookupThatFailed() throws Exception {
+        load(v1, v2);
+        BlobDescriptorList list = start();
+        list.add(url(v1, "apple"));
+        // Reading v2's articles now fails.
+        channels.get(v2).close();
+        close(list, v1);
+        BlobDescriptor bd = list.get(0);
+        assertPointsAt(blob(v1, "apple"), bd);
+        assertNull(bd.notFoundIn);
+        assertOrphaned(list, bd);
+        Slob reopened = open("movetest-v2.slob");
+        dictionaries.loaded.set(dictionaries.loaded.indexOf(v2), reopened);
+        list.moveToLoadedDictionaries();
+        awaitLoaded(list);
+        assertPointsAt(blob(reopened, "apple"), list.get(0));
     }
 
     @Test
@@ -351,6 +385,7 @@ public class BlobDescriptorListTest {
         BlobDescriptorList list = start();
         String url = url(v1, "apple");
         dictionaries.loaded.remove(v1);
+        assertNull(list.createDescriptor(url));
         assertNull(list.add(url));
         assertFalse(list.contains(url));
         assertTrue(list.isEmpty());
