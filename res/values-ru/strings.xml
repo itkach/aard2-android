@@ -89,6 +89,8 @@
     <string name="action_undo">Отменить</string>
     <string name="auto_style_title">Авто</string>
     <string name="blob_descriptor_removed">Удалено «%1$s»</string>
+    <string name="blob_descriptor_unknown_dictionary">Неизвестный словарь</string>
+    <string name="blob_descriptor_dictionary_unavailable">Словарь недоступен: %1$s</string>
     <string name="dictionaries_closed">Закрыто «%1$s»</string>
     <string name="dictionary_drag_handle">Перетащите для изменения порядка</string>
     <string name="dictionary_use_for_random">Использовать для случайного поиска</string>

@@ -101,6 +101,8 @@
     <string name="action_text_size">Tekststørrelse</string>
     <string name="action_undo">Angre</string>
     <string name="blob_descriptor_removed">«%1$s» fjernet</string>
+    <string name="blob_descriptor_unknown_dictionary">Ukjent ordbok</string>
+    <string name="blob_descriptor_dictionary_unavailable">Ordboken er ikke tilgjengelig: %1$s</string>
     <string name="dictionaries_closed">«%1$s» lukket</string>
     <string name="dictionary_drag_handle">Dra for å endre rekkefølge</string>
     <string name="dictionary_use_for_random">Bruk til tilfeldig oppslag</string>

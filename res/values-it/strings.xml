@@ -101,6 +101,8 @@ is missing a quantity used in that language, otherwise the app will crash
     <string name="application_version">Versione %1$s</string>
     <string name="auto_style_title">Auto</string>
     <string name="blob_descriptor_removed">«%1$s» rimosso</string>
+    <string name="blob_descriptor_unknown_dictionary">Dizionario sconosciuto</string>
+    <string name="blob_descriptor_dictionary_unavailable">Dizionario non disponibile: %1$s</string>
     <string name="dictionaries_closed">«%1$s» chiuso</string>
     <string name="dictionary_drag_handle">Trascina per riordinare</string>
     <string name="dictionary_use_for_random">Usa per la ricerca casuale</string>

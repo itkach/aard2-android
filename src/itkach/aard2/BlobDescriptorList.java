@@ -505,7 +505,7 @@ final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
     }
 
     // The dictionary's label, or null if it has none (blank counts as none).
-    private static String getLabel(Slob slob) {
+    static String getLabel(Slob slob) {
         String label = slob.getTags().get("label");
         return Util.isBlank(label) ? null : label;
     }

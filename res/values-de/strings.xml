@@ -97,6 +97,8 @@
     <string name="action_undo">Rückgängig</string>
     <string name="auto_style_title">Auto</string>
     <string name="blob_descriptor_removed">„%1$s“ entfernt</string>
+    <string name="blob_descriptor_unknown_dictionary">Unbekanntes Wörterbuch</string>
+    <string name="blob_descriptor_dictionary_unavailable">Wörterbuch nicht verfügbar: %1$s</string>
     <string name="dictionaries_closed">„%1$s“ geschlossen</string>
     <string name="dictionary_drag_handle">Zum Neuordnen ziehen</string>
     <string name="dictionary_use_for_random">Für zufällige Suche verwenden</string>

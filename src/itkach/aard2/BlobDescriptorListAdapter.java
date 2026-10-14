@@ -1,7 +1,12 @@
 package itkach.aard2;
 
+import android.content.Context;
 import android.database.DataSetObserver;
+import android.graphics.drawable.Drawable;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
 import android.text.format.DateUtils;
+import android.text.style.ImageSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -128,7 +133,23 @@ public class BlobDescriptorListAdapter
         BlobDescriptor item = list.get(position);
         holder.title.setText(item.key);
         Slob slob = list.resolveOwner(item);
-        holder.source.setText(slob == null ? "???" : slob.getTags().get("label"));
+        Context context = holder.itemView.getContext();
+        String label = slob == null ? item.slobLabel : BlobDescriptorList.getLabel(slob);
+        if (label == null) {
+            label = context.getString(R.string.blob_descriptor_unknown_dictionary);
+        }
+        if (slob == null) {
+            // The entry's dictionary file isn't loaded: show the label stored in
+            // the entry, marked as not available, and dim the row.
+            holder.source.setText(withUnavailableMarker(holder.source, label));
+            holder.source.setContentDescription(
+                    context.getString(R.string.blob_descriptor_dictionary_unavailable, label));
+            holder.text.setAlpha(ORPHANED_ALPHA);
+        } else {
+            holder.source.setText(label);
+            holder.source.setContentDescription(null);
+            holder.text.setAlpha(1f);
+        }
         holder.timestamp.setText(DateUtils.getRelativeTimeSpanString(item.createdAt));
 
         boolean selected = tracker != null && tracker.isSelected((long) position);
@@ -137,7 +158,29 @@ public class BlobDescriptorListAdapter
         holder.checkbox.setChecked(selected);
     }
 
+    // Opacity of the text of an entry whose dictionary isn't loaded.
+    private static final float ORPHANED_ALPHA = 0.6f;
+
+    // The label after the prohibit icon (the one the page for an entry that
+    // can't be opened shows), drawn at the label's size and in its color.
+    private static CharSequence withUnavailableMarker(TextView view, String label) {
+        int sizeDp = Math.round(view.getTextSize()
+                / view.getResources().getDisplayMetrics().density);
+        Drawable icon = IconMaker.make(view.getContext(), IconMaker.IC_BAN, sizeDp,
+                view.getCurrentTextColor());
+        icon.setBounds(0, 0, icon.getIntrinsicWidth(), icon.getIntrinsicHeight());
+        SpannableStringBuilder sb = new SpannableStringBuilder();
+        // An object-replacement placeholder (U+FFFC) the span renders over, then
+        // a gap.
+        sb.append("\uFFFC");
+        sb.setSpan(new ImageSpan(icon, ImageSpan.ALIGN_BASELINE), 0, 1,
+                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        sb.append(" ").append(label);
+        return sb;
+    }
+
     static class ViewHolder extends RecyclerView.ViewHolder {
+        final View text;
         final TextView title;
         final TextView source;
         final TextView timestamp;
@@ -145,6 +188,7 @@ public class BlobDescriptorListAdapter
 
         ViewHolder(View itemView) {
             super(itemView);
+            text = itemView.findViewById(R.id.blob_descriptor_item);
             title = (TextView) itemView.findViewById(R.id.blob_descriptor_key);
             source = (TextView) itemView.findViewById(R.id.blob_descriptor_source);
             timestamp = (TextView) itemView.findViewById(R.id.blob_descriptor_timestamp);

@@ -83,6 +83,8 @@
 
     <string name="blob_descriptor_confirm_delete">Delete %1$s?</string>
     <string name="blob_descriptor_removed">Removed "%1$s"</string>
+    <string name="blob_descriptor_unknown_dictionary">Unknown dictionary</string>
+    <string name="blob_descriptor_dictionary_unavailable">Dictionary not available: %1$s</string>
     <string name="msg_failed_to_read_file">Failed to read file</string>
     <string name="msg_file_too_big">File is too big</string>
     <string name="setting_user_styles">User Styles</string>

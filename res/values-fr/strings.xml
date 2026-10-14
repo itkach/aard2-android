@@ -103,6 +103,8 @@
     <string name="action_text_size">Taille du texte</string>
     <string name="action_undo">Annuler</string>
     <string name="blob_descriptor_removed">« %1$s » supprimé</string>
+    <string name="blob_descriptor_unknown_dictionary">Dictionnaire inconnu</string>
+    <string name="blob_descriptor_dictionary_unavailable">Dictionnaire indisponible : %1$s</string>
     <string name="dictionaries_closed">« %1$s » fermé</string>
     <string name="dictionary_drag_handle">Faire glisser pour réorganiser</string>
     <string name="dictionary_use_for_random">Utiliser pour la recherche aléatoire</string>

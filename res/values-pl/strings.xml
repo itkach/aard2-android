@@ -96,6 +96,8 @@
     <string name="action_text_size">Rozmiar tekstu</string>
     <string name="action_undo">Cofnij</string>
     <string name="blob_descriptor_removed">Usunięto „%1$s”</string>
+    <string name="blob_descriptor_unknown_dictionary">Nieznany słownik</string>
+    <string name="blob_descriptor_dictionary_unavailable">Słownik niedostępny: %1$s</string>
     <string name="dictionaries_closed">Zamknięto „%1$s”</string>
     <string name="dictionary_drag_handle">Przeciągnij, aby zmienić kolejność</string>
     <string name="dictionary_use_for_random">Używaj do losowego wyszukiwania</string>

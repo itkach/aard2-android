@@ -103,6 +103,8 @@
     <string name="action_text_size">Tamaño del texto</string>
     <string name="action_undo">Deshacer</string>
     <string name="blob_descriptor_removed">«%1$s» eliminado</string>
+    <string name="blob_descriptor_unknown_dictionary">Diccionario desconocido</string>
+    <string name="blob_descriptor_dictionary_unavailable">Diccionario no disponible: %1$s</string>
     <string name="dictionaries_closed">«%1$s» cerrado</string>
     <string name="dictionary_drag_handle">Arrastra para reordenar</string>
     <string name="dictionary_use_for_random">Usar para búsqueda aleatoria</string>
