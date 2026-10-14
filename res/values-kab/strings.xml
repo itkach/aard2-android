@@ -1,79 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Aard 2</string>
-    <string name="subtitle_lookup">Af-d</string>
-    <string name="subtitle_bookmark">Asɣal</string>
-    <string name="subtitle_history">Tamsirt</string>
+    <string name="subtitle_lookup">Nadi</string>
+    <string name="subtitle_bookmark">Ticraḍ</string>
+    <string name="subtitle_history">Amazray</string>
     <string name="subtitle_dictionaries">Imawalen</string>
-
     <string name="action_find_in_page">Af-d deg usebter</string>
-    <string name="action_bookmark_article">Asɣal</string>
+    <string name="action_bookmark_article">Ticreḍt</string>
     <string name="action_filter">Imsizdeg</string>
-    <string name="action_ascending">Igemment</string>
-    <string name="action_descending">Amnusruy</string>
-
+    <string name="action_ascending">Amizzwer yettalin</string>
+    <string name="action_descending">Amizzwer yettadren</string>
     <string name="action_sort_by_title">S uzwel</string>
     <string name="action_sort_by_time">S wakud</string>
     <string name="action_lookup">Nadi</string>
-
     <!--
     English only uses "one" and "other" for plurals.
     Other quantities are included as a fallback if some translation
     is missing a quantity used in that language, otherwise the app will crash
     -->
     <plurals name="dict_item_count">
-        <item quantity="zero">%,d n wawalen</item>
         <item quantity="one">%,d n wawal</item>
-        <item quantity="two">%,d n wawalen</item>
-        <item quantity="few">%,d n wawalen</item>
-        <item quantity="many">%,d n wawalen</item>
         <item quantity="other">%,d n wawalen</item>
     </plurals>
-
-    <string name="action_select_style">Iɣunab</string>
+    <string name="action_select_style">Iɣunab…</string>
     <string name="select_style">Fren aɣanib</string>
     <string name="default_style_title">Amezwar</string>
-    <string name="subtitle_settings">Aɣewwaṛ</string>
-    <string name="setting_remote_content_always">Yal tikelt</string>
+    <string name="subtitle_settings">Iɣewwaren</string>
+    <string name="setting_remote_content_always">Yal tikkelt</string>
     <string name="setting_remote_content_wifi">Ala s Wi-Fi</string>
-    <string name="setting_remote_content_never">Wurǧin</string>
-    <string name="setting_remote_content">Sali-d agbur azɣaray</string>
+    <string name="setting_remote_content_never">Werǧin</string>
     <string name="setting_about_section">Ɣef</string>
     <string name="article_collection_nothing_found">Ula ayen yettwafen</string>
     <string name="article_collection_selected_not_available">Amagrad yettwafernen ulac-it</string>
     <string name="article_collection_nothing_to_lookup">Ulac i unadi</string>
     <string name="lookup_nothing_found">Ulac ayen yettwafen</string>
-    <string name="main_empty_bookmarks">Ulac asɣal</string>
-    <string name="main_empty_history">Ulac timsirin</string>
+    <string name="main_empty_bookmarks">Ulac ticraḍ</string>
+    <string name="main_empty_history">Ulac amazray</string>
     <string name="main_empty_dictionaries">Ulac imawalen</string>
     <string name="delete">Sfeḍ</string>
     <plurals name="confirm_delete_bookmark_count">
-        <item quantity="zero">%,d n yisɣalen</item>
-        <item quantity="one">%,d n usɣal</item>
-        <item quantity="two">%,d n yisɣalen</item>
-        <item quantity="few">%,d n yisɣalen</item>
-        <item quantity="many">%,d n yisɣalen</item>
-        <item quantity="other">%,d n yisɣalen</item>
-    </plurals>
-    <plurals name="confirm_delete_history_count">
-        <item quantity="zero">%,d n yikalasen iqbuṛen</item>
-        <item quantity="one">%,d n ukalas aqbuṛ</item>
-        <item quantity="two">%,d n yikalasen iqbuṛen</item>
-        <item quantity="few">%,d n yikalasen iqbuṛen</item>
-        <item quantity="many">%,d n yikalasen iqbuṛen</item>
-        <item quantity="other">%,d n yikalasen iqbuṛen</item>
+        <item quantity="one">%,d n tecreḍt</item>
+        <item quantity="other">%,d n tecraḍ</item>
     </plurals>
     <string name="blob_descriptor_confirm_delete">Sfeḍ %1$s?</string>
     <string name="msg_failed_to_read_file">Afaylu ur yettwaɣray ara</string>
-    <string name="msg_file_too_big">Afaylu meqqeṛ</string>
+    <string name="msg_file_too_big">Afaylu meqqer aṭas</string>
     <string name="setting_user_styles">Iɣunab n useqdac</string>
-    <string name="msg_failed_to_store_user_style">Ur yezmir ara ad yessekles aɣanib</string>
+    <string name="msg_failed_to_store_user_style">Ur yezmir ara ad yessekles aɣanib n useqdac</string>
     <string name="setting_user_style_confirm_forget">Ttu %1$s?</string>
-    <string name="msg_no_activity_to_get_content">Ur yezmir ara ad d-yeldi afaylu-agi</string>
+    <string name="msg_no_activity_to_get_content">Ulac armud i izemren ad d-yeldi afaylu-a</string>
     <string name="setting_fav_random_search">Seqdec kan imawalen yettwafernen i unadi agacuṛan</string>
     <string name="article_collection_invalid_link">Aseɣwen yemmut</string>
     <string name="setting_ui_theme">Agrudem n useqdac</string>
     <string name="setting_ui_theme_light">Aceɛlal</string>
     <string name="setting_ui_theme_dark">Ubrik</string>
-    <string name="action_load_remote_content">Asali n ugbur azɣaay iteddu</string>
-    <string name="setting_use_volume_for_nav">Seqded tiqeffalin n ubleɣ akken ad tinigeḍ</string>
+    <string name="setting_use_volume_for_nav">Seqdec tiqeffalin n ubleɣ akken ad tinigeḍ</string>
+    <string name="action_reset">Wennez</string>
+    <string name="action_undo">Err-d</string>
+    <string name="setting_user_styles_add">Rnu</string>
+    <string name="action_open_dictionaries">Ldi</string>
+    <string name="action_download_dictionaries">Azdam</string>
+    <string name="auto_style_title">Awurman</string>
+    <string name="action_clear_query">Sfeḍ</string>
+    <string name="find_next">Uḍfiṛ</string>
+    <string name="find_previous">Uzwir</string>
+    <string name="action_random_article">Amagrad agacuran</string>
+    <string name="action_text_size">Tiddi n uḍris</string>
+    <string name="application_license_name">Turagt tamatut tazayezt GNU lqem wis 3</string>
+    <string name="application_version">Lqem %1$s</string>
+    <string name="scroll_to_top">Ali d asawen</string>
+    <string name="action_full_screen">Agdil aččuran</string>
+    <string name="action_full_screen_exit">Ffeɣ seg ugdil ačuran</string>
+    <string name="blob_descriptor_removed">« %1$s » yettwakkes</string>
+    <string name="setting_auto_paste">Asenṭeḍ awurman seg tecfawit</string>
+    <string name="setting_record_history_off_confirm">Kkes armad</string>
+    <string name="find_hint">Af-d deg usebter</string>
+    <string name="blob_descriptor_unknown_dictionary">Amawal ur n-ttwassen ara</string>
+    <string name="blob_descriptor_dictionary_unavailable">Amawal ur yestufi ara: %1$s</string>
+    <string name="msg_no_activity_to_open_link">Ulac asnas yettwasbedden i izmiren ad yeldi aseɣwen-a</string>
+    <string name="dictionaries_closed">« %1$s » yettwamdel</string>
+    <string name="dictionary_use_for_random">Seqdec-it i unadi agacuran</string>
+    <string name="setting_ui_theme_system">Am wakken i yella deg yibenk</string>
+    <string name="setting_record_history">Sekles amazray</string>
+    <string name="setting_record_history_off_title">Kkes armad n umazray?</string>
+    <string name="setting_record_history_off_message">Amezray-ik yettwakelsen ad yettwakkes.</string>
 </resources>
