@@ -42,11 +42,19 @@ DICTIONARIES = {
     'other.slob': ('test:other', [
         ('apple', 'Apple (other)'),
     ]),
+    'blank-label.slob': ('test:blank-label', [
+        ('apple', 'Apple (blank label)'),
+    ]),
+}
+
+# Each dictionary's label is its file name, except for these.
+LABELS = {
+    'blank-label.slob': ' ',
 }
 
 for name, (uri, articles) in DICTIONARIES.items():
     with slob.create(f'resources/{name}') as w:
-        w.tag('label', name)
+        w.tag('label', LABELS.get(name, name))
         w.tag('uri', uri)
         for key, text in articles:
             w.add(f'<h1>{text}</h1>'.encode('utf-8'), key, content_type=HTML)

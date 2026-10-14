@@ -47,6 +47,9 @@ public class BlobDescriptor extends BaseDescriptor {
     public String blobId;
     public String key;
     public String fragment;
+    // Label of the entry's dictionary, kept so the entry can still be shown
+    // with it once that dictionary is gone. Display only.
+    public String slobLabel;
     // Id of a dictionary file this entry's key wasn't found in when moving the
     // entry to it (see BlobDescriptorList.moveToLoadedDictionaries), so the
     // lookup isn't repeated.

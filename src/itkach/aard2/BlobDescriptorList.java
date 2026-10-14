@@ -45,6 +45,8 @@ final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
         // Ids of the files in the dictionary list, including ones that failed
         // to load.
         Set<String> getListedIds();
+        // The loaded dictionary files.
+        List<Slob> getLoadedSlobs();
     }
 
     private Dictionaries                    dictionaries;
@@ -204,7 +206,19 @@ final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
     void loadAsync() {
         loading = true;
         notifyDataSetChanged();
-        Util.runAsync(() -> store.load(BlobDescriptor.class), loaded -> {
+        Map<String, String> labels = new HashMap<>();
+        for (Slob slob : dictionaries.getLoadedSlobs()) {
+            labels.put(slob.getId().toString(), getLabel(slob));
+        }
+        Util.runAsync(() -> {
+            List<BlobDescriptor> loaded = store.load(BlobDescriptor.class);
+            // Entries without a label get it here. That can be every entry, too
+            // many to save on the main thread, and none is shared with it yet.
+            for (BlobDescriptor bd : loaded) {
+                fillInLabel(bd, labels.get(bd.slobId));
+            }
+            return loaded;
+        }, loaded -> {
             // Merge rather than addAll. An entry the user created while this was
             // loading - e.g. opening or bookmarking an article reached straight
             // from a link before the load finished - is already in the list, and
@@ -284,6 +298,14 @@ final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
         Set<String> listed = dictionaries.getListedIds();
         List<Move> moves = new ArrayList<>();
         for (BlobDescriptor bd : this.list) {
+            Slob own = dictionaries.getSlob(bd.slobId);
+            if (own != null) {
+                // Gets the label of an entry whose dictionary wasn't loaded when
+                // the entries were (see loadAsync), e.g. one on storage that
+                // wasn't mounted yet.
+                fillInLabel(bd, getLabel(own));
+                continue;
+            }
             if (listed.contains(bd.slobId) || bd.slobUri == null) {
                 continue;
             }
@@ -365,6 +387,7 @@ final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
             }
             bd.slobId = toId;
             bd.slobUri = m.to.getURI();
+            bd.slobLabel = getLabel(m.to);
             bd.blobId = m.found.id;
             bd.key = m.found.key;
             bd.notFoundIn = null;
@@ -477,7 +500,31 @@ final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
             return null;
         }
         bd.slobUri = slob.getURI();
+        bd.slobLabel = getLabel(slob);
         return bd;
+    }
+
+    // The dictionary's label, or null if it has none (blank counts as none).
+    private static String getLabel(Slob slob) {
+        String label = slob.getTags().get("label");
+        return Util.isBlank(label) ? null : label;
+    }
+
+    // Gives an entry without a label this one, if there is one, and saves it.
+    // The label is display only, and it's filled in again on the next load if
+    // the save fails (e.g. the disk is full), so a failure is logged rather
+    // than failing the load.
+    private void fillInLabel(BlobDescriptor bd, String label) {
+        if (bd.slobLabel != null || label == null) {
+            return;
+        }
+        bd.slobLabel = label;
+        try {
+            store.save(bd);
+        }
+        catch (Exception ex) {
+            Log.w(TAG, String.format("Failed to save the label of %s", bd.id), ex);
+        }
     }
 
     // Add an entry for the article at contentUrl, or return the existing one.

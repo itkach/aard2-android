@@ -48,6 +48,7 @@ public class BlobDescriptorListTest {
 
     private final Map<Slob, FileChannel> channels = new IdentityHashMap<>();
     private TestDictionaries dictionaries;
+    private File storeDir;
     private DescriptorStore<BlobDescriptor> store;
     private Slob v1;
     private Slob v2;
@@ -81,6 +82,11 @@ public class BlobDescriptorListTest {
         }
 
         @Override
+        public List<Slob> getLoadedSlobs() {
+            return loaded;
+        }
+
+        @Override
         public Set<String> getListedIds() {
             Set<String> ids = new HashSet<>(unloadable);
             for (Slob slob : loaded) {
@@ -99,7 +105,8 @@ public class BlobDescriptorListTest {
         dictionaries = new TestDictionaries();
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        store = new DescriptorStore<>(mapper, tmp.newFolder("store"));
+        storeDir = tmp.newFolder("store");
+        store = new DescriptorStore<>(mapper, storeDir);
     }
 
     @After
@@ -107,6 +114,8 @@ public class BlobDescriptorListTest {
         for (FileChannel channel : channels.values()) {
             channel.close();
         }
+        // Undoes makeStoreReadOnly, so TemporaryFolder can delete it.
+        storeDir.setWritable(true);
     }
 
     private Slob open(String name) throws Exception {
@@ -390,6 +399,115 @@ public class BlobDescriptorListTest {
         assertFalse(list.contains(url));
         assertTrue(list.isEmpty());
         assertTrue(stored().isEmpty());
+    }
+
+    @Test
+    public void storesTheDictionaryLabel() throws Exception {
+        load(v1);
+        BlobDescriptorList list = start();
+        assertEquals("movetest-v1.slob", list.add(url(v1, "apple")).slobLabel);
+        assertEquals("movetest-v1.slob", stored().get(0).slobLabel);
+    }
+
+    @Test
+    public void aBlankLabelCountsAsNone() throws Exception {
+        Slob blank = open("blank-label.slob");
+        load(blank);
+        BlobDescriptorList list = start();
+        assertNull(list.add(url(blank, "apple")).slobLabel);
+    }
+
+    @Test
+    public void aMovedEntryTakesTheLabelOfItsNewDictionary() throws Exception {
+        load(v1, v2);
+        BlobDescriptorList list = start();
+        list.add(url(v1, "apple"));
+        close(list, v1);
+        assertEquals("movetest-v2.slob", list.get(0).slobLabel);
+        assertEquals("movetest-v2.slob", stored().get(0).slobLabel);
+    }
+
+    @Test
+    public void anOrphanedEntryKeepsItsLabel() throws Exception {
+        load(v1, v2);
+        BlobDescriptorList list = start();
+        list.add(url(v1, "cherry"));
+        close(list, v1);
+        assertOrphaned(list, list.get(0));
+        assertEquals("movetest-v1.slob", list.get(0).slobLabel);
+    }
+
+    // Entries saved before labels were stored.
+    private void saveWithoutLabels(Slob slob, String... keys) throws Exception {
+        BlobDescriptorList list = start();
+        for (String key : keys) {
+            BlobDescriptor bd = list.add(url(slob, key));
+            bd.slobLabel = null;
+            store.save(bd);
+        }
+    }
+
+    @Test
+    public void fillsInLabelsOnLoad() throws Exception {
+        load(v1);
+        saveWithoutLabels(v1, "apple", "banana");
+        BlobDescriptorList list = start();
+        for (BlobDescriptor bd : list) {
+            assertEquals("movetest-v1.slob", bd.slobLabel);
+        }
+        for (BlobDescriptor bd : stored()) {
+            assertEquals("movetest-v1.slob", bd.slobLabel);
+        }
+    }
+
+    @Test
+    public void fillsInLabelsWhenTheirDictionaryIsLoadedLater() throws Exception {
+        load(v1);
+        saveWithoutLabels(v1, "apple");
+        dictionaries.loaded.remove(v1);
+        BlobDescriptorList list = start();
+        assertNull(list.get(0).slobLabel);
+        load(v1);
+        list.moveToLoadedDictionaries();
+        awaitLoaded(list);
+        assertEquals("movetest-v1.slob", list.get(0).slobLabel);
+        assertEquals("movetest-v1.slob", stored().get(0).slobLabel);
+    }
+
+    // Makes saving fail, as on a full disk: save writes a temporary file in the
+    // store directory first. Tests using it check that the saves did fail:
+    // a read-only directory doesn't stop root.
+    private void makeStoreReadOnly() {
+        assertTrue(storeDir.setWritable(false));
+    }
+
+    @Test
+    public void loadsEvenWhenLabelsCannotBeSaved() throws Exception {
+        load(v1);
+        saveWithoutLabels(v1, "apple", "banana");
+        makeStoreReadOnly();
+        BlobDescriptorList list = start();
+        assertEquals(2, list.size());
+        for (BlobDescriptor bd : list) {
+            assertEquals("movetest-v1.slob", bd.slobLabel);
+        }
+        for (BlobDescriptor bd : stored()) {
+            assertNull(bd.slobLabel);
+        }
+    }
+
+    @Test
+    public void fillsInLabelsLaterEvenWhenTheyCannotBeSaved() throws Exception {
+        load(v1);
+        saveWithoutLabels(v1, "apple");
+        dictionaries.loaded.remove(v1);
+        BlobDescriptorList list = start();
+        makeStoreReadOnly();
+        load(v1);
+        list.moveToLoadedDictionaries();
+        awaitLoaded(list);
+        assertEquals("movetest-v1.slob", list.get(0).slobLabel);
+        assertNull(stored().get(0).slobLabel);
     }
 
     @Test
