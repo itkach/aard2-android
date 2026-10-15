@@ -34,6 +34,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import itkach.aard2.BlobDescriptorList.OrphanState;
 import itkach.slob.Slob;
 import itkach.slobber.Slobber;
 
@@ -386,6 +387,135 @@ public class BlobDescriptorListTest {
         assertTrue(list.isLoading());
         close(list, v2);
         assertPointsAt(blob(v3, "apple"), list.get(0));
+    }
+
+    @Test
+    public void movesAllEntriesOfADictionaryToAnotherOne() throws Exception {
+        load(v1, other);
+        BlobDescriptorList list = start();
+        BlobDescriptor apple = list.add(url(v1, "apple"));
+        BlobDescriptor banana = list.add(url(v1, "banana"));
+        BlobDescriptor kept = list.add(url(other, "apple", "kept"));
+        dictionaries.loaded.remove(v1);
+        int[] result = {-1, -1};
+        list.moveEntriesOf(id(v1), other, (tried, moved) -> {
+            result[0] = tried;
+            result[1] = moved;
+        });
+        awaitLoaded(list);
+        assertEquals(2, result[0]);
+        assertEquals(1, result[1]);
+        assertPointsAt(blob(other, "apple"), apple);
+        assertEquals("test:other", apple.slobUri);
+        assertEquals("other.slob", apple.slobLabel);
+        // Not found there: stays, without recording it, which is only for the
+        // dictionary that replaced the entry's own.
+        assertPointsAt(blob(v1, "banana"), banana);
+        assertNull(banana.notFoundIn);
+        assertPointsAt(blob(other, "apple"), kept);
+        for (BlobDescriptor bd : stored()) {
+            assertEquals(bd.key.equals("banana") ? id(v1) : id(other), bd.slobId);
+        }
+    }
+
+    @Test
+    public void movesAllEntriesOfADictionaryOnceAPassIsDone() throws Exception {
+        load(v1, v2, other);
+        BlobDescriptorList list = start();
+        list.add(url(v1, "apple"));
+        dictionaries.loaded.remove(v1);
+        list.moveToLoadedDictionaries();
+        assertTrue(list.isLoading());
+        int[] result = {-1, -1};
+        list.moveEntriesOf(id(v1), other, (tried, moved) -> {
+            result[0] = tried;
+            result[1] = moved;
+        });
+        awaitLoaded(list);
+        // The pass moved it to v2 first, leaving nothing of v1 to move.
+        assertEquals(0, result[0]);
+        assertEquals(0, result[1]);
+        assertPointsAt(blob(v2, "apple"), list.get(0));
+    }
+
+    @Test
+    public void removesAllEntriesOfADictionary() throws Exception {
+        load(v1, v2);
+        BlobDescriptorList list = start();
+        list.add(url(v1, "apple"));
+        list.add(url(v1, "banana"));
+        BlobDescriptor kept = list.add(url(v2, "apple"));
+        assertEquals(2, list.countEntriesOf(id(v1)));
+        assertEquals(2, list.removeEntriesOf(id(v1)));
+        assertEquals(0, list.countEntriesOf(id(v1)));
+        assertEquals(1, list.size());
+        assertSame(kept, list.get(0));
+        assertEquals(1, stored().size());
+    }
+
+    @Test
+    public void removesThisVeryEntry() throws Exception {
+        load(v1);
+        BlobDescriptorList list = start();
+        BlobDescriptor bd = list.add(url(v1, "apple"));
+        BlobDescriptor equal = list.createDescriptor(url(v1, "apple"));
+        assertFalse(list.removeEntry(equal));
+        assertTrue(list.removeEntry(bd));
+        assertTrue(list.isEmpty());
+        assertTrue(stored().isEmpty());
+        assertFalse(list.removeEntry(bd));
+    }
+
+    @Test
+    public void anEntryOfALoadedDictionaryIsNotOrphaned() throws Exception {
+        load(v1);
+        BlobDescriptorList list = start();
+        BlobDescriptor bd = list.add(url(v1, "apple"));
+        assertEquals(OrphanState.NOT_ORPHANED, list.orphanState(bd));
+    }
+
+    @Test
+    public void anEntryOfAListedDictionaryThatFailsToLoadIsUnavailable() throws Exception {
+        load(v1, v2);
+        BlobDescriptorList list = start();
+        BlobDescriptor bd = list.add(url(v1, "apple"));
+        dictionaries.unloadable.add(id(v1));
+        close(list, v1);
+        assertEquals(OrphanState.UNAVAILABLE, list.orphanState(bd));
+    }
+
+    @Test
+    public void anEntryNotFoundInANewerVersionIsReplaced() throws Exception {
+        load(v1, v2);
+        BlobDescriptorList list = start();
+        BlobDescriptor bd = list.add(url(v1, "cherry"));
+        close(list, v1);
+        assertEquals(OrphanState.REPLACED, list.orphanState(bd));
+        assertSame(v2, list.replacementOf(bd));
+    }
+
+    @Test
+    public void anEntryWhoseLookupFailedIsReplaced() throws Exception {
+        load(v1, v2);
+        BlobDescriptorList list = start();
+        BlobDescriptor bd = list.add(url(v1, "apple"));
+        // Reading v2's articles now fails.
+        channels.get(v2).close();
+        close(list, v1);
+        assertNull(bd.notFoundIn);
+        assertEquals(OrphanState.REPLACED, list.orphanState(bd));
+        assertSame(v2, list.replacementOf(bd));
+    }
+
+    @Test
+    public void anEntryWithNoDictionaryOfItsUriLoadedIsGone() throws Exception {
+        load(v1, other);
+        BlobDescriptorList list = start();
+        BlobDescriptor bd = list.add(url(v1, "apple"));
+        close(list, v1);
+        assertEquals(OrphanState.GONE, list.orphanState(bd));
+        bd.slobUri = null;
+        assertEquals(OrphanState.GONE, list.orphanState(bd));
     }
 
     @Test

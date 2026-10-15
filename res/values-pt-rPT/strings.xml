@@ -102,6 +102,15 @@
     <string name="blob_descriptor_removed">«%1$s» removido</string>
     <string name="blob_descriptor_unknown_dictionary">Dicionário desconhecido</string>
     <string name="blob_descriptor_dictionary_unavailable">Dicionário indisponível: %1$s</string>
+    <string name="orphaned_gone">O dicionário desta entrada não está aberto, por isso o artigo não pode ser mostrado.</string>
+    <string name="orphaned_not_found">Este artigo não foi encontrado em %1$s, a versão atual deste dicionário.</string>
+    <string name="orphaned_unavailable">O dicionário desta entrada está na lista de dicionários, mas não foi possível abri-lo.</string>
+    <string name="orphaned_lookup">Procurar</string>
+    <string name="orphaned_move">Mover as entradas deste dicionário para…</string>
+    <string name="orphaned_move_to">Mover as entradas para</string>
+    <string name="orphaned_moved">Entradas movidas: %1$d de %2$d</string>
+    <string name="orphaned_remove_all">Remover %1$s deste dicionário</string>
+    <string name="orphaned_remove_this">Remover esta entrada</string>
     <string name="dictionaries_closed">«%1$s» fechado</string>
     <string name="dictionary_drag_handle">Arraste para reordenar</string>
     <string name="dictionary_use_for_random">Usar para pesquisa aleatória</string>

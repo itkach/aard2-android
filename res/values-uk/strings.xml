@@ -97,6 +97,15 @@
     <string name="blob_descriptor_removed">Вилучено «%1$s»</string>
     <string name="blob_descriptor_unknown_dictionary">Невідомий словник</string>
     <string name="blob_descriptor_dictionary_unavailable">Словник недоступний: %1$s</string>
+    <string name="orphaned_gone">Словник цього запису не відкрито, тому статтю неможливо показати.</string>
+    <string name="orphaned_not_found">Цю статтю не знайдено в словнику «%1$s» — поточній версії цього словника.</string>
+    <string name="orphaned_unavailable">Словник цього запису є в списку словників, але його не вдалося відкрити.</string>
+    <string name="orphaned_lookup">Знайти</string>
+    <string name="orphaned_move">Перенести записи цього словника до…</string>
+    <string name="orphaned_move_to">Перенести записи до</string>
+    <string name="orphaned_moved">Перенесено записів: %1$d з %2$d</string>
+    <string name="orphaned_remove_all">Видалити %1$s цього словника</string>
+    <string name="orphaned_remove_this">Видалити цей запис</string>
     <string name="dictionaries_closed">Закрито «%1$s»</string>
     <string name="dictionary_drag_handle">Перетягніть, щоб змінити порядок</string>
     <string name="dictionary_use_for_random">Використовувати для випадкового пошуку</string>

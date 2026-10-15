@@ -91,6 +91,15 @@
     <string name="blob_descriptor_removed">Удалено «%1$s»</string>
     <string name="blob_descriptor_unknown_dictionary">Неизвестный словарь</string>
     <string name="blob_descriptor_dictionary_unavailable">Словарь недоступен: %1$s</string>
+    <string name="orphaned_gone">Словарь этой записи не открыт, поэтому статью нельзя показать.</string>
+    <string name="orphaned_not_found">Эта статья не найдена в словаре «%1$s» — текущей версии этого словаря.</string>
+    <string name="orphaned_unavailable">Словарь этой записи есть в списке словарей, но его не удалось открыть.</string>
+    <string name="orphaned_lookup">Найти</string>
+    <string name="orphaned_move">Перенести записи этого словаря в…</string>
+    <string name="orphaned_move_to">Перенести записи в</string>
+    <string name="orphaned_moved">Перенесено записей: %1$d из %2$d</string>
+    <string name="orphaned_remove_all">Удалить %1$s этого словаря</string>
+    <string name="orphaned_remove_this">Удалить эту запись</string>
     <string name="dictionaries_closed">Закрыто «%1$s»</string>
     <string name="dictionary_drag_handle">Перетащите для изменения порядка</string>
     <string name="dictionary_use_for_random">Использовать для случайного поиска</string>

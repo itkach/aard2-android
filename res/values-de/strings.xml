@@ -99,6 +99,15 @@
     <string name="blob_descriptor_removed">„%1$s“ entfernt</string>
     <string name="blob_descriptor_unknown_dictionary">Unbekanntes Wörterbuch</string>
     <string name="blob_descriptor_dictionary_unavailable">Wörterbuch nicht verfügbar: %1$s</string>
+    <string name="orphaned_gone">Das Wörterbuch dieses Eintrags ist nicht geöffnet, daher kann der Artikel nicht angezeigt werden.</string>
+    <string name="orphaned_not_found">Dieser Artikel wurde in %1$s, der aktuellen Version dieses Wörterbuchs, nicht gefunden.</string>
+    <string name="orphaned_unavailable">Das Wörterbuch dieses Eintrags ist in der Wörterbuchliste, konnte aber nicht geöffnet werden.</string>
+    <string name="orphaned_lookup">Nachschlagen</string>
+    <string name="orphaned_move">Einträge dieses Wörterbuchs verschieben nach…</string>
+    <string name="orphaned_move_to">Einträge verschieben nach</string>
+    <string name="orphaned_moved">Verschobene Einträge: %1$d von %2$d</string>
+    <string name="orphaned_remove_all">%1$s aus diesem Wörterbuch entfernen</string>
+    <string name="orphaned_remove_this">Diesen Eintrag entfernen</string>
     <string name="dictionaries_closed">„%1$s“ geschlossen</string>
     <string name="dictionary_drag_handle">Zum Neuordnen ziehen</string>
     <string name="dictionary_use_for_random">Für zufällige Suche verwenden</string>

@@ -105,6 +105,15 @@
     <string name="blob_descriptor_removed">« %1$s » supprimé</string>
     <string name="blob_descriptor_unknown_dictionary">Dictionnaire inconnu</string>
     <string name="blob_descriptor_dictionary_unavailable">Dictionnaire indisponible : %1$s</string>
+    <string name="orphaned_gone">Le dictionnaire de cette entrée n\'est pas ouvert, l\'article ne peut donc pas être affiché.</string>
+    <string name="orphaned_not_found">Cet article est introuvable dans %1$s, la version actuelle de ce dictionnaire.</string>
+    <string name="orphaned_unavailable">Le dictionnaire de cette entrée figure dans la liste des dictionnaires, mais n\'a pas pu être ouvert.</string>
+    <string name="orphaned_lookup">Rechercher</string>
+    <string name="orphaned_move">Déplacer les entrées de ce dictionnaire vers…</string>
+    <string name="orphaned_move_to">Déplacer les entrées vers</string>
+    <string name="orphaned_moved">Entrées déplacées : %1$d sur %2$d</string>
+    <string name="orphaned_remove_all">Supprimer %1$s de ce dictionnaire</string>
+    <string name="orphaned_remove_this">Supprimer cette entrée</string>
     <string name="dictionaries_closed">« %1$s » fermé</string>
     <string name="dictionary_drag_handle">Faire glisser pour réorganiser</string>
     <string name="dictionary_use_for_random">Utiliser pour la recherche aléatoire</string>

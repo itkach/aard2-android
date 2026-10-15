@@ -42,6 +42,8 @@ public class MainActivity extends AppCompatActivity {
     private static final int LOOKUP = 0;
     private static final int DICTIONARIES = 3;
     private static final String STATE_SELECTED = "selectedSection";
+    // Text to look up, shown in the Lookup section.
+    static final String EXTRA_LOOKUP = "lookup";
     // Persisted so the last section is restored no matter how the app was last
     // torn down. Instance state (STATE_SELECTED) covers an OS kill while the task
     // is kept, but not a recents swipe-dismiss (Android discards a dismissed
@@ -57,6 +59,11 @@ public class MainActivity extends AppCompatActivity {
     private Timer lookupTimer;
     private String[] titles;
     private int selectedPosition = LOOKUP;
+    // Set when the activity is started with text to look up (EXTRA_LOOKUP):
+    // auto-paste is skipped until the window next loses focus, so that text
+    // isn't replaced by what's on the clipboard, and the clipboard isn't
+    // cleared for nothing.
+    private boolean skipAutoPaste;
 
     private Pattern[] NO_PASTE_PATTERNS = new Pattern[]{
             Patterns.WEB_URL,
@@ -176,6 +183,10 @@ public class MainActivity extends AppCompatActivity {
         int initial;
         if (savedInstanceState != null) {
             initial = savedInstanceState.getInt(STATE_SELECTED, LOOKUP);
+        } else if (getIntent().hasExtra(EXTRA_LOOKUP)) {
+            app.lookup(getIntent().getStringExtra(EXTRA_LOOKUP), false);
+            skipAutoPaste = true;
+            initial = LOOKUP;
         } else if (app.dictionaries.size() == 0) {
             initial = DICTIONARIES;
         } else {
@@ -331,7 +342,7 @@ public class MainActivity extends AppCompatActivity {
     // regains focus with clipboard text waiting to auto-paste.
     private void revealLookup() {
         final Application app = (Application) getApplication();
-        if (app.autoPaste()) {
+        if (app.autoPaste() && !skipAutoPaste) {
             CharSequence clipboard = Clipboard.take(this);
             if (clipboard != null) {
                 app.lookup(clipboard.toString(), false);
@@ -468,14 +479,37 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    // Started again with text to look up (see EXTRA_LOOKUP). Looked up right
+    // away, as auto-paste does, so the Lookup box shows it when revealed.
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        String query = intent.getStringExtra(EXTRA_LOOKUP);
+        if (query == null) {
+            return;
+        }
+        ((Application) getApplication()).lookup(query, false);
+        skipAutoPaste = true;
+        if (selectedPosition == LOOKUP) {
+            revealLookup();
+        } else {
+            bottomNav.setSelectedItemId(R.id.nav_lookup);
+        }
+    }
+
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
+        if (!hasFocus) {
+            Log.d(TAG, "has no focus");
+            skipAutoPaste = false;
+            return;
+        }
         if (!autoPaste()) {
             Log.d(TAG, "Auto-paste is off");
             return;
         }
-        if (!hasFocus) {
-            Log.d(TAG, "has no focus");
+        if (skipAutoPaste) {
+            Log.d(TAG, "Auto-paste skipped for the text looked up");
             return;
         }
         CharSequence text = Clipboard.peek(this);

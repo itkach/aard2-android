@@ -103,6 +103,15 @@
     <string name="blob_descriptor_removed">«%1$s» fjernet</string>
     <string name="blob_descriptor_unknown_dictionary">Ukjent ordbok</string>
     <string name="blob_descriptor_dictionary_unavailable">Ordboken er ikke tilgjengelig: %1$s</string>
+    <string name="orphaned_gone">Ordboken til denne oppføringen er ikke åpen, så artikkelen kan ikke vises.</string>
+    <string name="orphaned_not_found">Denne artikkelen ble ikke funnet i %1$s, den gjeldende versjonen av denne ordboken.</string>
+    <string name="orphaned_unavailable">Ordboken til denne oppføringen står i ordboklisten, men kunne ikke åpnes.</string>
+    <string name="orphaned_lookup">Slå opp</string>
+    <string name="orphaned_move">Flytt oppføringene fra denne ordboken til…</string>
+    <string name="orphaned_move_to">Flytt oppføringene til</string>
+    <string name="orphaned_moved">Oppføringer flyttet: %1$d av %2$d</string>
+    <string name="orphaned_remove_all">Fjern %1$s fra denne ordboken</string>
+    <string name="orphaned_remove_this">Fjern denne oppføringen</string>
     <string name="dictionaries_closed">«%1$s» lukket</string>
     <string name="dictionary_drag_handle">Dra for å endre rekkefølge</string>
     <string name="dictionary_use_for_random">Bruk til tilfeldig oppslag</string>

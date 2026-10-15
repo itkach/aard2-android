@@ -17,6 +17,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.util.SparseArray;
+import android.util.SparseBooleanArray;
 import android.util.TypedValue;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
@@ -56,7 +57,9 @@ import android.widget.PopupWindow;
 import android.widget.Toast;
 import com.google.android.material.button.MaterialButton;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Objects;
 
 import itkach.slob.Slob;
@@ -752,23 +755,157 @@ public class ArticleCollectionActivity extends AppCompatActivity {
     }
 
     private ArticleCollectionPagerAdapter createFromBookmarks(final Application app) {
-        return new ArticleCollectionPagerAdapter(
+        ArticleCollectionPagerAdapter adapter = new ArticleCollectionPagerAdapter(
                 app, new BlobDescriptorListAdapter(app.bookmarks), new ToBlob() {
             @Override
             public Blob convert(Object item) {
                 return app.bookmarks.resolve((BlobDescriptor)item);
             }
         });
+        adapter.setUnresolvedPageFactory((container, item) -> orphanedEntryPage(
+                container, app.bookmarks, R.plurals.confirm_delete_bookmark_count,
+                (BlobDescriptor) item));
+        return adapter;
     }
 
     private ArticleCollectionPagerAdapter createFromHistory(final Application app) {
-        return new ArticleCollectionPagerAdapter(
+        ArticleCollectionPagerAdapter adapter = new ArticleCollectionPagerAdapter(
                 app, new BlobDescriptorListAdapter(app.history), new ToBlob() {
             @Override
             public Blob convert(Object item) {
                 return app.history.resolve((BlobDescriptor)item);
             }
         });
+        adapter.setUnresolvedPageFactory((container, item) -> orphanedEntryPage(
+                container, app.history, R.plurals.confirm_delete_history_count,
+                (BlobDescriptor) item));
+        return adapter;
+    }
+
+    // The page for a bookmark or history entry (of list) whose article can't
+    // be shown because its dictionary file isn't loaded: why, and what can be
+    // done about it. countResId: the plural naming list's entries.
+    private View orphanedEntryPage(ViewGroup container, BlobDescriptorList list,
+                                   int countResId, BlobDescriptor bd) {
+        View page = LayoutInflater.from(container.getContext())
+                .inflate(R.layout.orphaned_entry, container, false);
+        ((ImageView) page.findViewById(R.id.orphaned_icon)).setImageDrawable(
+                IconMaker.emptyView(this, IconMaker.IC_BAN));
+        ((TextView) page.findViewById(R.id.orphaned_key)).setText(bd.key);
+        ((TextView) page.findViewById(R.id.orphaned_dictionary)).setText(labelOrUnknown(bd.slobLabel));
+        TextView explanation = page.findViewById(R.id.orphaned_explanation);
+        MaterialButton lookup = page.findViewById(R.id.orphaned_lookup);
+        MaterialButton move = page.findViewById(R.id.orphaned_move);
+        MaterialButton remove = page.findViewById(R.id.orphaned_remove);
+        lookup.setOnClickListener(v -> lookUpInMain(bd.key));
+        BlobDescriptorList.OrphanState state = list.orphanState(bd);
+        if (state == BlobDescriptorList.OrphanState.UNAVAILABLE) {
+            // Moving or removing the entries would make a passing problem
+            // permanent.
+            explanation.setText(R.string.orphaned_unavailable);
+            move.setVisibility(View.GONE);
+            remove.setVisibility(View.GONE);
+        } else if (state == BlobDescriptorList.OrphanState.REPLACED) {
+            // The rest of its dictionary's entries moved, or will move, to the
+            // newer version, so only this one is offered for removal.
+            explanation.setText(getString(R.string.orphaned_not_found,
+                    labelOrUnknown(BlobDescriptorList.getLabel(list.replacementOf(bd)))));
+            move.setVisibility(View.GONE);
+            remove.setText(R.string.orphaned_remove_this);
+            remove.setOnClickListener(v -> confirmRemove(
+                    getResources().getQuantityString(countResId, 1, 1),
+                    () -> list.removeEntry(bd)));
+        } else {
+            explanation.setText(R.string.orphaned_gone);
+            if (loadedDictionaries().isEmpty()) {
+                move.setVisibility(View.GONE);
+            } else {
+                move.setOnClickListener(v -> pickMoveTarget(bd.slobId));
+            }
+            int count = list.countEntriesOf(bd.slobId);
+            remove.setText(getString(R.string.orphaned_remove_all,
+                    getResources().getQuantityString(countResId, count, count)));
+            remove.setOnClickListener(v -> {
+                int n = list.countEntriesOf(bd.slobId);
+                confirmRemove(getResources().getQuantityString(countResId, n, n),
+                        () -> list.removeEntriesOf(bd.slobId));
+            });
+        }
+        return page;
+    }
+
+    private String labelOrUnknown(String label) {
+        return label == null ? getString(R.string.blob_descriptor_unknown_dictionary) : label;
+    }
+
+    // Shows the main screen's Lookup section with key looked up.
+    private void lookUpInMain(String key) {
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        intent.putExtra(MainActivity.EXTRA_LOOKUP, key);
+        startActivity(intent);
+        finish();
+    }
+
+    // Asks before removing what (e.g. "3 bookmarks"), then goes back to the
+    // list the entries were opened from, like its own bulk delete does.
+    private void confirmRemove(String what, Runnable remove) {
+        new MaterialAlertDialogBuilder(this)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setMessage(getString(R.string.blob_descriptor_confirm_delete, what))
+                .setPositiveButton(android.R.string.yes, (dialog, which) -> {
+                    remove.run();
+                    finish();
+                })
+                .setNegativeButton(android.R.string.no, null)
+                .show();
+    }
+
+    // Loaded dictionaries, in list order, turned off ones included: turning a
+    // dictionary off only affects lookups.
+    private List<SlobDescriptor> loadedDictionaries() {
+        Application app = (Application) getApplication();
+        List<SlobDescriptor> result = new ArrayList<>();
+        for (SlobDescriptor sd : app.dictionaries) {
+            if (sd.id != null && app.getSlob(sd.id) != null) {
+                result.add(sd);
+            }
+        }
+        return result;
+    }
+
+    private void pickMoveTarget(String fromSlobId) {
+        List<SlobDescriptor> targets = loadedDictionaries();
+        String[] labels = new String[targets.size()];
+        for (int i = 0; i < labels.length; i++) {
+            labels[i] = targets.get(i).getLabel();
+        }
+        new MaterialAlertDialogBuilder(this)
+                .setTitle(R.string.orphaned_move_to)
+                .setItems(labels, (dialog, which) ->
+                        moveEntries(fromSlobId, targets.get(which).id))
+                .show();
+    }
+
+    // Moves the bookmarks and history entries of the dictionary file
+    // fromSlobId to the articles with their keys in another one, and says how
+    // many were found there. A page whose entry moved then shows its article.
+    private void moveEntries(String fromSlobId, String toSlobId) {
+        Application app = (Application) getApplication();
+        Slob to = app.getSlob(toSlobId);
+        if (to == null) {
+            return;
+        }
+        app.bookmarks.moveEntriesOf(fromSlobId, to, (bookmarksTried, bookmarksMoved) ->
+                app.history.moveEntriesOf(fromSlobId, to, (historyTried, historyMoved) -> {
+                    Toast.makeText(app, app.getString(R.string.orphaned_moved,
+                            bookmarksMoved + historyMoved, bookmarksTried + historyTried),
+                            Toast.LENGTH_LONG).show();
+                    if (!isFinishing() && !onDestroyCalled && viewPager != null) {
+                        updateTitle(viewPager.getCurrentItem());
+                        invalidateOptionsMenu();
+                    }
+                }));
     }
 
     private ArticleCollectionPagerAdapter createFromIntent(Application app, Intent intent) {
@@ -856,7 +993,9 @@ public class ArticleCollectionActivity extends AppCompatActivity {
             }
         }
         else {
-            actionBar.setTitle("???");
+            Object item = articleCollectionPagerAdapter.getItem(position);
+            actionBar.setTitle(item instanceof BlobDescriptor
+                    ? labelOrUnknown(((BlobDescriptor) item).slobLabel) : "???");
         }
     }
 
@@ -1303,6 +1442,21 @@ public class ArticleCollectionActivity extends AppCompatActivity {
             this.scrollListener = l;
         }
 
+        interface UnresolvedPageFactory {
+            View create(ViewGroup container, Object item);
+        }
+
+        // Builds the page for an item whose article can't be shown; without
+        // one, that page is blank but for an icon.
+        private UnresolvedPageFactory unresolvedPageFactory;
+        // Positions of instantiated pages built for an item whose article
+        // couldn't be shown.
+        private final SparseBooleanArray unresolvedPages = new SparseBooleanArray();
+
+        void setUnresolvedPageFactory(UnresolvedPageFactory factory) {
+            this.unresolvedPageFactory = factory;
+        }
+
         public ArticleCollectionPagerAdapter(Application app, RecyclerView.Adapter<?> data, ToBlob toBlob) {
             this.app = app;
             this.data = data;
@@ -1356,7 +1510,9 @@ public class ArticleCollectionActivity extends AppCompatActivity {
                     ? source.getBlobItem(position) : null;
             Slob.Blob blob = item == null ? null : toBlob.convert(item);
             View pageView;
-            if (blob == null) {
+            if (blob == null && item != null && unresolvedPageFactory != null) {
+                pageView = unresolvedPageFactory.create(container, item);
+            } else if (blob == null) {
                 pageView = inflater.inflate(R.layout.empty_view, container, false);
                 ((TextView) pageView.findViewById(R.id.empty_text)).setText("");
                 ((ImageView) pageView.findViewById(R.id.empty_icon)).setImageDrawable(
@@ -1394,6 +1550,7 @@ public class ArticleCollectionActivity extends AppCompatActivity {
             container.addView(pageView);
             pages.put(position, pageView);
             pageItems.put(position, item);
+            unresolvedPages.put(position, blob == null);
             return pageView;
         }
 
@@ -1408,6 +1565,7 @@ public class ArticleCollectionActivity extends AppCompatActivity {
             if (pages.get(position) == pageView) {
                 pages.remove(position);
                 pageItems.remove(position);
+                unresolvedPages.delete(position);
             }
         }
 
@@ -1441,6 +1599,14 @@ public class ArticleCollectionActivity extends AppCompatActivity {
             return toBlob.convert(source.getBlobItem(position));
         }
 
+        // The source item at position (a BlobDescriptor or a Slob.Blob), or null.
+        Object getItem(int position) {
+            if (position < 0 || position >= source.getBlobCount()) {
+                return null;
+            }
+            return source.getBlobItem(position);
+        }
+
         @Override
         public CharSequence getPageTitle(int position) {
             if (position < source.getBlobCount()) {
@@ -1470,7 +1636,11 @@ public class ArticleCollectionActivity extends AppCompatActivity {
             int position = pages.keyAt(idx);
             if (position < source.getBlobCount()
                     && Objects.equals(pageItems.get(position), source.getBlobItem(position))) {
-                return POSITION_UNCHANGED;
+                // A page for an article that couldn't be shown is cheap to
+                // build, and is rebuilt on every change: its entry may have
+                // moved to another dictionary, and what it says (e.g. how many
+                // entries a button removes) may have changed.
+                return unresolvedPages.get(position) ? POSITION_NONE : POSITION_UNCHANGED;
             }
             return POSITION_NONE;
         }

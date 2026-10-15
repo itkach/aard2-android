@@ -85,6 +85,15 @@
     <string name="blob_descriptor_removed">Removed "%1$s"</string>
     <string name="blob_descriptor_unknown_dictionary">Unknown dictionary</string>
     <string name="blob_descriptor_dictionary_unavailable">Dictionary not available: %1$s</string>
+    <string name="orphaned_gone">This entry\'s dictionary isn\'t open, so the article can\'t be shown.</string>
+    <string name="orphaned_not_found">This article wasn\'t found in %1$s, the current version of this dictionary.</string>
+    <string name="orphaned_unavailable">This entry\'s dictionary is in the dictionary list but couldn\'t be opened.</string>
+    <string name="orphaned_lookup">Look up</string>
+    <string name="orphaned_move">Move entries from this dictionary to…</string>
+    <string name="orphaned_move_to">Move entries to</string>
+    <string name="orphaned_moved">Entries moved: %1$d of %2$d</string>
+    <string name="orphaned_remove_all">Remove %1$s from this dictionary</string>
+    <string name="orphaned_remove_this">Remove this entry</string>
     <string name="msg_failed_to_read_file">Failed to read file</string>
     <string name="msg_file_too_big">File is too big</string>
     <string name="setting_user_styles">User Styles</string>
