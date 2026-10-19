@@ -63,10 +63,12 @@ public class BlobDescriptorListTest {
     private Slob split22;
 
     // Dictionary files as the list sees them: loaded ones in list order, plus
-    // ones that are listed but fail to load.
+    // ones that are listed but fail to load, and ones that a listed file
+    // replaced whose entries are still to move to it.
     private static class TestDictionaries implements BlobDescriptorList.Dictionaries {
         final List<Slob> loaded = new ArrayList<>();
         final Set<String> unloadable = new HashSet<>();
+        final Set<String> replaced = new HashSet<>();
 
         @Override
         public Slob getSlob(String slobId) {
@@ -97,6 +99,7 @@ public class BlobDescriptorListTest {
         @Override
         public Set<String> getListedIds() {
             Set<String> ids = new HashSet<>(unloadable);
+            ids.addAll(replaced);
             for (Slob slob : loaded) {
                 ids.add(id(slob));
             }
@@ -583,6 +586,196 @@ public class BlobDescriptorListTest {
         assertEquals(0, result[0]);
         assertEquals(0, result[1]);
         assertPointsAt(blob(v2, "apple"), list.get(0));
+    }
+
+    // A file overwritten in place, as the app sees it: the new file is loaded
+    // in the old one's place, and the old one is recorded as replaced by it
+    // until its entries have moved (see continueAs).
+    private void overwrite(BlobDescriptorList list, Slob old, Slob replacement)
+            throws InterruptedException {
+        dictionaries.loaded.set(dictionaries.loaded.indexOf(old), replacement);
+        dictionaries.replaced.add(id(old));
+        list.moveToLoadedDictionaries();
+        awaitLoaded(list);
+    }
+
+    // Moves the entries of old, overwritten by replacement, as the app does,
+    // then forgets that it was replaced. Returns how many entries there were
+    // to move, and how many moved.
+    private int[] continueAs(BlobDescriptorList list, Slob old, Slob replacement)
+            throws InterruptedException {
+        int[] result = {-1, -1};
+        list.moveEntriesOfReplacedFile(id(old), old.getURI(), id(replacement), (tried, moved) -> {
+            result[0] = tried;
+            result[1] = moved;
+        });
+        awaitLoaded(list);
+        dictionaries.replaced.remove(id(old));
+        list.moveToLoadedDictionaries();
+        awaitLoaded(list);
+        return result;
+    }
+
+    @Test
+    public void movesEntriesOfAnOverwrittenFileToTheNewFile() throws Exception {
+        load(v1);
+        BlobDescriptorList list = start();
+        BlobDescriptor apple = list.add(url(v1, "apple"));
+        BlobDescriptor cherry = list.add(url(v1, "cherry"));
+        overwrite(list, v1, other);
+        int[] result = continueAs(list, v1, other);
+        assertEquals(2, result[0]);
+        assertEquals(1, result[1]);
+        assertPointsAt(blob(other, "apple"), apple);
+        assertEquals("test:other", apple.slobUri);
+        assertEquals("other.slob", apple.slobLabel);
+        // Not found there: stays orphaned, and can still be moved elsewhere.
+        assertPointsAt(blob(v1, "cherry"), cherry);
+        assertNull(cherry.notFoundInIds);
+        assertEquals(OrphanState.GONE, list.orphanState(cherry));
+    }
+
+    @Test
+    public void movesEntriesOfAnOverwrittenFileToEveryFileOfItsDictionary() throws Exception {
+        load(v1, split22);
+        BlobDescriptorList list = start();
+        BlobDescriptor banana = list.add(url(v1, "banana"));
+        BlobDescriptor cherry = list.add(url(v1, "cherry"));
+        overwrite(list, v1, split21);
+        int[] result = continueAs(list, v1, split21);
+        assertEquals(2, result[1]);
+        assertPointsAt(blob(split21, "banana"), banana);
+        assertPointsAt(blob(split22, "cherry"), cherry);
+    }
+
+    @Test
+    public void movesEntriesOfAnOverwrittenFileToItRatherThanAnotherWithTheUri()
+            throws Exception {
+        load(v3, v1);
+        BlobDescriptorList list = start();
+        BlobDescriptor apple = list.add(url(v1, "apple"));
+        overwrite(list, v1, v2);
+        // The pass leaves it for the overwrite, though v3 comes first.
+        assertPointsAt(blob(v1, "apple"), apple);
+        continueAs(list, v1, v2);
+        assertPointsAt(blob(v2, "apple"), apple);
+    }
+
+    @Test
+    public void movesEntriesOfAnOverwrittenFileToItsNewUriWhileTheOldOneIsLoaded()
+            throws Exception {
+        load(v3, v1);
+        BlobDescriptorList list = start();
+        BlobDescriptor apple = list.add(url(v1, "apple"));
+        BlobDescriptor cherry = list.add(url(v1, "cherry"));
+        overwrite(list, v1, other);
+        continueAs(list, v1, other);
+        assertPointsAt(blob(other, "apple"), apple);
+        // Not found in the new file, it's left to its own uri's dictionary,
+        // which doesn't have it either.
+        assertPointsAt(blob(v1, "cherry"), cherry);
+        assertEquals(Arrays.asList(id(v3)), cherry.notFoundInIds);
+        assertEquals(OrphanState.REPLACED, list.orphanState(cherry));
+    }
+
+    @Test
+    public void leavesEntriesOfAReplacedFileAloneWhileTheNewOneFailsToLoad() throws Exception {
+        load(v3, v1);
+        BlobDescriptorList list = start();
+        BlobDescriptor apple = list.add(url(v1, "apple"));
+        dictionaries.loaded.remove(v1);
+        dictionaries.replaced.add(id(v1));
+        dictionaries.unloadable.add(id(v2));
+        list.moveToLoadedDictionaries();
+        awaitLoaded(list);
+        assertPointsAt(blob(v1, "apple"), apple);
+        assertEquals(OrphanState.UNAVAILABLE, list.orphanState(apple));
+    }
+
+    @Test
+    public void movesEntriesLeftOrphanedByEarlierVersionsOfAnOverwrittenFile() throws Exception {
+        load(v1, v2);
+        BlobDescriptorList list = start();
+        BlobDescriptor cherry = list.add(url(v1, "cherry"));
+        close(list, v1);
+        assertEquals(OrphanState.REPLACED, list.orphanState(cherry));
+        overwrite(list, v2, split22);
+        int[] result = continueAs(list, v2, split22);
+        assertEquals(1, result[1]);
+        assertPointsAt(blob(split22, "cherry"), cherry);
+        assertNull(cherry.notFoundInIds);
+    }
+
+    @Test
+    public void leavesEarlierOrphansToAnotherFileWithTheOldUriStillLoaded() throws Exception {
+        load(v1, v2, v3);
+        BlobDescriptorList list = start();
+        BlobDescriptor cherry = list.add(url(v1, "cherry"));
+        close(list, v1);
+        overwrite(list, v2, split22);
+        int[] result = continueAs(list, v2, split22);
+        assertEquals(0, result[1]);
+        assertPointsAt(blob(v1, "cherry"), cherry);
+        assertEquals(OrphanState.REPLACED, list.orphanState(cherry));
+    }
+
+    @Test
+    public void movesEntriesOfAFileOverwrittenBeforeStartup() throws Exception {
+        load(v1);
+        start().add(url(v1, "apple"));
+        dictionaries.loaded.set(0, other);
+        dictionaries.replaced.add(id(v1));
+        // At startup the dictionaries are loaded, and the move asked for,
+        // before the entries are.
+        BlobDescriptorList list = new BlobDescriptorList(dictionaries, store);
+        list.moveToLoadedDictionaries();
+        int[] result = {-1, -1};
+        list.moveEntriesOfReplacedFile(id(v1), "test:movetest", id(other), (tried, moved) -> {
+            result[0] = tried;
+            result[1] = moved;
+        });
+        list.loadAsync();
+        awaitLoaded(list);
+        assertEquals(1, result[1]);
+        assertPointsAt(blob(other, "apple"), list.get(0));
+    }
+
+    @Test
+    public void doesNotFinishAMoveToAFileNoLongerLoaded() throws Exception {
+        load(v1);
+        start().add(url(v1, "apple"));
+        dictionaries.loaded.set(0, other);
+        dictionaries.replaced.add(id(v1));
+        BlobDescriptorList list = new BlobDescriptorList(dictionaries, store);
+        boolean[] done = {false};
+        list.moveEntriesOfReplacedFile(id(v1), "test:movetest", id(other),
+                (tried, moved) -> done[0] = true);
+        // Unloaded before the entries are, and so before the move runs.
+        dictionaries.loaded.remove(other);
+        list.loadAsync();
+        awaitLoaded(list);
+        assertFalse(done[0]);
+        assertPointsAt(blob(v1, "apple"), list.get(0));
+    }
+
+    @Test
+    public void waitsForAMoveStartedByAnEarlierCallback() throws Exception {
+        load(v1);
+        start().add(url(v1, "apple"));
+        dictionaries.loaded.set(0, other);
+        dictionaries.replaced.add(id(v1));
+        BlobDescriptorList list = new BlobDescriptorList(dictionaries, store);
+        list.moveEntriesOfReplacedFile(id(v1), "test:movetest", id(other), (tried, moved) -> {});
+        boolean[] seenLoading = {true};
+        String[] seenSlobId = new String[1];
+        list.whenLoaded(() -> {
+            seenLoading[0] = list.isLoading();
+            seenSlobId[0] = list.get(0).slobId;
+        });
+        list.loadAsync();
+        awaitLoaded(list);
+        assertFalse(seenLoading[0]);
+        assertEquals(id(other), seenSlobId[0]);
     }
 
     @Test

@@ -168,6 +168,11 @@ public class Application extends android.app.Application {
                     if (sd.id != null) {
                         ids.add(sd.id);
                     }
+                    if (sd.replacedFiles != null) {
+                        for (SlobDescriptor.Replaced replaced : sd.replacedFiles) {
+                            ids.add(replaced.slobId);
+                        }
+                    }
                 }
                 return ids;
             }
@@ -183,6 +188,7 @@ public class Application extends android.app.Application {
                 List<Slob> slobs = new ArrayList<Slob>();
                 for (SlobDescriptor sd : dictionaries) {
                     String origSlobId = sd.id;
+                    String origURI = sd.getURI();
                     Slob s = sd.load(getApplicationContext());
                     if (s != null) {
                         if (!Objects.equals(origSlobId, sd.id)) {
@@ -194,6 +200,7 @@ public class Application extends android.app.Application {
                             Log.d(TAG, String.format("%s loaded with a new id, updating dict store %s -> %s", sd.path, origSlobId, sd.id));
                             if (origSlobId != null) {
                                 dictStore.delete(origSlobId);
+                                continueDictionary(sd, origSlobId, origURI, s.getURI());
                             }
                             dictStore.save(sd);
                         }
@@ -207,6 +214,7 @@ public class Application extends android.app.Application {
                 history.notifyDataSetChanged();
                 bookmarks.moveToLoadedDictionaries();
                 history.moveToLoadedDictionaries();
+                moveEntriesOfReplacedFiles();
             }
         });
 
@@ -821,6 +829,72 @@ public class Application extends android.app.Application {
 
     Slob getSlob(String slobId) {
         return slobber.getSlob(slobId);
+    }
+
+    // The file at sd's path, the file replacedId going by replacedURI when last
+    // loaded, has been overwritten with one going by uri. The user put it in
+    // the old one's place, which says it's the same dictionary: the old file's
+    // bookmarks and history are to move to it (see moveEntriesOfReplacedFiles),
+    // and the style chosen for it carries over, unless the new uri has one.
+    private void continueDictionary(SlobDescriptor sd, String replacedId,
+                                    String replacedURI, String uri) {
+        SlobDescriptor.Replaced replaced = new SlobDescriptor.Replaced();
+        replaced.slobId = replacedId;
+        replaced.uri = replacedURI;
+        if (sd.replacedFiles == null) {
+            sd.replacedFiles = new ArrayList<>();
+        }
+        sd.replacedFiles.add(replaced);
+        if (replacedURI.equals(uri)) {
+            return;
+        }
+        SharedPreferences prefs = getSharedPreferences(ARTICLE_VIEW_PREF, MODE_PRIVATE);
+        String style = prefs.getString(PREF_STYLE + replacedURI, null);
+        if (style != null && !prefs.contains(PREF_STYLE + uri)) {
+            prefs.edit().putString(PREF_STYLE + uri, style).apply();
+        }
+    }
+
+    // Moves the bookmarks and history of the files that dictionaries' files
+    // replaced (see continueDictionary) to those dictionaries, and forgets each
+    // replaced file once its entries are moved. Running it again while a move
+    // is under way only repeats lookups.
+    private void moveEntriesOfReplacedFiles() {
+        for (SlobDescriptor sd : dictionaries) {
+            if (sd.replacedFiles == null || sd.id == null || slobber.getSlob(sd.id) == null) {
+                continue;
+            }
+            String slobId = sd.id;
+            for (SlobDescriptor.Replaced replaced : new ArrayList<>(sd.replacedFiles)) {
+                bookmarks.moveEntriesOfReplacedFile(replaced.slobId, replaced.uri, slobId,
+                        (bookmarksTried, bookmarksMoved) ->
+                        history.moveEntriesOfReplacedFile(replaced.slobId, replaced.uri, slobId,
+                                (historyTried, historyMoved) -> {
+                    Log.d(TAG, String.format("Moved %d of %d entries of %s to %s",
+                            bookmarksMoved + historyMoved, bookmarksTried + historyTried,
+                            replaced.slobId, slobId));
+                    forgetReplaced(sd, replaced);
+                }));
+            }
+        }
+    }
+
+    private void forgetReplaced(SlobDescriptor sd, SlobDescriptor.Replaced replaced) {
+        if (sd.replacedFiles == null || !sd.replacedFiles.remove(replaced)) {
+            return;
+        }
+        if (sd.replacedFiles.isEmpty()) {
+            sd.replacedFiles = null;
+        }
+        // Unless the dictionary was closed meanwhile: saving it would add it
+        // back.
+        if (dictionaries.contains(sd)) {
+            dictStore.save(sd);
+        }
+        // The entries left, not found in the new file, are no longer its: the
+        // move pass may have somewhere for them (another file with their uri).
+        bookmarks.moveToLoadedDictionaries();
+        history.moveToLoadedDictionaries();
     }
 
     synchronized boolean addDictionary(Uri uri) {

@@ -45,7 +45,10 @@ final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
         // versions, volumes or other parts of one dictionary.
         List<Slob> findSlobsByURI(String uri);
         // Ids of the files in the dictionary list, including ones that failed
-        // to load.
+        // to load, and ones that a listed file replaced, overwritten in place,
+        // whose entries are still to be moved to it (see
+        // moveEntriesOfReplacedFile): until then they're its, not for the
+        // move pass to move elsewhere.
         Set<String> getListedIds();
         // The loaded dictionary files.
         List<Slob> getLoadedSlobs();
@@ -70,11 +73,13 @@ final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
     private int                             maxSize;
     private RuleBasedCollator               filterCollator;
     private Handler                         handler;
-    // True from loadAsync() until its results are merged in on the main thread
-    // and entries are moved, and while a later move pass runs (see
-    // moveToLoadedDictionaries). Read on the main thread only (set false there
-    // too), so no synchronization.
-    private boolean                         loading;
+    // True until loadAsync()'s results are merged in on the main thread and
+    // entries are moved, and while a later move pass runs (see
+    // moveToLoadedDictionaries). It starts out true: what waits for the
+    // entries (see whenLoaded) can come before loadAsync(), e.g. the
+    // dictionaries being loaded at startup. Read on the main thread only (set
+    // false there too), so no synchronization.
+    private boolean                         loading = true;
     // Set when dictionaries change while loading, so a move pass runs (again)
     // once that's done. Main thread only.
     private boolean                         moveAgain;
@@ -184,11 +189,11 @@ final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
     }
 
     // Run action once this list's entries are available: immediately if the
-    // async load and any move pass have already finished (or were never
-    // started), otherwise right after. Lets a caller that needs a populated,
-    // up-to-date list - opening a bookmarks/history article, resolving the
-    // bookmark icon - avoid acting on the still-empty list during a cold start,
-    // or on entries about to be moved. Main thread only.
+    // async load and any move have already finished, otherwise right after.
+    // Lets a caller that needs a populated, up-to-date list - opening a
+    // bookmarks/history article, resolving the bookmark icon - avoid acting on
+    // the still-empty list during a cold start, or on entries about to be
+    // moved. Main thread only.
     void whenLoaded(Runnable action) {
         if (loading) {
             loadedCallbacks.add(action);
@@ -252,13 +257,11 @@ final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
     private void finishLoading() {
         loading = false;
         notifyDataSetChanged();
-        // Drain a copy: a callback may itself call whenLoaded, and with
-        // loading now false that reentrant one runs immediately rather than
-        // re-queuing, so this list won't be mutated mid-iteration.
-        List<Runnable> callbacks = new ArrayList<>(loadedCallbacks);
-        loadedCallbacks.clear();
-        for (Runnable action : callbacks) {
-            action.run();
+        // One at a time: a callback can start a move (see moveEntriesOf),
+        // which counts as loading again, and the rest then wait for it, so
+        // they see the moved entries and moves don't overlap.
+        while (!loading && !loadedCallbacks.isEmpty()) {
+            loadedCallbacks.remove(0).run();
         }
     }
 
@@ -347,9 +350,10 @@ final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
         whenLoaded(() -> {
             List<Slob> to = dictionaries.findSlobsByURI(toUri);
             List<Move> moves = new ArrayList<>();
-            // If a file with the dictionary's uri has been loaded since, it's
-            // no longer gone: the move pass has taken its entries there, and
-            // the ones it didn't find aren't to be moved elsewhere.
+            // Nothing is moved if a file with uri is loaded by now: the
+            // dictionary isn't gone, so its entries belong with that file. The
+            // move pass has taken them there, and the ones it didn't find
+            // aren't to be moved elsewhere.
             boolean gone = uri == null || dictionaries.findSlobsByURI(uri).isEmpty();
             if (gone && !to.isEmpty()) {
                 for (BlobDescriptor bd : entriesOf(uri, slobId)) {
@@ -361,6 +365,56 @@ final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
                 return;
             }
             runMoves(moves, false, moved -> done.onMoved(moves.size(), moved));
+        });
+    }
+
+    // Moves the entries of the file replacedId, which went by replacedURI, to
+    // the file toSlobId, which overwrote it in place. The user put the new
+    // file in the old one's place, which says it's the same dictionary,
+    // whatever the uris and whatever else is loaded: each key is looked up in
+    // the new file first, then in the other files with its uri, in list order
+    // (with a split dictionary the article can be in another volume). If the
+    // uri changed, the entries left orphaned by earlier versions with the old
+    // one move too, as the move pass would have moved them to a new version
+    // with the same uri, unless a file with the old uri is still loaded: then
+    // they belong with that file. done is called once they're saved, and not
+    // at all if toSlobId isn't loaded by the time the move runs (its storage
+    // was unmounted, or it was overwritten in turn): the move is still to be
+    // done then, and is asked for again on the next change.
+    void moveEntriesOfReplacedFile(String replacedId, String replacedURI, String toSlobId,
+                                   MoveDone done) {
+        whenLoaded(() -> {
+            Slob to = dictionaries.getSlob(toSlobId);
+            if (to == null) {
+                return;
+            }
+            String uri = to.getURI();
+            List<Slob> files = new ArrayList<>();
+            files.add(to);
+            for (Slob slob : dictionaries.findSlobsByURI(uri)) {
+                if (!slob.equals(to)) {
+                    files.add(slob);
+                }
+            }
+            List<Move> moves = new ArrayList<>();
+            for (BlobDescriptor bd : this.list) {
+                if (replacedId.equals(bd.slobId)) {
+                    moves.add(new Move(bd, files));
+                }
+            }
+            MoveDone then = (tried, moved) -> {
+                if (replacedURI.equals(uri)) {
+                    done.onMoved(tried, moved);
+                } else {
+                    moveEntriesOf(replacedURI, null, uri, (orphansTried, orphansMoved) ->
+                            done.onMoved(tried + orphansTried, moved + orphansMoved));
+                }
+            };
+            if (moves.isEmpty()) {
+                then.onMoved(0, 0);
+            } else {
+                runMoves(moves, true, moved -> then.onMoved(moves.size(), moved));
+            }
         });
     }
 
