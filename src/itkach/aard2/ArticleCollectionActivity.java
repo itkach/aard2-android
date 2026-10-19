@@ -58,9 +58,11 @@ import android.widget.Toast;
 import com.google.android.material.button.MaterialButton;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 import itkach.slob.Slob;
 import itkach.slob.Slob.Blob;
@@ -809,7 +811,7 @@ public class ArticleCollectionActivity extends AppCompatActivity {
             // The rest of its dictionary's entries moved, or will move, to the
             // newer version, so only this one is offered for removal.
             explanation.setText(getString(R.string.orphaned_not_found,
-                    labelOrUnknown(BlobDescriptorList.getLabel(list.replacementOf(bd)))));
+                    labelOrUnknown(BlobDescriptorList.getLabel(list.replacementsOf(bd).get(0)))));
             move.setVisibility(View.GONE);
             remove.setText(R.string.orphaned_remove_this);
             remove.setOnClickListener(v -> confirmRemove(
@@ -817,18 +819,18 @@ public class ArticleCollectionActivity extends AppCompatActivity {
                     () -> list.removeEntry(bd)));
         } else {
             explanation.setText(R.string.orphaned_gone);
-            if (loadedDictionaries().isEmpty()) {
+            if (moveTargets().isEmpty()) {
                 move.setVisibility(View.GONE);
             } else {
-                move.setOnClickListener(v -> pickMoveTarget(bd.slobId));
+                move.setOnClickListener(v -> pickMoveTarget(bd));
             }
-            int count = list.countEntriesOf(bd.slobId);
+            int count = list.countEntriesOf(bd);
             remove.setText(getString(R.string.orphaned_remove_all,
                     getResources().getQuantityString(countResId, count, count)));
             remove.setOnClickListener(v -> {
-                int n = list.countEntriesOf(bd.slobId);
+                int n = list.countEntriesOf(bd);
                 confirmRemove(getResources().getQuantityString(countResId, n, n),
-                        () -> list.removeEntriesOf(bd.slobId));
+                        () -> list.removeEntriesOf(bd));
             });
         }
         return page;
@@ -861,43 +863,47 @@ public class ArticleCollectionActivity extends AppCompatActivity {
                 .show();
     }
 
-    // Loaded dictionaries, in list order, turned off ones included: turning a
-    // dictionary off only affects lookups.
-    private List<SlobDescriptor> loadedDictionaries() {
+    // The loaded dictionaries to offer as a move target, in list order, turned
+    // off ones included (turning a dictionary off only affects lookups): the
+    // first loaded file of each uri, standing for all of the dictionary's
+    // files (its volumes, say).
+    private List<Slob> moveTargets() {
         Application app = (Application) getApplication();
-        List<SlobDescriptor> result = new ArrayList<>();
+        List<Slob> result = new ArrayList<>();
+        Set<String> uris = new HashSet<>();
         for (SlobDescriptor sd : app.dictionaries) {
-            if (sd.id != null && app.getSlob(sd.id) != null) {
-                result.add(sd);
+            Slob slob = sd.id == null ? null : app.getSlob(sd.id);
+            if (slob != null && uris.add(slob.getURI())) {
+                result.add(slob);
             }
         }
         return result;
     }
 
-    private void pickMoveTarget(String fromSlobId) {
-        List<SlobDescriptor> targets = loadedDictionaries();
+    private void pickMoveTarget(BlobDescriptor orphaned) {
+        List<Slob> targets = moveTargets();
         String[] labels = new String[targets.size()];
         for (int i = 0; i < labels.length; i++) {
-            labels[i] = targets.get(i).getLabel();
+            labels[i] = labelOrUnknown(BlobDescriptorList.getLabel(targets.get(i)));
         }
         new MaterialAlertDialogBuilder(this)
                 .setTitle(R.string.orphaned_move_to)
                 .setItems(labels, (dialog, which) ->
-                        moveEntries(fromSlobId, targets.get(which).id))
+                        moveEntries(orphaned, targets.get(which).getURI()))
                 .show();
     }
 
-    // Moves the bookmarks and history entries of the dictionary file
-    // fromSlobId to the articles with their keys in another one, and says how
-    // many were found there. A page whose entry moved then shows its article.
-    private void moveEntries(String fromSlobId, String toSlobId) {
+    // Moves the bookmarks and history entries of orphaned's dictionary, one
+    // that's gone, to the articles with their keys in the dictionary with uri
+    // toUri, and says how many were found there. A page whose entry moved then
+    // shows its article.
+    private void moveEntries(BlobDescriptor orphaned, String toUri) {
         Application app = (Application) getApplication();
-        Slob to = app.getSlob(toSlobId);
-        if (to == null) {
-            return;
-        }
-        app.bookmarks.moveEntriesOf(fromSlobId, to, (bookmarksTried, bookmarksMoved) ->
-                app.history.moveEntriesOf(fromSlobId, to, (historyTried, historyMoved) -> {
+        // Taken now: moving the bookmarks can move orphaned itself.
+        String uri = orphaned.slobUri;
+        String slobId = orphaned.slobId;
+        app.bookmarks.moveEntriesOf(uri, slobId, toUri, (bookmarksTried, bookmarksMoved) ->
+                app.history.moveEntriesOf(uri, slobId, toUri, (historyTried, historyMoved) -> {
                     Toast.makeText(app, app.getString(R.string.orphaned_moved,
                             bookmarksMoved + historyMoved, bookmarksTried + historyTried),
                             Toast.LENGTH_LONG).show();

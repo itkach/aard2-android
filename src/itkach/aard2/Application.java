@@ -152,8 +152,8 @@ public class Application extends android.app.Application {
             }
 
             @Override
-            public Slob findSlobByURI(String uri) {
-                return slobber.findSlobByURI(uri);
+            public List<Slob> findSlobsByURI(String uri) {
+                return slobber.findAllSlobsByURI(uri);
             }
 
             @Override

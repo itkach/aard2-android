@@ -41,9 +41,9 @@ final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
     interface Dictionaries {
         // The loaded dictionary file with this id, or null.
         Slob getSlob(String slobId);
-        // The first loaded dictionary file with this uri, in list order, or
-        // null.
-        Slob findSlobByURI(String uri);
+        // The loaded dictionary files with this uri, in list order: the
+        // versions, volumes or other parts of one dictionary.
+        List<Slob> findSlobsByURI(String uri);
         // Ids of the files in the dictionary list, including ones that failed
         // to load.
         Set<String> getListedIds();
@@ -262,28 +262,31 @@ final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
         }
     }
 
-    // An entry to move to another dictionary file, and what looking its key up
-    // there found.
+    // An entry to move to another dictionary, and what looking its key up in
+    // that dictionary's files found.
     private static final class Move {
         final BlobDescriptor bd;
-        final Slob to;
+        // The files to look the key up in, in list order.
+        final List<Slob> to;
         Slob.Blob found;
         boolean failed;
 
-        Move(BlobDescriptor bd, Slob to) {
+        Move(BlobDescriptor bd, List<Slob> to) {
             this.bd = bd;
             this.to = to;
         }
     }
 
-    // Move entries whose dictionary file has been closed or replaced to a loaded
-    // dictionary with the same uri - a newer version of it: the key is looked up
-    // there and the entry saved pointing at the article found. Entries whose key
-    // isn't found keep pointing at the old file, and record that, so the lookup
-    // isn't repeated; a lookup that fails (a read error) isn't recorded, so it's
-    // retried on the next change or startup. An entry whose file is still in
-    // the dictionary list but fails to load (e.g. on storage that's currently
-    // unavailable) isn't moved, so it isn't bound to another file for good.
+    // Move entries whose dictionary file has been closed or replaced to the
+    // loaded files with the same uri - a newer version of it, or its volumes:
+    // the key is looked up in each, in list order, until it's found, and the
+    // entry saved pointing at the article found. Entries whose key isn't found
+    // keep pointing at the old file, and record the files it wasn't found in,
+    // so the lookup isn't repeated until another file with the uri is loaded; a
+    // lookup that fails (a read error) isn't recorded, so it's retried on the
+    // next change or startup. An entry whose file is still in the dictionary
+    // list but fails to load (e.g. on storage that's currently unavailable)
+    // isn't moved, so it isn't bound to another file for good.
     // Called whenever the set of loaded dictionaries changes; the lookups run in
     // the background, with the list counting as loading meanwhile, and a change
     // during a load or pass makes it run again once that's done.
@@ -311,9 +314,14 @@ final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
             if (listed.contains(bd.slobId)) {
                 continue;
             }
-            Slob slob = replacementOf(bd);
-            if (slob != null && !slob.getId().toString().equals(bd.notFoundIn)) {
-                moves.add(new Move(bd, slob));
+            List<Slob> untried = new ArrayList<>();
+            for (Slob slob : replacementsOf(bd)) {
+                if (!wasNotFoundIn(bd, slob)) {
+                    untried.add(slob);
+                }
+            }
+            if (!untried.isEmpty()) {
+                moves.add(new Move(bd, untried));
             }
         }
         if (moves.isEmpty()) {
@@ -331,15 +339,20 @@ final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
         void onMoved(int tried, int moved);
     }
 
-    // Moves every entry of the dictionary file fromSlobId to the article with
-    // its key in another dictionary, one the user picked for the entries of a
-    // dictionary that's gone. Entries whose key isn't found there stay as they
-    // are. done is called once they're saved.
-    void moveEntriesOf(String fromSlobId, Slob to, MoveDone done) {
+    // Moves every entry of a dictionary that's gone, going by the uri and file
+    // id of one of its entries (see entriesOf), to the article with its key in
+    // the dictionary with uri toUri, one the user picked. Entries whose key
+    // isn't found there stay as they are. done is called once they're saved.
+    void moveEntriesOf(String uri, String slobId, String toUri, MoveDone done) {
         whenLoaded(() -> {
+            List<Slob> to = dictionaries.findSlobsByURI(toUri);
             List<Move> moves = new ArrayList<>();
-            for (BlobDescriptor bd : this.list) {
-                if (fromSlobId.equals(bd.slobId)) {
+            // If a file with the dictionary's uri has been loaded since, it's
+            // no longer gone: the move pass has taken its entries there, and
+            // the ones it didn't find aren't to be moved elsewhere.
+            boolean gone = uri == null || dictionaries.findSlobsByURI(uri).isEmpty();
+            if (gone && !to.isEmpty()) {
+                for (BlobDescriptor bd : entriesOf(uri, slobId)) {
                     moves.add(new Move(bd, to));
                 }
             }
@@ -353,7 +366,7 @@ final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
 
     // Looks the moves' keys up in the background, with the list counting as
     // loading meanwhile, then applies them. recordNotFound: whether an entry
-    // whose key isn't found records that (see BlobDescriptor.notFoundIn).
+    // whose key isn't found records that (see BlobDescriptor.notFoundInIds).
     private void runMoves(List<Move> moves, boolean recordNotFound, Consumer<Integer> done) {
         if (!loading) {
             loading = true;
@@ -374,34 +387,65 @@ final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
 
     private List<Move> lookUp(List<Move> moves) {
         for (Move m : moves) {
-            try {
-                m.found = findBlob(m.to, m.bd.key);
-            }
-            catch (Exception ex) {
-                m.failed = true;
-                Log.w(TAG, String.format("Failed to look up %s in %s (%s)",
-                        m.bd.key, m.to.getId(), m.to.fileURI), ex);
-            }
+            m.found = findBlob(m);
         }
         return moves;
     }
 
-    // The article for key: the one with exactly that key if there is one, else
-    // the first match. Matches are keys equal to it at quaternary strength (not
-    // a prefix search), so there are only ever a few.
-    private static Slob.Blob findBlob(Slob slob, String key) {
-        Iterator<Slob.Blob> result = slob.find(key, Slob.Strength.QUATERNARY);
+    // The article for m's key in m's files: the first one with exactly that
+    // key, in whichever file, else the first match. Matches are keys equal to
+    // it at quaternary strength (not a prefix search), so there are only ever
+    // a few. A file whose lookup fails (a read error) is skipped, and m marked
+    // as failed.
+    private Slob.Blob findBlob(Move m) {
+        String key = m.bd.key;
         Slob.Blob first = null;
-        while (result.hasNext()) {
-            Slob.Blob blob = result.next();
-            if (blob.key.equals(key)) {
-                return blob;
+        for (Slob slob : m.to) {
+            try {
+                Iterator<Slob.Blob> result = slob.find(key, Slob.Strength.QUATERNARY);
+                while (result.hasNext()) {
+                    Slob.Blob blob = result.next();
+                    if (blob.key.equals(key)) {
+                        return blob;
+                    }
+                    if (first == null) {
+                        first = blob;
+                    }
+                }
             }
-            if (first == null) {
-                first = blob;
+            catch (Exception ex) {
+                m.failed = true;
+                Log.w(TAG, String.format("Failed to look up %s in %s (%s)",
+                        key, slob.getId(), slob.fileURI), ex);
             }
         }
         return first;
+    }
+
+    // Whether bd's key is recorded as not found in slob.
+    private static boolean wasNotFoundIn(BlobDescriptor bd, Slob slob) {
+        String slobId = slob.getId().toString();
+        return slobId.equals(bd.notFoundIn)
+                || (bd.notFoundInIds != null && bd.notFoundInIds.contains(slobId));
+    }
+
+    // Records that bd's key isn't in the files tried, nor in the ones it was
+    // already recorded not found in. Files no longer loaded are left out, so
+    // the record doesn't grow with every version; one added back gets looked
+    // up again.
+    private void recordNotFound(BlobDescriptor bd, List<Slob> tried) {
+        List<String> ids = new ArrayList<>();
+        for (Slob slob : replacementsOf(bd)) {
+            if (tried.contains(slob) || wasNotFoundIn(bd, slob)) {
+                ids.add(slob.getId().toString());
+            }
+        }
+        if (ids.isEmpty()) {
+            return;
+        }
+        bd.notFoundInIds = ids;
+        bd.notFoundIn = null;
+        store.save(bd);
     }
 
     // Returns how many entries were moved.
@@ -411,24 +455,28 @@ final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
         Set<BlobDescriptor> moved = Collections.newSetFromMap(new IdentityHashMap<>());
         for (Move m : moves) {
             BlobDescriptor bd = m.bd;
-            String toId = m.to.getId().toString();
-            // Skip entries removed while the lookups ran, and targets closed
+            // Skip entries removed while the lookups ran, and files closed
             // meanwhile: that change runs the pass again.
-            if (m.failed || !current.contains(bd) || dictionaries.getSlob(toId) == null) {
+            if (!current.contains(bd)) {
                 continue;
             }
             if (m.found == null) {
-                if (recordNotFound) {
-                    bd.notFoundIn = toId;
-                    store.save(bd);
+                if (recordNotFound && !m.failed) {
+                    recordNotFound(bd, m.to);
                 }
                 continue;
             }
+            Slob to = m.found.owner;
+            String toId = to.getId().toString();
+            if (dictionaries.getSlob(toId) == null) {
+                continue;
+            }
             bd.slobId = toId;
-            bd.slobUri = m.to.getURI();
-            bd.slobLabel = getLabel(m.to);
+            bd.slobUri = to.getURI();
+            bd.slobLabel = getLabel(to);
             bd.blobId = m.found.id;
             bd.key = m.found.key;
+            bd.notFoundInIds = null;
             bd.notFoundIn = null;
             moved.add(bd);
         }
@@ -521,12 +569,12 @@ final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
         // Its file is in the dictionary list but failed to load (e.g. it's on
         // storage that isn't mounted), so it may well come back.
         UNAVAILABLE,
-        // Its file was closed or replaced, and a dictionary with its uri, a
-        // newer version of it, is loaded (see replacementOf). The entry wasn't
-        // moved there: its key isn't in it, or the lookup failed and is
-        // retried on the next change.
+        // Its file was closed or replaced, and files with its uri, a newer
+        // version of it or its volumes, are loaded (see replacementsOf). The
+        // entry wasn't moved there: its key isn't in them, or a lookup failed
+        // and is retried on the next change.
         REPLACED,
-        // Its file was closed, and no dictionary with its uri is loaded.
+        // Its file was closed, and no file with its uri is loaded.
         GONE
     }
 
@@ -537,13 +585,14 @@ final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
         if (dictionaries.getListedIds().contains(bd.slobId)) {
             return OrphanState.UNAVAILABLE;
         }
-        return replacementOf(bd) == null ? OrphanState.GONE : OrphanState.REPLACED;
+        return replacementsOf(bd).isEmpty() ? OrphanState.GONE : OrphanState.REPLACED;
     }
 
-    // For an entry whose dictionary file isn't loaded: the first loaded
-    // dictionary with its uri, in list order, or null.
-    Slob replacementOf(BlobDescriptor bd) {
-        return bd.slobUri == null ? null : dictionaries.findSlobByURI(bd.slobUri);
+    // For an entry whose dictionary file isn't loaded: the loaded files with
+    // its uri, in list order.
+    List<Slob> replacementsOf(BlobDescriptor bd) {
+        return bd.slobUri == null
+                ? Collections.emptyList() : dictionaries.findSlobsByURI(bd.slobUri);
     }
 
     // The entry's article, or null if its dictionary file isn't loaded. Entries
@@ -682,33 +731,42 @@ final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
         return true;
     }
 
-    // Number of entries of this dictionary file.
-    int countEntriesOf(String slobId) {
-        int count = 0;
+    // The entries of a dictionary that's gone (see OrphanState.GONE), going by
+    // one of them: those with its uri whose file isn't in the dictionary list,
+    // so those of every file the dictionary was made of, or, without a uri,
+    // those of its file. An entry whose file is listed but fails to load is
+    // left out, so it isn't moved or removed for a passing problem.
+    private List<BlobDescriptor> entriesOf(String uri, String slobId) {
+        Set<String> listed = dictionaries.getListedIds();
+        List<BlobDescriptor> result = new ArrayList<>();
         for (BlobDescriptor bd : this.list) {
-            if (slobId.equals(bd.slobId)) {
-                count++;
+            boolean same = uri == null ? slobId.equals(bd.slobId) : uri.equals(bd.slobUri);
+            if (same && !listed.contains(bd.slobId)) {
+                result.add(bd);
             }
         }
-        return count;
+        return result;
     }
 
-    // Removes every entry of this dictionary file. Returns how many.
-    int removeEntriesOf(String slobId) {
-        int count = 0;
-        Iterator<BlobDescriptor> it = this.list.iterator();
-        while (it.hasNext()) {
-            BlobDescriptor bd = it.next();
-            if (slobId.equals(bd.slobId)) {
-                it.remove();
-                store.delete(bd.id);
-                count++;
-            }
+    // Number of entries of orphaned's dictionary, one that's gone (see
+    // entriesOf).
+    int countEntriesOf(BlobDescriptor orphaned) {
+        return entriesOf(orphaned.slobUri, orphaned.slobId).size();
+    }
+
+    // Removes every entry of orphaned's dictionary, one that's gone (see
+    // entriesOf). Returns how many.
+    int removeEntriesOf(BlobDescriptor orphaned) {
+        Set<BlobDescriptor> removed = Collections.newSetFromMap(new IdentityHashMap<>());
+        removed.addAll(entriesOf(orphaned.slobUri, orphaned.slobId));
+        for (BlobDescriptor bd : removed) {
+            store.delete(bd.id);
         }
-        if (count > 0) {
+        this.list.removeIf(removed::contains);
+        if (!removed.isEmpty()) {
             notifyDataSetChanged();
         }
-        return count;
+        return removed.size();
     }
 
     // Delete every entry, from both the in-memory list and the backing store.

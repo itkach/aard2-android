@@ -16,9 +16,9 @@ def nfd(s):
     return unicodedata.normalize('NFD', s)
 
 
-# Three versions of one dictionary (same uri) and an unrelated one. Keys
-# differing only in Unicode normalization are equal at every collation
-# strength below identical, so they match each other on lookup.
+# Three versions of one dictionary (same uri), a split one, and unrelated
+# ones. Keys differing only in Unicode normalization are equal at every
+# collation strength below identical, so they match each other on lookup.
 DICTIONARIES = {
     'movetest-v1.slob': ('test:movetest', [
         ('apple', 'Apple A (v1)'),
@@ -41,6 +41,23 @@ DICTIONARIES = {
     ]),
     'other.slob': ('test:other', [
         ('apple', 'Apple (other)'),
+    ]),
+    # A dictionary that's one file in its first version and two volumes in
+    # its second, which an article can end up in either of.
+    'split-v1.slob': ('test:split', [
+        ('apple', 'Apple (split v1)'),
+        (nfc('café'), 'Café (split v1)'),
+        ('cherry', 'Cherry (split v1)'),
+        ('date', 'Date (split v1)'),
+    ]),
+    'split-v2-1.slob': ('test:split', [
+        ('apple', 'Apple (split v2, volume 1)'),
+        ('banana', 'Banana (split v2, volume 1)'),
+        (nfd('café'), 'Café, decomposed (split v2, volume 1)'),
+    ]),
+    'split-v2-2.slob': ('test:split', [
+        (nfc('café'), 'Café (split v2, volume 2)'),
+        ('cherry', 'Cherry (split v2, volume 2)'),
     ]),
     'blank-label.slob': ('test:blank-label', [
         ('apple', 'Apple (blank label)'),
