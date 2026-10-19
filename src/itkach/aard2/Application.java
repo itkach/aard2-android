@@ -33,6 +33,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.Future;
@@ -184,12 +185,16 @@ public class Application extends android.app.Application {
                     String origSlobId = sd.id;
                     Slob s = sd.load(getApplicationContext());
                     if (s != null) {
-                        if (!origSlobId.equals(sd.id)) {
-                            Log.d(TAG, String.format("%s has been replaced, updating dict store %s -> %s", sd.path, origSlobId, sd.id));
-                            //dictionary file has been replaced
-                            //(same file name, different slob uuid)
-                            //need to update store accordingly
-                            dictStore.delete(origSlobId);
+                        if (!Objects.equals(origSlobId, sd.id)) {
+                            // The file at the dictionary's path was replaced
+                            // (same path, different slob id), or opened for the
+                            // first time: a dictionary added while its file
+                            // couldn't be opened has no id, and so isn't stored
+                            // yet.
+                            Log.d(TAG, String.format("%s loaded with a new id, updating dict store %s -> %s", sd.path, origSlobId, sd.id));
+                            if (origSlobId != null) {
+                                dictStore.delete(origSlobId);
+                            }
                             dictStore.save(sd);
                         }
                         slobs.add(s);
