@@ -110,6 +110,11 @@
     <string name="orphaned_move">Flytt oppføringene fra denne ordboken til…</string>
     <string name="orphaned_move_to">Flytt oppføringene til</string>
     <string name="orphaned_moved">Oppføringer flyttet: %1$d av %2$d</string>
+    <string name="orphaned_moving">Flytter oppføringene…</string>
+    <plurals name="orphaned_move_confirm">
+        <item quantity="one">Flytte %1$,d oppføring fra «%2$s» til «%3$s»?</item>
+        <item quantity="other">Flytte %1$,d oppføringer fra «%2$s» til «%3$s»?</item>
+    </plurals>
     <string name="orphaned_remove_all">Fjern %1$s fra denne ordboken</string>
     <string name="orphaned_remove_this">Fjern denne oppføringen</string>
     <string name="dictionaries_closed">«%1$s» lukket</string>

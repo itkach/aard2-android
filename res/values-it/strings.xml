@@ -110,6 +110,11 @@ is missing a quantity used in that language, otherwise the app will crash
     <string name="orphaned_move">Sposta le voci di questo dizionario in…</string>
     <string name="orphaned_move_to">Sposta le voci in</string>
     <string name="orphaned_moved">Voci spostate: %1$d di %2$d</string>
+    <string name="orphaned_moving">Spostamento delle voci…</string>
+    <plurals name="orphaned_move_confirm">
+        <item quantity="one">Spostare %1$,d voce da «%2$s» a «%3$s»?</item>
+        <item quantity="other">Spostare %1$,d voci da «%2$s» a «%3$s»?</item>
+    </plurals>
     <string name="orphaned_remove_all">Rimuovi %1$s di questo dizionario</string>
     <string name="orphaned_remove_this">Rimuovi questa voce</string>
     <string name="dictionaries_closed">«%1$s» chiuso</string>

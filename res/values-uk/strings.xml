@@ -104,6 +104,13 @@
     <string name="orphaned_move">Перенести записи цього словника до…</string>
     <string name="orphaned_move_to">Перенести записи до</string>
     <string name="orphaned_moved">Перенесено записів: %1$d з %2$d</string>
+    <string name="orphaned_moving">Перенесення записів…</string>
+    <plurals name="orphaned_move_confirm">
+        <item quantity="one">Перенести %1$,d запис із «%2$s» до «%3$s»?</item>
+        <item quantity="few">Перенести %1$,d записи із «%2$s» до «%3$s»?</item>
+        <item quantity="many">Перенести %1$,d записів із «%2$s» до «%3$s»?</item>
+        <item quantity="other">Перенести %1$,d запису із «%2$s» до «%3$s»?</item>
+    </plurals>
     <string name="orphaned_remove_all">Видалити %1$s цього словника</string>
     <string name="orphaned_remove_this">Видалити цей запис</string>
     <string name="dictionaries_closed">Закрито «%1$s»</string>

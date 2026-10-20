@@ -767,6 +767,7 @@ public class ArticleCollectionActivity extends AppCompatActivity {
         adapter.setUnresolvedPageFactory((container, item) -> orphanedEntryPage(
                 container, app.bookmarks, R.plurals.confirm_delete_bookmark_count,
                 (BlobDescriptor) item));
+        adapter.alsoObserve(app.history);
         return adapter;
     }
 
@@ -781,6 +782,7 @@ public class ArticleCollectionActivity extends AppCompatActivity {
         adapter.setUnresolvedPageFactory((container, item) -> orphanedEntryPage(
                 container, app.history, R.plurals.confirm_delete_history_count,
                 (BlobDescriptor) item));
+        adapter.alsoObserve(app.bookmarks);
         return adapter;
     }
 
@@ -800,8 +802,18 @@ public class ArticleCollectionActivity extends AppCompatActivity {
         MaterialButton move = page.findViewById(R.id.orphaned_move);
         MaterialButton remove = page.findViewById(R.id.orphaned_remove);
         lookup.setOnClickListener(v -> lookUpInMain(bd.key));
+        Application app = (Application) getApplication();
         BlobDescriptorList.OrphanState state = list.orphanState(bd);
-        if (state == BlobDescriptorList.OrphanState.UNAVAILABLE) {
+        if (app.bookmarks.isLoading() || app.history.isLoading()) {
+            // Until the move ends, the entry may be about to move, a newer
+            // version it's being looked up in isn't known not to have it, and
+            // the counts include entries about to move. The page is rebuilt
+            // when the move ends (see ArticleCollectionPagerAdapter.alsoObserve).
+            explanation.setText(R.string.orphaned_moving);
+            page.findViewById(R.id.orphaned_progress).setVisibility(View.VISIBLE);
+            move.setVisibility(View.GONE);
+            remove.setVisibility(View.GONE);
+        } else if (state == BlobDescriptorList.OrphanState.UNAVAILABLE) {
             // Moving or removing the entries would make a passing problem
             // permanent.
             explanation.setText(R.string.orphaned_unavailable);
@@ -888,8 +900,23 @@ public class ArticleCollectionActivity extends AppCompatActivity {
         }
         new MaterialAlertDialogBuilder(this)
                 .setTitle(R.string.orphaned_move_to)
-                .setItems(labels, (dialog, which) ->
-                        moveEntries(orphaned, targets.get(which).getURI()))
+                .setItems(labels, (dialog, which) -> confirmMove(orphaned, targets.get(which)))
+                .show();
+    }
+
+    // Asks before moving the entries of orphaned's dictionary to target's,
+    // naming both and how many entries, bookmarks and history together, there
+    // are to move.
+    private void confirmMove(BlobDescriptor orphaned, Slob target) {
+        Application app = (Application) getApplication();
+        int count = app.bookmarks.countEntriesOf(orphaned) + app.history.countEntriesOf(orphaned);
+        new MaterialAlertDialogBuilder(this)
+                .setMessage(getResources().getQuantityString(R.plurals.orphaned_move_confirm,
+                        count, count, labelOrUnknown(orphaned.slobLabel),
+                        labelOrUnknown(BlobDescriptorList.getLabel(target))))
+                .setPositiveButton(android.R.string.yes, (dialog, which) ->
+                        moveEntries(orphaned, target.getURI()))
+                .setNegativeButton(android.R.string.no, null)
                 .show();
     }
 
@@ -1463,6 +1490,23 @@ public class ArticleCollectionActivity extends AppCompatActivity {
             this.unresolvedPageFactory = factory;
         }
 
+        // Another list whose changes rebuild the pages for items whose
+        // article couldn't be shown, as the data's own do (see
+        // getItemPosition): what such a page offers depends on whether either
+        // list is moving entries.
+        private BlobDescriptorList otherList;
+        private final DataSetObserver otherListObserver = new DataSetObserver() {
+            @Override
+            public void onChanged() {
+                notifyDataSetChanged();
+            }
+        };
+
+        void alsoObserve(BlobDescriptorList list) {
+            otherList = list;
+            list.registerDataSetObserver(otherListObserver);
+        }
+
         public ArticleCollectionPagerAdapter(Application app, RecyclerView.Adapter<?> data, ToBlob toBlob) {
             this.app = app;
             this.data = data;
@@ -1493,6 +1537,10 @@ public class ArticleCollectionActivity extends AppCompatActivity {
 
         void destroy() {
             data.unregisterAdapterDataObserver(observer);
+            if (otherList != null) {
+                otherList.unregisterDataSetObserver(otherListObserver);
+                otherList = null;
+            }
             // The data adapter observes an app-scoped list (lookup results,
             // bookmarks or history); detach it so that list doesn't retain this
             // pager's adapter, and through it this Activity.

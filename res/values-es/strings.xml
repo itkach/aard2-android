@@ -112,6 +112,11 @@
     <string name="orphaned_move">Mover las entradas de este diccionario a…</string>
     <string name="orphaned_move_to">Mover las entradas a</string>
     <string name="orphaned_moved">Entradas movidas: %1$d de %2$d</string>
+    <string name="orphaned_moving">Moviendo las entradas…</string>
+    <plurals name="orphaned_move_confirm">
+        <item quantity="one">¿Mover %1$,d entrada de «%2$s» a «%3$s»?</item>
+        <item quantity="other">¿Mover %1$,d entradas de «%2$s» a «%3$s»?</item>
+    </plurals>
     <string name="orphaned_remove_all">Eliminar %1$s de este diccionario</string>
     <string name="orphaned_remove_this">Eliminar esta entrada</string>
     <string name="dictionaries_closed">«%1$s» cerrado</string>

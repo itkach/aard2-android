@@ -51,6 +51,14 @@
             android:gravity="center"
             android:textColor="?attr/colorOnSurfaceVariant" />
 
+        <com.google.android.material.progressindicator.CircularProgressIndicator
+            android:id="@+id/orphaned_progress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:indeterminate="true"
+            android:visibility="gone" />
+
         <com.google.android.material.button.MaterialButton
             android:id="@+id/orphaned_lookup"
             style="@style/Widget.Material3.Button"

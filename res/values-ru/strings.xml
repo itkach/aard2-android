@@ -98,6 +98,13 @@
     <string name="orphaned_move">Перенести записи этого словаря в…</string>
     <string name="orphaned_move_to">Перенести записи в</string>
     <string name="orphaned_moved">Перенесено записей: %1$d из %2$d</string>
+    <string name="orphaned_moving">Перенос записей…</string>
+    <plurals name="orphaned_move_confirm">
+        <item quantity="one">Перенести %1$,d запись из «%2$s» в «%3$s»?</item>
+        <item quantity="few">Перенести %1$,d записи из «%2$s» в «%3$s»?</item>
+        <item quantity="many">Перенести %1$,d записей из «%2$s» в «%3$s»?</item>
+        <item quantity="other">Перенести %1$,d записи из «%2$s» в «%3$s»?</item>
+    </plurals>
     <string name="orphaned_remove_all">Удалить %1$s этого словаря</string>
     <string name="orphaned_remove_this">Удалить эту запись</string>
     <string name="dictionaries_closed">Закрыто «%1$s»</string>

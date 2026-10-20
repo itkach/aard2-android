@@ -92,6 +92,11 @@
     <string name="orphaned_move">Move entries from this dictionary to…</string>
     <string name="orphaned_move_to">Move entries to</string>
     <string name="orphaned_moved">Entries moved: %1$d of %2$d</string>
+    <string name="orphaned_moving">Moving entries…</string>
+    <plurals name="orphaned_move_confirm">
+        <item quantity="one">Move %1$,d entry from \"%2$s\" to \"%3$s\"?</item>
+        <item quantity="other">Move %1$,d entries from \"%2$s\" to \"%3$s\"?</item>
+    </plurals>
     <string name="orphaned_remove_all">Remove %1$s from this dictionary</string>
     <string name="orphaned_remove_this">Remove this entry</string>
     <string name="msg_failed_to_read_file">Failed to read file</string>

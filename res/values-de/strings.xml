@@ -106,6 +106,11 @@
     <string name="orphaned_move">Einträge dieses Wörterbuchs verschieben nach…</string>
     <string name="orphaned_move_to">Einträge verschieben nach</string>
     <string name="orphaned_moved">Verschobene Einträge: %1$d von %2$d</string>
+    <string name="orphaned_moving">Einträge werden verschoben…</string>
+    <plurals name="orphaned_move_confirm">
+        <item quantity="one">%1$,d Eintrag von „%2$s“ nach „%3$s“ verschieben?</item>
+        <item quantity="other">%1$,d Einträge von „%2$s“ nach „%3$s“ verschieben?</item>
+    </plurals>
     <string name="orphaned_remove_all">%1$s aus diesem Wörterbuch entfernen</string>
     <string name="orphaned_remove_this">Diesen Eintrag entfernen</string>
     <string name="dictionaries_closed">„%1$s“ geschlossen</string>
