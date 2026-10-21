@@ -104,7 +104,7 @@ is missing a quantity used in that language, otherwise the app will crash
     <string name="blob_descriptor_unknown_dictionary">Dizionario sconosciuto</string>
     <string name="blob_descriptor_dictionary_unavailable">Dizionario non disponibile: %1$s</string>
     <string name="orphaned_gone">Il dizionario di questa voce non è aperto, quindi l\'articolo non può essere mostrato.</string>
-    <string name="orphaned_not_found">Questo articolo non è stato trovato in %1$s, la versione attuale di questo dizionario.</string>
+    <string name="orphaned_not_found">Questo articolo non è stato trovato in %1$s, la versione attuale di questo dizionario, oppure lì ci sono più articoli con questo titolo.</string>
     <string name="orphaned_unavailable">Il dizionario di questa voce è nell\'elenco dei dizionari, ma non è stato possibile aprirlo.</string>
     <string name="orphaned_lookup">Cerca</string>
     <string name="orphaned_move">Sposta le voci di questo dizionario in…</string>

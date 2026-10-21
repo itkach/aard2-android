@@ -103,7 +103,7 @@
     <string name="blob_descriptor_unknown_dictionary">Dicionário desconhecido</string>
     <string name="blob_descriptor_dictionary_unavailable">Dicionário indisponível: %1$s</string>
     <string name="orphaned_gone">O dicionário desta entrada não está aberto, por isso o artigo não pode ser mostrado.</string>
-    <string name="orphaned_not_found">Este artigo não foi encontrado em %1$s, a versão atual deste dicionário.</string>
+    <string name="orphaned_not_found">Este artigo não foi encontrado em %1$s, a versão atual deste dicionário, ou há nela vários artigos com este título.</string>
     <string name="orphaned_unavailable">O dicionário desta entrada está na lista de dicionários, mas não foi possível abri-lo.</string>
     <string name="orphaned_lookup">Procurar</string>
     <string name="orphaned_move">Mover as entradas deste dicionário para…</string>

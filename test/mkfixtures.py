@@ -59,6 +59,34 @@ DICTIONARIES = {
         (nfc('café'), 'Café (split v2, volume 2)'),
         ('cherry', 'Cherry (split v2, volume 2)'),
     ]),
+    # Versions of a dictionary with homographs, several articles under one
+    # key. They stay in the order they're added in.
+    'homographs-v1.slob': ('test:homographs', [
+        ('bank', 'Bank, of a river (homographs v1)'),
+        ('bank', 'Bank, for money (homographs v1)'),
+        (nfc('café'), 'Café, a place (homographs v1)'),
+        (nfc('café'), 'Café, a drink (homographs v1)'),
+        ('pitch', 'Pitch (homographs v1)'),
+    ]),
+    'homographs-v2.slob': ('test:homographs', [
+        ('bank', 'Bank, of a river (homographs v2)'),
+        ('bank', 'Bank, for money (homographs v2)'),
+        (nfd('café'), 'Café, a place, decomposed (homographs v2)'),
+        (nfd('café'), 'Café, a drink, decomposed (homographs v2)'),
+        ('pitch', 'Pitch (homographs v2)'),
+    ]),
+    'homographs-v3.slob': ('test:homographs', [
+        ('bank', 'Bank, of a river (homographs v3)'),
+        ('bank', 'Bank, for money (homographs v3)'),
+        ('bank', 'Bank, of a plane turning (homographs v3)'),
+    ]),
+    'homographs-v4.slob': ('test:homographs', [
+        ('bank', 'Bank (homographs v4)'),
+    ]),
+    'homographs-other.slob': ('test:homographs-other', [
+        ('bank', 'Bank, of a river (homographs other)'),
+        ('bank', 'Bank, for money (homographs other)'),
+    ]),
     'blank-label.slob': ('test:blank-label', [
         ('apple', 'Apple (blank label)'),
     ]),

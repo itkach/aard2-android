@@ -822,8 +822,9 @@ public class ArticleCollectionActivity extends AppCompatActivity {
         } else if (state == BlobDescriptorList.OrphanState.REPLACED) {
             // The rest of its dictionary's entries moved, or will move, to the
             // newer version, so only this one is offered for removal.
+            List<Slob> files = list.replacementsOf(bd);
             explanation.setText(getString(R.string.orphaned_not_found,
-                    labelOrUnknown(BlobDescriptorList.getLabel(list.replacementsOf(bd).get(0)))));
+                    labelOrUnknown(BlobDescriptorList.getLabel(files.get(0)))));
             move.setVisibility(View.GONE);
             remove.setText(R.string.orphaned_remove_this);
             remove.setOnClickListener(v -> confirmRemove(

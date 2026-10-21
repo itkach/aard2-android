@@ -100,7 +100,7 @@
     <string name="blob_descriptor_unknown_dictionary">Unbekanntes Wörterbuch</string>
     <string name="blob_descriptor_dictionary_unavailable">Wörterbuch nicht verfügbar: %1$s</string>
     <string name="orphaned_gone">Das Wörterbuch dieses Eintrags ist nicht geöffnet, daher kann der Artikel nicht angezeigt werden.</string>
-    <string name="orphaned_not_found">Dieser Artikel wurde in %1$s, der aktuellen Version dieses Wörterbuchs, nicht gefunden.</string>
+    <string name="orphaned_not_found">Dieser Artikel wurde in %1$s, der aktuellen Version dieses Wörterbuchs, nicht gefunden, oder dort haben mehrere Artikel diesen Titel.</string>
     <string name="orphaned_unavailable">Das Wörterbuch dieses Eintrags ist in der Wörterbuchliste, konnte aber nicht geöffnet werden.</string>
     <string name="orphaned_lookup">Nachschlagen</string>
     <string name="orphaned_move">Einträge dieses Wörterbuchs verschieben nach…</string>

@@ -104,7 +104,7 @@
     <string name="blob_descriptor_unknown_dictionary">Ukjent ordbok</string>
     <string name="blob_descriptor_dictionary_unavailable">Ordboken er ikke tilgjengelig: %1$s</string>
     <string name="orphaned_gone">Ordboken til denne oppføringen er ikke åpen, så artikkelen kan ikke vises.</string>
-    <string name="orphaned_not_found">Denne artikkelen ble ikke funnet i %1$s, den gjeldende versjonen av denne ordboken.</string>
+    <string name="orphaned_not_found">Denne artikkelen ble ikke funnet i %1$s, den gjeldende versjonen av denne ordboken, eller flere artikler der har denne tittelen.</string>
     <string name="orphaned_unavailable">Ordboken til denne oppføringen står i ordboklisten, men kunne ikke åpnes.</string>
     <string name="orphaned_lookup">Slå opp</string>
     <string name="orphaned_move">Flytt oppføringene fra denne ordboken til…</string>

@@ -103,7 +103,7 @@
     <string name="blob_descriptor_unknown_dictionary">Onbekend woordenboek</string>
     <string name="blob_descriptor_dictionary_unavailable">Woordenboek niet beschikbaar: %1$s</string>
     <string name="orphaned_gone">Het woordenboek van dit item is niet geopend, dus het artikel kan niet worden getoond.</string>
-    <string name="orphaned_not_found">Dit artikel is niet gevonden in %1$s, de huidige versie van dit woordenboek.</string>
+    <string name="orphaned_not_found">Dit artikel is niet gevonden in %1$s, de huidige versie van dit woordenboek, of daar hebben meerdere artikelen deze titel.</string>
     <string name="orphaned_unavailable">Het woordenboek van dit item staat in de woordenboeklijst, maar kon niet worden geopend.</string>
     <string name="orphaned_lookup">Opzoeken</string>
     <string name="orphaned_move">Items van dit woordenboek verplaatsen naar…</string>

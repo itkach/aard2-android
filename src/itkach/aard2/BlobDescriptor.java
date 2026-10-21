@@ -50,14 +50,22 @@ public class BlobDescriptor extends BaseDescriptor {
     // Label of the entry's dictionary, kept so the entry can still be shown
     // with it once that dictionary is gone. Display only.
     public String slobLabel;
-    // Ids of the dictionary files with the entry's uri that its key wasn't
-    // found in when moving the entry (see
+    // Ids of the dictionary files with the entry's uri that no article for it
+    // was picked in when moving the entry: its key isn't there, or several
+    // articles are and its position doesn't tell which (see
     // BlobDescriptorList.moveToLoadedDictionaries), so the lookup isn't
     // repeated until another file with the uri is loaded.
     public List<String> notFoundInIds;
     // One such id, as older app versions store it: they would fail to read a
     // list here. Read along with notFoundInIds, and cleared when it's written.
     public String notFoundIn;
+    // Which of the articles under the entry's key in its dictionary it points
+    // to, counting from 0, and how many there are (see
+    // BlobDescriptorList.articlesUnder), so a move can tell homographs apart.
+    // Both null until worked out; keyIndex alone null if the entry's article
+    // wasn't among them.
+    public Integer keyIndex;
+    public Integer keyCount;
 
     static BlobDescriptor fromUri(Uri uri) {
         BlobDescriptor bd = new BlobDescriptor();

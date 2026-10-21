@@ -99,7 +99,7 @@
     <string name="blob_descriptor_unknown_dictionary">Nieznany słownik</string>
     <string name="blob_descriptor_dictionary_unavailable">Słownik niedostępny: %1$s</string>
     <string name="orphaned_gone">Słownik tego wpisu nie jest otwarty, więc nie można wyświetlić artykułu.</string>
-    <string name="orphaned_not_found">Nie znaleziono tego artykułu w słowniku %1$s – aktualnej wersji tego słownika.</string>
+    <string name="orphaned_not_found">Nie znaleziono tego artykułu w słowniku %1$s – aktualnej wersji tego słownika – albo jest w nim kilka artykułów o tym tytule.</string>
     <string name="orphaned_unavailable">Słownik tego wpisu jest na liście słowników, ale nie udało się go otworzyć.</string>
     <string name="orphaned_lookup">Wyszukaj</string>
     <string name="orphaned_move">Przenieś wpisy z tego słownika do…</string>

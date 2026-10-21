@@ -98,7 +98,7 @@
     <string name="blob_descriptor_unknown_dictionary">Невідомий словник</string>
     <string name="blob_descriptor_dictionary_unavailable">Словник недоступний: %1$s</string>
     <string name="orphaned_gone">Словник цього запису не відкрито, тому статтю неможливо показати.</string>
-    <string name="orphaned_not_found">Цю статтю не знайдено в словнику «%1$s» — поточній версії цього словника.</string>
+    <string name="orphaned_not_found">Цю статтю не знайдено в словнику «%1$s» — поточній версії цього словника, — або в ньому кілька статей із такою назвою.</string>
     <string name="orphaned_unavailable">Словник цього запису є в списку словників, але його не вдалося відкрити.</string>
     <string name="orphaned_lookup">Знайти</string>
     <string name="orphaned_move">Перенести записи цього словника до…</string>
