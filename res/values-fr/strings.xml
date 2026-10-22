@@ -122,6 +122,10 @@
     <string name="dictionaries_closed">« %1$s » fermé</string>
     <string name="dictionary_drag_handle">Faire glisser pour réorganiser</string>
     <string name="dictionary_use_for_random">Utiliser pour la recherche aléatoire</string>
+    <string name="dictionary_uri_missing">absente</string>
+    <string name="dictionary_uri_about">L\'uri est l\'identifiant logique du dictionnaire. Les signets, l\'historique et le style choisi sont enregistrés par uri, et passent donc à une version plus récente du dictionnaire. Les fichiers ayant la même uri sont traités comme le même dictionnaire, par exemple ses volumes ou une nouvelle édition.</string>
+    <string name="dictionary_uri_none">« %1$s » n\'a pas de balise uri.</string>
+    <string name="dictionary_uri_none_tips">Sans uri, c\'est l\'identifiant du fichier qui est utilisé, et il change à chaque version, si bien que rien n\'est repris. Pour déplacer manuellement les signets et l\'historique vers une version plus récente, écrasez ce fichier avec la version plus récente, en conservant son nom et son dossier, ou, après avoir retiré ce fichier, ouvrez l\'un de ses signets et utilisez « Déplacer les entrées de ce dictionnaire vers… ».</string>
     <string name="scroll_to_top">Faire défiler vers le haut</string>
     <string name="setting_auto_paste">Coller automatiquement depuis le presse-papiers</string>
 </resources>

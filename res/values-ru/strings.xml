@@ -110,6 +110,10 @@
     <string name="dictionaries_closed">Закрыто «%1$s»</string>
     <string name="dictionary_drag_handle">Перетащите для изменения порядка</string>
     <string name="dictionary_use_for_random">Использовать для случайного поиска</string>
+    <string name="dictionary_uri_missing">отсутствует</string>
+    <string name="dictionary_uri_about">Uri — логический идентификатор словаря. Закладки, история и выбранный стиль хранятся по uri, поэтому переходят в более новую версию словаря. Файлы с одним uri считаются одним и тем же словарём, например его тома или новое издание.</string>
+    <string name="dictionary_uri_none">У словаря «%1$s» нет тега uri.</string>
+    <string name="dictionary_uri_none_tips">Без uri вместо него используется идентификатор файла, который в каждой версии свой, поэтому ничего не переходит. Чтобы вручную перенести закладки и историю в более новую версию, перезапишите этот файл более новой версией, сохранив его имя и папку, или, после удаления этого файла, откройте одну из его закладок и выберите «Перенести записи этого словаря в…».</string>
     <string name="find_next">Следующее</string>
     <string name="find_previous">Предыдущее</string>
     <string name="scroll_to_top">Прокрутить вверх</string>

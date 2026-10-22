@@ -90,6 +90,13 @@ DICTIONARIES = {
     'blank-label.slob': ('test:blank-label', [
         ('apple', 'Apple (blank label)'),
     ]),
+    # Unrelated dictionaries whose uri tags are blank, which counts as none.
+    'blank-uri-1.slob': ('', [
+        ('apple', 'Apple (blank uri 1)'),
+    ]),
+    'blank-uri-2.slob': (' ', [
+        ('apple', 'Apple (blank uri 2)'),
+    ]),
 }
 
 # Each dictionary's label is its file name, except for these.

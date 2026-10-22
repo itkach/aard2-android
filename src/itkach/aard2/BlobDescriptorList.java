@@ -220,11 +220,13 @@ final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
         }
         Util.runAsync(() -> {
             List<BlobDescriptor> loaded = store.load(BlobDescriptor.class);
-            // Entries without a label or a position get them here. That can be
-            // every entry, too many to look up and save on the main thread, and
-            // none is shared with it yet.
+            // Entries without a label or a position get them here, and ones
+            // with a blank uri the one their file goes by. That can be every
+            // entry, too many to look up and save on the main thread, and none
+            // is shared with it yet.
             for (BlobDescriptor bd : loaded) {
                 boolean filledIn = fillInLabel(bd, labels.get(bd.slobId));
+                filledIn |= fillInBlankUri(bd);
                 Slob own = slobs.get(bd.slobId);
                 if (own != null && bd.keyCount == null) {
                     filledIn |= locate(bd, own);
@@ -836,9 +838,21 @@ final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
         return true;
     }
 
-    // Saves an entry whose label or position was filled in. Both are filled
-    // in again on the next load if the save fails (e.g. the disk is full), so
-    // a failure is logged rather than failing the load.
+    // An entry saved from a dictionary whose uri tag is blank has that blank
+    // uri, which every such dictionary would share. Gives it the uri its file
+    // goes by (see Slob.getURI), made from the file's id, whether or not the
+    // file is loaded. Returns whether it did.
+    private static boolean fillInBlankUri(BlobDescriptor bd) {
+        if (bd.slobUri == null || !Util.isBlank(bd.slobUri)) {
+            return false;
+        }
+        bd.slobUri = "slob:" + bd.slobId;
+        return true;
+    }
+
+    // Saves an entry whose label, uri or position was filled in. They're
+    // filled in again on the next load if the save fails (e.g. the disk is
+    // full), so a failure is logged rather than failing the load.
     private void saveFilledIn(BlobDescriptor bd) {
         try {
             store.save(bd);

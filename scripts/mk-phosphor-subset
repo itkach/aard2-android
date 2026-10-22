@@ -15,8 +15,9 @@
 # that isn't on PATH a throwaway venv is created under build/ (git-ignored).
 #
 # Everything uses the "regular" weight (outline) except the filled bookmark that
-# marks a bookmarked article, which uses "fill". Codepoints correspond to
-# IconMaker.java's Glyph constants (look a name up in Fonts/regular/style.css):
+# marks a bookmarked article and the warning badge, which use "fill". Codepoints
+# correspond to IconMaker.java's Glyph constants (look a name up in
+# Fonts/regular/style.css):
 #
 #   regular() -> Phosphor.ttf (outline)
 #     e3d4 plus                 e136 caret-down          e13c caret-up
@@ -28,10 +29,11 @@
 #     e1a0 clock-counter-clockwise                       e0b4 bank
 #     e6ee text-aa               e1ee dice-five           e30c magnifying-glass
 #     e270 gear                 e444 sort-ascending      e446 sort-descending
-#     e45e square               e4a6 trash
+#     e45e square               e4a6 trash               e23e fingerprint
 #
 #   fill()    -> Phosphor-Fill.ttf (filled)
 #     e0ea bookmark-simple (same codepoint as the outline one, different font file)
+#     e4e0 warning (a badge, see IconMaker.textWithWarning)
 #
 set -euo pipefail
 # Resolve the Phosphor download dir against the caller's cwd BEFORE cd'ing to the
@@ -41,8 +43,8 @@ PH_DIR="${1:-$HOME/Downloads/phosphor-icons}"
 case "$PH_DIR" in /*) ;; *) PH_DIR="$PWD/$PH_DIR" ;; esac
 cd "$(dirname "$0")/.."
 
-REG_CODES="e3d4,e136,e13c,e3de,e0ea,e186,e19a,e4f6,e1ce,e54a,e0e2,eae2,e4e0,e1d0,e5de,e230,e266,e256,e1a0,e0b4,e6ee,e1ee,e30c,e270,e444,e446,e45e,e4a6"
-FILL_CODES="e0ea"
+REG_CODES="e3d4,e136,e13c,e3de,e0ea,e186,e19a,e4f6,e1ce,e54a,e0e2,eae2,e4e0,e1d0,e5de,e230,e266,e256,e1a0,e0b4,e6ee,e1ee,e30c,e270,e444,e446,e45e,e4a6,e23e"
+FILL_CODES="e0ea,e4e0"
 
 REG_SRC="$PH_DIR/Fonts/regular/Phosphor.ttf"
 FILL_SRC="$PH_DIR/Fonts/fill/Phosphor-Fill.ttf"

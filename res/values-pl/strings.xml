@@ -117,6 +117,10 @@
     <string name="dictionaries_closed">Zamknięto „%1$s”</string>
     <string name="dictionary_drag_handle">Przeciągnij, aby zmienić kolejność</string>
     <string name="dictionary_use_for_random">Używaj do losowego wyszukiwania</string>
+    <string name="dictionary_uri_missing">brak</string>
+    <string name="dictionary_uri_about">Uri to logiczny identyfikator słownika. Zakładki, historia i wybrany styl są zapisywane według uri, więc przechodzą do nowszej wersji słownika. Pliki z tym samym uri są traktowane jako ten sam słownik, np. jego tomy lub nowe wydanie.</string>
+    <string name="dictionary_uri_none">Słownik „%1$s” nie ma znacznika uri.</string>
+    <string name="dictionary_uri_none_tips">Bez uri używany jest zamiast niego identyfikator pliku, który jest inny w każdej wersji, więc nic nie zostaje przeniesione. Aby ręcznie przenieść zakładki i historię do nowszej wersji, nadpisz ten plik nowszą wersją, zachowując jego nazwę i folder, albo, po usunięciu tego pliku, otwórz jedną z jego zakładek i użyj „Przenieś wpisy z tego słownika do…”.</string>
     <string name="scroll_to_top">Przewiń do góry</string>
     <string name="setting_auto_paste">Automatycznie wklejaj ze schowka</string>
 </resources>

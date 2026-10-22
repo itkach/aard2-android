@@ -68,6 +68,8 @@ public class BlobDescriptorListTest {
     private Slob h3;
     private Slob h4;
     private Slob hOther;
+    private Slob blank1;
+    private Slob blank2;
 
     // Dictionary files as the list sees them: loaded ones in list order, plus
     // ones that are listed but fail to load, and ones that a listed file
@@ -128,6 +130,8 @@ public class BlobDescriptorListTest {
         h3 = open("homographs-v3.slob");
         h4 = open("homographs-v4.slob");
         hOther = open("homographs-other.slob");
+        blank1 = open("blank-uri-1.slob");
+        blank2 = open("blank-uri-2.slob");
         dictionaries = new TestDictionaries();
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
@@ -955,6 +959,39 @@ public class BlobDescriptorListTest {
         assertNull(bd.notFoundInIds);
         assertEquals(OrphanState.REPLACED, list.orphanState(bd));
         assertEquals(Arrays.asList(v2), list.replacementsOf(bd));
+    }
+
+    @Test
+    public void aBlankUriCountsAsNone() throws Exception {
+        load(blank1, blank2);
+        BlobDescriptorList list = start();
+        BlobDescriptor bd = list.add(url(blank1, "apple"));
+        assertEquals("slob:" + id(blank1), bd.slobUri);
+        close(list, blank1);
+        assertPointsAt(blob(blank1, "apple"), bd);
+        assertEquals(OrphanState.GONE, list.orphanState(bd));
+    }
+
+    @Test
+    public void givesEntriesWithABlankUriTheOneTheirFileGoesByOnLoad() throws Exception {
+        load(blank1, blank2);
+        BlobDescriptorList first = start();
+        for (Slob slob : Arrays.asList(blank1, blank2)) {
+            BlobDescriptor bd = first.add(url(slob, "apple"));
+            bd.slobUri = "";
+            store.save(bd);
+        }
+        dictionaries.loaded.clear();
+        BlobDescriptorList list = start();
+        assertEquals(2, list.size());
+        for (int i = 0; i < list.size(); i++) {
+            BlobDescriptor bd = list.get(i);
+            assertEquals("slob:" + bd.slobId, bd.slobUri);
+            assertEquals(1, list.countEntriesOf(bd));
+        }
+        for (BlobDescriptor bd : stored()) {
+            assertEquals("slob:" + bd.slobId, bd.slobUri);
+        }
     }
 
     @Test

@@ -112,6 +112,11 @@
     <string name="dictionaries_download_url" translatable="false">https://aarddict.org/dictionaries</string>
     <string name="setting_fav_random_search">Use only marked dictionaries for random lookup</string>
     <string name="dictionary_use_for_random">Use for random lookup</string>
+    <string name="dictionary_uri_title" translatable="false">uri</string>
+    <string name="dictionary_uri_missing">missing</string>
+    <string name="dictionary_uri_about">The uri is the dictionary\'s logical identifier. Bookmarks, history and the selected style are stored by uri, so they carry over to a newer version of the dictionary. Files with the same uri are treated as the same dictionary, e.g. its volumes or a new edition.</string>
+    <string name="dictionary_uri_none">\"%1$s\" has no uri tag.</string>
+    <string name="dictionary_uri_none_tips">Without a uri, the file id is used instead, which is different in every version, so nothing carries over. To move bookmarks and history to a newer version manually, either overwrite this file with the newer version, keeping its name and folder, or, after removing this file, open one of its bookmarks and use \"Move entries from this dictionary to…\".</string>
     <string name="dictionary_marked_for_random_content_desc">%s, marked for random lookup</string>
     <string name="dictionary_drag_handle">Drag to reorder</string>
     <string name="article_collection_invalid_link">Invalid link</string>

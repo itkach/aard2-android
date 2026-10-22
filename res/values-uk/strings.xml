@@ -116,6 +116,10 @@
     <string name="dictionaries_closed">Закрито «%1$s»</string>
     <string name="dictionary_drag_handle">Перетягніть, щоб змінити порядок</string>
     <string name="dictionary_use_for_random">Використовувати для випадкового пошуку</string>
+    <string name="dictionary_uri_missing">відсутній</string>
+    <string name="dictionary_uri_about">Uri — логічний ідентифікатор словника. Закладинки, історія та вибраний стиль зберігаються за uri, тому переходять до новішої версії словника. Файли з однаковим uri вважаються тим самим словником, наприклад його томи або нове видання.</string>
+    <string name="dictionary_uri_none">У словника «%1$s» немає тегу uri.</string>
+    <string name="dictionary_uri_none_tips">Без uri натомість використовується ідентифікатор файлу, який у кожній версії інший, тому нічого не переходить. Щоб вручну перенести закладинки та історію до новішої версії, перезапишіть цей файл новішою версією, зберігши його назву й папку, або, після вилучення цього файлу, відкрийте одну з його закладинок і виберіть «Перенести записи цього словника до…».</string>
     <string name="find_hint">Знайти на сторінці</string>
     <string name="find_next">Наступне</string>
     <string name="find_previous">Попереднє</string>

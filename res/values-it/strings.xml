@@ -120,6 +120,10 @@ is missing a quantity used in that language, otherwise the app will crash
     <string name="dictionaries_closed">«%1$s» chiuso</string>
     <string name="dictionary_drag_handle">Trascina per riordinare</string>
     <string name="dictionary_use_for_random">Usa per la ricerca casuale</string>
+    <string name="dictionary_uri_missing">mancante</string>
+    <string name="dictionary_uri_about">L\'uri è l\'identificatore logico del dizionario. Segnalibri, cronologia e stile scelto sono memorizzati per uri, quindi passano a una versione più recente del dizionario. I file con la stessa uri sono trattati come lo stesso dizionario, ad es. i suoi volumi o una nuova edizione.</string>
+    <string name="dictionary_uri_none">«%1$s» non ha il tag uri.</string>
+    <string name="dictionary_uri_none_tips">Senza uri si usa invece l\'id del file, che è diverso in ogni versione, quindi non passa nulla. Per spostare manualmente segnalibri e cronologia in una versione più recente, sovrascrivi questo file con la versione più recente, mantenendone nome e cartella, oppure, dopo aver rimosso questo file, apri uno dei suoi segnalibri e usa «Sposta le voci di questo dizionario in…».</string>
     <string name="scroll_to_top">Scorri in cima</string>
     <string name="setting_auto_paste">Incolla automaticamente dagli appunti</string>
 </resources>

@@ -116,6 +116,10 @@
     <string name="dictionaries_closed">„%1$s“ geschlossen</string>
     <string name="dictionary_drag_handle">Zum Neuordnen ziehen</string>
     <string name="dictionary_use_for_random">Für zufällige Suche verwenden</string>
+    <string name="dictionary_uri_missing">fehlt</string>
+    <string name="dictionary_uri_about">Die uri ist die logische Kennung des Wörterbuchs. Lesezeichen, Verlauf und der gewählte Stil werden nach uri gespeichert und gehen daher auf eine neuere Version des Wörterbuchs über. Dateien mit derselben uri werden als dasselbe Wörterbuch behandelt, z. B. seine Bände oder eine neue Ausgabe.</string>
+    <string name="dictionary_uri_none">„%1$s“ hat kein uri-Tag.</string>
+    <string name="dictionary_uri_none_tips">Ohne uri wird stattdessen die Datei-ID verwendet, die in jeder Version anders ist, daher geht nichts über. Um Lesezeichen und Verlauf manuell auf eine neuere Version zu übertragen: diese Datei unter demselben Namen im selben Ordner mit der neueren Version überschreiben oder, nachdem diese Datei entfernt wurde, eines ihrer Lesezeichen öffnen und „Einträge dieses Wörterbuchs verschieben nach…“ verwenden.</string>
     <string name="find_next">Nächstes</string>
     <string name="find_previous">Vorheriges</string>
     <string name="scroll_to_top">Nach oben scrollen</string>

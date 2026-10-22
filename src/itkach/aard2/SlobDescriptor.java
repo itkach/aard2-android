@@ -85,14 +85,14 @@ public class SlobDescriptor extends BaseDescriptor {
     }
 
     // The uri the file went by when last loaded, by the same rule as
-    // Slob.getURI(): its uri tag, else one made from its id. Null if it was
-    // never loaded.
+    // Slob.getURI(): its uri tag, else, if it has none or a blank one, one
+    // made from its id. Null if it was never loaded.
     String getURI() {
         if (id == null) {
             return null;
         }
         String uri = tags.get("uri");
-        return uri != null ? uri : "slob:" + id;
+        return Util.isBlank(uri) ? "slob:" + id : uri;
     }
 
     String getLabel() {

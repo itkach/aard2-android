@@ -5,13 +5,16 @@ import static itkach.aard2.Util.fromHtml;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.content.res.Resources;
 import android.database.DataSetObserver;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.documentfile.provider.DocumentFile;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
@@ -27,6 +30,8 @@ import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.CompoundButton;
 import android.widget.TextView;
+
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.util.Locale;
 
@@ -110,6 +115,17 @@ public class DictionaryListAdapter extends RecyclerView.Adapter<DictionaryListAd
 
         view.findViewById(R.id.dictionary_license).setOnClickListener(openUrlOnClick);
         view.findViewById(R.id.dictionary_source).setOnClickListener(openUrlOnClick);
+
+        // The uri row turns the error color when there's no uri, so it keeps
+        // its regular colors to go back to when the row is reused.
+        TextView uriView = (TextView) view.findViewById(R.id.dictionary_uri);
+        uriView.setTag(uriView.getTextColors());
+        view.findViewById(R.id.dictionary_uri_row).setOnClickListener(v -> {
+            int position = holder.getBindingAdapterPosition();
+            if (position != RecyclerView.NO_POSITION) {
+                showUriInfo(data.get(position));
+            }
+        });
 
         // The switch itself isn't clickable (its scaled-down touch area would be
         // small); its 48dp frame owns the tap and toggles it.
@@ -210,6 +226,7 @@ public class DictionaryListAdapter extends RecyclerView.Adapter<DictionaryListAd
         setupCopyrightView(desc, available, view);
         setupLicenseView(desc, available, view);
         setupSourceView(desc, available, view);
+        setupUriView(desc, view);
         setupPathView(fileName, available, view);
         setupErrorView(desc, view);
 
@@ -308,6 +325,73 @@ public class DictionaryListAdapter extends RecyclerView.Adapter<DictionaryListAd
 
         blobCountView.setText(format(Locale.getDefault(),
                 r.getQuantityString(R.plurals.dict_item_count, (int)blobCount), blobCount));
+    }
+
+    // The dictionary's uri tag, which its bookmarks, history and style go by,
+    // or, in the error color, that it has none (a blank one counts as none):
+    // it then goes by one made from its file's id (see SlobDescriptor.getURI),
+    // which every new version changes. Hidden for a file that couldn't be
+    // read when it was added: it has no tags at all, and its error is shown
+    // instead.
+    private void setupUriView(SlobDescriptor desc, View view) {
+        View uriRow = view.findViewById(R.id.dictionary_uri_row);
+        ImageView uriIcon = (ImageView) view.findViewById(R.id.dictionary_uri_icon);
+        TextView uriView = (TextView) view.findViewById(R.id.dictionary_uri);
+
+        uriRow.setVisibility(desc.id == null ? View.GONE : View.VISIBLE);
+        String uri = desc.tags.get("uri");
+        boolean missing = Util.isBlank(uri);
+        String shown = missing ? context.getString(R.string.dictionary_uri_missing) : uri;
+        uriView.setText(shown);
+        // Only the fingerprint says what the row is, so screen readers get
+        // that from here.
+        uriRow.setContentDescription(
+                context.getString(R.string.dictionary_uri_title) + ": " + shown);
+        // The fingerprint stays either way, badged when there's no uri: it's
+        // what says the row is about the uri. The badge sticks out to the
+        // right, into the gap before the text, so the text stays in line with
+        // the other rows'.
+        ViewGroup.MarginLayoutParams iconParams =
+                (ViewGroup.MarginLayoutParams) uriIcon.getLayoutParams();
+        int gap = IconMaker.px(context, 4);
+        if (missing) {
+            uriIcon.setImageDrawable(IconMaker.textWithWarning(context, IconMaker.IC_URI));
+            iconParams.setMarginEnd(gap - IconMaker.px(context, IconMaker.BADGE_OVERHANG_DP));
+            uriView.setTextColor(IconMaker.resolveThemeColor(context,
+                    androidx.appcompat.R.attr.colorError, 0xffcc0000));
+        }
+        else {
+            uriIcon.setImageDrawable(IconMaker.text(context, IconMaker.IC_URI));
+            iconParams.setMarginEnd(gap);
+            uriView.setTextColor((ColorStateList) uriView.getTag());
+        }
+        uriIcon.setLayoutParams(iconParams);
+        // Italic sets "missing" apart from a uri.
+        uriView.setTypeface(Typeface.create(uriView.getTypeface(),
+                missing ? Typeface.ITALIC : Typeface.NORMAL));
+    }
+
+    // The dictionary's uri, or that it has none, naming the dictionary, since
+    // the dialog can cover the row it was opened from; then what the uri is
+    // for - the same explanation either way - and, without one, what that
+    // means and how to move the entries over anyway. The text can be
+    // selected, so the uri can be copied, e.g. into a bug report.
+    private void showUriInfo(SlobDescriptor desc) {
+        String uri = desc.tags.get("uri");
+        String about = context.getString(R.string.dictionary_uri_about);
+        String message = Util.isBlank(uri)
+                ? context.getString(R.string.dictionary_uri_none, desc.getLabel()) + "\n\n" + about
+                        + "\n\n" + context.getString(R.string.dictionary_uri_none_tips)
+                : uri + "\n\n" + about;
+        AlertDialog dialog = new MaterialAlertDialogBuilder(context)
+                .setTitle(R.string.dictionary_uri_title)
+                .setMessage(message)
+                .setPositiveButton(android.R.string.ok, null)
+                .show();
+        TextView messageView = dialog.findViewById(android.R.id.message);
+        if (messageView != null) {
+            messageView.setTextIsSelectable(true);
+        }
     }
 
     private void setupCopyrightView(SlobDescriptor desc, boolean available, View view) {
