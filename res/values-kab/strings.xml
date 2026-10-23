@@ -24,7 +24,7 @@
     <string name="action_reset">Wennez</string>
     <string name="action_select_style">Iɣunab…</string>
     <string name="select_style">Fren aɣanib</string>
-    <string name="default_style_title">Amezwar</string>
+    <string name="default_style_title">Amezwer</string>
     <string name="subtitle_settings">Iɣewwaren</string>
     <string name="setting_remote_content_always">Yal tikkelt</string>
     <string name="setting_remote_content_wifi">Ala s Wi-Fi</string>
@@ -33,7 +33,7 @@
     <string name="setting_about_section">Ɣef</string>
     <string name="application_license_name">Turagt tamatut tazayezt GNU lqem wis 3</string>
     <string name="application_version">Lqem %1$s</string>
-    <string name="article_collection_nothing_found">Ula ayen yettwafen</string>
+    <string name="article_collection_nothing_found">Ulac ayen yettwafen</string>
     <string name="article_collection_selected_not_available">Amagrad yettwafernen ulac-it</string>
     <string name="article_collection_nothing_to_lookup">Ulac i unadi</string>
     <string name="scroll_to_top">Ali d asawen</string>
@@ -80,10 +80,10 @@
     <string name="setting_user_styles_add">Rnu</string>
     <string name="msg_failed_to_store_user_style">Ur yezmir ara ad yessekles aɣanib n useqdac</string>
     <string name="setting_user_style_confirm_forget">Ttu %1$s?</string>
-    <string name="msg_no_activity_to_get_content">Ulac armud i izemren ad d-yeldi afaylu-a</string>
-    <string name="msg_no_activity_to_open_link">Ulac asnas yettwasbedden i izmiren ad yeldi aseɣwen-a</string>
+    <string name="msg_no_activity_to_get_content">Ulac asnas i izemren ad d-yeldi afaylu-a</string>
+    <string name="msg_no_activity_to_open_link">Ulac asnas yettwasbedden i izemren ad yeldi aseɣwen-a</string>
     <string name="action_open_dictionaries">Ldi</string>
-    <string name="action_download_dictionaries">Azdam</string>
+    <string name="action_download_dictionaries">Sader</string>
     <string name="setting_fav_random_search">Seqdec kan imawalen yettwafernen i unadi agacuran</string>
     <string name="dictionary_use_for_random">Seqdec-it i unadi agacuran</string>
     <string name="dictionary_uri_missing">ixuṣ</string>
@@ -92,10 +92,10 @@
     <string name="dictionary_uri_none_tips">War uri, asulay n ufaylu i yettwaseqdacen deg umkan-is, yerna yemgarad deg yal lqem, ihi ulac ayen ara d-yegrin. Akken ad tsenkzeḍ ticraḍ d umazray s ufus ɣer lqem amaynut, sefleḍ afaylu-a s lqem amaynut s useḥbiber ɣef yisem-is d ukaram-is, neɣ, deffir ma tekkseḍ afaylu-a, ldi yiwet seg tecraḍ-is sakin seqdec \"Senkez isemliyen seg umawal-a ɣer…\".</string>
     <string name="dictionary_marked_for_random_content_desc">%s, yettwafren i unadi agacuran</string>
     <string name="dictionary_drag_handle">Zuɣer akken ad tbeddleḍ amizzwer</string>
-    <string name="article_collection_invalid_link">Aseɣwen yemmut</string>
+    <string name="article_collection_invalid_link">Aseɣwen arameɣtu</string>
     <string name="setting_ui_theme">Aɣanib n ugrudem</string>
     <string name="setting_ui_theme_light">Aceɛlal</string>
-    <string name="setting_ui_theme_dark">Ubrik</string>
+    <string name="setting_ui_theme_dark">Aberkan</string>
     <string name="setting_ui_theme_system">Am wakken i yella deg yibenk</string>
     <string name="action_load_remote_content">Sserked agbur anmeggag</string>
     <string name="auto_style_title">Awurman</string>
@@ -103,11 +103,11 @@
     <string name="setting_auto_fullscreen_landscape">Kcem s wudem awurman ɣer ugdil aččuran deg teɣzut</string>
     <string name="setting_auto_paste">Asenṭeḍ awurman seg tecfawit</string>
     <string name="setting_record_history">Sekles amazray</string>
-    <string name="setting_record_history_off_title">Kkes armad n umazray?</string>
+    <string name="setting_record_history_off_title">Sens amazray?</string>
     <string name="setting_record_history_off_message">Amazray-ik yettwakelsen ad yettwakkes.</string>
-    <string name="setting_record_history_off_confirm">Kkes armad</string>
+    <string name="setting_record_history_off_confirm">Sens</string>
     <string name="action_clear_query">Sfeḍ</string>
     <string name="find_hint">Af-d deg usebter</string>
-    <string name="find_next">Uḍfiṛ</string>
+    <string name="find_next">Uḍfir</string>
     <string name="find_previous">Uzwir</string>
 </resources>
