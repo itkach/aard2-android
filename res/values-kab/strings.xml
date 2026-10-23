@@ -13,15 +13,15 @@
     <string name="action_sort_by_title">S uzwel</string>
     <string name="action_sort_by_time">S wakud</string>
     <string name="action_lookup">Nadi</string>
-    <!--
-    English only uses "one" and "other" for plurals.
-    Other quantities are included as a fallback if some translation
-    is missing a quantity used in that language, otherwise the app will crash
-    -->
+    <string name="action_random_article">Amagrad agacuran</string>
+
     <plurals name="dict_item_count">
         <item quantity="one">%,d n wawal</item>
         <item quantity="other">%,d n wawalen</item>
     </plurals>
+
+    <string name="action_text_size">Tiddi n uḍris</string>
+    <string name="action_reset">Wennez</string>
     <string name="action_select_style">Iɣunab…</string>
     <string name="select_style">Fren aɣanib</string>
     <string name="default_style_title">Amezwar</string>
@@ -29,59 +29,85 @@
     <string name="setting_remote_content_always">Yal tikkelt</string>
     <string name="setting_remote_content_wifi">Ala s Wi-Fi</string>
     <string name="setting_remote_content_never">Werǧin</string>
+    <string name="setting_remote_content">Sserked agbur anmeggag</string>
     <string name="setting_about_section">Ɣef</string>
+    <string name="application_license_name">Turagt tamatut tazayezt GNU lqem wis 3</string>
+    <string name="application_version">Lqem %1$s</string>
     <string name="article_collection_nothing_found">Ula ayen yettwafen</string>
     <string name="article_collection_selected_not_available">Amagrad yettwafernen ulac-it</string>
     <string name="article_collection_nothing_to_lookup">Ulac i unadi</string>
+    <string name="scroll_to_top">Ali d asawen</string>
+    <string name="action_full_screen">Agdil aččuran</string>
+    <string name="action_full_screen_exit">Ffeɣ seg ugdil aččuran</string>
+    <string name="dictionaries_closed">« %1$s » yettwamdel</string>
+    <string name="action_undo">Err-d</string>
     <string name="lookup_nothing_found">Ulac ayen yettwafen</string>
     <string name="main_empty_bookmarks">Ulac ticraḍ</string>
     <string name="main_empty_history">Ulac amazray</string>
     <string name="main_empty_dictionaries">Ulac imawalen</string>
     <string name="delete">Sfeḍ</string>
+
     <plurals name="confirm_delete_bookmark_count">
         <item quantity="one">%,d n tecreḍt</item>
         <item quantity="other">%,d n tecraḍ</item>
     </plurals>
+    <plurals name="confirm_delete_history_count">
+        <item quantity="one">%,d n yisemli n umazray</item>
+        <item quantity="other">%,d n yisemliyen n umazray</item>
+    </plurals>
+
     <string name="blob_descriptor_confirm_delete">Sfeḍ %1$s?</string>
+    <string name="blob_descriptor_removed">« %1$s » yettwakkes</string>
+    <string name="blob_descriptor_unknown_dictionary">Amawal ur nettwassen ara</string>
+    <string name="blob_descriptor_dictionary_unavailable">Amawal ur yestufi ara: %1$s</string>
+    <string name="orphaned_gone">Amawal n yisemli-a ur yeldi ara, ihi amagrad ur yezmir ara ad d-yeffeɣ.</string>
+    <string name="orphaned_not_found">Amagrad-a ur yettwafen ara deg %1$s, lqem amiran n umawal-a, neɣ aṭas n yimagraden i yesɛan azwel-a.</string>
+    <string name="orphaned_unavailable">Amawal n yisemli-a yella deg tebdart n yimawalen maca ur yezmir ara ad yeldi.</string>
+    <string name="orphaned_lookup">Nadi</string>
+    <string name="orphaned_move">Senkez isemliyen seg umawal-a ɣer…</string>
+    <string name="orphaned_move_to">Senkez isemliyen ɣer</string>
+    <string name="orphaned_moved">Isemliyen yettwasenkzen: %1$d seg %2$d</string>
+    <string name="orphaned_moving">Asenkez n yisemliyen…</string>
+    <plurals name="orphaned_move_confirm">
+        <item quantity="one">Ad tsenkzeḍ %1$,d n yisemli seg \"%2$s\" ɣer \"%3$s\"?</item>
+        <item quantity="other">Ad tsenkzeḍ %1$,d n yisemliyen seg \"%2$s\" ɣer \"%3$s\"?</item>
+    </plurals>
+    <string name="orphaned_remove_all">Kkes %1$s seg umawal-a</string>
+    <string name="orphaned_remove_this">Kkes asemli-a</string>
     <string name="msg_failed_to_read_file">Afaylu ur yettwaɣray ara</string>
     <string name="msg_file_too_big">Afaylu meqqer aṭas</string>
     <string name="setting_user_styles">Iɣunab n useqdac</string>
+    <string name="setting_user_styles_add">Rnu</string>
     <string name="msg_failed_to_store_user_style">Ur yezmir ara ad yessekles aɣanib n useqdac</string>
     <string name="setting_user_style_confirm_forget">Ttu %1$s?</string>
     <string name="msg_no_activity_to_get_content">Ulac armud i izemren ad d-yeldi afaylu-a</string>
-    <string name="setting_fav_random_search">Seqdec kan imawalen yettwafernen i unadi agacuṛan</string>
-    <string name="article_collection_invalid_link">Aseɣwen yemmut</string>
-    <string name="setting_ui_theme">Agrudem n useqdac</string>
-    <string name="setting_ui_theme_light">Aceɛlal</string>
-    <string name="setting_ui_theme_dark">Ubrik</string>
-    <string name="setting_use_volume_for_nav">Seqdec tiqeffalin n ubleɣ akken ad tinigeḍ</string>
-    <string name="action_reset">Wennez</string>
-    <string name="action_undo">Err-d</string>
-    <string name="setting_user_styles_add">Rnu</string>
+    <string name="msg_no_activity_to_open_link">Ulac asnas yettwasbedden i izmiren ad yeldi aseɣwen-a</string>
     <string name="action_open_dictionaries">Ldi</string>
     <string name="action_download_dictionaries">Azdam</string>
-    <string name="auto_style_title">Awurman</string>
-    <string name="action_clear_query">Sfeḍ</string>
-    <string name="find_next">Uḍfiṛ</string>
-    <string name="find_previous">Uzwir</string>
-    <string name="action_random_article">Amagrad agacuran</string>
-    <string name="action_text_size">Tiddi n uḍris</string>
-    <string name="application_license_name">Turagt tamatut tazayezt GNU lqem wis 3</string>
-    <string name="application_version">Lqem %1$s</string>
-    <string name="scroll_to_top">Ali d asawen</string>
-    <string name="action_full_screen">Agdil aččuran</string>
-    <string name="action_full_screen_exit">Ffeɣ seg ugdil ačuran</string>
-    <string name="blob_descriptor_removed">« %1$s » yettwakkes</string>
-    <string name="setting_auto_paste">Asenṭeḍ awurman seg tecfawit</string>
-    <string name="setting_record_history_off_confirm">Kkes armad</string>
-    <string name="find_hint">Af-d deg usebter</string>
-    <string name="blob_descriptor_unknown_dictionary">Amawal ur n-ttwassen ara</string>
-    <string name="blob_descriptor_dictionary_unavailable">Amawal ur yestufi ara: %1$s</string>
-    <string name="msg_no_activity_to_open_link">Ulac asnas yettwasbedden i izmiren ad yeldi aseɣwen-a</string>
-    <string name="dictionaries_closed">« %1$s » yettwamdel</string>
+    <string name="setting_fav_random_search">Seqdec kan imawalen yettwafernen i unadi agacuran</string>
     <string name="dictionary_use_for_random">Seqdec-it i unadi agacuran</string>
+    <string name="dictionary_uri_missing">ixuṣ</string>
+    <string name="dictionary_uri_about">uri d asulay ameẓlan n umawal. Ticraḍ, amazray d uɣanib yettwafernen ttuskelsen s uri, ihi ad d-qqimen ticki yettwalaqqem umawal. Ifuyla yesɛan yiwen n uri ttwaggzen d yiwen n umawal, am umedya aḥricen-is neɣ lqem amaynut.</string>
+    <string name="dictionary_uri_none">\"%1$s\" ur yesɛi ara tazamult uri.</string>
+    <string name="dictionary_uri_none_tips">War uri, asulay n ufaylu i yettwaseqdacen deg umkan-is, yerna yemgarad deg yal lqem, ihi ulac ayen ara d-yegrin. Akken ad tsenkzeḍ ticraḍ d umazray s ufus ɣer lqem amaynut, sefleḍ afaylu-a s lqem amaynut s useḥbiber ɣef yisem-is d ukaram-is, neɣ, deffir ma tekkseḍ afaylu-a, ldi yiwet seg tecraḍ-is sakin seqdec \"Senkez isemliyen seg umawal-a ɣer…\".</string>
+    <string name="dictionary_marked_for_random_content_desc">%s, yettwafren i unadi agacuran</string>
+    <string name="dictionary_drag_handle">Zuɣer akken ad tbeddleḍ amizzwer</string>
+    <string name="article_collection_invalid_link">Aseɣwen yemmut</string>
+    <string name="setting_ui_theme">Aɣanib n ugrudem</string>
+    <string name="setting_ui_theme_light">Aceɛlal</string>
+    <string name="setting_ui_theme_dark">Ubrik</string>
     <string name="setting_ui_theme_system">Am wakken i yella deg yibenk</string>
+    <string name="action_load_remote_content">Sserked agbur anmeggag</string>
+    <string name="auto_style_title">Awurman</string>
+    <string name="setting_use_volume_for_nav">Seqdec tiqeffalin n ubleɣ akken ad tinigeḍ</string>
+    <string name="setting_auto_fullscreen_landscape">Kcem s wudem awurman ɣer ugdil aččuran deg teɣzut</string>
+    <string name="setting_auto_paste">Asenṭeḍ awurman seg tecfawit</string>
     <string name="setting_record_history">Sekles amazray</string>
     <string name="setting_record_history_off_title">Kkes armad n umazray?</string>
-    <string name="setting_record_history_off_message">Amezray-ik yettwakelsen ad yettwakkes.</string>
+    <string name="setting_record_history_off_message">Amazray-ik yettwakelsen ad yettwakkes.</string>
+    <string name="setting_record_history_off_confirm">Kkes armad</string>
+    <string name="action_clear_query">Sfeḍ</string>
+    <string name="find_hint">Af-d deg usebter</string>
+    <string name="find_next">Uḍfiṛ</string>
+    <string name="find_previous">Uzwir</string>
 </resources>
