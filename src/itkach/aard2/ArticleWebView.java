@@ -6,7 +6,6 @@ import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.ConnectivityManager;
@@ -42,8 +41,6 @@ public class ArticleWebView extends SearchableWebView {
 
     public static final String LOCALHOST = Application.LOCALHOST;
     private final String styleSwitcherJs;
-    private final String defaultStyleTitle;
-    private final String autoStyleTitle;
 
     String TAG = getClass().getSimpleName();
 
@@ -138,10 +135,6 @@ public class ArticleWebView extends SearchableWebView {
         settings.setJavaScriptEnabled(true);
         settings.setBuiltInZoomControls(true);
         settings.setDisplayZoomControls(false);
-
-        Resources r = getResources();
-        defaultStyleTitle = r.getString(R.string.default_style_title);
-        autoStyleTitle = r.getString(R.string.auto_style_title);
 
         this.addJavascriptInterface(this, "$SLOB");
 
@@ -350,12 +343,14 @@ public class ArticleWebView extends SearchableWebView {
         return false;
     }
 
+    // The styles that can be picked, as saveStylePref takes them: the
+    // document's own built-in styles first, then the default look
+    // (Application.STYLE_DEFAULT) and Auto (null), then the user's own styles
+    // last.
     String[] getAvailableStyles() {
-        // The document's own built-in styles first, then the Default/Auto
-        // sentinels, then the user's own styles last.
         List<String> names = new ArrayList<String>(styleTitles);
-        names.add(defaultStyleTitle);
-        names.add(autoStyleTitle);
+        names.add(Application.STYLE_DEFAULT);
+        names.add(null);
         List<String> userStyles = new ArrayList<String>(getApplication().userStyleNames());
         Util.sort(userStyles);
         names.addAll(userStyles);
@@ -439,6 +434,7 @@ public class ArticleWebView extends SearchableWebView {
         Log.d(TAG, "Loaded available styles: " + styleTitles.size());
     }
 
+    // Saves the style picked for the current dictionary; null for Auto.
     void saveStylePref(String styleTitle) {
         if (currentSlobUri == null) {
             Log.w(TAG, "Can't save article view style pref - slob uri is null");
@@ -447,7 +443,11 @@ public class ArticleWebView extends SearchableWebView {
         SharedPreferences prefs = prefs();
         String prefName = Application.PREF_STYLE + currentSlobUri;
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putString(prefName, styleTitle);
+        if (styleTitle == null) {
+            editor.remove(prefName);
+        } else {
+            editor.putString(prefName, styleTitle);
+        }
         boolean success = editor.commit();
         if (!success) {
             Log.w(TAG, "Failed to save article view style pref");
@@ -457,7 +457,7 @@ public class ArticleWebView extends SearchableWebView {
     @JavascriptInterface
     public String getPreferredStyle() {
         if (currentSlobUri == null) {
-            return "";
+            return Application.STYLE_DEFAULT;
         }
         // Application.resolveStyleTitle() re-reads the same
         // SharedPreferences data this instance's styleTitles/currentSlobUri

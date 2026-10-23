@@ -1272,13 +1272,21 @@ public class ArticleCollectionActivity extends AppCompatActivity {
         }
         if (itemId == R.id.action_select_style) {
             final String[] styleTitles = webView.getAvailableStyles();
+            // Auto and the default look are shown by their translated names.
             // User styles are file names (with .css); show that stripped, but
             // keep the full name as the value saved as the preference.
             String[] labels = new String[styleTitles.length];
             for (int i = 0; i < styleTitles.length; i++) {
-                labels[i] = styleTitles[i].endsWith(".css")
-                        ? styleTitles[i].substring(0, styleTitles[i].length() - 4)
-                        : styleTitles[i];
+                String title = styleTitles[i];
+                if (title == null) {
+                    labels[i] = getString(R.string.auto_style_title);
+                } else if (title.equals(Application.STYLE_DEFAULT)) {
+                    labels[i] = getString(R.string.default_style_title);
+                } else if (title.endsWith(".css")) {
+                    labels[i] = title.substring(0, title.length() - 4);
+                } else {
+                    labels[i] = title;
+                }
             }
             new MaterialAlertDialogBuilder(this)
                     .setTitle(R.string.select_style)

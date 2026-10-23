@@ -82,8 +82,14 @@ public class Application extends android.app.Application {
     // lives here rather than on whichever of those happened to declare
     // it first.
     static final String ARTICLE_VIEW_PREF               = "articleView";
+    // A dictionary's selected style: one of its own style titles, a user
+    // style's file name, or STYLE_DEFAULT. No value means Auto.
     static final String PREF_STYLE                      = "style.";
     static final String PREF_STYLE_AVAILABLE            = "style.available.";
+    // The style that is a dictionary's default look: none of its own styles
+    // turned on. A style title is never empty (a stylesheet without a title
+    // isn't one of its styles), so this can't name one.
+    static final String STYLE_DEFAULT                   = "";
     // Per (dictionary, resolved style, UI dark/light) cache of the article
     // background/foreground colors the WebView actually paints - measured once by
     // the real engine (see probecolors.js) so the loading placeholder can match.
@@ -544,12 +550,12 @@ public class Application extends android.app.Application {
     String getUrl(Blob blob) {
         String path = Slobber.mkContentURL(blob);
         String styleTitle = resolveStyleTitle(getSlobURI(blob.owner.getId().toString()));
-        // "Default" is never sent as a real param: the server's natural,
+        // The default look is never sent as a param: the server's natural,
         // unmodified rendering already *is* that (see Slobber's
         // StylePreference, which does nothing when the param is absent),
         // so sending it would only cost a wasted HTML parse on every
         // single article load for an identical result.
-        if (!styleTitle.equals(getString(R.string.default_style_title))) {
+        if (!styleTitle.equals(STYLE_DEFAULT)) {
             path = StylePreference.withStyleParam(path, styleTitle);
         }
         return String.format(CONTENT_URL_TEMPLATE, port, path);
@@ -680,21 +686,20 @@ public class Application extends android.app.Application {
 
     /**
      * Resolves a dictionary's effective style title from its raw stored
-     * preference (storedStyleTitle - either a concrete title the user
-     * picked, or the "Auto" sentinel) and the set of style titles it's
-     * known to declare: "Auto" resolves to the first declared title that
-     * looks dark while the dark UI theme is active, else to
-     * defaultStyleTitle. A pure function of its arguments (no
+     * preference (storedStyleTitle - the style the user picked, or null
+     * for Auto) and the set of style titles it's known to declare: Auto
+     * resolves to the first declared title that looks dark while the dark
+     * UI theme is active, else to STYLE_DEFAULT. A pure function of its
+     * arguments (no
      * SharedPreferences/WebView access), shared by getPreferredStyle()
      * (which already has this data cached as instance state) and
      * resolveStyleTitle() below (which needs the same resolution before
      * any WebView for the dictionary exists, so it reads the same
      * underlying SharedPreferences data directly instead).
      */
-    static String resolveStyle(String storedStyleTitle, String autoStyleTitle,
-                                String defaultStyleTitle, boolean isUIDark,
+    static String resolveStyle(String storedStyleTitle, boolean isUIDark,
                                 Set<String> availableTitles) {
-        if (!storedStyleTitle.equals(autoStyleTitle)) {
+        if (storedStyleTitle != null) {
             return storedStyleTitle;
         }
         if (isUIDark) {
@@ -704,7 +709,7 @@ public class Application extends android.app.Application {
                 }
             }
         }
-        return defaultStyleTitle;
+        return STYLE_DEFAULT;
     }
 
     /**
@@ -726,24 +731,19 @@ public class Application extends android.app.Application {
      * correcting it after a default-styled page has already started
      * rendering) and from a live one (ArticleWebView.getPreferredStyle()
      * delegates here instead of keeping its own parallel resolution).
-     * Always returns a concrete title, never null - "Default" is a real
-     * answer, not an absence of one; callers that specifically need to
-     * know whether that's the *literal* answer (to decide whether it's
-     * worth adding as a URL param at all) compare against
-     * R.string.default_style_title themselves.
+     * Never returns null: the default look is STYLE_DEFAULT, which
+     * callers that need to tell it apart (e.g. to leave it out of the
+     * URL) compare against.
      */
     String resolveStyleTitle(String slobUri) {
         SharedPreferences prefs = getSharedPreferences(ARTICLE_VIEW_PREF, Activity.MODE_PRIVATE);
-        String autoStyleTitle = getString(R.string.auto_style_title);
-        String defaultStyleTitle = getString(R.string.default_style_title);
         if (slobUri == null) {
-            return defaultStyleTitle;
+            return STYLE_DEFAULT;
         }
-        String storedStyleTitle = prefs.getString(PREF_STYLE + slobUri, autoStyleTitle);
+        String storedStyleTitle = prefs.getString(PREF_STYLE + slobUri, null);
         Set<String> availableTitles = prefs.getStringSet(
                 PREF_STYLE_AVAILABLE + slobUri, Collections.<String>emptySet());
-        return resolveStyle(storedStyleTitle, autoStyleTitle,
-                defaultStyleTitle, isUIDark(), availableTitles);
+        return resolveStyle(storedStyleTitle, isUIDark(), availableTitles);
     }
 
     // ---- Article color cache: the background/foreground the WebView actually
