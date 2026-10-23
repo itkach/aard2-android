@@ -2,7 +2,11 @@ package itkach.aard2;
 
 import android.content.Context;
 import androidx.core.content.ContextCompat;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.LayerDrawable;
 import android.util.TypedValue;
+import android.view.Gravity;
 
 import com.kazy.fontdrawable.FontDrawable;
 
@@ -13,7 +17,8 @@ class IconMaker {
     // separate font file, all sharing one codepoint per icon - so a Glyph
     // carries which file it comes from, not just the character. Everything uses
     // the outline (regular) weight; only the filled bookmark that marks a
-    // bookmarked article uses fill. Each asset is a subset built with fonttools
+    // bookmarked article and the warning badge (see textWithWarning) use
+    // fill. Each asset is a subset built with fonttools
     // (pyftsubset) holding just the glyphs used below, not Phosphor's full
     // ~2000-icon set (that's why phosphor-regular.ttf is ~7KB and
     // phosphor-fill.ttf under 1KB) - regenerate with ./d mk-phosphor, which
@@ -56,7 +61,9 @@ class IconMaker {
     static final Glyph IC_EXTERNAL_LINK = regular('\ue5de'); // arrow-square-out
     static final Glyph IC_FILE = regular('\ue230');          // file
     static final Glyph IC_ERROR = regular('\ue4e0');         // warning
+    static final Glyph IC_ERROR_FILL = fill('\ue4e0');       // warning (filled, for a badge)
     static final Glyph IC_COPYRIGHT = regular('\ue54a');     // copyright
+    static final Glyph IC_URI = regular('\ue23e');           // fingerprint (dictionary uri)
     static final Glyph IC_CHECK_SQUARE = regular('\ue186');  // check-square (checked box)
     static final Glyph IC_SQUARE = regular('\ue45e');        // square (empty box)
     static final Glyph IC_ADD = regular('\ue3d4');           // plus
@@ -170,6 +177,42 @@ class IconMaker {
     static FontDrawable errorText(Context context, Glyph g) {
         int color = resolveThemeColor(context, androidx.appcompat.R.attr.colorError, 0xffcc0000);
         return make(context, g, 16, color);
+    }
+
+    // How far the badge of textWithWarning sticks out past the icon, to the
+    // right.
+    static final int BADGE_OVERHANG_DP = 3;
+
+    // A text() icon with a filled warning on its top-right corner, like a
+    // badge on an app icon: in the error color, sticking out to the right of
+    // the icon (so the drawable is BADGE_OVERHANG_DP wider; it's as tall as
+    // the icon, which sits on the text's baseline), on a disc of the
+    // background color that sets it off from the icon's lines.
+    static Drawable textWithWarning(Context context, Glyph g) {
+        int badgeDp = 8;
+        int discDp = 10;
+        int background = resolveThemeColor(context, android.R.attr.colorBackground, 0xffffffff);
+        int error = resolveThemeColor(context, androidx.appcompat.R.attr.colorError, 0xffcc0000);
+        GradientDrawable disc = new GradientDrawable();
+        disc.setShape(GradientDrawable.OVAL);
+        disc.setColor(background);
+        LayerDrawable badged = new LayerDrawable(new Drawable[] {
+                text(context, g), disc, make(context, IC_ERROR_FILL, badgeDp, error)});
+        int overhang = px(context, BADGE_OVERHANG_DP);
+        badged.setLayerInsetRight(0, overhang);
+        int discPx = px(context, discDp);
+        badged.setLayerSize(1, discPx, discPx);
+        badged.setLayerGravity(1, Gravity.TOP | Gravity.RIGHT);
+        int badgeInset = (discPx - px(context, badgeDp)) / 2;
+        badged.setLayerGravity(2, Gravity.TOP | Gravity.RIGHT);
+        badged.setLayerInsetTop(2, badgeInset);
+        badged.setLayerInsetRight(2, badgeInset);
+        return badged;
+    }
+
+    static int px(Context context, int dp) {
+        return Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp,
+                context.getResources().getDisplayMetrics()));
     }
 
     // Placeholder icon for an empty list (e.g. "no bookmarks yet") -

@@ -99,9 +99,27 @@
     <string name="blob_descriptor_removed">„%1$s“ entfernt</string>
     <string name="blob_descriptor_unknown_dictionary">Unbekanntes Wörterbuch</string>
     <string name="blob_descriptor_dictionary_unavailable">Wörterbuch nicht verfügbar: %1$s</string>
+    <string name="orphaned_gone">Das Wörterbuch dieses Eintrags ist nicht geöffnet, daher kann der Artikel nicht angezeigt werden.</string>
+    <string name="orphaned_not_found">Dieser Artikel wurde in %1$s, der aktuellen Version dieses Wörterbuchs, nicht gefunden, oder dort haben mehrere Artikel diesen Titel.</string>
+    <string name="orphaned_unavailable">Das Wörterbuch dieses Eintrags ist in der Wörterbuchliste, konnte aber nicht geöffnet werden.</string>
+    <string name="orphaned_lookup">Nachschlagen</string>
+    <string name="orphaned_move">Einträge dieses Wörterbuchs verschieben nach…</string>
+    <string name="orphaned_move_to">Einträge verschieben nach</string>
+    <string name="orphaned_moved">Verschobene Einträge: %1$d von %2$d</string>
+    <string name="orphaned_moving">Einträge werden verschoben…</string>
+    <plurals name="orphaned_move_confirm">
+        <item quantity="one">%1$,d Eintrag von „%2$s“ nach „%3$s“ verschieben?</item>
+        <item quantity="other">%1$,d Einträge von „%2$s“ nach „%3$s“ verschieben?</item>
+    </plurals>
+    <string name="orphaned_remove_all">%1$s aus diesem Wörterbuch entfernen</string>
+    <string name="orphaned_remove_this">Diesen Eintrag entfernen</string>
     <string name="dictionaries_closed">„%1$s“ geschlossen</string>
     <string name="dictionary_drag_handle">Zum Neuordnen ziehen</string>
     <string name="dictionary_use_for_random">Für zufällige Suche verwenden</string>
+    <string name="dictionary_uri_missing">fehlt</string>
+    <string name="dictionary_uri_about">Die uri ist die logische Kennung des Wörterbuchs. Lesezeichen, Verlauf und der gewählte Stil werden nach uri gespeichert und gehen daher auf eine neuere Version des Wörterbuchs über. Dateien mit derselben uri werden als dasselbe Wörterbuch behandelt, z. B. seine Bände oder eine neue Ausgabe.</string>
+    <string name="dictionary_uri_none">„%1$s“ hat kein uri-Tag.</string>
+    <string name="dictionary_uri_none_tips">Ohne uri wird stattdessen die Datei-ID verwendet, die in jeder Version anders ist, daher geht nichts über. Um Lesezeichen und Verlauf manuell auf eine neuere Version zu übertragen: diese Datei unter demselben Namen im selben Ordner mit der neueren Version überschreiben oder, nachdem diese Datei entfernt wurde, eines ihrer Lesezeichen öffnen und „Einträge dieses Wörterbuchs verschieben nach…“ verwenden.</string>
     <string name="find_next">Nächstes</string>
     <string name="find_previous">Vorheriges</string>
     <string name="scroll_to_top">Nach oben scrollen</string>

@@ -98,9 +98,29 @@
     <string name="blob_descriptor_removed">Usunięto „%1$s”</string>
     <string name="blob_descriptor_unknown_dictionary">Nieznany słownik</string>
     <string name="blob_descriptor_dictionary_unavailable">Słownik niedostępny: %1$s</string>
+    <string name="orphaned_gone">Słownik tego wpisu nie jest otwarty, więc nie można wyświetlić artykułu.</string>
+    <string name="orphaned_not_found">Nie znaleziono tego artykułu w słowniku %1$s – aktualnej wersji tego słownika – albo jest w nim kilka artykułów o tym tytule.</string>
+    <string name="orphaned_unavailable">Słownik tego wpisu jest na liście słowników, ale nie udało się go otworzyć.</string>
+    <string name="orphaned_lookup">Wyszukaj</string>
+    <string name="orphaned_move">Przenieś wpisy z tego słownika do…</string>
+    <string name="orphaned_move_to">Przenieś wpisy do</string>
+    <string name="orphaned_moved">Przeniesiono wpisy: %1$d z %2$d</string>
+    <string name="orphaned_moving">Przenoszenie wpisów…</string>
+    <plurals name="orphaned_move_confirm">
+        <item quantity="one">Przenieść %1$,d wpis z „%2$s” do „%3$s”?</item>
+        <item quantity="few">Przenieść %1$,d wpisy z „%2$s” do „%3$s”?</item>
+        <item quantity="many">Przenieść %1$,d wpisów z „%2$s” do „%3$s”?</item>
+        <item quantity="other">Przenieść %1$,d wpisu z „%2$s” do „%3$s”?</item>
+    </plurals>
+    <string name="orphaned_remove_all">Usuń %1$s z tego słownika</string>
+    <string name="orphaned_remove_this">Usuń ten wpis</string>
     <string name="dictionaries_closed">Zamknięto „%1$s”</string>
     <string name="dictionary_drag_handle">Przeciągnij, aby zmienić kolejność</string>
     <string name="dictionary_use_for_random">Używaj do losowego wyszukiwania</string>
+    <string name="dictionary_uri_missing">brak</string>
+    <string name="dictionary_uri_about">Uri to logiczny identyfikator słownika. Zakładki, historia i wybrany styl są zapisywane według uri, więc przechodzą do nowszej wersji słownika. Pliki z tym samym uri są traktowane jako ten sam słownik, np. jego tomy lub nowe wydanie.</string>
+    <string name="dictionary_uri_none">Słownik „%1$s” nie ma znacznika uri.</string>
+    <string name="dictionary_uri_none_tips">Bez uri używany jest zamiast niego identyfikator pliku, który jest inny w każdej wersji, więc nic nie zostaje przeniesione. Aby ręcznie przenieść zakładki i historię do nowszej wersji, nadpisz ten plik nowszą wersją, zachowując jego nazwę i folder, albo, po usunięciu tego pliku, otwórz jedną z jego zakładek i użyj „Przenieś wpisy z tego słownika do…”.</string>
     <string name="scroll_to_top">Przewiń do góry</string>
     <string name="setting_auto_paste">Automatycznie wklejaj ze schowka</string>
 </resources>

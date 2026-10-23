@@ -16,9 +16,9 @@ def nfd(s):
     return unicodedata.normalize('NFD', s)
 
 
-# Three versions of one dictionary (same uri) and an unrelated one. Keys
-# differing only in Unicode normalization are equal at every collation
-# strength below identical, so they match each other on lookup.
+# Three versions of one dictionary (same uri), a split one, and unrelated
+# ones. Keys differing only in Unicode normalization are equal at every
+# collation strength below identical, so they match each other on lookup.
 DICTIONARIES = {
     'movetest-v1.slob': ('test:movetest', [
         ('apple', 'Apple A (v1)'),
@@ -42,8 +42,60 @@ DICTIONARIES = {
     'other.slob': ('test:other', [
         ('apple', 'Apple (other)'),
     ]),
+    # A dictionary that's one file in its first version and two volumes in
+    # its second, which an article can end up in either of.
+    'split-v1.slob': ('test:split', [
+        ('apple', 'Apple (split v1)'),
+        (nfc('café'), 'Café (split v1)'),
+        ('cherry', 'Cherry (split v1)'),
+        ('date', 'Date (split v1)'),
+    ]),
+    'split-v2-1.slob': ('test:split', [
+        ('apple', 'Apple (split v2, volume 1)'),
+        ('banana', 'Banana (split v2, volume 1)'),
+        (nfd('café'), 'Café, decomposed (split v2, volume 1)'),
+    ]),
+    'split-v2-2.slob': ('test:split', [
+        (nfc('café'), 'Café (split v2, volume 2)'),
+        ('cherry', 'Cherry (split v2, volume 2)'),
+    ]),
+    # Versions of a dictionary with homographs, several articles under one
+    # key. They stay in the order they're added in.
+    'homographs-v1.slob': ('test:homographs', [
+        ('bank', 'Bank, of a river (homographs v1)'),
+        ('bank', 'Bank, for money (homographs v1)'),
+        (nfc('café'), 'Café, a place (homographs v1)'),
+        (nfc('café'), 'Café, a drink (homographs v1)'),
+        ('pitch', 'Pitch (homographs v1)'),
+    ]),
+    'homographs-v2.slob': ('test:homographs', [
+        ('bank', 'Bank, of a river (homographs v2)'),
+        ('bank', 'Bank, for money (homographs v2)'),
+        (nfd('café'), 'Café, a place, decomposed (homographs v2)'),
+        (nfd('café'), 'Café, a drink, decomposed (homographs v2)'),
+        ('pitch', 'Pitch (homographs v2)'),
+    ]),
+    'homographs-v3.slob': ('test:homographs', [
+        ('bank', 'Bank, of a river (homographs v3)'),
+        ('bank', 'Bank, for money (homographs v3)'),
+        ('bank', 'Bank, of a plane turning (homographs v3)'),
+    ]),
+    'homographs-v4.slob': ('test:homographs', [
+        ('bank', 'Bank (homographs v4)'),
+    ]),
+    'homographs-other.slob': ('test:homographs-other', [
+        ('bank', 'Bank, of a river (homographs other)'),
+        ('bank', 'Bank, for money (homographs other)'),
+    ]),
     'blank-label.slob': ('test:blank-label', [
         ('apple', 'Apple (blank label)'),
+    ]),
+    # Unrelated dictionaries whose uri tags are blank, which counts as none.
+    'blank-uri-1.slob': ('', [
+        ('apple', 'Apple (blank uri 1)'),
+    ]),
+    'blank-uri-2.slob': (' ', [
+        ('apple', 'Apple (blank uri 2)'),
     ]),
 }
 

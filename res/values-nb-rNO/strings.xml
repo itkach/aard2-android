@@ -103,9 +103,27 @@
     <string name="blob_descriptor_removed">«%1$s» fjernet</string>
     <string name="blob_descriptor_unknown_dictionary">Ukjent ordbok</string>
     <string name="blob_descriptor_dictionary_unavailable">Ordboken er ikke tilgjengelig: %1$s</string>
+    <string name="orphaned_gone">Ordboken til denne oppføringen er ikke åpen, så artikkelen kan ikke vises.</string>
+    <string name="orphaned_not_found">Denne artikkelen ble ikke funnet i %1$s, den gjeldende versjonen av denne ordboken, eller flere artikler der har denne tittelen.</string>
+    <string name="orphaned_unavailable">Ordboken til denne oppføringen står i ordboklisten, men kunne ikke åpnes.</string>
+    <string name="orphaned_lookup">Slå opp</string>
+    <string name="orphaned_move">Flytt oppføringene fra denne ordboken til…</string>
+    <string name="orphaned_move_to">Flytt oppføringene til</string>
+    <string name="orphaned_moved">Oppføringer flyttet: %1$d av %2$d</string>
+    <string name="orphaned_moving">Flytter oppføringene…</string>
+    <plurals name="orphaned_move_confirm">
+        <item quantity="one">Flytte %1$,d oppføring fra «%2$s» til «%3$s»?</item>
+        <item quantity="other">Flytte %1$,d oppføringer fra «%2$s» til «%3$s»?</item>
+    </plurals>
+    <string name="orphaned_remove_all">Fjern %1$s fra denne ordboken</string>
+    <string name="orphaned_remove_this">Fjern denne oppføringen</string>
     <string name="dictionaries_closed">«%1$s» lukket</string>
     <string name="dictionary_drag_handle">Dra for å endre rekkefølge</string>
     <string name="dictionary_use_for_random">Bruk til tilfeldig oppslag</string>
+    <string name="dictionary_uri_missing">mangler</string>
+    <string name="dictionary_uri_about">Uri-en er ordbokens logiske identifikator. Bokmerker, historikk og valgt stil lagres etter uri, så de overføres til en nyere versjon av ordboken. Filer med samme uri behandles som samme ordbok, f.eks. bindene eller en ny utgave.</string>
+    <string name="dictionary_uri_none">«%1$s» har ingen uri-tagg.</string>
+    <string name="dictionary_uri_none_tips">Uten uri brukes fil-ID-en i stedet, som er forskjellig i hver versjon, så ingenting overføres. For å flytte bokmerker og historikk til en nyere versjon manuelt, overskriv denne filen med den nyere versjonen, med samme navn og mappe, eller, etter at denne filen er fjernet, åpne ett av bokmerkene og bruk «Flytt oppføringene fra denne ordboken til…».</string>
     <string name="find_hint">Søk på siden</string>
     <string name="find_next">Neste</string>
     <string name="find_previous">Forrige</string>

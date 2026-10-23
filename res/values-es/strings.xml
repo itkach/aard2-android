@@ -105,9 +105,27 @@
     <string name="blob_descriptor_removed">«%1$s» eliminado</string>
     <string name="blob_descriptor_unknown_dictionary">Diccionario desconocido</string>
     <string name="blob_descriptor_dictionary_unavailable">Diccionario no disponible: %1$s</string>
+    <string name="orphaned_gone">El diccionario de esta entrada no está abierto, así que no se puede mostrar el artículo.</string>
+    <string name="orphaned_not_found">Este artículo no se encontró en %1$s, la versión actual de este diccionario, o allí hay varios artículos con este título.</string>
+    <string name="orphaned_unavailable">El diccionario de esta entrada está en la lista de diccionarios, pero no se pudo abrir.</string>
+    <string name="orphaned_lookup">Buscar</string>
+    <string name="orphaned_move">Mover las entradas de este diccionario a…</string>
+    <string name="orphaned_move_to">Mover las entradas a</string>
+    <string name="orphaned_moved">Entradas movidas: %1$d de %2$d</string>
+    <string name="orphaned_moving">Moviendo las entradas…</string>
+    <plurals name="orphaned_move_confirm">
+        <item quantity="one">¿Mover %1$,d entrada de «%2$s» a «%3$s»?</item>
+        <item quantity="other">¿Mover %1$,d entradas de «%2$s» a «%3$s»?</item>
+    </plurals>
+    <string name="orphaned_remove_all">Eliminar %1$s de este diccionario</string>
+    <string name="orphaned_remove_this">Eliminar esta entrada</string>
     <string name="dictionaries_closed">«%1$s» cerrado</string>
     <string name="dictionary_drag_handle">Arrastra para reordenar</string>
     <string name="dictionary_use_for_random">Usar para búsqueda aleatoria</string>
+    <string name="dictionary_uri_missing">falta</string>
+    <string name="dictionary_uri_about">La uri es el identificador lógico del diccionario. Los marcadores, el historial y el tema elegido se guardan por uri, así que pasan a una versión más nueva del diccionario. Los archivos con la misma uri se tratan como el mismo diccionario, p. ej., sus volúmenes o una nueva edición.</string>
+    <string name="dictionary_uri_none">«%1$s» no tiene la etiqueta uri.</string>
+    <string name="dictionary_uri_none_tips">Sin uri, se usa en su lugar el id del archivo, que es distinto en cada versión, así que no se transfiere nada. Para mover los marcadores y el historial a una versión más nueva manualmente, sobrescribe este archivo con la versión más nueva, manteniendo su nombre y carpeta, o, después de quitar este archivo, abre uno de sus marcadores y usa «Mover las entradas de este diccionario a…».</string>
     <string name="scroll_to_top">Desplazar hacia arriba</string>
     <string name="setting_auto_paste">Pegar automáticamente del portapapeles</string>
 </resources>

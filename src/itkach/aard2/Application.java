@@ -33,6 +33,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.Future;
@@ -81,8 +82,14 @@ public class Application extends android.app.Application {
     // lives here rather than on whichever of those happened to declare
     // it first.
     static final String ARTICLE_VIEW_PREF               = "articleView";
+    // A dictionary's selected style: one of its own style titles, a user
+    // style's file name, or STYLE_DEFAULT. No value means Auto.
     static final String PREF_STYLE                      = "style.";
     static final String PREF_STYLE_AVAILABLE            = "style.available.";
+    // The style that is a dictionary's default look: none of its own styles
+    // turned on. A style title is never empty (a stylesheet without a title
+    // isn't one of its styles), so this can't name one.
+    static final String STYLE_DEFAULT                   = "";
     // Per (dictionary, resolved style, UI dark/light) cache of the article
     // background/foreground colors the WebView actually paints - measured once by
     // the real engine (see probecolors.js) so the loading placeholder can match.
@@ -151,8 +158,8 @@ public class Application extends android.app.Application {
             }
 
             @Override
-            public Slob findSlobByURI(String uri) {
-                return slobber.findSlobByURI(uri);
+            public List<Slob> findSlobsByURI(String uri) {
+                return slobber.findAllSlobsByURI(uri);
             }
 
             @Override
@@ -166,6 +173,11 @@ public class Application extends android.app.Application {
                 for (SlobDescriptor sd : dictionaries) {
                     if (sd.id != null) {
                         ids.add(sd.id);
+                    }
+                    if (sd.replacedFiles != null) {
+                        for (SlobDescriptor.Replaced replaced : sd.replacedFiles) {
+                            ids.add(replaced.slobId);
+                        }
                     }
                 }
                 return ids;
@@ -182,14 +194,20 @@ public class Application extends android.app.Application {
                 List<Slob> slobs = new ArrayList<Slob>();
                 for (SlobDescriptor sd : dictionaries) {
                     String origSlobId = sd.id;
+                    String origURI = sd.getURI();
                     Slob s = sd.load(getApplicationContext());
                     if (s != null) {
-                        if (!origSlobId.equals(sd.id)) {
-                            Log.d(TAG, String.format("%s has been replaced, updating dict store %s -> %s", sd.path, origSlobId, sd.id));
-                            //dictionary file has been replaced
-                            //(same file name, different slob uuid)
-                            //need to update store accordingly
-                            dictStore.delete(origSlobId);
+                        if (!Objects.equals(origSlobId, sd.id)) {
+                            // The file at the dictionary's path was replaced
+                            // (same path, different slob id), or opened for the
+                            // first time: a dictionary added while its file
+                            // couldn't be opened has no id, and so isn't stored
+                            // yet.
+                            Log.d(TAG, String.format("%s loaded with a new id, updating dict store %s -> %s", sd.path, origSlobId, sd.id));
+                            if (origSlobId != null) {
+                                dictStore.delete(origSlobId);
+                                continueDictionary(sd, origSlobId, origURI, s.getURI());
+                            }
                             dictStore.save(sd);
                         }
                         slobs.add(s);
@@ -202,6 +220,7 @@ public class Application extends android.app.Application {
                 history.notifyDataSetChanged();
                 bookmarks.moveToLoadedDictionaries();
                 history.moveToLoadedDictionaries();
+                moveEntriesOfReplacedFiles();
             }
         });
 
@@ -439,9 +458,17 @@ public class Application extends android.app.Application {
         editor.apply();
     }
 
+    // Picks from the dictionaries marked for random lookup if the setting
+    // says so, or from all that are turned on if none of the marked ones is
+    // turned on and loaded.
     Blob random() {
-        Slob[] slobs = isOnlyFavDictsForRandomLookup() ? getFavoriteSlobs() : getActiveSlobs();
-        return slobber.findRandom(slobs);
+        if (isOnlyFavDictsForRandomLookup()) {
+            Slob[] marked = getFavoriteSlobs();
+            if (marked.length > 0) {
+                return slobber.findRandom(marked);
+            }
+        }
+        return slobber.findRandom(getActiveSlobs());
     }
 
     boolean useVolumeForNav() {
@@ -523,12 +550,12 @@ public class Application extends android.app.Application {
     String getUrl(Blob blob) {
         String path = Slobber.mkContentURL(blob);
         String styleTitle = resolveStyleTitle(getSlobURI(blob.owner.getId().toString()));
-        // "Default" is never sent as a real param: the server's natural,
+        // The default look is never sent as a param: the server's natural,
         // unmodified rendering already *is* that (see Slobber's
         // StylePreference, which does nothing when the param is absent),
         // so sending it would only cost a wasted HTML parse on every
         // single article load for an identical result.
-        if (!styleTitle.equals(getString(R.string.default_style_title))) {
+        if (!styleTitle.equals(STYLE_DEFAULT)) {
             path = StylePreference.withStyleParam(path, styleTitle);
         }
         return String.format(CONTENT_URL_TEMPLATE, port, path);
@@ -659,21 +686,20 @@ public class Application extends android.app.Application {
 
     /**
      * Resolves a dictionary's effective style title from its raw stored
-     * preference (storedStyleTitle - either a concrete title the user
-     * picked, or the "Auto" sentinel) and the set of style titles it's
-     * known to declare: "Auto" resolves to the first declared title that
-     * looks dark while the dark UI theme is active, else to
-     * defaultStyleTitle. A pure function of its arguments (no
+     * preference (storedStyleTitle - the style the user picked, or null
+     * for Auto) and the set of style titles it's known to declare: Auto
+     * resolves to the first declared title that looks dark while the dark
+     * UI theme is active, else to STYLE_DEFAULT. A pure function of its
+     * arguments (no
      * SharedPreferences/WebView access), shared by getPreferredStyle()
      * (which already has this data cached as instance state) and
      * resolveStyleTitle() below (which needs the same resolution before
      * any WebView for the dictionary exists, so it reads the same
      * underlying SharedPreferences data directly instead).
      */
-    static String resolveStyle(String storedStyleTitle, String autoStyleTitle,
-                                String defaultStyleTitle, boolean isUIDark,
+    static String resolveStyle(String storedStyleTitle, boolean isUIDark,
                                 Set<String> availableTitles) {
-        if (!storedStyleTitle.equals(autoStyleTitle)) {
+        if (storedStyleTitle != null) {
             return storedStyleTitle;
         }
         if (isUIDark) {
@@ -683,7 +709,7 @@ public class Application extends android.app.Application {
                 }
             }
         }
-        return defaultStyleTitle;
+        return STYLE_DEFAULT;
     }
 
     /**
@@ -705,24 +731,19 @@ public class Application extends android.app.Application {
      * correcting it after a default-styled page has already started
      * rendering) and from a live one (ArticleWebView.getPreferredStyle()
      * delegates here instead of keeping its own parallel resolution).
-     * Always returns a concrete title, never null - "Default" is a real
-     * answer, not an absence of one; callers that specifically need to
-     * know whether that's the *literal* answer (to decide whether it's
-     * worth adding as a URL param at all) compare against
-     * R.string.default_style_title themselves.
+     * Never returns null: the default look is STYLE_DEFAULT, which
+     * callers that need to tell it apart (e.g. to leave it out of the
+     * URL) compare against.
      */
     String resolveStyleTitle(String slobUri) {
         SharedPreferences prefs = getSharedPreferences(ARTICLE_VIEW_PREF, Activity.MODE_PRIVATE);
-        String autoStyleTitle = getString(R.string.auto_style_title);
-        String defaultStyleTitle = getString(R.string.default_style_title);
         if (slobUri == null) {
-            return defaultStyleTitle;
+            return STYLE_DEFAULT;
         }
-        String storedStyleTitle = prefs.getString(PREF_STYLE + slobUri, autoStyleTitle);
+        String storedStyleTitle = prefs.getString(PREF_STYLE + slobUri, null);
         Set<String> availableTitles = prefs.getStringSet(
                 PREF_STYLE_AVAILABLE + slobUri, Collections.<String>emptySet());
-        return resolveStyle(storedStyleTitle, autoStyleTitle,
-                defaultStyleTitle, isUIDark(), availableTitles);
+        return resolveStyle(storedStyleTitle, isUIDark(), availableTitles);
     }
 
     // ---- Article color cache: the background/foreground the WebView actually
@@ -816,6 +837,72 @@ public class Application extends android.app.Application {
 
     Slob getSlob(String slobId) {
         return slobber.getSlob(slobId);
+    }
+
+    // The file at sd's path, the file replacedId going by replacedURI when last
+    // loaded, has been overwritten with one going by uri. The user put it in
+    // the old one's place, which says it's the same dictionary: the old file's
+    // bookmarks and history are to move to it (see moveEntriesOfReplacedFiles),
+    // and the style chosen for it carries over, unless the new uri has one.
+    private void continueDictionary(SlobDescriptor sd, String replacedId,
+                                    String replacedURI, String uri) {
+        SlobDescriptor.Replaced replaced = new SlobDescriptor.Replaced();
+        replaced.slobId = replacedId;
+        replaced.uri = replacedURI;
+        if (sd.replacedFiles == null) {
+            sd.replacedFiles = new ArrayList<>();
+        }
+        sd.replacedFiles.add(replaced);
+        if (replacedURI.equals(uri)) {
+            return;
+        }
+        SharedPreferences prefs = getSharedPreferences(ARTICLE_VIEW_PREF, MODE_PRIVATE);
+        String style = prefs.getString(PREF_STYLE + replacedURI, null);
+        if (style != null && !prefs.contains(PREF_STYLE + uri)) {
+            prefs.edit().putString(PREF_STYLE + uri, style).apply();
+        }
+    }
+
+    // Moves the bookmarks and history of the files that dictionaries' files
+    // replaced (see continueDictionary) to those dictionaries, and forgets each
+    // replaced file once its entries are moved. Running it again while a move
+    // is under way only repeats lookups.
+    private void moveEntriesOfReplacedFiles() {
+        for (SlobDescriptor sd : dictionaries) {
+            if (sd.replacedFiles == null || sd.id == null || slobber.getSlob(sd.id) == null) {
+                continue;
+            }
+            String slobId = sd.id;
+            for (SlobDescriptor.Replaced replaced : new ArrayList<>(sd.replacedFiles)) {
+                bookmarks.moveEntriesOfReplacedFile(replaced.slobId, replaced.uri, slobId,
+                        (bookmarksTried, bookmarksMoved) ->
+                        history.moveEntriesOfReplacedFile(replaced.slobId, replaced.uri, slobId,
+                                (historyTried, historyMoved) -> {
+                    Log.d(TAG, String.format("Moved %d of %d entries of %s to %s",
+                            bookmarksMoved + historyMoved, bookmarksTried + historyTried,
+                            replaced.slobId, slobId));
+                    forgetReplaced(sd, replaced);
+                }));
+            }
+        }
+    }
+
+    private void forgetReplaced(SlobDescriptor sd, SlobDescriptor.Replaced replaced) {
+        if (sd.replacedFiles == null || !sd.replacedFiles.remove(replaced)) {
+            return;
+        }
+        if (sd.replacedFiles.isEmpty()) {
+            sd.replacedFiles = null;
+        }
+        // Unless the dictionary was closed meanwhile: saving it would add it
+        // back.
+        if (dictionaries.contains(sd)) {
+            dictStore.save(sd);
+        }
+        // The entries left, not found in the new file, are no longer its: the
+        // move pass may have somewhere for them (another file with their uri).
+        bookmarks.moveToLoadedDictionaries();
+        history.moveToLoadedDictionaries();
     }
 
     synchronized boolean addDictionary(Uri uri) {

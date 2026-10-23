@@ -102,9 +102,27 @@
     <string name="blob_descriptor_removed">„%1$s“ verwijderd</string>
     <string name="blob_descriptor_unknown_dictionary">Onbekend woordenboek</string>
     <string name="blob_descriptor_dictionary_unavailable">Woordenboek niet beschikbaar: %1$s</string>
+    <string name="orphaned_gone">Het woordenboek van dit item is niet geopend, dus het artikel kan niet worden getoond.</string>
+    <string name="orphaned_not_found">Dit artikel is niet gevonden in %1$s, de huidige versie van dit woordenboek, of daar hebben meerdere artikelen deze titel.</string>
+    <string name="orphaned_unavailable">Het woordenboek van dit item staat in de woordenboeklijst, maar kon niet worden geopend.</string>
+    <string name="orphaned_lookup">Opzoeken</string>
+    <string name="orphaned_move">Items van dit woordenboek verplaatsen naar…</string>
+    <string name="orphaned_move_to">Items verplaatsen naar</string>
+    <string name="orphaned_moved">Items verplaatst: %1$d van %2$d</string>
+    <string name="orphaned_moving">Items verplaatsen…</string>
+    <plurals name="orphaned_move_confirm">
+        <item quantity="one">%1$,d item van „%2$s“ naar „%3$s“ verplaatsen?</item>
+        <item quantity="other">%1$,d items van „%2$s“ naar „%3$s“ verplaatsen?</item>
+    </plurals>
+    <string name="orphaned_remove_all">%1$s van dit woordenboek verwijderen</string>
+    <string name="orphaned_remove_this">Dit item verwijderen</string>
     <string name="dictionaries_closed">„%1$s“ gesloten</string>
     <string name="dictionary_drag_handle">Sleep om te herordenen</string>
     <string name="dictionary_use_for_random">Gebruiken voor willekeurig opzoeken</string>
+    <string name="dictionary_uri_missing">ontbreekt</string>
+    <string name="dictionary_uri_about">De uri is de logische identificatie van het woordenboek. Bladwijzers, geschiedenis en de gekozen stijl worden per uri opgeslagen en gaan dus over naar een nieuwere versie van het woordenboek. Bestanden met dezelfde uri worden als hetzelfde woordenboek behandeld, bijv. de delen ervan of een nieuwe editie.</string>
+    <string name="dictionary_uri_none">„%1$s“ heeft geen uri-tag.</string>
+    <string name="dictionary_uri_none_tips">Zonder uri wordt in plaats daarvan de bestands-id gebruikt, die in elke versie anders is, dus gaat er niets over. Om bladwijzers en geschiedenis handmatig naar een nieuwere versie te verplaatsen, overschrijf je dit bestand met de nieuwere versie, met behoud van naam en map, of open je, nadat dit bestand is verwijderd, een van de bladwijzers en gebruik je „Items van dit woordenboek verplaatsen naar…“.</string>
     <string name="find_hint">Zoeken op pagina</string>
     <string name="find_next">Volgende</string>
     <string name="find_previous">Vorige</string>

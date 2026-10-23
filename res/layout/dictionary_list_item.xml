@@ -215,6 +215,40 @@
 
         </LinearLayout>
 
+        <!-- The dictionary's uri, or that it has none; tapping it explains
+             what it's for (see DictionaryListAdapter.setupUriView). -->
+        <LinearLayout
+            android:id="@+id/dictionary_uri_row"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="2dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?attr/selectableItemBackground"
+            >
+
+            <ImageView
+                android:id="@+id/dictionary_uri_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:baselineAlignBottom="true"
+                android:layout_marginEnd="4dp"
+                />
+
+            <TextView
+                android:id="@+id/dictionary_uri"
+                style="@style/TextAppearance.Aard2.ListSubtitle"
+                android:text="test:wordnet"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:singleLine="true"
+                android:ellipsize="end"
+                />
+
+        </LinearLayout>
+
         <LinearLayout
             android:id="@+id/dictionary_path_row"
             android:orientation="horizontal"

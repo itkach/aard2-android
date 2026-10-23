@@ -11,6 +11,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import itkach.slob.Slob;
@@ -35,7 +36,19 @@ public class SlobDescriptor extends BaseDescriptor {
     public long blobCount;
     public String error;
     public boolean expandDetail = false;
+    // Files that the file at path replaced, overwritten in place, whose
+    // bookmarks and history are still to be moved to it (see
+    // Application.continueDictionary). Kept until they are, so a move cut
+    // short by the app stopping is done on the next start.
+    public List<Replaced> replacedFiles;
     private transient ParcelFileDescriptor fileDescriptor;
+
+    // A file that the dictionary's file replaced (see replacedFiles).
+    public static class Replaced {
+        public String slobId;
+        // The uri it went by.
+        public String uri;
+    }
 
     void update(Slob s) {
         this.id = s.getId().toString();
@@ -69,6 +82,17 @@ public class SlobDescriptor extends BaseDescriptor {
             active = false;
         }
         return slob;
+    }
+
+    // The uri the file went by when last loaded, by the same rule as
+    // Slob.getURI(): its uri tag, else, if it has none or a blank one, one
+    // made from its id. Null if it was never loaded.
+    String getURI() {
+        if (id == null) {
+            return null;
+        }
+        String uri = tags.get("uri");
+        return Util.isBlank(uri) ? "slob:" + id : uri;
     }
 
     String getLabel() {

@@ -105,9 +105,27 @@
     <string name="blob_descriptor_removed">« %1$s » supprimé</string>
     <string name="blob_descriptor_unknown_dictionary">Dictionnaire inconnu</string>
     <string name="blob_descriptor_dictionary_unavailable">Dictionnaire indisponible : %1$s</string>
+    <string name="orphaned_gone">Le dictionnaire de cette entrée n\'est pas ouvert, l\'article ne peut donc pas être affiché.</string>
+    <string name="orphaned_not_found">Cet article est introuvable dans %1$s, la version actuelle de ce dictionnaire, ou plusieurs articles y portent ce titre.</string>
+    <string name="orphaned_unavailable">Le dictionnaire de cette entrée figure dans la liste des dictionnaires, mais n\'a pas pu être ouvert.</string>
+    <string name="orphaned_lookup">Rechercher</string>
+    <string name="orphaned_move">Déplacer les entrées de ce dictionnaire vers…</string>
+    <string name="orphaned_move_to">Déplacer les entrées vers</string>
+    <string name="orphaned_moved">Entrées déplacées : %1$d sur %2$d</string>
+    <string name="orphaned_moving">Déplacement des entrées…</string>
+    <plurals name="orphaned_move_confirm">
+        <item quantity="one">Déplacer %1$,d entrée de « %2$s » vers « %3$s » ?</item>
+        <item quantity="other">Déplacer %1$,d entrées de « %2$s » vers « %3$s » ?</item>
+    </plurals>
+    <string name="orphaned_remove_all">Supprimer %1$s de ce dictionnaire</string>
+    <string name="orphaned_remove_this">Supprimer cette entrée</string>
     <string name="dictionaries_closed">« %1$s » fermé</string>
     <string name="dictionary_drag_handle">Faire glisser pour réorganiser</string>
     <string name="dictionary_use_for_random">Utiliser pour la recherche aléatoire</string>
+    <string name="dictionary_uri_missing">absente</string>
+    <string name="dictionary_uri_about">L\'uri est l\'identifiant logique du dictionnaire. Les signets, l\'historique et le style choisi sont enregistrés par uri, et passent donc à une version plus récente du dictionnaire. Les fichiers ayant la même uri sont traités comme le même dictionnaire, par exemple ses volumes ou une nouvelle édition.</string>
+    <string name="dictionary_uri_none">« %1$s » n\'a pas de balise uri.</string>
+    <string name="dictionary_uri_none_tips">Sans uri, c\'est l\'identifiant du fichier qui est utilisé, et il change à chaque version, si bien que rien n\'est repris. Pour déplacer manuellement les signets et l\'historique vers une version plus récente, écrasez ce fichier avec la version plus récente, en conservant son nom et son dossier, ou, après avoir retiré ce fichier, ouvrez l\'un de ses signets et utilisez « Déplacer les entrées de ce dictionnaire vers… ».</string>
     <string name="scroll_to_top">Faire défiler vers le haut</string>
     <string name="setting_auto_paste">Coller automatiquement depuis le presse-papiers</string>
 </resources>
