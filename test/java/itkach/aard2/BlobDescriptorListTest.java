@@ -287,6 +287,27 @@ public class BlobDescriptorListTest {
         }
     }
 
+    // Saves and deletes are written in the background, in the order they're
+    // made, so the moved entry's save doesn't bring it back.
+    @Test
+    public void removingAnEntryRightAfterItsMovedLeavesItRemoved() throws Exception {
+        load(v1, v2);
+        BlobDescriptorList list = start();
+        BlobDescriptor bd = list.add(url(v1, "apple"));
+        close(list, v1);
+        assertTrue(list.removeEntry(bd));
+        assertTrue(stored().isEmpty());
+    }
+
+    @Test
+    public void savesAnEntryAsItIsWhenTheSaveIsMade() throws Exception {
+        load(v1);
+        BlobDescriptor bd = start().add(url(v1, "apple"));
+        store.saveLater(bd);
+        bd.key = "changed";
+        assertEquals("apple", stored().get(0).key);
+    }
+
     @Test
     public void movesEntriesOnStartupBeforeCountingAsLoaded() throws Exception {
         load(v1, v2);
@@ -363,7 +384,7 @@ public class BlobDescriptorListTest {
         load(v1, v2);
         BlobDescriptor saved = start().add(url(v1, "cherry"));
         saved.notFoundIn = id(v2);
-        store.save(saved);
+        store.saveLater(saved);
         dictionaries.loaded.remove(v1);
         // Not looked up in v2 again, which would record it as a list.
         BlobDescriptorList list = start();
@@ -979,7 +1000,7 @@ public class BlobDescriptorListTest {
         for (Slob slob : Arrays.asList(blank1, blank2)) {
             BlobDescriptor bd = first.add(url(slob, "apple"));
             bd.slobUri = "";
-            store.save(bd);
+            store.saveLater(bd);
         }
         dictionaries.loaded.clear();
         BlobDescriptorList list = start();
@@ -1060,7 +1081,7 @@ public class BlobDescriptorListTest {
         for (String key : keys) {
             BlobDescriptor bd = list.add(url(slob, key));
             bd.slobLabel = null;
-            store.save(bd);
+            store.saveLater(bd);
         }
     }
 
@@ -1093,8 +1114,10 @@ public class BlobDescriptorListTest {
 
     // Makes saving fail, as on a full disk: save writes a temporary file in the
     // store directory first. Tests using it check that the saves did fail:
-    // a read-only directory doesn't stop root.
+    // a read-only directory doesn't stop root. The saves already made are
+    // done first.
     private void makeStoreReadOnly() {
+        store.awaitWrites();
         assertTrue(storeDir.setWritable(false));
     }
 
@@ -1258,7 +1281,7 @@ public class BlobDescriptorListTest {
             BlobDescriptor bd = list.add(url(blob));
             bd.keyIndex = null;
             bd.keyCount = null;
-            store.save(bd);
+            store.saveLater(bd);
         }
     }
 

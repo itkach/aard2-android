@@ -222,8 +222,8 @@ final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
             List<BlobDescriptor> loaded = store.load(BlobDescriptor.class);
             // Entries without a label or a position get them here, and ones
             // with a blank uri the one their file goes by. That can be every
-            // entry, too many to look up and save on the main thread, and none
-            // is shared with it yet.
+            // entry, too many to look up on the main thread, and none is
+            // shared with it yet.
             for (BlobDescriptor bd : loaded) {
                 boolean filledIn = fillInLabel(bd, labels.get(bd.slobId));
                 filledIn |= fillInBlankUri(bd);
@@ -232,7 +232,7 @@ final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
                     filledIn |= locate(bd, own);
                 }
                 if (filledIn) {
-                    saveFilledIn(bd);
+                    store.saveLater(bd);
                 }
             }
             return loaded;
@@ -248,13 +248,14 @@ final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
             // Membership is via a HashSet: with up to maxSize entries a contains()
             // scan per loaded item would be quadratic. All of this runs on the
             // main thread, as do all list mutations, so the list is never touched
-            // concurrently - the background task only reads the store.
+            // concurrently - the background task only reads the store and saves
+            // entries not yet in the list.
             Set<BlobDescriptor> seen = new HashSet<>(list);
             for (BlobDescriptor bd : loaded) {
                 if (seen.add(bd)) {
                     list.add(bd);
                 } else {
-                    store.delete(bd.id);
+                    store.deleteLater(bd.id);
                 }
             }
             // The disk load plus any entries added while it was in flight can put
@@ -336,7 +337,7 @@ final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
                 // that wasn't mounted yet. Its position is worked out on the
                 // next load.
                 if (fillInLabel(bd, getLabel(own))) {
-                    saveFilledIn(bd);
+                    store.saveLater(bd);
                 }
                 continue;
             }
@@ -378,7 +379,7 @@ final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
     // id of one of its entries (see entriesOf), to the article with its key in
     // the dictionary with uri toUri, one the user picked. Entries for which no
     // article is picked there (see pick), or whose lookup failed, stay as they
-    // are. done is called once they're saved.
+    // are. done is called once they're moved.
     void moveEntriesOf(String uri, String slobId, String toUri, MoveDone done) {
         moveEntriesOf(uri, slobId, toUri, (tried, moved, failed) -> done.onMoved(tried, moved));
     }
@@ -415,7 +416,7 @@ final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
     // changed, the entries left orphaned by earlier versions with the old one
     // move too, as the move pass would have moved them to a new version with
     // the same uri, unless a file with the old uri is still loaded: then they
-    // belong with that file. done is called once they're saved, and not at
+    // belong with that file. done is called once they're moved, and not at
     // all if toSlobId isn't loaded by the time the move runs (its storage was
     // unmounted, or it was overwritten in turn), or a lookup failed: the move
     // is still to be done then, with the new file first, and is asked for
@@ -629,7 +630,7 @@ final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
         }
         bd.notFoundInIds = ids;
         bd.notFoundIn = null;
-        store.save(bd);
+        store.saveLater(bd);
     }
 
     // Returns how many entries were moved.
@@ -693,13 +694,13 @@ final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
             BlobDescriptor existing = kept.get(bd);
             if (existing == null) {
                 kept.put(bd, bd);
-                store.save(bd);
+                store.saveLater(bd);
                 continue;
             }
             existing.createdAt = Math.min(existing.createdAt, bd.createdAt);
             existing.lastAccess = Math.max(existing.lastAccess, bd.lastAccess);
-            store.save(existing);
-            store.delete(bd.id);
+            store.saveLater(existing);
+            store.deleteLater(bd.id);
             dropped.add(bd);
         }
         this.list.removeAll(dropped);
@@ -720,7 +721,7 @@ final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
             return;
         }
         bd.lastAccess = t;
-        store.save(bd);
+        store.saveLater(bd);
     }
 
     private boolean isListed(BlobDescriptor bd) {
@@ -850,18 +851,6 @@ final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
         return true;
     }
 
-    // Saves an entry whose label, uri or position was filled in. They're
-    // filled in again on the next load if the save fails (e.g. the disk is
-    // full), so a failure is logged rather than failing the load.
-    private void saveFilledIn(BlobDescriptor bd) {
-        try {
-            store.save(bd);
-        }
-        catch (Exception ex) {
-            Log.w(TAG, String.format("Failed to save %s", bd.id), ex);
-        }
-    }
-
     // Add an entry for the article at contentUrl, or return the existing one.
     // Returns null, adding nothing, when there can't be an entry for it (see
     // createDescriptor).
@@ -878,7 +867,7 @@ final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
         // entries are next loaded (see loadAsync).
         locate(bd, dictionaries.getSlob(bd.slobId));
         this.list.add(bd);
-        store.save(bd);
+        store.saveLater(bd);
         enforceMaxSize();
         notifyDataSetChanged();
         return bd;
@@ -895,7 +884,7 @@ final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
         Util.sort(this.list, lastAccessComparator);
         while (this.list.size() > this.maxSize) {
             BlobDescriptor lru = this.list.remove(this.list.size() - 1);
-            store.delete(lru.id);
+            store.deleteLater(lru.id);
         }
     }
 
@@ -920,18 +909,15 @@ final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
     // natural place rather than jumping to the top like a fresh add would.
     public void restore(BlobDescriptor bd) {
         this.list.add(bd);
-        store.save(bd);
+        store.saveLater(bd);
         notifyDataSetChanged();
     }
 
     private BlobDescriptor removeByIndex(int index) {
         BlobDescriptor bd = this.list.remove(index);
         if (bd != null) {
-            boolean removed = store.delete(bd.id);
-            Log.d(TAG, String.format("Item (%s) %s removed? %s", bd.key, bd.id, removed));
-            if (removed) {
-                notifyDataSetChanged();
-            }
+            store.deleteLater(bd.id);
+            notifyDataSetChanged();
         }
         return bd;
     }
@@ -976,7 +962,7 @@ final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
         Set<BlobDescriptor> removed = Collections.newSetFromMap(new IdentityHashMap<>());
         removed.addAll(entriesOf(orphaned.slobUri, orphaned.slobId));
         for (BlobDescriptor bd : removed) {
-            store.delete(bd.id);
+            store.deleteLater(bd.id);
         }
         this.list.removeAll(removed);
         if (!removed.isEmpty()) {
@@ -989,7 +975,7 @@ final class BlobDescriptorList extends AbstractList<BlobDescriptor> {
     // Used when history recording is turned off.
     public void clear() {
         for (BlobDescriptor bd : this.list) {
-            store.delete(bd.id);
+            store.deleteLater(bd.id);
         }
         this.list.clear();
         notifyDataSetChanged();
