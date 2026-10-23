@@ -452,9 +452,17 @@ public class Application extends android.app.Application {
         editor.apply();
     }
 
+    // Picks from the dictionaries marked for random lookup if the setting
+    // says so, or from all that are turned on if none of the marked ones is
+    // turned on and loaded.
     Blob random() {
-        Slob[] slobs = isOnlyFavDictsForRandomLookup() ? getFavoriteSlobs() : getActiveSlobs();
-        return slobber.findRandom(slobs);
+        if (isOnlyFavDictsForRandomLookup()) {
+            Slob[] marked = getFavoriteSlobs();
+            if (marked.length > 0) {
+                return slobber.findRandom(marked);
+            }
+        }
+        return slobber.findRandom(getActiveSlobs());
     }
 
     boolean useVolumeForNav() {

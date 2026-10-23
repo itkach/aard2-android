@@ -8,7 +8,7 @@
   {
     "name": "slobber",
     "repo": "git@github.com:itkach/slobber.git",
-    "sha": "8735093403736557a1c0447d5ec53a670f89242c",
-    "describe": "0.12"
+    "sha": "2f537cdbb7bbeeb1c7662c988337df9c7eb54242",
+    "describe": "0.12-1-g2f537cd"
   }
 ]
