@@ -531,14 +531,19 @@ public class ArticleCollectionActivity extends AppCompatActivity {
         final Intent intent = getIntent();
         final int position = intent.getIntExtra("position", 0);
 
-        // Holds an exception raised while building the adapter off the main
-        // thread, so the main-thread callback can surface it (the background work
-        // can't touch the UI). Single-element array = a mutable final capture.
+        // Holds an exception raised while looking up off the main thread, so the
+        // main-thread callback can surface it (the background work can't touch
+        // the UI). Single-element array = a mutable final capture.
         final Exception[] exception = { null };
         final Uri articleUrl = intent.getData();
         final String action = intent.getAction();
+        // The lookup runs off the main thread; the adapter is built on it, in the
+        // callback, because it reads and observes lists only the main thread
+        // changes. A lookup's first chunk of results is posted to its list before
+        // the callback, so the adapter starts with it; later chunks reach the
+        // adapter through its observer.
         Runnable buildPager = () -> Util.runAsync(() -> {
-            ArticleCollectionPagerAdapter result = null;
+            PagerBuilder result = null;
             try {
                 if (articleUrl != null) {
                     result = createFromUri(app, articleUrl);
@@ -558,16 +563,10 @@ public class ArticleCollectionActivity extends AppCompatActivity {
                 exception[0] = e;
             }
             return result;
-        }, adapter -> {
+        }, builder -> {
+                // Back during the spinner, or push() finishing this Activity: the
+                // adapter isn't built yet, so nothing observes a list.
                 if (isFinishing() || onDestroyCalled) {
-                    // The adapter finished building after this Activity began going
-                    // away (Back during the spinner, or push() finishing it). It has
-                    // already registered observers on the app-scoped list it wraps;
-                    // onDestroy can't release it (the field below was never assigned),
-                    // so release it here or it leaks for the life of the process.
-                    if (adapter != null) {
-                        adapter.destroy();
-                    }
                     return;
                 }
                 if (exception[0] != null) {
@@ -577,7 +576,7 @@ public class ArticleCollectionActivity extends AppCompatActivity {
                     finish();
                     return;
                 }
-                articleCollectionPagerAdapter = adapter;
+                articleCollectionPagerAdapter = builder == null ? null : builder.build();
                 if (articleCollectionPagerAdapter == null || articleCollectionPagerAdapter.getCount() == 0) {
                     int messageId;
                     if (articleCollectionPagerAdapter == null) {
@@ -734,7 +733,12 @@ public class ArticleCollectionActivity extends AppCompatActivity {
         return new int[]{dark ? Color.BLACK : Color.WHITE, dark ? Color.WHITE : Color.BLACK};
     }
 
-    private ArticleCollectionPagerAdapter createFromUri(Application app, Uri articleUrl) {
+    // Builds the pager's adapter on the main thread (see buildPager in onCreate).
+    private interface PagerBuilder {
+        ArticleCollectionPagerAdapter build();
+    }
+
+    private PagerBuilder createFromUri(Application app, Uri articleUrl) {
         String host = articleUrl.getHost();
         if (!(host.equals("localhost") || host.matches("127.\\d{1,3}.\\d{1,3}.\\d{1,3}"))) {
             return null;
@@ -746,44 +750,47 @@ public class ArticleCollectionActivity extends AppCompatActivity {
         Iterator<Slob.Blob> result = app.find(bd.key, bd.slobId);
         BlobList data = new BlobList(this, 20, 1);
         data.setData(result);
-        boolean hasFragment = !Util.isBlank(bd.fragment);
-        return new ArticleCollectionPagerAdapter(
-                app, new BlobListAdapter(data), hasFragment ? new ToBlobWithFragment(bd.fragment) : blobToBlob);
+        ToBlob toBlob = Util.isBlank(bd.fragment) ? blobToBlob : new ToBlobWithFragment(bd.fragment);
+        return () -> new ArticleCollectionPagerAdapter(app, new BlobListAdapter(data), toBlob);
     };
 
-    private ArticleCollectionPagerAdapter createFromLastResult(Application app) {
-        return new ArticleCollectionPagerAdapter(
+    private PagerBuilder createFromLastResult(Application app) {
+        return () -> new ArticleCollectionPagerAdapter(
                 app, new BlobListAdapter(app.lastResult), blobToBlob);
     }
 
-    private ArticleCollectionPagerAdapter createFromBookmarks(final Application app) {
-        ArticleCollectionPagerAdapter adapter = new ArticleCollectionPagerAdapter(
-                app, new BlobDescriptorListAdapter(app.bookmarks), new ToBlob() {
-            @Override
-            public Blob convert(Object item) {
-                return app.bookmarks.resolve((BlobDescriptor)item);
-            }
-        });
-        adapter.setUnresolvedPageFactory((container, item) -> orphanedEntryPage(
-                container, app.bookmarks, R.plurals.confirm_delete_bookmark_count,
-                (BlobDescriptor) item));
-        adapter.alsoObserve(app.history);
-        return adapter;
+    private PagerBuilder createFromBookmarks(final Application app) {
+        return () -> {
+            ArticleCollectionPagerAdapter adapter = new ArticleCollectionPagerAdapter(
+                    app, new BlobDescriptorListAdapter(app.bookmarks), new ToBlob() {
+                @Override
+                public Blob convert(Object item) {
+                    return app.bookmarks.resolve((BlobDescriptor)item);
+                }
+            });
+            adapter.setUnresolvedPageFactory((container, item) -> orphanedEntryPage(
+                    container, app.bookmarks, R.plurals.confirm_delete_bookmark_count,
+                    (BlobDescriptor) item));
+            adapter.alsoObserve(app.history);
+            return adapter;
+        };
     }
 
-    private ArticleCollectionPagerAdapter createFromHistory(final Application app) {
-        ArticleCollectionPagerAdapter adapter = new ArticleCollectionPagerAdapter(
-                app, new BlobDescriptorListAdapter(app.history), new ToBlob() {
-            @Override
-            public Blob convert(Object item) {
-                return app.history.resolve((BlobDescriptor)item);
-            }
-        });
-        adapter.setUnresolvedPageFactory((container, item) -> orphanedEntryPage(
-                container, app.history, R.plurals.confirm_delete_history_count,
-                (BlobDescriptor) item));
-        adapter.alsoObserve(app.bookmarks);
-        return adapter;
+    private PagerBuilder createFromHistory(final Application app) {
+        return () -> {
+            ArticleCollectionPagerAdapter adapter = new ArticleCollectionPagerAdapter(
+                    app, new BlobDescriptorListAdapter(app.history), new ToBlob() {
+                @Override
+                public Blob convert(Object item) {
+                    return app.history.resolve((BlobDescriptor)item);
+                }
+            });
+            adapter.setUnresolvedPageFactory((container, item) -> orphanedEntryPage(
+                    container, app.history, R.plurals.confirm_delete_history_count,
+                    (BlobDescriptor) item));
+            adapter.alsoObserve(app.bookmarks);
+            return adapter;
+        };
     }
 
     // The page for a bookmark or history entry (of list) whose article can't
@@ -942,7 +949,7 @@ public class ArticleCollectionActivity extends AppCompatActivity {
                 }));
     }
 
-    private ArticleCollectionPagerAdapter createFromIntent(Application app, Intent intent) {
+    private PagerBuilder createFromIntent(Application app, Intent intent) {
         String lookupKey = intent.getStringExtra(Intent.EXTRA_TEXT);
         if (intent.getAction().equals(Intent.ACTION_PROCESS_TEXT)) {
             lookupKey = getIntent()
@@ -976,8 +983,9 @@ public class ArticleCollectionActivity extends AppCompatActivity {
             Iterator<Blob> result = stemLookup(app, lookupKey, preferredSlobId);
             data.setData(result);
         }
-        return new ArticleCollectionPagerAdapter(
-                app, new BlobListAdapter(data), toBlob);
+        final ToBlob resultToBlob = toBlob;
+        return () -> new ArticleCollectionPagerAdapter(
+                app, new BlobListAdapter(data), resultToBlob);
     }
 
     // The id of the first of slobs made from the wiki at host (per its uri tag),
